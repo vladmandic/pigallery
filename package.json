@@ -1,0 +1,26 @@
+{
+  "name": "photo-analysis",
+  "version": "0.0.1",
+  "description": "Photo Analysis using ML5js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vladmandic/photo-analysis.git"
+  },
+  "keywords": [
+    "photo",
+    "ml5"
+  ],
+  "author": "Vladimir Mandic <mandic00@live.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vladmandic/photo-analysis/issues"
+  },
+  "homepage": "https://github.com/vladmandic/photo-analysis#readme",
+  "dependencies": {
+    "eslint-config-airbnb-base": "^14.1.0"
+  }
+}
