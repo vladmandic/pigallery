@@ -1,0 +1,38 @@
+{
+  "globals": {},
+  "env": {
+      "browser": true,
+      "commonjs": true,
+      "es6": true,
+      "node": true,
+      "jquery": true,
+      "es2020": true
+  },
+  "parserOptions": { "ecmaVersion": 2020 },
+  "plugins": [ "html" ],
+  "extends": [
+      "eslint:recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings",
+      "plugin:node/recommended",
+      "plugin:promise/recommended",
+      "plugin:json/recommended"
+  ],
+  "rules": {
+      "max-len": [1, 220, 3],
+      "no-restricted-globals": "off",
+      "import/extensions": "off",
+      "no-await-in-loop": "off",
+      "no-restricted-syntax": "off",
+      "object-curly-newline": "off",
+      "camelcase": "off",
+      "no-loop-func": "off",
+      "no-mixed-operators": "off",
+      "prefer-destructuring": "off",
+      "no-bitwise": "off",
+      "guard-for-in": "off",
+      "no-plusplus": "off",
+      "promise/always-return": "off",
+      "node/no-unsupported-features/es-syntax": "off"
+  }
+}
