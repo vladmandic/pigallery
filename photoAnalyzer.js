@@ -37,22 +37,26 @@ async function initModels() {
 async function processPicture() {
   log(`Processing picture: ${image.src}`);
   for (const model of classifiers) {
-    const t0 = window.performance.now();
-    let results = [];
-    if (model.type === 'classify') results = await model.func.classify(image);
-    if (model.type === 'detect') results = await model.func.detect(image);
-    // for (const result of results) {
-    //  if (result.confidence > 0.12) classification.push({ type: model.type, model: model.name, image: image.src, confidence: result.confidence, label: result.label })
-    // }
-    const guesses = [];
-    for (const result of results) {
-      const label = result.label.split(', ')[0].trim();
-      if (result.confidence > 0.12) guesses.push({ confidence: result.confidence, label });
+    try {
+      const t0 = window.performance.now();
+      let results = [];
+      if (model.type === 'classify') results = await model.func.classify(image);
+      if (model.type === 'detect') results = await model.func.detect(image);
+      // for (const result of results) {
+      //  if (result.confidence > 0.12) classification.push({ type: model.type, model: model.name, image: image.src, confidence: result.confidence, label: result.label })
+      // }
+      const guesses = [];
+      for (const result of results) {
+        const label = result.label.split(', ')[0].trim();
+        if (result.confidence > 0.12) guesses.push({ confidence: result.confidence, label });
+      }
+      const obj = { type: model.type, model: model.name, time: window.performance.now() - t0, guesses };
+      const found = images.find((a) => a.image === image.src);
+      if (found) found.obj.push(obj);
+      else images.push({ image: image.src, obj: [obj] });
+    } catch (err) {
+      log(`Error processing: ${image.src} using ${model.type}/${model.name}: ${err}`);
     }
-    const obj = { type: model.type, model: model.name, time: window.performance.now() - t0, guesses };
-    const found = images.find((a) => a.image === image.src);
-    if (found) found.obj.push(obj);
-    else images.push({ image: image.src, obj: [obj] });
   }
   busy = false;
 }
@@ -89,7 +93,7 @@ async function loadPicture(i) {
 }
 
 async function loadGallery() {
-  for (let i = 1; i < 33; i++) {
+  for (let i = 1; i < 32; i++) {
     await loadPicture(i);
   }
 }
