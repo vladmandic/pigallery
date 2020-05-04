@@ -1,8 +1,7 @@
 module.exports = {
   0: 'tench, Tinca tinca',
   1: 'goldfish, Carassius auratus',
-  2: 'great white shark, white shark, man-eater, man-eating shark, ' +
-    'Carcharodon carcharias',
+  2: 'great white shark, white shark, man-eater, man-eating shark Carcharodon carcharias',
   3: 'tiger shark, Galeocerdo cuvieri',
   4: 'hammerhead, hammerhead shark',
   5: 'electric ray, crampfish, numbfish, torpedo',
@@ -48,8 +47,8 @@ module.exports = {
   45: 'Gila monster, Heloderma suspectum',
   46: 'green lizard, Lacerta viridis',
   47: 'African chameleon, Chamaeleo chamaeleon',
-  48: 'Komodo dragon, Komodo lizard, dragon lizard, giant lizard, ' +
-    'Varanus komodoensis',
+  48: 'Komodo dragon, Komodo lizard, dragon lizard, giant lizard, '
+    + 'Varanus komodoensis',
   49: 'African crocodile, Nile crocodile, Crocodylus niloticus',
   50: 'American alligator, Alligator mississipiensis',
   51: 'triceratops',
@@ -104,8 +103,8 @@ module.exports = {
   100: 'black swan, Cygnus atratus',
   101: 'tusker',
   102: 'echidna, spiny anteater, anteater',
-  103: 'platypus, duckbill, duckbilled platypus, duck-billed platypus, ' +
-    'Ornithorhynchus anatinus',
+  103: 'platypus, duckbill, duckbilled platypus, duck-billed platypus, '
+    + 'Ornithorhynchus anatinus',
   104: 'wallaby, brush kangaroo',
   105: 'koala, koala bear, kangaroo bear, native bear, Phascolarctos cinereus',
   106: 'wombat',
@@ -123,11 +122,11 @@ module.exports = {
   118: 'Dungeness crab, Cancer magister',
   119: 'rock crab, Cancer irroratus',
   120: 'fiddler crab',
-  121: 'king crab, Alaska crab, Alaskan king crab, Alaska king crab, ' +
-    'Paralithodes camtschatica',
+  121: 'king crab, Alaska crab, Alaskan king crab, Alaska king crab, '
+    + 'Paralithodes camtschatica',
   122: 'American lobster, Northern lobster, Maine lobster, Homarus americanus',
-  123: 'spiny lobster, langouste, rock lobster, crawfish, crayfish, sea ' +
-    'crawfish',
+  123: 'spiny lobster, langouste, rock lobster, crawfish, crayfish, sea '
+    + 'crawfish',
   124: 'crayfish, crawfish, crawdad, crawdaddy',
   125: 'hermit crab',
   126: 'isopod',
@@ -151,8 +150,8 @@ module.exports = {
   144: 'pelican',
   145: 'king penguin, Aptenodytes patagonica',
   146: 'albatross, mollymawk',
-  147: 'grey whale, gray whale, devilfish, Eschrichtius gibbosus, ' +
-    'Eschrichtius robustus',
+  147: 'grey whale, gray whale, devilfish, Eschrichtius gibbosus, '
+    + 'Eschrichtius robustus',
   148: 'killer whale, killer, orca, grampus, sea wolf, Orcinus orca',
   149: 'dugong, Dugong dugon',
   150: 'sea lion',
@@ -185,8 +184,8 @@ module.exports = {
   177: 'Scottish deerhound, deerhound',
   178: 'Weimaraner',
   179: 'Staffordshire bullterrier, Staffordshire bull terrier',
-  180: 'American Staffordshire terrier, Staffordshire terrier, American pit ' +
-    'bull terrier, pit bull terrier',
+  180: 'American Staffordshire terrier, Staffordshire terrier, American pit '
+    + 'bull terrier, pit bull terrier',
   181: 'Bedlington terrier',
   182: 'Border terrier',
   183: 'Kerry blue terrier',
@@ -292,8 +291,8 @@ module.exports = {
   283: 'Persian cat',
   284: 'Siamese cat, Siamese',
   285: 'Egyptian cat',
-  286: 'cougar, puma, catamount, mountain lion, painter, panther, ' +
-    'Felis concolor',
+  286: 'cougar, puma, catamount, mountain lion, painter, panther, '
+    + 'Felis concolor',
   287: 'lynx, catamount',
   288: 'leopard, Panthera pardus',
   289: 'snow leopard, ounce, Panthera uncia',
@@ -302,8 +301,8 @@ module.exports = {
   292: 'tiger, Panthera tigris',
   293: 'cheetah, chetah, Acinonyx jubatus',
   294: 'brown bear, bruin, Ursus arctos',
-  295: 'American black bear, black bear, Ursus americanus, Euarctos ' +
-    'americanus',
+  295: 'American black bear, black bear, Ursus americanus, Euarctos '
+    + 'americanus',
   296: 'ice bear, polar bear, Ursus Maritimus, Thalarctos maritimus',
   297: 'sloth bear, Melursus ursinus, Ursus ursinus',
   298: 'mongoose',
@@ -327,8 +326,8 @@ module.exports = {
   316: 'cicada, cicala',
   317: 'leafhopper',
   318: 'lacewing, lacewing fly',
-  319: 'dragonfly, darning needle, devil\'s darning needle, sewing needle, ' +
-    'snake feeder, snake doctor, mosquito hawk, skeeter hawk',
+  319: 'dragonfly, darning needle, devil\'s darning needle, sewing needle, '
+    + 'snake feeder, snake doctor, mosquito hawk, skeeter hawk',
   320: 'damselfly',
   321: 'admiral',
   322: 'ringlet, ringlet butterfly',
@@ -358,8 +357,8 @@ module.exports = {
   346: 'water buffalo, water ox, Asiatic buffalo, Bubalus bubalis',
   347: 'bison',
   348: 'ram, tup',
-  349: 'bighorn, bighorn sheep, cimarron, Rocky Mountain bighorn, Rocky ' +
-    'Mountain sheep, Ovis canadensis',
+  349: 'bighorn, bighorn sheep, cimarron, Rocky Mountain bighorn, Rocky '
+    + 'Mountain sheep, Ovis canadensis',
   350: 'ibex, Capra ibex',
   351: 'hartebeest',
   352: 'impala, Aepyceros melampus',
@@ -401,8 +400,8 @@ module.exports = {
   388: 'giant panda, panda, panda bear, coon bear, Ailuropoda melanoleuca',
   389: 'barracouta, snoek',
   390: 'eel',
-  391: 'coho, cohoe, coho salmon, blue jack, silver salmon, Oncorhynchus ' +
-    'kisutch',
+  391: 'coho, cohoe, coho salmon, blue jack, silver salmon, Oncorhynchus '
+    + 'kisutch',
   392: 'rock beauty, Holocanthus tricolor',
   393: 'anemone fish',
   394: 'sturgeon',
@@ -414,7 +413,7 @@ module.exports = {
   400: 'academic gown, academic robe, judge\'s robe',
   401: 'accordion, piano accordion, squeeze box',
   402: 'acoustic guitar',
-  403: 'aircraft carrier, carrier, flattop, attack aircraft carrier',
+  403: 'ship, aircraft carrier, carrier, flattop, attack aircraft carrier',
   404: 'airliner',
   405: 'airship, dirigible',
   406: 'altar',
@@ -423,8 +422,8 @@ module.exports = {
   409: 'analog clock',
   410: 'apiary, bee house',
   411: 'apron',
-  412: 'ashcan, trash can, garbage can, wastebin, ash bin, ash-bin, ashbin, ' +
-    'dustbin, trash barrel, trash bin',
+  412: 'ashcan, trash can, garbage can, wastebin, ash bin, ash-bin, ashbin, '
+    + 'dustbin, trash barrel, trash bin',
   413: 'assault rifle, assault gun',
   414: 'backpack, back pack, knapsack, packsack, rucksack, haversack',
   415: 'bakery, bakeshop, bakehouse',
@@ -448,17 +447,17 @@ module.exports = {
   433: 'bathing cap, swimming cap',
   434: 'bath towel',
   435: 'bathtub, bathing tub, bath, tub',
-  436: 'beach wagon, station wagon, wagon, estate car, beach waggon, station ' +
-    'waggon, waggon',
-  437: 'beacon, lighthouse, beacon light, pharos',
+  436: 'beach wagon, station wagon, wagon, estate car, beach waggon, station '
+    + 'waggon, waggon',
+  437: 'lighthouse, beacon, beacon light, pharos',
   438: 'beaker',
   439: 'bearskin, busby, shako',
   440: 'beer bottle',
   441: 'beer glass',
-  442: 'bell cote, bell cot',
+  442: 'tower, bell cote, bell cot',
   443: 'bib',
   444: 'bicycle-built-for-two, tandem bicycle, tandem',
-  445: 'bikini, two-piece',
+  445: 'girl in a bikini, two-piece',
   446: 'binder, ring-binder',
   447: 'binoculars, field glasses, opera glasses',
   448: 'birdhouse',
@@ -493,8 +492,8 @@ module.exports = {
   477: 'carpenter\'s kit, tool kit',
   478: 'carton',
   479: 'car wheel',
-  480: 'cash machine, cash dispenser, automated teller machine, automatic ' +
-    'teller machine, automated teller, automatic teller, ATM',
+  480: 'cash machine, cash dispenser, automated teller machine, automatic '
+    + 'teller machine, automated teller, automatic teller, ATM',
   481: 'cassette',
   482: 'cassette player',
   483: 'castle',
@@ -504,8 +503,8 @@ module.exports = {
   487: 'cellular telephone, cellular phone, cellphone, cell, mobile phone',
   488: 'chain',
   489: 'chainlink fence',
-  490: 'chain mail, ring mail, mail, chain armor, chain armour, ring armor, ' +
-    'ring armour',
+  490: 'chain mail, ring mail, mail, chain armor, chain armour, ring armor, '
+    + 'ring armour',
   491: 'chain saw, chainsaw',
   492: 'chest',
   493: 'chiffonier, commode',
@@ -625,7 +624,7 @@ module.exports = {
   607: 'jack-o\'-lantern',
   608: 'jean, blue jean, denim',
   609: 'jeep, landrover',
-  610: 'jersey, T-shirt, tee shirt',
+  610: 't-shirt, jersey, T-shirt, tee shirt',
   611: 'jigsaw puzzle',
   612: 'jinrikisha, ricksha, rickshaw',
   613: 'joystick',
@@ -647,14 +646,14 @@ module.exports = {
   629: 'lipstick, lip rouge',
   630: 'Loafer',
   631: 'lotion',
-  632: 'loudspeaker, speaker, speaker unit, loudspeaker system, speaker ' +
-    'system',
+  632: 'loudspeaker, speaker, speaker unit, loudspeaker system, speaker '
+    + 'system',
   633: 'loupe, jeweler\'s loupe',
   634: 'lumbermill, sawmill',
   635: 'magnetic compass',
   636: 'mailbag, postbag',
   637: 'mailbox, letter box',
-  638: 'maillot',
+  638: 'girl in a tank suite',
   639: 'maillot, tank suit',
   640: 'manhole cover',
   641: 'maraca',
@@ -750,8 +749,8 @@ module.exports = {
   731: 'plunger, plumber\'s helper',
   732: 'Polaroid camera, Polaroid Land camera',
   733: 'pole',
-  734: 'police van, police wagon, paddy wagon, patrol wagon, wagon, black ' +
-    'Maria',
+  734: 'police van, police wagon, paddy wagon, patrol wagon, wagon, black '
+    + 'Maria',
   735: 'poncho',
   736: 'pool table, billiard table, snooker table',
   737: 'pop bottle, soda bottle',
@@ -884,8 +883,8 @@ module.exports = {
   864: 'tow truck, tow car, wrecker',
   865: 'toyshop',
   866: 'tractor',
-  867: 'trailer truck, tractor trailer, trucking rig, rig, articulated ' +
-    'lorry, semi',
+  867: 'trailer truck, tractor trailer, trucking rig, rig, articulated '
+    + 'lorry, semi',
   868: 'tray',
   869: 'trench coat',
   870: 'tricycle, trike, velocipede',
@@ -993,19 +992,19 @@ module.exports = {
   972: 'cliff, drop, drop-off',
   973: 'coral reef',
   974: 'geyser',
-  975: 'lakeside, lakeshore',
+  975: 'seaside, lakeside, lakeshore',
   976: 'promontory, headland, head, foreland',
-  977: 'sandbar, sand bar',
+  977: 'beach, sandbar, sand bar',
   978: 'seashore, coast, seacoast, sea-coast',
   979: 'valley, vale',
-  980: 'volcano',
+  980: 'sunset, volcano',
   981: 'ballplayer, baseball player',
   982: 'groom, bridegroom',
   983: 'scuba diver',
   984: 'rapeseed',
   985: 'daisy',
-  986: 'yellow lady\'s slipper, yellow lady-slipper, Cypripedium calceolus, ' +
-    'Cypripedium parviflorum',
+  986: 'yellow lady\'s slipper, yellow lady-slipper, Cypripedium calceolus, '
+    + 'Cypripedium parviflorum',
   987: 'corn',
   988: 'acorn',
   989: 'hip, rose hip, rosehip',
@@ -1015,9 +1014,9 @@ module.exports = {
   993: 'gyromitra',
   994: 'stinkhorn, carrion fungus',
   995: 'earthstar',
-  996: 'hen-of-the-woods, hen of the woods, Polyporus frondosus, Grifola ' +
-    'frondosa',
+  996: 'hen-of-the-woods, hen of the woods, Polyporus frondosus, Grifola '
+    + 'frondosa',
   997: 'bolete',
   998: 'ear, spike, capitulum',
-  999: 'toilet tissue, toilet paper, bathroom tissue'
+  999: 'toilet tissue, toilet paper, bathroom tissue',
 };
