@@ -34,6 +34,7 @@
       "guard-for-in": "off",
       "no-plusplus": "off",
       "promise/always-return": "off",
+      "promise/catch-or-return": "off",
       "node/no-unsupported-features/es-syntax": "off"
   }
 }
