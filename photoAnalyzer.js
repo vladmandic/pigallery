@@ -89,7 +89,7 @@ async function loadPicture(i) {
 }
 
 async function loadGallery() {
-  for (let i = 1; i < 15; i++) {
+  for (let i = 1; i < 33; i++) {
     await loadPicture(i);
   }
 }
