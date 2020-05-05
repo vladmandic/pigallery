@@ -8,4 +8,5 @@ MobileNet: <https://github.com/tensorflow/models/blob/master/research/slim/nets/
 DarkNet Yolo: <https://pjreddie.com/darknet/yolo/>
 Face/Gender/Age: <https://github.com/justadudewhohacks/face-api.js>
 
-<https://storage.googleapis.com/tfhub-tfjs-modules/google/imagenet/mobilenet_v1_100_224/classification/1/model.json>
+PoseNet: <https://github.com/tensorflow/tfjs-models/tree/master/posenet>
+BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>

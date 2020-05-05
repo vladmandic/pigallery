@@ -1,8 +1,9 @@
-/* global mobilenet, cocoSsd, faceapi */
+/* global tf, mobilenet, cocoSsd, faceapi */
 
 let classifierV1;
 let classifierV2;
 let detector;
+const maxSize = 2048;
 const images = [];
 
 async function log(msg) {
@@ -18,13 +19,15 @@ async function loadImage(imageUrl) {
       image.loading = 'eager';
       image.onerror = () => log(`Error loading image: ${imageUrl}`);
       image.addEventListener('load', () => {
-        /* resize if too large for processing
         const ratio = image.height / image.width;
-        if (image.width > 1048 || image.height > 1048) {
-          image.width = 1024;
+        if (image.width > maxSize) {
+          image.width = maxSize;
           image.height = image.width * ratio;
         }
-        */
+        if (image.height > maxSize) {
+          image.height = maxSize;
+          image.width = image.height / ratio;
+        }
         resolve(image);
       });
       image.src = imageUrl;
@@ -35,9 +38,13 @@ async function loadImage(imageUrl) {
   });
 }
 
-async function loadModels() {
-  log('Initializing TensorFlowJS...');
-  // load TF MobileNet Classifier model
+async function loadModels(gpu = 'webgl') {
+  log('Starting Image Analsys');
+  log(`Initializing TensorFlow/JS version ${tf.version.tfjs}`);
+  // tf.wasm.setWasmPath('assets/');
+  await tf.setBackend(gpu);
+  log(`Using ${tf.getBackend().toUpperCase()} back-end for processing`);
+  log('Loading models: MobileNet-v1, MobileNet-v2, CocoSSD, FaceAPI...');
   const t0 = window.performance.now();
   classifierV1 = await mobilenet.load({ version: 1, alpha: 1.0, modelUrl: 'models/mobilenet-v1/model.json' });
   classifierV2 = await mobilenet.load({ version: 2, alpha: 1.0, modelUrl: 'models/mobilenet-v2/model.json' });
@@ -47,6 +54,7 @@ async function loadModels() {
   await faceapi.nets.ageGenderNet.load('models/faceapi/');
   await faceapi.loadFaceExpressionModel('models/faceapi/');
   log(`Models loaded in ${(window.performance.now() - t0).toLocaleString()}ms`);
+  log(`Forced image resize to max ${maxSize}px`);
 }
 
 async function processPerson(image) {
@@ -65,7 +73,7 @@ async function processPerson(image) {
 }
 
 async function processImage(image) {
-  log(`Processing image: ${image.src} ${image.width}x${image.height}`);
+  log(`&nbsp Processing image: ${image.src} size: ${image.width}x${image.height}`);
   try {
     const t0 = window.performance.now();
     const classifiedV1 = classifierV1 ? await classifierV1.classify(image) : null;
@@ -76,7 +84,7 @@ async function processImage(image) {
     if (found) person = await processPerson(image);
     images.push({ image: image.src, time: (window.performance.now() - t0), classifiedV1, classifiedV2, detected, person });
   } catch (err) {
-    log(`Error processing image: ${image.src}: ${err}`);
+    log(`&nbsp Error processing image: ${image.src}: ${err}`);
   }
 }
 
@@ -85,19 +93,20 @@ function printObject(objects) {
   let text = '';
   const arr = Array.isArray(objects) ? objects : [objects];
   for (const obj of arr) {
-    if (obj.age) text += `${(100 * (obj.gender.confidence).toFixed(2))}% ${obj.gender.label} age:${obj.age.toFixed(2)}y emotion:${(100 * (obj.emotion.confidence).toFixed(2))}% ${obj.emotion.label}`;
-    else text += `${(100 * (obj.probability || obj.score)).toFixed(2)}% ${(obj.className || obj.class)} | `;
+    const label = (obj.className || obj.class || '').split(',')[0];
+    if (obj.age) text += `${(100 * (obj.gender.confidence).toFixed(2))}% ${obj.gender.label} age: ${obj.age.toFixed(1)}y emotion: ${(100 * (obj.emotion.confidence).toFixed(2))}% ${obj.emotion.label}`;
+    else text += `${(100 * (obj.probability || obj.score)).toFixed(2)}% ${label} | `;
   }
   return text;
 }
 async function printResults() {
-  log('Processing results...');
+  log('Printing results...');
   let text = '';
   for (const img of images) {
     text += '<div class="row">';
     text += ` <div class="col" style="height: 150px; min-width: 150px; max-width: 150px"><img src="${img.image}" width="140" height="140"></div>`;
     text += ' <div class="col">';
-    text += `  <div>Image ${img.image} processed in ${img.time.toFixed(0)}ms </div>`;
+    text += `  <div>Image ${img.image} processed in ${img.time.toLocaleString()}ms </div>`;
     text += `  <div>ClassificationV1: ${printObject(img.classifiedV1)}</div>`;
     text += `  <div>ClassificationV2: ${printObject(img.classifiedV2)}</div>`;
     text += `  <div>Detected: ${printObject(img.detected)}</div>`;
@@ -108,19 +117,23 @@ async function printResults() {
   document.getElementById('result').innerHTML = text;
 }
 
-async function loadGallery() {
-  for (let i = 1; i < 12; i++) { // 58
-    const image = await loadImage(`/samples/sample%20(${i}).jpg`);
+async function loadGallery(count) {
+  log(`Queued ${count} images for processing...`);
+  const t0 = window.performance.now();
+  for (let i = 1; i <= count; i++) {
+    const image = await loadImage(`/samples/test%20(${i}).jpg`);
     if (image) {
       await processImage(image);
       image.remove();
     }
   }
+  const t1 = window.performance.now();
+  log(`Finished processed ${count} images: total: ${(t1 - t0).toLocaleString()}ms average: ${((t1 - t0) / count).toLocaleString()}ms / image`);
 }
 
 async function main() {
-  await loadModels();
-  await loadGallery();
+  await loadModels('webgl'); // webgl, wasm, cpu
+  await loadGallery(94); // max=94
   await printResults();
 }
 
