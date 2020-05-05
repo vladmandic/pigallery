@@ -1,9 +1,9 @@
 /* global tf, mobilenet, cocoSsd, faceapi */
 
+const config = { maxSize: 1500, person: false };
 let classifierV1;
 let classifierV2;
 let detector;
-const maxSize = 2048;
 const images = [];
 
 async function log(msg) {
@@ -20,12 +20,12 @@ async function loadImage(imageUrl) {
       image.onerror = () => log(`Error loading image: ${imageUrl}`);
       image.addEventListener('load', () => {
         const ratio = image.height / image.width;
-        if (image.width > maxSize) {
-          image.width = maxSize;
+        if (image.width > config.maxSize) {
+          image.width = config.maxSize;
           image.height = image.width * ratio;
         }
-        if (image.height > maxSize) {
-          image.height = maxSize;
+        if (image.height > config.maxSize) {
+          image.height = config.maxSize;
           image.width = image.height / ratio;
         }
         resolve(image);
@@ -54,10 +54,11 @@ async function loadModels(gpu = 'webgl') {
   await faceapi.nets.ageGenderNet.load('models/faceapi/');
   await faceapi.loadFaceExpressionModel('models/faceapi/');
   log(`Models loaded in ${(window.performance.now() - t0).toLocaleString()}ms`);
-  log(`Forced image resize to max ${maxSize}px`);
+  log(`Forced image resize to max ${config.maxSize}px`);
 }
 
 async function processPerson(image) {
+  if (!config.person) return null;
   const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 });
   const result = await faceapi.detectSingleFace(image, options)
     .withFaceLandmarks()
@@ -76,13 +77,20 @@ async function processImage(image) {
   log(`&nbsp Processing image: ${image.src} size: ${image.width}x${image.height}`);
   try {
     const t0 = window.performance.now();
-    const classifiedV1 = classifierV1 ? await classifierV1.classify(image) : null;
-    const classifiedV2 = classifierV2 ? await classifierV2.classify(image) : null;
-    const detected = detector ? await detector.detect(image) : null;
-    const found = detected.find((a) => a.class === 'person');
-    let person;
-    if (found) person = await processPerson(image);
-    images.push({ image: image.src, time: (window.performance.now() - t0), classifiedV1, classifiedV2, detected, person });
+    const res = {};
+    res.classifiedV1 = classifierV1 ? await classifierV1.classify(image) : null;
+    res.classifiedV2 = classifierV2 ? await classifierV2.classify(image) : null;
+    // res.detected = detector ? await detector.detect(image) : null;
+    const found = res.detected ? res.detected.find((a) => a.class === 'person') : null;
+    if (found) res.person = await processPerson(image);
+    images.push({
+      image: image.src,
+      time: (window.performance.now() - t0),
+      classifiedV1: res.classifiedV1 || null,
+      classifiedV2: res.classifiedV2 || null,
+      detected: res.detected || null,
+      person: res.person || null,
+    });
   } catch (err) {
     log(`&nbsp Error processing image: ${image.src}: ${err}`);
   }
@@ -93,9 +101,10 @@ function printObject(objects) {
   let text = '';
   const arr = Array.isArray(objects) ? objects : [objects];
   for (const obj of arr) {
+    const confidence = (obj.probability || obj.score || 0);
     const label = (obj.className || obj.class || '').split(',')[0];
     if (obj.age) text += `${(100 * (obj.gender.confidence).toFixed(2))}% ${obj.gender.label} age: ${obj.age.toFixed(1)}y emotion: ${(100 * (obj.emotion.confidence).toFixed(2))}% ${obj.emotion.label}`;
-    else text += `${(100 * (obj.probability || obj.score)).toFixed(2)}% ${label} | `;
+    else if (confidence > 0.15) text += `${(100 * confidence).toFixed(2)}% ${label} | `;
   }
   return text;
 }
@@ -133,7 +142,7 @@ async function loadGallery(count) {
 
 async function main() {
   await loadModels('webgl'); // webgl, wasm, cpu
-  await loadGallery(94); // max=94
+  await loadGallery(93); // max=93
   await printResults();
 }
 
