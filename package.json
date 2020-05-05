@@ -21,9 +21,6 @@
   },
   "homepage": "https://github.com/vladmandic/photo-analysis#readme",
   "dependencies": {
-    "eslint-config-airbnb-base": "^14.1.0",
-    "isomorphic-fetch": "^2.2.1",
-    "mkdirp": "^1.0.4",
-    "tfjs-yolo": "0.0.4"
+    "eslint-config-airbnb-base": "^14.1.0"
   }
 }
