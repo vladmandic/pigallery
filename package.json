@@ -1,18 +1,21 @@
 {
   "name": "photo-analysis",
   "version": "0.0.1",
-  "description": "Photo Analysis using ML5js",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "Photo Analysis using TensorFlow/JS",
+  "main": "",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vladmandic/photo-analysis.git"
   },
   "keywords": [
-    "photo",
-    "ml5"
+    "tensorflow",
+    "tensorflowjs",
+    "mobilenet",
+    "cocossd",
+    "darknet",
+    "faceapi",
+    "yolo"
   ],
   "author": "Vladimir Mandic <mandic00@live.com>",
   "license": "MIT",
@@ -21,6 +24,16 @@
   },
   "homepage": "https://github.com/vladmandic/photo-analysis#readme",
   "dependencies": {
+    "@tensorflow/tfjs": "^1.7.4",
+    "@tensorflow/tfjs-backend-cpu": "^2.0.0-rc.1",
+    "@tensorflow/tfjs-backend-wasm": "^1.7.4",
+    "@tensorflow/tfjs-backend-webgl": "^2.0.0-rc.1",
+    "@tensorflow/tfjs-backend-webgpu": "0.0.1-alpha.0",
+    "@tensorflow/tfjs-converter": "^1.7.4",
+    "@tensorflow/tfjs-core": "^1.7.4",
+    "@tensorflow/tfjs-data": "^1.7.4",
+    "@tensorflow/tfjs-layers": "^1.7.4",
+    "@tensorflow/tfjs-vis": "^1.4.0",
     "eslint-config-airbnb-base": "^14.1.0"
   }
 }
