@@ -4,6 +4,9 @@
   "description": "Photo Analysis using TensorFlow/JS",
   "main": "",
   "scripts": {},
+  "browserslist": [
+    "last 2 Chrome versions"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vladmandic/photo-analysis.git"
@@ -24,16 +27,21 @@
   },
   "homepage": "https://github.com/vladmandic/photo-analysis#readme",
   "dependencies": {
+    "@tensorflow-models/coco-ssd": "^2.0.3",
+    "@tensorflow-models/mobilenet": "^2.0.4",
     "@tensorflow/tfjs": "^1.7.4",
     "@tensorflow/tfjs-backend-cpu": "^2.0.0-rc.1",
     "@tensorflow/tfjs-backend-wasm": "^1.7.4",
     "@tensorflow/tfjs-backend-webgl": "^2.0.0-rc.1",
-    "@tensorflow/tfjs-backend-webgpu": "0.0.1-alpha.0",
     "@tensorflow/tfjs-converter": "^1.7.4",
     "@tensorflow/tfjs-core": "^1.7.4",
     "@tensorflow/tfjs-data": "^1.7.4",
     "@tensorflow/tfjs-layers": "^1.7.4",
-    "@tensorflow/tfjs-vis": "^1.4.0",
-    "eslint-config-airbnb-base": "^14.1.0"
+    "bootstrap": "^4.4.1",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "face-api.js": "^0.22.2",
+    "http-server": "^0.12.3",
+    "nsfwjs": "^2.2.0",
+    "parcel-bundler": "^1.12.4"
   }
 }
