@@ -41,7 +41,10 @@
     "eslint-config-airbnb-base": "^14.1.0",
     "face-api.js": "^0.22.2",
     "http-server": "^0.12.3",
+    "jimp": "^0.10.3",
     "nsfwjs": "^2.2.0",
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.4",
+    "resnet_imagenet": "^1.0.4",
+    "tfjs-yolo": "0.0.4"
   }
 }

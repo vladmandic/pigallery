@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+
 import * as tf from '@tensorflow/tfjs';
 // import '@tensorflow/tfjs-backend-cpu';
 // import '@tensorflow/tfjs-backend-webgl';
@@ -6,8 +8,11 @@ import * as mobilenet from '@tensorflow-models/mobilenet';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 import * as faceapi from 'face-api.js';
 import * as nsfwjs from 'nsfwjs';
+import yolo from 'tfjs-yolo';
+import Jimp from 'jimp';
+import labels from './assets/imagenet.json';
 
-const config = { maxSize: 800, person: true, modelsPrefix: 'models', samplesPrefix: 'samples' };
+const config = { maxSize: 800, modelsPrefix: 'models', samplesPrefix: 'samples' };
 const models = {};
 const images = [];
 
@@ -22,30 +27,66 @@ async function loadModels(gpu = 'webgl') {
   // tf.wasm.setWasmPath('assets/');
   await tf.setBackend(gpu);
   log(`Using ${tf.getBackend().toUpperCase()} back-end for processing`);
+  log('Loading models...');
   const t0 = window.performance.now();
 
-  log('Loading model: MobileNet-v1-100');
+  log('&nbsp Model: MobileNet-v1-100');
   models.mobileNetV1 = await mobilenet.load({ version: 1, alpha: 1.0, modelUrl: `${config.modelsPrefix}/mobilenet-v1/model.json` });
-  // log('Loading model: MobileNet-v2');
-  // models.mobileNetv2 = await mobilenet.load({ version: 2, alpha: 1.0, modelUrl: `${config.modelsPrefix}/mobilenet-v2/model.json` });
-  // log('Loading model: CocoSSD-v2');
-  // models.cocoSsd = await cocoSsd.load({ base: 'mobilenet_v2', modelUrl: `${config.modelsPrefix}/cocossd-v2/model.json` });
-
-  log('Loading model: NSFW');
-  // models.nsfw = await nsfwjs.load(`${config.modelsPrefix}/web_model/`);
+  log('&nbsp Model: MobileNet-v2-100');
+  models.mobileNetv2 = await mobilenet.load({ version: 2, alpha: 1.0, modelUrl: `${config.modelsPrefix}/mobilenet-v2/model.json` });
+  log('&nbsp Model: CocoSSD-v2');
+  models.cocoSsd = await cocoSsd.load({ base: 'mobilenet_v2', modelUrl: `${config.modelsPrefix}/cocossd-v2/model.json` });
+  log('&nbsp Model: DarkNet/Yolo-v3');
+  models.yolo = await yolo.v3(`${config.modelsPrefix}/yolo-v3/model.json`);
+  log('&nbsp Model: NSFW');
   models.nsfw = await nsfwjs.load(`${config.modelsPrefix}/nsfw/`);
 
-  if (config.person) {
-    log('Loading model: FaceAPI');
-    await faceapi.nets.ssdMobilenetv1.load(`${config.modelsPrefix}/faceapi/`);
-    await faceapi.loadFaceLandmarkModel(`${config.modelsPrefix}/faceapi/`);
-    await faceapi.nets.ageGenderNet.load(`${config.modelsPrefix}/faceapi/`);
-    await faceapi.loadFaceExpressionModel(`${config.modelsPrefix}/faceapi/`);
-    models.faceapi = faceapi;
-  }
+  log('&nbsp Model: FaceAPI');
+  await faceapi.nets.ssdMobilenetv1.load(`${config.modelsPrefix}/faceapi/`);
+  await faceapi.loadFaceLandmarkModel(`${config.modelsPrefix}/faceapi/`);
+  await faceapi.nets.ageGenderNet.load(`${config.modelsPrefix}/faceapi/`);
+  await faceapi.loadFaceExpressionModel(`${config.modelsPrefix}/faceapi/`);
+  models.faceapi = faceapi;
+
+  log('&nbsp Model: Resnet-10');
+  models.resnet101 = await tf.loadLayersModel(`${config.modelsPrefix}/resnet10/model.json`);
+  models.resnet101.classify = async (image) => {
+    const img = await imgURItoTensor(image.src);
+    const predictions = await models.resnet101.predict(img);
+    const prediction = predictions.argMax([-1]).dataSync();
+    return { score: Math.max(...predictions.dataSync()), class: labels[prediction[0]] };
+  };
+  log('&nbsp Model: Resnet-15');
+  models.resnet152 = await tf.loadLayersModel(`${config.modelsPrefix}/resnet15/model.json`);
+  models.resnet152.classify = async (image) => {
+    const img = await imgURItoTensor(image.src);
+    const predictions = await models.resnet152.predict(img);
+    const prediction = predictions.argMax([-1]).dataSync();
+    return { score: Math.max(...predictions.dataSync()), class: labels[prediction[0]] };
+  };
+  log('&nbsp Model: Resnet-50');
+  models.resnet50 = await tf.loadLayersModel(`${config.modelsPrefix}/resnet50/model.json`);
+  models.resnet50.classify = async (image) => {
+    const img = await imgURItoTensor(image.src);
+    const predictions = await models.resnet50.predict(img);
+    const prediction = predictions.argMax([-1]).dataSync();
+    return { score: Math.max(...predictions.dataSync()), class: labels[prediction[0]] };
+  };
+
   log(`Models loaded in ${(window.performance.now() - t0).toLocaleString()}ms`);
   log(`Forced image resize to max ${config.maxSize}px`);
 }
+
+const imgURItoTensor = async (imgURI) => Jimp.read(imgURI).then((img) => {
+  img.resize(224, 224);
+  const p = [];
+  img.scan(0, 0, img.bitmap.width, img.bitmap.height, function test(x, y, idx) {
+    p.push(this.bitmap.data[idx + 0]);
+    p.push(this.bitmap.data[idx + 1]);
+    p.push(this.bitmap.data[idx + 2]);
+  });
+  return tf.tensor4d(p, [1, img.bitmap.width, img.bitmap.height, 3]);
+});
 
 async function loadImage(imageUrl) {
   return new Promise((resolve) => {
@@ -75,7 +116,6 @@ async function loadImage(imageUrl) {
 }
 
 faceapi.classify = async (image) => {
-  if (!config.person) return null;
   const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 });
   const result = await faceapi.detectSingleFace(image, options)
     .withFaceLandmarks()
@@ -97,14 +137,14 @@ async function processImage(image) {
     const res = [];
     for (const [name, func] of Object.entries(models)) {
       let result;
+      const t2 = window.performance.now();
       if (func.classify) result = await func.classify(image);
       else if (func.detect) result = await func.detect(image);
       else if (func.predict) result = await func.predict(image);
-      res.push({ name, result });
+      const t3 = window.performance.now();
+      res.push({ name, time: t3 - t2, result });
     }
     const t1 = window.performance.now();
-    // const found = res.cocoSsd ? res.cocoSsd.find((a) => a.class === 'person') : null;
-    // if (found) res.faceApi = await processPerson(image);
     const found = images.find((a) => a.image === image.src);
     if (found) found.results.push(res);
     else images.push({ image: image.src, time: t1 - t0, results: res });
@@ -134,7 +174,7 @@ async function printResults() {
     text += ' <div class="col">';
     text += `  <div>Image | ${img.image} | processed in ${img.time.toLocaleString()}ms </div>`;
     for (const res of img.results) {
-      text += `${res.name} ${printObject(res.result)}<br>`;
+      text += `${res.name} in ${res.time.toLocaleString()}ms ${printObject(res.result)}<br>`;
     }
     text += ' </div>';
     text += '</div>';
