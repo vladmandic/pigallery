@@ -15,7 +15,6 @@
       "plugin:import/errors",
       "plugin:import/warnings",
       "plugin:node/recommended",
-      "plugin:promise/recommended",
       "plugin:json/recommended",
       "airbnb-base"
   ],
