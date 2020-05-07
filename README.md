@@ -2,8 +2,10 @@
 
 Photo Analysis using TensorFlow/JS
 
-  node_modules/.bin/parcel watch index.html --target browser --no-minify
+  node_modules/.bin/parcel watch index.html --target browser
+  node_modules/.bin/parcel build index.html --target browser --no-minify
   node_modules/.bin/http-server dist --cors -p 80
+  rm dist/*.map dist/*.js dist/*.ttf dist/*.ico dist/*.css dist/*.html 2>/dev/null
 
 TensorFlowJS: <https://www.tensorflow.org/js/>
 Datasets: <https://www.tensorflow.org/resources/models-datasets>
