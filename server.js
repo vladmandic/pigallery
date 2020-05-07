@@ -20,9 +20,7 @@ const options = {
   sourceMaps: true,
   detailedReport: false,
   autoInstall: false,
-  // cacheDir: '.cache',
-  // global: 'moduleName', // Expose modules as UMD under this name, disabled by default
-  // scopeHoist: false, // Turn on experimental scope hoisting/tree shaking flag, for smaller production bundles
+  scopeHoist: false,
   hmr: false,
   hmrPort: 0,
   hmrHostname: '',
