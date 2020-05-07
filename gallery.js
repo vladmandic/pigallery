@@ -27,7 +27,7 @@ async function loadModels(gpu = 'webgl') {
   await tf.enableProdMode();
   log(`Backend: ${tf.getBackend().toUpperCase()}`);
 
-  log('Loading models...');
+  log(`Loading models from ${config.modelsPrefix ? config.modelsPrefix : 'internet'}`);
   const t0 = window.performance.now();
 
   log('&nbsp Model: MobileNet-v1-100');
@@ -57,6 +57,8 @@ async function loadModels(gpu = 'webgl') {
   models.faceapi = faceapi;
 
   log(`Models loaded: ${tf.engine().state.numBytes.toLocaleString()} bytes in ${(window.performance.now() - t0).toLocaleString()}ms`);
+  log(`Parallel processing: ${config.batch} parallel images`);
+  log(`Forced image resize: ${config.maxSize}px maximum shape: ${config.square ? 'square' : 'native'}`);
 }
 
 async function loadImage(imageUrl) {
@@ -219,8 +221,6 @@ async function loadGallery(what) {
   const res = await fetch(`/list/${what}`);
   const dir = await res.json();
   log(`Queued: ${dir.files.length} images from ${dir.folder}/${what} ...`);
-  log(`Forced image resize: ${config.maxSize}px maximum`);
-  log(`Parallel processing: ${config.batch} parallel images`);
   const t0 = window.performance.now();
   const promises = [];
   for (const f of dir.files) {
