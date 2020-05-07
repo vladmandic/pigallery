@@ -52,7 +52,12 @@ async function main() {
   app.use('/models', express.static(path.join(__dirname, './models'), { maxAge: '365d', cacheControl: true }));
   app.use('/samples', express.static(path.join(__dirname, './samples'), { maxAge: '365d', cacheControl: true }));
   app.get('/list/:prefix', (req, res) => {
-    const dir = req.param.prefix ? fs.readdirSync(`./samples/${req.param.prefix}*`) : fs.readdirSync('./samples');
+    log.info('Requested file listing for', req.params.prefix);
+    let dir = [];
+    try {
+      dir = fs.readdirSync('./samples');
+      if (req.params.prefix) dir = dir.filter((a) => a.includes(req.params.prefix));
+    } catch { /**/ }
     res.json({ files: dir, folder: '/samples' });
   });
 

@@ -6,9 +6,9 @@ import yolo from 'tfjs-yolo';
 import Jimp from 'jimp';
 
 const config = {
-  maxSize: 1200, // maximum image width or height before resizing is required
+  maxSize: 1000, // maximum image width or height before resizing is required
   modelsPrefix: '/models', // path prefix for loading tf models
-  jimp: false, // use jimp for image loading
+  jimp: false, // use jimp for image loading and resizing
   batch: 10, // how many images to process in parallel
 };
 
@@ -25,6 +25,7 @@ async function loadModels(gpu = 'webgl') {
   await tf.setBackend(gpu);
   await tf.enableProdMode();
   log(`Using ${tf.getBackend().toUpperCase()} back-end for processing`);
+
   log('Loading models...');
   const t0 = window.performance.now();
   log('&nbsp Model: MobileNet-v1-100');
@@ -55,8 +56,8 @@ async function loadImage(imageUrl) {
 }
 
 faceapi.classify = async (image) => {
-  const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 });
-  const result = await faceapi.detectSingleFace(image, options)
+  if (!faceapi.options) faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 });
+  const result = await faceapi.detectSingleFace(image, faceapi.options)
     .withFaceLandmarks()
     .withFaceExpressions()
     .withAgeAndGender();
@@ -76,11 +77,12 @@ async function printResult(object, image) {
   for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
   let person = '';
   if (object.person && object.person.age) {
-    person = ` | 
+    person = `Person in ${object.perf.person.toFixed(0)}ms | 
       Gender: ${(100 * object.person.scoreGender).toFixed(0)}% ${object.person.gender}
       Age: ${object.person.age.toFixed(1)}
       Emotion: ${(100 * object.person.scoreEmotion).toFixed(0)}% ${object.person.emotion}
       Class: ${(100 * object.person.scoreClass).toFixed(0)}% ${object.person.class}
+      <br>
     `;
   }
   const div = document.createElement('div');
@@ -95,12 +97,12 @@ async function printResult(object, image) {
   }
   div.innerHTML = `
     <div class="col" style="height: 114x; min-width: 114px; max-width: 114px"><img src="${data}" width="106px" height="106px"></div>
-    <div class="col" style="height: 114px; min-width: 570px; max-width: 570px">
+    <div class="col" style="height: 114px; min-width: 575px; max-width: 575px">
       Image ${decodeURI(object.image)} processed in ${object.perf.total.toFixed(0)}ms<br>
       Loaded in ${object.perf.load.toFixed(0)}ms<br>
       Classified in ${object.perf.classify.toFixed(0)}ms ${classified}<br>
       Detected in ${object.perf.detect.toFixed(0)}ms ${detected}<br>
-      Person in ${object.perf.person.toFixed(0)}ms ${person}<br>
+      ${person}
     </div>
   `;
   document.getElementById('result').appendChild(div);
@@ -191,9 +193,9 @@ async function processImage(name) {
 async function loadGallery(what) {
   const res = await fetch(`/list/${what}`);
   const dir = await res.json();
+  log(`Queued: ${dir.files.length} images from ${dir.folder}/${what} ...`);
   log(`Forced image resize: ${config.maxSize}px maximum`);
   log(`Parallel processing: ${config.batch} parallel images`);
-  log(`Queued: ${dir.files.length} images from ${dir.folder}/${what} ...`);
   const t0 = window.performance.now();
   const promises = [];
   for (const f of dir.files) {
@@ -210,7 +212,8 @@ async function loadGallery(what) {
 
 async function main() {
   await loadModels('webgl');
-  await loadGallery('test');
+  await loadGallery('people');
+  await loadGallery('objects');
 }
 
 window.onload = main;
