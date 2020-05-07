@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Photo Classification Test</title>
+    <meta http-equiv="content-type">
+    <meta content="text/html">
+    <meta charset="UTF-8">
+    <meta name="Description" content="Photo Classification Test; Author: Vladimir Mandic <mandic00@live.com>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=2.0, shrink-to-fit=yes, user-scalable=yes">
+    <meta name="theme-color" content="#555555"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="favicon.ico">
+    <link rel="stylesheet" href="assets/bootstrap.css">
+    <script src="assets/ml5.min.js" type="text/javascript"></script>
+    <style>
+      @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('assets/roboto.ttf') format('truetype'); }
+      ::-webkit-scrollbar { width: 20px; }
+      ::-webkit-scrollbar-track { border-radius: 0; }
+      ::-webkit-scrollbar-thumb { border-radius: 0; background: grey }
+      ::-webkit-scrollbar-button { background: transparent; }
+      html { font-family: Roboto; font-size: 14px; margin: 0 }
+      body { background: black; color: #ebebeb; margin-left: 12px; margin-right: 12px; overflow-x: auto; }
+      .nav { background-color: grey; margin: 0px 0px 30px 0px; padding: 4px; left: 0; height: 25px; width: 100%; position: sticky; top: 0; z-index: 101; }
+      .row { width: 100% }
+      .col { background: #555555; text-align: left; margin: 8px; padding: 4px; width: 100%; box-shadow: 5px 5px #222222; overflow-y: auto; }
+      h1 { font-size: 1.3rem; margin-left: 8px; font-weight: bold; line-height: 30px }
+      h2 { font-size: 1.0rem; margin: 0px; padding: 0px; font-weight: bold; }
+      a { color: white }
+      a:hover { background: darkcyan; color: white }
+    </style>
+</head>
+<body>
+  <div id="log"></div>
+  <div id="result"></div>
+  <img id="image" style="visibility: hidden;">
+  <script src="compareClassifiers.js"></script>
+</body>
+</html>

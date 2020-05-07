@@ -2,8 +2,11 @@
   "name": "photo-analysis",
   "version": "0.0.4",
   "description": "Photo Analysis using TensorFlow/JS",
-  "main": "",
-  "scripts": {},
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "upgrade": "npm update && npm dedupe && npm prune"
+  },
   "browserslist": [
     "last 1 Chrome version"
   ],
