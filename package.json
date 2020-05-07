@@ -44,7 +44,6 @@
     "jimp": "^0.10.3",
     "nsfwjs": "^2.2.0",
     "parcel-bundler": "^1.12.4",
-    "resnet_imagenet": "^1.0.4",
     "tfjs-yolo": "0.0.4"
   }
 }

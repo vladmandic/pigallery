@@ -18,10 +18,10 @@
       ::-webkit-scrollbar-track { border-radius: 0; }
       ::-webkit-scrollbar-thumb { border-radius: 0; background: grey }
       ::-webkit-scrollbar-button { background: transparent; }
-      html { font-family: Roboto; font-size: 14px; margin: 0 }
-      body { background: black; color: #ebebeb; margin-left: 12px; margin-right: 12px; overflow-x: auto; }
+      html { font-family: Roboto; font-size: 14px; }
+      body { background: black; color: #ebebeb; overflow-x: auto; }
       .nav { background-color: grey; margin: 0px 0px 30px 0px; padding: 4px; left: 0; height: 25px; width: 100%; position: sticky; top: 0; z-index: 101; }
-      .row { width: 100% }
+      .row { width: 100%; margin: 10px }
       .col { background: #555555; text-align: left; margin: 8px; padding: 4px; width: 100%; box-shadow: 5px 5px #222222; overflow-y: auto; }
       h1 { font-size: 1.3rem; margin-left: 8px; font-weight: bold; line-height: 30px }
       h2 { font-size: 1.0rem; margin: 0px; padding: 0px; font-weight: bold; }
@@ -30,7 +30,7 @@
     </style>
 </head>
 <body>
-  <div id="log"></div>
-  <div id="result"></div>
+  <div id="log" class="row"></div>
+  <div id="result" class="row"></div>
 </body>
 </html>
