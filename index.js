@@ -3,6 +3,7 @@ import * as mobilenet from '@tensorflow-models/mobilenet';
 import * as faceapi from 'face-api.js';
 import * as nsfwjs from 'nsfwjs';
 import yolo from 'tfjs-yolo';
+import Jimp from 'jimp';
 
 const config = { maxSize: 800, modelsPrefix: 'models', samplesPrefix: 'samples' };
 const models = {};
@@ -17,10 +18,10 @@ async function loadModels(gpu = 'webgl') {
   log('Starting Image Analsys');
   log(`Initializing TensorFlow/JS version ${tf.version.tfjs}`);
   await tf.setBackend(gpu);
+  await tf.enableProdMode();
   log(`Using ${tf.getBackend().toUpperCase()} back-end for processing`);
   log('Loading models...');
   const t0 = window.performance.now();
-
   log('&nbsp Model: MobileNet-v1-100');
   models.mobilenet = await mobilenet.load({ version: 1, alpha: 1.0, modelUrl: `${config.modelsPrefix}/mobilenet-v1/model.json` });
   log('&nbsp Model: DarkNet/Yolo-v3');
@@ -35,34 +36,24 @@ async function loadModels(gpu = 'webgl') {
   await faceapi.loadFaceExpressionModel(`${config.modelsPrefix}/faceapi/`);
   models.faceapi = faceapi;
 
-  log(`Models loaded in ${(window.performance.now() - t0).toLocaleString()}ms`);
+  log(`Models loaded: ${tf.engine().state.numBytes.toLocaleString()} bytes in ${(window.performance.now() - t0).toLocaleString()}ms`);
+
   log(`Forced image resize to max ${config.maxSize}px`);
 }
 
 async function loadImage(imageUrl) {
-  return new Promise((resolve) => {
-    try {
-      const image = new Image();
-      image.loading = 'eager';
-      image.onerror = () => log(`Error loading image: ${imageUrl}`);
-      image.addEventListener('load', () => {
-        const ratio = image.height / image.width;
-        if (image.width > config.maxSize) {
-          image.width = config.maxSize;
-          image.height = image.width * ratio;
-        }
-        if (image.height > config.maxSize) {
-          image.height = config.maxSize;
-          image.width = image.height / ratio;
-        }
-        resolve(image);
-      });
-      image.src = imageUrl;
-    } catch (err) {
-      log(`Error loading image: ${imageUrl} ${err}`);
-      resolve(null);
-    }
-  });
+  const image = await Jimp.read(imageUrl);
+  image.quality(80);
+  if (image.bitmap.width > image.bitmap.height) image.resize(config.maxSize, Jimp.AUTO);
+  else await image.resize(Jimp.AUTO, config.maxSize);
+  await image.resize(config.maxSize, Jimp.AUTO);
+  const base64 = await image.getBase64Async(Jimp.MIME_JPEG);
+  const img = new Image();
+  img.src = base64;
+  // img.width = image.width;
+  // img.height = image.height;
+  // console.log(img.width, img.heigh);
+  return img;
 }
 
 faceapi.classify = async (image) => {
@@ -80,7 +71,7 @@ faceapi.classify = async (image) => {
   return null;
 };
 
-async function printResult(img) {
+async function printResult(img, image) {
   let classified = '';
   for (const obj of img.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
   let detected = '';
@@ -98,9 +89,9 @@ async function printResult(img) {
   div.class = 'col';
   div.style = 'display: flex';
   div.innerHTML = `
-    <div class="col" style="height: 100px; min-width: 100px; max-width: 100px"><img src="${img.image}" width="92" height="92"></div>
+    <div class="col" style="height: 100px; min-width: 100px; max-width: 100px"><img src="${image.src}" width="92" height="92"></div>
     <div class="col" style="height: 100px; min-width: 550px; max-width: 550px">
-      Image | ${img.image} | processed in ${img.time.toLocaleString()}ms<br>
+      Image | ${decodeURI(img.image)} | processed in ${img.time.toLocaleString()}ms<br>
       Classified ${classified}<br>
       Detected ${detected}<br>
       Person ${person}<br>
@@ -109,7 +100,7 @@ async function printResult(img) {
   document.getElementById('result').appendChild(div);
 }
 
-async function processImage(image) {
+async function processImage(image, name) {
   try {
     const t0 = window.performance.now();
     let classify = await models.mobilenet.classify(image, 3);
@@ -135,9 +126,9 @@ async function processImage(image) {
       };
     }
     const t1 = window.performance.now();
-    const img = { image: image.src, time: t1 - t0, classify, detect, person };
+    const img = { image: name, time: t1 - t0, classify, detect, person };
     images.push(img);
-    printResult(img);
+    printResult(img, image);
     return image;
   } catch (err) {
     log(`&nbsp Error processing image: ${image.src}: ${err}`);
@@ -150,7 +141,7 @@ async function loadGallery(count) {
   const t0 = window.performance.now();
   for (let i = 1; i <= count; i++) {
     const image = await loadImage(`${config.samplesPrefix}/test%20(${i}).jpg`);
-    await processImage(image);
+    await processImage(image, `test%20(${i}).jpg`);
     image.remove();
   }
   /*
