@@ -5,7 +5,7 @@
   "main": "",
   "scripts": {},
   "browserslist": [
-    "last 2 Chrome versions"
+    "last 1 Chrome version"
   ],
   "repository": {
     "type": "git",
@@ -43,7 +43,6 @@
     "eslint-config-airbnb-base": "^14.1.0",
     "express": "^4.17.1",
     "face-api.js": "^0.22.2",
-    "http-server": "^0.12.3",
     "jimp": "^0.10.3",
     "nsfwjs": "^2.2.0",
     "parcel-bundler": "^1.12.4",
