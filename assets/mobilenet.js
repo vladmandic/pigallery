@@ -1,1 +1,0 @@
-../node_modules/@tensorflow-models/mobilenet/dist/mobilenet.js
