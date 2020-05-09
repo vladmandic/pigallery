@@ -63,21 +63,16 @@ export default class CocoSsd {
     const boxes = result[1].dataSync();
     const height = batched.shape[1];
     const width = batched.shape[2];
-    batched.dispose();
-    tf.dispose(result);
     const [maxScores, classes] = calculateMaxScores(scores, result[0].shape[1], result[0].shape[2]);
-    const prevBackend = tf.getBackend();
-    // run post process in cpu
-    tf.setBackend('cpu');
     const indexTensor = tf.tidy(() => {
       const boxes2 = tf.tensor2d(boxes, [result[1].shape[1], result[1].shape[3]]);
       return tf.image.nonMaxSuppression(boxes2, maxScores, this.topK, 0.5, 0.5);
     });
     const indexes = indexTensor.dataSync();
-    indexTensor.dispose();
-    // restore previous backend
-    tf.setBackend(prevBackend);
     const results = buildDetectedObjects(width, height, boxes, maxScores, indexes, classes);
+    batched.dispose();
+    tf.dispose(result);
+    indexTensor.dispose();
     return results;
   }
 }
