@@ -23,6 +23,7 @@
       .nav { background-color: grey; margin: 0px 0px 30px 0px; padding: 4px; left: 0; height: 25px; width: 100%; position: sticky; top: 0; z-index: 101; }
       .row { width: 100%; margin: 10px }
       .col { background: #555555; text-align: left; margin: 8px; padding: 4px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; }
+      .active { background: #555555; padding: 4px; overflow: hidden; position: fixed; top: 10px; right: 10px; width: 300px; height: 28px; }
       h1 { font-size: 1.3rem; margin-left: 8px; font-weight: bold; line-height: 30px }
       h2 { font-size: 1.0rem; margin: 0px; padding: 0px; font-weight: bold; }
       a { color: white }
@@ -30,6 +31,7 @@
     </style>
 </head>
 <body>
+  <div id="active" class="active"></div>
   <div id="log" class="row"></div>
   <div id="result" class="row"></div>
 </body>
