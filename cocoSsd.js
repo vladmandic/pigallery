@@ -1,5 +1,14 @@
 import * as tf from '@tensorflow/tfjs';
-import * as labels from './assets/classesDetect.json';
+import * as labels from './assets/CocoSSDLabels.json';
+
+let config = {
+  modelPath: null,
+  score: 0.2,
+  topK: 3,
+  inputMin: -1,
+  inputMax: 1,
+};
+let model;
 
 function buildDetectedObjects(width, height, boxes, scores, indexes, classes) {
   const count = indexes.length;
@@ -40,39 +49,37 @@ function calculateMaxScores(scores, numBoxes, numClasses) {
   return [maxes, classes];
 }
 
-export default class CocoSsd {
-  constructor(config) {
-    this.modelPath = config.modelPath || null;
-    this.score = config.score || 0.2;
-    this.topK = config.maxResults || 3;
-    this.inputMin = config.inputMin || -1;
-    this.inputMax = config.inputMax || 1;
-    return this;
-  }
-
-  async load() {
-    this.model = await tf.loadGraphModel(this.modelPath);
-    return this.model;
-  }
-
-  async detect(image) {
-    const imgBuf = tf.browser.fromPixels(image, 3);
-    const batched = tf.tidy(() => imgBuf.expandDims(0));
-    const result = await this.model.executeAsync(batched);
-    const scores = result[0].dataSync();
-    const boxes = result[1].dataSync();
-    const height = batched.shape[1];
-    const width = batched.shape[2];
-    const [maxScores, classes] = calculateMaxScores(scores, result[0].shape[1], result[0].shape[2]);
-    const indexTensor = tf.tidy(() => {
-      const boxes2 = tf.tensor2d(boxes, [result[1].shape[1], result[1].shape[3]]);
-      return tf.image.nonMaxSuppression(boxes2, maxScores, this.topK, 0.5, 0.5);
-    });
-    const indexes = indexTensor.dataSync();
-    const results = buildDetectedObjects(width, height, boxes, maxScores, indexes, classes);
-    batched.dispose();
-    tf.dispose(result);
-    indexTensor.dispose();
-    return results;
-  }
+async function load(cfg) {
+  config = { ...config, ...cfg };
+  model = await tf.loadGraphModel(config.modelPath);
+  // eslint-disable-next-line no-use-before-define
+  return cocossd;
 }
+
+async function detect(image) {
+  const imgBuf = tf.browser.fromPixels(image, 3);
+  const batched = tf.tidy(() => imgBuf.expandDims(0));
+  const result = await model.executeAsync(batched);
+  const scores = result[0].dataSync();
+  const boxes = result[1].dataSync();
+  const [maxScores, classes] = calculateMaxScores(scores, result[0].shape[1], result[0].shape[2]);
+  const indexTensor = tf.tidy(() => {
+    const boxes2 = tf.tensor2d(boxes, [result[1].shape[1], result[1].shape[3]]);
+    const tensor = tf.image.nonMaxSuppression(boxes2, maxScores, config.topK, 0.5, 0.5); // nonMaxSuppressionAsync
+    boxes2.dispose();
+    return tensor;
+  });
+  const indexes = await indexTensor.dataSync();
+  const results = buildDetectedObjects(batched.shape[2], batched.shape[1], boxes, maxScores, indexes, classes);
+  imgBuf.dispose();
+  batched.dispose();
+  indexTensor.dispose();
+  return results;
+}
+
+const cocossd = {
+  load,
+  detect,
+};
+
+export default cocossd;
