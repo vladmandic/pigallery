@@ -13,51 +13,41 @@ Runs main classification, detection and prediction:
 - Server uses ParcelJS to build distribution in `/dist` and start HTTP ExpressJS server
 - Connect to <http://localhost/gallery.html>
 
-### Test app
-
-This runs all available models:
-
-- Modify `gallery.html` to include `models.js` instead of `gallery.js`
-
 ## General Notes
 
-- Large images can cause processing errors.
-- There is no increased accuracy in image sizes larger than 800 pixels as individual classification samples are typically 224px
-- Image ratios matter as tensor calculations are mostly square - loading square images does not reduce accuracy, but it does increase performance
-- Forced image resize on load adds large overhead of 1800ms average, better let browser deal with it
-- Size of pretrained model is not related to performance as larger models can sometimes predict objects easier
-- Batch processing skews per-test performance numbers. If performing specific performance tests, limit batch size to 1
-- Batch sizes above 10 do not further increase performance
+- Large images can cause random WebGL processing errors, recommended limit is 1000px.
+- There is no increased accuracy in image sizes larger than 800 pixels as individual classification samples are typically 224px.
+- Image ratios matter as tensor calculations are mostly square.
+- Smaller objects are easier to detect due to cleaner bounding boxes. Image with single large object that covers 100% of the image is worst-case scenario.
+- Size of pretrained model is not related to performance as larger models can sometimes predict objects easier.
+- Batch processing skews per-test performance numbers. If performing specific performance tests, limit batch size to 1.
+- Batch sizes above 10 do not further increase performance.
 
-## Notes on Models
+### Tested pre-trained models
 
-- All models are pretrained using ImageNet samples
-- MobileNet-v1: has better accuracy and performance than MobileNet-v2
-- DarkNet/Yolo-v3 and CocoSSD: close results, but Yolo wins in both performance and accuracy by few percent
+Note: All models were pretrained using ImageNet samples
+
+- MobileNet v1 & v2 (25%/50%/70%/100%)
+- CocoSSD-v2
+- DarkNet/Yolo v1 & v2 & v3 (tiny & full)
+- ResNet 10 & 15 & 50
+- NSFW
+- FaceAPI
+
+### Notes on Models
+
+- MobileNet: v1 is good out-of-the-box, v2 is better but needs manual tuning
+- DarkNet/Yolo vs CocoSSD: Yolo has slightly better accuracy, but CocoSSD is much faster
 - ResNet models: slow & unreliable, sometimes guess is better than anything else and other times it's not even close
 - FaceAPI model: gender detection is real, emotion and age are more fun than real prediction
 - NSFW model: nice, but not sufficiently accurate
 
-## Benchmarks
+### Benchmarks
 
 Using Intel i7 with nVidia GTX-1050
 
-- Totals: ~360ms/image classification and detection, ~1,000ms/image with person prediction
-- Image classification using MobileNet-v1 is 160ms/image average
-- Image object detection using DarkNet/Yolo-v3 is 200ms/image average
-- Person prediction using both NSFW and FaceApi is 640ms/image average
-
-## Tested pre-trained models
-
-- MobileNet-v1-100
-- MobileNet-v2
-- CocoSSD-v2
-- DarkNet/Yolo-v3
-- ResNet10
-- ResNet15
-- ResNet50
-- NSFW
-- FaceAPI
+- Totals: ~350ms/image classification and detection, ~700ms/image with person prediction
+- Top 90% is 2x faster, but borderline cases drop average numbers
 
 ## Links
 
@@ -69,3 +59,10 @@ Using Intel i7 with nVidia GTX-1050
 - Face/Gender/Age: <https://github.com/justadudewhohacks/face-api.js>
 - PoseNet: <https://github.com/tensorflow/tfjs-models/tree/master/posenet>
 - BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
+- NSFW: <https://github.com/infinitered/nsfwjs>
+
+## TBD
+
+- Buildings
+- NSFW alternative models
+- Inception models
