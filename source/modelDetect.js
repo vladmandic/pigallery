@@ -1,5 +1,4 @@
 import * as tf from '@tensorflow/tfjs';
-import * as labels from './assets/Coco-Labels.json';
 
 let config = {
   modelPath: null,
@@ -10,6 +9,8 @@ let config = {
   inputMax: 1,
   overlap: 0.1,
   softNmsSigma: 0,
+  classes: 'assets/Coco-Labels.json',
+  labels: {},
 };
 let model;
 
@@ -17,6 +18,8 @@ async function load(cfg) {
   config = { ...config, ...cfg };
   if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath);
   if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath);
+  const res = await fetch(config.classes);
+  config.labels = await res.json();
   // eslint-disable-next-line no-use-before-define
   return exported;
 }
@@ -32,19 +35,19 @@ function buildDetectedObjects(batched, result, maxScores, classes, index) {
   const count = indexes.length;
   const objects = [];
   for (let i = 0; i < count; i++) {
-    const bbox = [];
+    const box = [];
     for (let j = 0; j < 4; j++) {
-      bbox[j] = boxes[indexes[i] * 4 + j];
+      box[j] = boxes[indexes[i] * 4 + j];
     }
-    const minY = bbox[0] * height;
-    const minX = bbox[1] * width;
-    const maxY = bbox[2] * height;
-    const maxX = bbox[3] * width;
-    bbox[0] = minX;
-    bbox[1] = minY;
-    bbox[2] = maxX - minX;
-    bbox[3] = maxY - minY;
-    objects.push({ bbox, class: labels[classes[indexes[i]] + 1].displayName, score: maxScores[indexes[i]] });
+    const minY = box[0] * height;
+    const minX = box[1] * width;
+    const maxY = box[2] * height;
+    const maxX = box[3] * width;
+    box[0] = minX;
+    box[1] = minY;
+    box[2] = maxX - minX;
+    box[3] = maxY - minY;
+    objects.push({ box, class: config.labels[classes[indexes[i]] + 1].displayName, score: maxScores[indexes[i]] });
   }
   return objects;
 }

@@ -10,10 +10,10 @@
     <meta name="theme-color" content="#555555"/>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
-    <link rel="stylesheet" href="/assets/bootstrap.css">
-    <script type="text/javascript" src="/gallery.js"></script>
+    <link rel="stylesheet" href="assets/bootstrap.css">
+    <script type="text/javascript" src="gallery.js"></script>
     <style>
-      @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('assets/roboto.ttf') format('truetype'); }
+      @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
       ::-webkit-scrollbar { width: 20px; }
       ::-webkit-scrollbar-track { border-radius: 0; }
       ::-webkit-scrollbar-thumb { border-radius: 0; background: grey }
@@ -22,8 +22,9 @@
       .row { width: 100%; margin: 10px }
       .col { background: #555555; text-align: left; margin: 8px; padding: 4px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; }
       .active { background: #555555; padding: 4px; overflow: hidden; position: fixed; top: 10px; right: 10px; width: 400px; height: 50px; }
-      h1 { font-size: 1.4rem; padding: 8px; font-weight: bold; line-height: 1.4rem; }
-      h2 { font-size: 1.2rem; padding: 4px; font-weight: bold; line-height: 1.2rem; }
+      .details { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 50px; right: 10%; width: 80%; display: none ;}
+      h1 { font-size: 1.4rem; margin-top: 16px; font-weight: bold; }
+      h2 { font-size: 1.2rem; margin-top: 8px; font-weight: bold; }
       a { color: white }
       a:hover { background: darkcyan; color: white }
     </style>
@@ -32,5 +33,10 @@
   <div id="active" class="active"></div>
   <div id="log" class="row"></div>
   <div id="result" class="row"></div>
+  <div id="details" class="details">
+    <img id="details-image" style="width: auto; height: auto; max-width: 850px; max-height: 850px"></img>
+    <canvas id="canvas"></canvas>
+    <div style="margin: 12px" id="details-result"></div>
+  </div>
 </body>
 </html>
