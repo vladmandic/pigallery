@@ -2,16 +2,32 @@
 
 import * as tf from '@tensorflow/tfjs';
 import * as faceapi from 'face-api.js';
-import mobilenet from './mobileNet.js';
-import cocossd from './cocoSsd.js';
 // import * as nsfwjs from 'nsfwjs';
-// import yolo from 'tfjs-yolo';
+import modelClassify from './modelClassify.js';
+import modelDetect from './modelDetect.js';
+// import yolo from './modelYolo.js';
 
 const config = {
+  backEnd: 'webgl', // can be webgl, cpu, wasm
   maxSize: 780, // maximum image width or height before resizing is required
-  batch: 1, // how many images to process in parallel
-  square: false, // resize proportional to original image or to square image
-  floatPrecision: true, // use float32 or float16 for WebGL tensors
+  batchProcessing: 1, // how many images to process in parallel
+  squareImage: false, // resize proportional to original image or to square image
+  floatPrecision: false, // use float32 or float16 for WebGL tensors
+  classify: { name: 'Inception v3', modelPath: '/models/inception-v3/model.json', score: 0.20, topK: 3 },
+  detect: { name: 'Coco/SSD v2', modelPath: '/models/cocossd-v2/model.json', score: 0.65, topK: 5, inputMin: 0, inputMax: 1, overlap: 0.1 },
+  person: { name: 'FaceAPI SSD', modelPath: '/models/faceapi/', score: 0.5, topK: 1 },
+
+  // alternative classification models
+  /*
+  classify: { name: 'MobileNet v1', modelPath: '/models/mobilenet-v1/model.json' },
+  classify: { name: 'MobileNet v2', modelPath: '/models/mobilenet-v2/model.json' },
+  classify: { name: 'Inception v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1' },
+  classify: { name: 'Inception v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v2/classification/3/default/1' },
+  classify: { name: 'Inception v3', modelPath: '/models/inception-v3/model.json' },
+  classify: { name: 'Inception ResNet v2', modelPath: '/models/inception-resnet-v2/model.json' },
+  classify: { name: 'ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/resnet_v2_101/classification/3/default/1' },
+  classify: { name: 'NasNet Mobile', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/nasnet_mobile/classification/3/default/1' },
+  */
 };
 let ImageNetClasses = {};
 
@@ -28,48 +44,69 @@ async function active(msg) {
   div.innerHTML = `${msg}<br>Memory State: Bytes:${mem.numBytes.toLocaleString()} Buffers:${mem.numDataBuffers.toLocaleString()} Tensors:${mem.numTensors.toLocaleString()}`;
 }
 
-async function loadModels(gpu = 'webgl') {
+function JSONtoStr(json) {
+  if (json) return JSON.stringify(json).replace(/{|}|"/g, '').replace(/,/g, ', ');
+}
+
+async function loadModels() {
   log('Starting Image Analsys');
   log(`Initializing TensorFlow/JS version ${tf.version.tfjs}`);
-  await tf.setBackend(gpu);
+  await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
-  log(`Backend: ${tf.getBackend().toUpperCase()}`);
+  log(`Configured Backend: ${tf.getBackend().toUpperCase()}`);
+  log('Configuration:');
+  log(`&nbsp Parallel processing: ${config.batchProcessing} parallel images`);
+  log(`&nbsp Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
+  log(`&nbsp Flaoat Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);
+  log(`&nbsp Classify: ${JSONtoStr(config.classify)}`);
+  log(`&nbsp Detect: ${JSONtoStr(config.detect)}`);
+  log(`&nbsp Person: ${JSONtoStr(config.person)}`);
 
   log('Loading models...');
   const t0 = window.performance.now();
 
-  log('&nbsp Model: MobileNet-v2');
-  models.mobilenet = await mobilenet.load({ modelPath: '/models/mobilenet-v2-100/model.json', score: 0.15, topK: 2, inputMin: 0, inputMax: 1 });
+  if (config.classify) {
+    log(`&nbsp Model: ${config.classify.name}`);
+    models.classify = await modelClassify.load(config.classify);
+  }
 
-  log('&nbsp Model: CocoSSD-v2');
-  models.cocossd = await cocossd.load({ modelPath: '/models/cocossd-v2/model.json', score: 0.15, topK: 5, inputMin: -1, inputMax: 1 });
+  if (config.detect) {
+    log(`&nbsp Model: ${config.detect.name}`);
+    models.detect = await modelDetect.load(config.detect);
+  }
 
-  // log('&nbsp Model: DarkNet/Yolo-v3');
-  // models.yolo = await yolo.v3('/models/yolo-v3/model.json');
+  if (config.person) {
+    log(`&nbsp Model: ${config.person.name}`);
+    await faceapi.nets.ssdMobilenetv1.load(config.person.modelPath);
+    await faceapi.nets.ageGenderNet.load(config.person.modelPath);
+    await faceapi.nets.faceLandmark68Net.load(config.person.modelPath);
+    await faceapi.nets.faceRecognitionNet.load(config.person.modelPath);
+    await faceapi.nets.faceExpressionNet.load(config.person.modelPath);
+    models.faceapi = faceapi;
+  }
 
-  // log('&nbsp Model: NSFW');
-  // models.nsfw = await nsfwjs.load('/models/nsfw-mini/', { size: 224, type: 'layers' });
-  // models.nsfw = await nsfwjs.load('/models/nsfw-inception-v3/', { size: 299, type: 'layers' });
+  /* working but unreliable
+  log('&nbsp Model: DarkNet/Yolo-v3');
+  models.yolo = await yolo.v1tiny('/models/yolo-v1-tiny/model.json');
+  models.yolo = await yolo.v2tiny('/models/yolo-v2-tiny/model.json');
+  models.yolo = await yolo.v3tiny('/models/yolo-v3-tiny/model.json');
+  models.yolo = await yolo.v3('/models/yolo-v3-full/model.json');
+  */
 
-  log('&nbsp Model: FaceAPI-SSD');
-  await faceapi.nets.ssdMobilenetv1.load('/models/faceapi/');
-  await faceapi.nets.ageGenderNet.load('/models/faceapi/');
-  await faceapi.nets.faceRecognitionNet.load('/models/faceapi/');
-  await faceapi.nets.faceExpressionNet.load('/models/faceapi/');
-  await faceapi.nets.faceLandmark68Net.load('/models/faceapi/');
-  models.faceapi = faceapi;
+  /* working but unreliable
+  log('&nbsp Model: NSFW');
+  models.nsfw = await nsfwjs.load('/models/nsfw-mini/', { size: 224, type: 'layers' });
+  models.nsfw = await nsfwjs.load('/models/nsfw-inception-v3/', { size: 299, type: 'layers' });
+  */
 
   log(`Models loaded in ${(window.performance.now() - t0).toLocaleString()}ms`);
   const engine = await tf.engine();
   log(`Engine State: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
 
   log('Loading WordNet classification classes');
-  const res = await fetch('/assets/ImageNetClasses.json');
+  const res = await fetch('/assets/WordNet-Synset.json');
   ImageNetClasses = await res.json();
-
-  log(`Parallel processing: ${config.batch} parallel images`);
-  log(`Forced image resize: ${config.maxSize}px maximum shape: ${config.square ? 'square' : 'native'}`);
 }
 
 function searchClasses(id) {
@@ -86,13 +123,16 @@ function searchClasses(id) {
 }
 
 faceapi.classify = async (image) => {
-  if (!faceapi.options) faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3, maxResults: 1 });
+  if (!faceapi.options) faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: config.person.score, maxResults: config.person.topK });
   const result = await faceapi.detectSingleFace(image, faceapi.options)
     .withFaceLandmarks()
+    // .withFaceDescriptor()
     .withFaceExpressions()
-    .withAgeAndGender()
-    .withFaceDescriptor();
+    .withAgeAndGender();
   if (result) {
+    // const faceMatcher = new faceapi.FaceMatcher(result);
+    // const bestMatch = faceMatcher.findBestMatch(result.descriptor);
+    // console.log(faceMatcher, bestMatch);
     let emotion = Object.entries(result.expressions)
       .reduce(([keyPrev, valPrev], [keyCur, valCur]) => (valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]));
     emotion = { label: emotion && emotion[0] ? emotion[0] : '', confidence: emotion && emotion[1] ? emotion[1] : 0 };
@@ -138,9 +178,10 @@ async function printResult(object, image) {
   await document.getElementById('result').appendChild(div);
   const thumbnail = document.getElementById('thumbnail');
   thumbnail.id = object.classify && object.classify[0] ? object.classify[0].id : 0;
+  thumbnail.original = image.image.src;
   thumbnail.addEventListener('click', (evt) => {
     const details = searchClasses(evt.currentTarget.id);
-    console.log(details);
+    console.log(evt.currentTarget.original, details);
   });
 }
 
@@ -149,7 +190,7 @@ async function getImage(img) {
     const image = new Image();
     image.addEventListener('load', () => {
       if (Math.max(image.width, image.height) > config.maxSize) {
-        if (config.square) {
+        if (config.squareImage) {
           image.height = config.maxSize;
           image.width = config.maxSize;
         } else {
@@ -178,8 +219,7 @@ async function processImage(name) {
   active(`Classifying: ${name}`);
   const tc0 = window.performance.now();
   try {
-    // const time = await tf.time(async () => res.classify = await models.mobilenet.classify(image.canvas, { maxBoxes: 3, scoreThreshold: 0.3 }));
-    if (models.mobilenet) res.classify = await models.mobilenet.classify(image.canvas, { maxBoxes: 3, scoreThreshold: 0.3 });
+    if (models.classify) res.classify = await models.classify.classify(image.canvas);
   } catch (err) {
     log(`Errror in MobileNet for ${name}: ${err}`);
   }
@@ -188,14 +228,14 @@ async function processImage(name) {
   active(`Detecting: ${name}`);
   const td0 = window.performance.now();
   try {
-    if (models.cocossd) res.detect = await models.cocossd.detect(image.canvas);
+    if (models.detect) res.detect = await models.detect.detect(image.canvas);
   } catch (err) {
     log(`Errror in CocoSSD for ${name}: ${err}`);
   }
   const td1 = window.performance.now();
 
-  // let detect = await models.yolo.predict(image, { maxBoxes: 3, scoreThreshold: 0.3 });
-  // detect = detect.map((a) => ({ score: a.score, class: a.class }));
+  // const detect = await models.yolo.predict(image.canvas, { maxBoxes: 3, scoreThreshold: 0.3 });
+  // res.detect = detect.map((a) => ({ score: a.score, class: a.class }));
 
   const tp0 = window.performance.now();
   if (res.detect && res.detect.find((a) => a.class === 'person')) {
@@ -247,7 +287,7 @@ async function loadGallery(what) {
   const promises = [];
   for (const f of dir.files) {
     promises.push(processImage(`${dir.folder}/${f}`));
-    if (promises.length >= config.batch) {
+    if (promises.length >= config.batchProcessing) {
       await Promise.all(promises);
       promises.length = 0;
     }
@@ -267,7 +307,7 @@ async function warmupModels() {
 }
 
 async function main() {
-  await loadModels('webgl');
+  await loadModels();
   await warmupModels();
 
   await loadGallery('objects');
