@@ -22,9 +22,10 @@
     "imagenet",
     "cocossd",
     "darknet",
-    "faceapi",
     "yolo",
-    "resnet"
+    "faceapi",
+    "resnet",
+    "inception"
   ],
   "author": "Vladimir Mandic <mandic00@live.com>",
   "license": "MIT",
