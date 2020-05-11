@@ -3,12 +3,12 @@ const express = require('express');
 const Parcel = require('parcel-bundler');
 const fs = require('fs');
 const path = require('path');
-const nodeconfig = require('./package.json');
+const nodeconfig = require('../package.json');
 
-const entryFiles = path.join(__dirname, './gallery.html');
+const entryFiles = path.join(__dirname, './gallery.js');
 const options = {
   outDir: './dist',
-  outFile: 'gallery.html',
+  outFile: 'gallery.js',
   publicUrl: '/',
   watch: true,
   cache: false,
@@ -46,22 +46,28 @@ async function main() {
     next();
   });
 
-  app.use('/assets', express.static(path.join(__dirname, './assets'), { maxAge: '365d', cacheControl: true }));
-  app.use('/models', express.static(path.join(__dirname, './models'), { maxAge: '365d', cacheControl: true }));
-  app.use('/samples', express.static(path.join(__dirname, './samples'), { maxAge: '365d', cacheControl: true }));
+  app.use('/assets', express.static(path.join(__dirname, '../assets'), { maxAge: '365d', cacheControl: true }));
+  app.use('/models', express.static(path.join(__dirname, '../models'), { maxAge: '365d', cacheControl: true }));
+  app.use('/samples', express.static(path.join(__dirname, '../samples'), { maxAge: '365d', cacheControl: true }));
+  app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, '../favicon.ico')));
+  app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'gallery.html')));
   app.get('/list/:prefix', (req, res) => {
-    log.info('Requested file listing for', req.params.prefix);
-    let dir = [];
+    let matched = [];
     try {
-      dir = fs.readdirSync('./samples');
-      if (req.params.prefix) dir = dir.filter((a) => a.includes(req.params.prefix));
+      const match = req.params.prefix ? req.params.prefix : '';
+      const dir = fs.readdirSync('./samples');
+      if (match) matched = dir.filter((a) => a.includes(match));
+      log.info(`Requested file listing for:${match} total:${dir.length} matched:${matched.length}`);
     } catch { /**/ }
-    res.json({ files: dir, folder: '/samples' });
+    res.json({ files: matched, folder: '/samples' });
   });
 
   const bundler = new Parcel(entryFiles, options);
   bundler.on('buildStart', (f) => log.state('Parcel start', f));
-  bundler.on('buildEnd', () => log.state('Parcel ready'));
+  bundler.on('buildEnd', () => {
+    log.state('Parcel ready');
+    // log.data(bundler.mainBundle.assets);
+  });
   bundler.on('buildError', (err) => log.state('Parcel error', err));
   app.use('/', bundler.middleware()); // use for bundle as express middle-ware
 

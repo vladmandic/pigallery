@@ -2,14 +2,20 @@
   "name": "photo-analysis",
   "version": "0.0.7",
   "description": "Photo Analysis using TensorFlow/JS",
-  "main": "server.js",
+  "main": "source/server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node source/server.js",
     "upgrade": "npm update && npm dedupe && npm prune"
   },
   "browserslist": [
     "last 1 Chrome version"
   ],
+  "staticFiles": {
+    "staticPath": "assets",
+    "excludeGlob": [
+      "*"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vladmandic/photo-analysis.git"
