@@ -10,13 +10,13 @@ import modelDetect from './modelDetect.js';
 const config = {
   backEnd: 'webgl', // can be webgl, cpu, wasm
   maxSize: 780, // maximum image width or height before resizing is required
-  batchProcessing: 10, // how many images to process in parallel
+  batchProcessing: 20, // how many images to process in parallel
   squareImage: false, // resize proportional to original image or to square image
   floatPrecision: true, // use float32 or float16 for WebGL tensors
   // Default models
-  classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.20, topK: 3 },
-  detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.65, topK: 6, inputMin: 0, inputMax: 1, overlap: 0.1 },
-  person: { name: 'FaceAPI TinyYolo v2', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' },
+  classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },
+  detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 },
+  person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 1, type: 'ssdMobilenetv1' },
 
   // alternative face-api models
   /*
@@ -410,6 +410,7 @@ async function processImage(name) {
   active(`Printing: ${name}`);
   printResult(obj, image);
   active(`Done: ${name}`);
+  return obj;
 }
 
 async function loadGallery(what) {
