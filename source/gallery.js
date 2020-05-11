@@ -10,12 +10,21 @@ import modelDetect from './modelDetect.js';
 const config = {
   backEnd: 'webgl', // can be webgl, cpu, wasm
   maxSize: 780, // maximum image width or height before resizing is required
-  batchProcessing: 1, // how many images to process in parallel
+  batchProcessing: 10, // how many images to process in parallel
   squareImage: false, // resize proportional to original image or to square image
-  floatPrecision: false, // use float32 or float16 for WebGL tensors
-  classify: { name: 'Inception v3', modelPath: '/models/inception-v3/model.json', score: 0.20, topK: 3 },
-  detect: { name: 'Coco/SSD v2', modelPath: '/models/cocossd-v2/model.json', score: 0.65, topK: 5, inputMin: 0, inputMax: 1, overlap: 0.1 },
-  person: { name: 'FaceAPI SSD', modelPath: '/models/faceapi/', score: 0.5, topK: 1 },
+  floatPrecision: true, // use float32 or float16 for WebGL tensors
+  // Default models
+  classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.20, topK: 3 },
+  detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.65, topK: 6, inputMin: 0, inputMax: 1, overlap: 0.1 },
+  person: { name: 'FaceAPI TinyYolo v2', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' },
+
+  // alternative face-api models
+  /*
+  person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'ssdMobilenetv1' },
+  person: { name: 'FaceAPI Yolo', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyYolov2' },
+  person: { name: 'FaceAPI Tiny', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' },
+  person: { name: 'FaceAPI MTCNN', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'mtcnn' },
+  */
 
   // alternative classification models
   /*
@@ -29,9 +38,10 @@ const config = {
   classify: { name: 'NasNet Mobile', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/nasnet_mobile/classification/3/default/1' },
   */
 };
-let ImageNetClasses = {};
-
+const results = [];
+let wordNet = {};
 const models = {};
+let id = 0;
 
 async function log(msg) {
   const div = document.getElementById('log');
@@ -46,6 +56,127 @@ async function active(msg) {
 
 function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"/g, '').replace(/,/g, ', ');
+}
+
+function searchClasses(wnid) {
+  const res = [];
+  // eslint-disable-next-line consistent-return
+  function recursive(obj) {
+    for (const item of obj) {
+      if (item._wnid === wnid) return res.push({ id: item._wnid, name: item._words, desc: item._gloss });
+      if (item.synset && recursive(item.synset, id)) return res.push({ id: item._wnid, name: item._words, desc: item._gloss });
+    }
+  }
+  recursive(wordNet.ImageNetStructure.synset[0].synset);
+  return res;
+}
+
+function drawBoxes(img, object) {
+  const canvas = document.getElementById('canvas');
+  canvas.style.position = 'absolute';
+  canvas.style.left = img.offsetLeft;
+  canvas.style.top = img.offsetTop;
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  // draw faces
+  let faceDetails;
+  if (object.person && object.person.detection) {
+    const displaySize = { width: canvas.width, height: canvas.height };
+    faceapi.matchDimensions(canvas, displaySize);
+    const resized = faceapi.resizeResults(object.person.detection, displaySize);
+    new faceapi.draw.DrawBox(resized.detection.box, { boxColor: 'lightskyblue' }).draw(canvas);
+    new faceapi.draw.DrawFaceLandmarks(resized.landmarks, { lineColor: 'skyblue', pointColor: 'deepskyblue' }).draw(canvas);
+    const jaw = resized.landmarks.getJawOutline() || [];
+    const nose = resized.landmarks.getNose() || [];
+    const mouth = resized.landmarks.getMouth() || [];
+    const leftEye = resized.landmarks.getLeftEye() || [];
+    const rightEye = resized.landmarks.getRightEye() || [];
+    const leftEyeBrow = resized.landmarks.getLeftEyeBrow() || [];
+    const rightEyeBrow = resized.landmarks.getRightEyeBrow() || [];
+    faceDetails = `Points jaw:${jaw.length} mouth:${mouth.length} nose:${nose.length} left-eye:${leftEye.length} right-eye:${rightEye.length} left-eyebrow:${leftEyeBrow.length} right-eyebrow:${rightEyeBrow.length}`;
+  }
+
+  // draw objects
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = 'lightyellow';
+  ctx.linewidth = 2;
+  if (object.detect) {
+    for (const obj of object.detect) {
+      ctx.beginPath();
+      const x = obj.box[0] * img.width / object.size.width;
+      const y = obj.box[1] * img.height / object.size.height;
+      const width = obj.box[2] * img.width / object.size.width;
+      const height = obj.box[3] * img.height / object.size.height;
+      ctx.rect(x, y, width, height);
+      ctx.stroke();
+      ctx.fillStyle = 'lightyellow';
+      ctx.font = '16px Roboto';
+      ctx.fillText(`${(100 * obj.score).toFixed(0)}% ${obj.class}`, x + 2, y + 18);
+    }
+  }
+
+  return faceDetails;
+}
+
+function showDetails(i) {
+  const object = results[i];
+
+  const img = document.getElementById('details-image');
+  img.addEventListener('load', () => {
+    let classified = 'Classified ';
+    if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+
+    let detected = 'Detected ';
+    if (object.detect) for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+
+    let person = '';
+    if (object.person && object.person.age) {
+      person = `Person | 
+        Gender: ${(100 * object.person.scoreGender).toFixed(0)}% ${object.person.gender} | 
+        Age: ${object.person.age.toFixed(1)} | 
+        Emotion: ${(100 * object.person.scoreEmotion).toFixed(0)}% ${object.person.emotion}`;
+    }
+
+    let nsfw = '';
+    if (object.person && object.person.class) {
+      nsfw = `Class: ${(100 * object.person.scoreClass).toFixed(0)}% ${object.person.class} `;
+    }
+
+    let desc = '<h2>Description:</h2><ul>';
+    if (object.classify) {
+      for (const guess of object.classify) {
+        const descriptions = object.classify && object.classify[0] ? searchClasses(guess.wnid) : [];
+        for (const description of descriptions) {
+          desc += `<li><b>${description.name}</b>: <i>${description.desc}</i></li>`;
+        }
+        desc += '<br>';
+      }
+    }
+    desc += '</ul>';
+
+    const faceDetails = drawBoxes(img, object) || '';
+
+    document.getElementById('details-result').innerHTML = `
+      <h2>Image: ${object.image}</h2>
+      Image size: ${img.naturalWidth} x ${img.naturalHeight}
+        Processed in ${object.perf.total.toFixed(0)}ms<br>
+        Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)}ms<br>
+        Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)}ms<br>
+        Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)}ms<br>
+      <h2>${classified}</h2>
+      <h2>${detected}</h2>
+      <h2>${person} ${nsfw}</h2>
+      ${faceDetails}<br>
+      ${desc}<br>
+      </div>
+    `;
+
+    const div = document.getElementById('details');
+    div.addEventListener('click', () => { div.style.display = 'none'; });
+    div.style.display = 'flex';
+  });
+  img.src = object.image;
 }
 
 async function loadModels() {
@@ -78,7 +209,25 @@ async function loadModels() {
 
   if (config.person) {
     log(`&nbsp Model: ${config.person.name}`);
-    await faceapi.nets.ssdMobilenetv1.load(config.person.modelPath);
+    switch (config.person.type) {
+      case 'tinyFaceDetector':
+        await faceapi.nets.tinyFaceDetector.load(config.person.modelPath);
+        faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: config.person.score, inputSize: 416 });
+        break;
+      case 'ssdMobilenetv1':
+        await faceapi.nets.ssdMobilenetv1.load(config.person.modelPath);
+        faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: config.person.score, maxResults: config.person.topK });
+        break;
+      case 'tinyYolov2':
+        await faceapi.nets.tinyYolov2.load(config.person.modelPath);
+        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: config.person.score, inputSize: 416 });
+        break;
+      case 'mtcnn':
+        await faceapi.nets.mtcnn.load(config.person.modelPath);
+        faceapi.options = new faceapi.MtcnnOptions({ minFaceSize: 100, scaleFactor: 0.8 });
+        break;
+      default:
+    }
     await faceapi.nets.ageGenderNet.load(config.person.modelPath);
     await faceapi.nets.faceLandmark68Net.load(config.person.modelPath);
     await faceapi.nets.faceRecognitionNet.load(config.person.modelPath);
@@ -104,26 +253,12 @@ async function loadModels() {
   const engine = await tf.engine();
   log(`Engine State: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
 
-  log('Loading WordNet classification classes');
+  log('Loading WordNet classification classes ...');
   const res = await fetch('/assets/WordNet-Synset.json');
-  ImageNetClasses = await res.json();
-}
-
-function searchClasses(id) {
-  const res = [];
-  // eslint-disable-next-line consistent-return
-  function recursive(obj) {
-    for (const item of obj) {
-      if (item._wnid === id) return res.push({ id: item._wnid, name: item._words, desc: item._gloss });
-      if (item.synset && recursive(item.synset, id)) return res.push({ id: item._wnid, name: item._words, desc: item._gloss });
-    }
-  }
-  recursive(ImageNetClasses.ImageNetStructure.synset[0].synset);
-  return res;
+  wordNet = await res.json();
 }
 
 faceapi.classify = async (image) => {
-  if (!faceapi.options) faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: config.person.score, maxResults: config.person.topK });
   const result = await faceapi.detectSingleFace(image, faceapi.options)
     .withFaceLandmarks()
     // .withFaceDescriptor()
@@ -136,7 +271,7 @@ faceapi.classify = async (image) => {
     let emotion = Object.entries(result.expressions)
       .reduce(([keyPrev, valPrev], [keyCur, valCur]) => (valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]));
     emotion = { label: emotion && emotion[0] ? emotion[0] : '', confidence: emotion && emotion[1] ? emotion[1] : 0 };
-    return { gender: { confidence: result.genderProbability, label: result.gender }, age: result.age, emotion: { confidence: emotion.confidence, label: emotion.label } };
+    return { gender: { confidence: result.genderProbability, label: result.gender }, age: result.age, emotion: { confidence: emotion.confidence, label: emotion.label }, detection: result };
   }
   return null;
 };
@@ -177,12 +312,8 @@ async function printResult(object, image) {
   `;
   await document.getElementById('result').appendChild(div);
   const thumbnail = document.getElementById('thumbnail');
-  thumbnail.id = object.classify && object.classify[0] ? object.classify[0].id : 0;
-  thumbnail.original = image.image.src;
-  thumbnail.addEventListener('click', (evt) => {
-    const details = searchClasses(evt.currentTarget.id);
-    console.log(evt.currentTarget.original, details);
-  });
+  thumbnail.id = object.id;
+  thumbnail.addEventListener('click', (evt) => showDetails(evt.currentTarget.id));
 }
 
 async function getImage(img) {
@@ -259,6 +390,7 @@ async function processImage(name) {
       emotion: (res.face && res.face.emotion) ? res.face.emotion.label : null,
       scoreClass: (res.nsfw && res.nsfw[0]) ? res.nsfw[0].probability : null,
       class: (res.nsfw && res.nsfw[0]) ? res.nsfw[0].className : null,
+      detection: (res.face && res.face.detection) ? res.face.detection : null,
     };
   }
   const tp1 = window.performance.now();
@@ -266,16 +398,18 @@ async function processImage(name) {
   const t1 = window.performance.now();
 
   const obj = {
+    id: id++,
     image: name,
+    size: { width: image.canvas.width, height: image.canvas.height },
     classify: res.classify,
     detect: res.detect,
     person: res.person,
     perf: { total: t1 - t0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 },
   };
+  results.push(obj);
   active(`Printing: ${name}`);
   printResult(obj, image);
   active(`Done: ${name}`);
-  return obj;
 }
 
 async function loadGallery(what) {
