@@ -1,6 +1,6 @@
 {
   "name": "photo-analysis",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Photo Analysis using TensorFlow/JS",
   "main": "source/server.js",
   "scripts": {
