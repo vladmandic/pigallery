@@ -1,6 +1,6 @@
 {
   "name": "photo-analysis",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Photo Analysis using TensorFlow/JS",
   "main": "source/server.js",
   "scripts": {
@@ -45,6 +45,7 @@
     "@tensorflow/tfjs-backend-wasm": "^1.7.4",
     "@tensorflow/tfjs-backend-webgl": "^2.0.0-rc.1",
     "eslint-config-airbnb-base": "^14.1.0",
+    "exif-parser": "^0.1.12",
     "express": "^4.17.1",
     "face-api.js": "^0.22.2",
     "node-fetch": "^2.6.0",
