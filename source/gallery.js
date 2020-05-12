@@ -42,16 +42,26 @@ const results = [];
 let wordNet = {};
 const models = {};
 let id = 0;
+const div = {};
+
+// pre-fetching DOM elements to avoid multiple runtime lookups
+function initDivs() {
+  div.Log = document.getElementById('log');
+  div.Active = document.getElementById('active');
+  div.Result = document.getElementById('result');
+  div.Popup = document.getElementById('popup');
+  div.PopupImage = document.getElementById('popup-image');
+  div.PopupDetails = document.getElementById('popup-details');
+  div.canvas = document.getElementById('popup-canvas');
+}
 
 async function log(msg) {
-  const div = document.getElementById('log');
-  div.innerHTML += `${msg}<br>`;
+  div.Log.innerHTML += `${msg}<br>`;
 }
 
 async function active(msg) {
-  const div = document.getElementById('active');
   const mem = await tf.memory();
-  div.innerHTML = `${msg}<br>Memory State: Bytes:${mem.numBytes.toLocaleString()} Buffers:${mem.numDataBuffers.toLocaleString()} Tensors:${mem.numTensors.toLocaleString()}`;
+  div.Active.innerHTML = `${msg}<br>Memory State: Bytes:${mem.numBytes.toLocaleString()} Buffers:${mem.numDataBuffers.toLocaleString()} Tensors:${mem.numTensors.toLocaleString()}`;
 }
 
 function JSONtoStr(json) {
@@ -72,21 +82,20 @@ function searchClasses(wnid) {
 }
 
 function drawBoxes(img, object) {
-  const canvas = document.getElementById('canvas');
-  canvas.style.position = 'absolute';
-  canvas.style.left = img.offsetLeft;
-  canvas.style.top = img.offsetTop;
-  canvas.width = img.width;
-  canvas.height = img.height;
+  div.canvas.style.position = 'absolute';
+  div.canvas.style.left = img.offsetLeft;
+  div.canvas.style.top = img.offsetTop;
+  div.canvas.width = img.width;
+  div.canvas.height = img.height;
 
   // draw faces
   let faceDetails;
   if (object.person && object.person.detection) {
-    const displaySize = { width: canvas.width, height: canvas.height };
-    faceapi.matchDimensions(canvas, displaySize);
+    const displaySize = { width: div.canvas.width, height: div.canvas.height };
+    faceapi.matchDimensions(div.canvas, displaySize);
     const resized = faceapi.resizeResults(object.person.detection, displaySize);
-    new faceapi.draw.DrawBox(resized.detection.box, { boxColor: 'lightskyblue' }).draw(canvas);
-    new faceapi.draw.DrawFaceLandmarks(resized.landmarks, { lineColor: 'skyblue', pointColor: 'deepskyblue' }).draw(canvas);
+    new faceapi.draw.DrawBox(resized.detection.box, { boxColor: 'lightskyblue' }).draw(div.canvas);
+    new faceapi.draw.DrawFaceLandmarks(resized.landmarks, { lineColor: 'skyblue', pointColor: 'deepskyblue' }).draw(div.canvas);
     const jaw = resized.landmarks.getJawOutline() || [];
     const nose = resized.landmarks.getNose() || [];
     const mouth = resized.landmarks.getMouth() || [];
@@ -98,7 +107,7 @@ function drawBoxes(img, object) {
   }
 
   // draw objects
-  const ctx = canvas.getContext('2d');
+  const ctx = div.canvas.getContext('2d');
   ctx.strokeStyle = 'lightyellow';
   ctx.linewidth = 2;
   if (object.detect) {
@@ -119,51 +128,64 @@ function drawBoxes(img, object) {
   return faceDetails;
 }
 
-function showDetails(i) {
-  const object = results[i];
+async function showDetails() {
+  const object = results[div.PopupImage.resid];
+  div.Popup.style.display = 'flex';
 
-  const img = document.getElementById('details-image');
-  img.addEventListener('load', () => {
-    let classified = 'Classified ';
-    if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+  let classified = 'Classified ';
+  if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
 
-    let detected = 'Detected ';
-    if (object.detect) for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+  let detected = 'Detected ';
+  if (object.detect) for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
 
-    let person = '';
-    if (object.person && object.person.age) {
-      person = `Person | 
+  let person = '';
+  if (object.person && object.person.age) {
+    person = `Person | 
         Gender: ${(100 * object.person.scoreGender).toFixed(0)}% ${object.person.gender} | 
         Age: ${object.person.age.toFixed(1)} | 
         Emotion: ${(100 * object.person.scoreEmotion).toFixed(0)}% ${object.person.emotion}`;
-    }
+  }
 
-    let nsfw = '';
-    if (object.person && object.person.class) {
-      nsfw = `Class: ${(100 * object.person.scoreClass).toFixed(0)}% ${object.person.class} `;
-    }
+  let nsfw = '';
+  if (object.person && object.person.class) {
+    nsfw = `Class: ${(100 * object.person.scoreClass).toFixed(0)}% ${object.person.class} `;
+  }
 
-    let desc = '<h2>Description:</h2><ul>';
-    if (object.classify) {
-      for (const guess of object.classify) {
-        const descriptions = object.classify && object.classify[0] ? searchClasses(guess.wnid) : [];
-        for (const description of descriptions) {
-          desc += `<li><b>${description.name}</b>: <i>${description.desc}</i></li>`;
-        }
-        desc += '<br>';
+  let desc = '<h2>Description:</h2><ul>';
+  if (object.classify) {
+    for (const guess of object.classify) {
+      const descriptions = object.classify && object.classify[0] ? searchClasses(guess.wnid) : [];
+      for (const description of descriptions) {
+        desc += `<li><b>${description.name}</b>: <i>${description.desc}</i></li>`;
       }
+      desc += '<br>';
     }
-    desc += '</ul>';
+  }
+  desc += '</ul>';
 
-    const faceDetails = drawBoxes(img, object) || '';
+  const faceDetails = drawBoxes(div.PopupImage, object) || '';
+  const res = await fetch(`exif?image=${encodeURI(object.image)}`);
+  let exif = '';
+  if (res.ok) {
+    const data = await res.json();
+    if (data) {
+      if (data.make) exif += `Camera: ${data.make} ${data.model || ''} ${data.lens || ''}<br>`;
+      if (data.created) exif += `Taken: ${new Date(1000 * data.created).toLocaleString()} Edited: ${new Date(1000 * data.modified).toLocaleString()}<br>`;
+      if (data.software) exif += `Software: ${data.software}<br>`;
+      if (data.lat) exif += `Coordinates: Lat ${data.lat.toFixed(3)} Lon ${data.lon.toFixed(3)}<br>`;
+      if (data.exposure) exif += `Settings: ${data.fov || 0}mm ISO${data.iso || 0} f/${data.apperture || 0} 1/${(1 / (data.exposure || 1)).toFixed(0)}sec<br>`;
+    }
+  }
 
-    document.getElementById('details-result').innerHTML = `
+  div.PopupDetails.innerHTML = `
       <h2>Image: ${object.image}</h2>
-      Image size: ${img.naturalWidth} x ${img.naturalHeight}
+      Image size: ${div.PopupImage.naturalWidth} x ${div.PopupImage.naturalHeight}
         Processed in ${object.perf.total.toFixed(0)}ms<br>
         Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)}ms<br>
         Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)}ms<br>
         Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)}ms<br>
+      <h2>Image Data</h2>
+      ${exif}
       <h2>${classified}</h2>
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
@@ -172,11 +194,7 @@ function showDetails(i) {
       </div>
     `;
 
-    const div = document.getElementById('details');
-    div.addEventListener('click', () => { div.style.display = 'none'; });
-    div.style.display = 'flex';
-  });
-  img.src = object.image;
+  div.Popup.onclick = () => { div.Popup.style.display = 'none'; };
 }
 
 async function loadModels() {
@@ -292,28 +310,34 @@ async function printResult(object, image) {
   if (object.person && object.person.class) {
     nsfw = `Class: ${(100 * object.person.scoreClass).toFixed(0)}% ${object.person.class} `;
   }
-  const div = document.createElement('div');
-  div.class = 'col';
-  div.style = 'display: flex';
-  const canvas = document.createElement('canvas');
-  canvas.height = 110;
-  canvas.width = 110;
-  const ctx = canvas.getContext('2d');
+  const divItem = document.createElement('div');
+  divItem.class = 'col';
+  divItem.style = 'display: flex';
+  const miniCanvas = document.createElement('canvas');
+  miniCanvas.height = 110;
+  miniCanvas.width = 110;
+  const ctx = miniCanvas.getContext('2d');
   ctx.drawImage(image.image, 0, 0, 110, 110);
-  const imageData = canvas.toDataURL('image/jpeg', 0.5);
-  div.innerHTML = `
-    <div class="col" style="height: 114x; min-width: 114px; max-width: 114px"><img id="thumbnail" src="${imageData}" width="106px" height="106px"></div>
-    <div class="col" style="height: 114px; min-width: 575px; max-width: 575px">
+  const imageData = miniCanvas.toDataURL('image/jpeg', 0.5);
+  divItem.innerHTML = `
+    <div class="col" style="height: 114px; min-width: 114px; max-width: 114px">
+      <img id="thumb-${object.id}" src="${imageData}" width="106px" height="106px">
+    </div>
+    <div id="desc-${object.id}" class="col" style="height: 114px; min-width: 575px; max-width: 575px">
       Image ${decodeURI(object.image)} processed in ${object.perf.total.toFixed(0)}ms src:${image.image.naturalWidth}x${image.image.naturalHeight} tgt:${image.canvas.width}x${image.canvas.height}<br>
       Classified in ${object.perf.classify.toFixed(0)}ms ${classified}<br>
       Detected in ${object.perf.detect.toFixed(0)}ms ${detected}<br>
       ${person} ${nsfw}<br>
     </div>
   `;
-  await document.getElementById('result').appendChild(div);
-  const thumbnail = document.getElementById('thumbnail');
-  thumbnail.id = object.id;
-  thumbnail.addEventListener('click', (evt) => showDetails(evt.currentTarget.id));
+  div.Result.appendChild(divItem);
+  document.getElementById(`thumb-${object.id}`).resid = object.id;
+  document.getElementById(`desc-${object.id}`).resid = object.id;
+  divItem.addEventListener('click', (evt) => {
+    div.PopupImage.resid = evt.target.resid;
+    div.PopupImage.src = object.image; // this triggers showDetails via onLoad event
+  });
+  div.PopupImage.addEventListener('load', showDetails); // don't call showDetails directly to ensure image is loaded
 }
 
 async function getImage(img) {
@@ -330,12 +354,12 @@ async function getImage(img) {
           image.height = ratio > 1 ? config.maxSize : config.maxSize * ratio;
         }
       }
-      const canvas = document.createElement('canvas');
-      canvas.height = image.height;
-      canvas.width = image.width;
-      const ctx = canvas.getContext('2d');
+      const offscreenCanvas = document.createElement('canvas');
+      offscreenCanvas.height = image.height;
+      offscreenCanvas.width = image.width;
+      const ctx = offscreenCanvas.getContext('2d');
       ctx.drawImage(image, 0, 0, image.width, image.height);
-      resolve({ image, canvas });
+      resolve({ image, canvas: offscreenCanvas });
     });
     image.src = img;
   });
@@ -442,6 +466,7 @@ async function warmupModels() {
 }
 
 async function main() {
+  initDivs();
   await loadModels();
   await warmupModels();
 
