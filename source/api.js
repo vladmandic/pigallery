@@ -66,7 +66,7 @@ function api(app) {
           resolve(data);
         })
         .on('error', (err) => {
-          log.warn('EXIF', err.code ? err.code : err);
+          log.warn('EXIF', JSON.stringify(err));
           resolve(json);
         });
     });
