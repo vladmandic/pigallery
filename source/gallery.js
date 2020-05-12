@@ -6,38 +6,8 @@ import * as faceapi from 'face-api.js';
 import modelClassify from './modelClassify.js';
 import modelDetect from './modelDetect.js';
 // import yolo from './modelYolo.js';
+import config from './config.js';
 
-const config = {
-  backEnd: 'webgl', // can be webgl, cpu, wasm
-  maxSize: 780, // maximum image width or height before resizing is required
-  batchProcessing: 20, // how many images to process in parallel
-  squareImage: false, // resize proportional to original image or to square image
-  floatPrecision: true, // use float32 or float16 for WebGL tensors
-  // Default models
-  classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },
-  detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 },
-  person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 1, type: 'ssdMobilenetv1' },
-
-  // alternative face-api models
-  /*
-  person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'ssdMobilenetv1' },
-  person: { name: 'FaceAPI Yolo', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyYolov2' },
-  person: { name: 'FaceAPI Tiny', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' },
-  person: { name: 'FaceAPI MTCNN', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'mtcnn' },
-  */
-
-  // alternative classification models
-  /*
-  classify: { name: 'MobileNet v1', modelPath: '/models/mobilenet-v1/model.json' },
-  classify: { name: 'MobileNet v2', modelPath: '/models/mobilenet-v2/model.json' },
-  classify: { name: 'Inception v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1' },
-  classify: { name: 'Inception v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v2/classification/3/default/1' },
-  classify: { name: 'Inception v3', modelPath: '/models/inception-v3/model.json' },
-  classify: { name: 'Inception ResNet v2', modelPath: '/models/inception-resnet-v2/model.json' },
-  classify: { name: 'ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/resnet_v2_101/classification/3/default/1' },
-  classify: { name: 'NasNet Mobile', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/nasnet_mobile/classification/3/default/1' },
-  */
-};
 const results = [];
 let wordNet = {};
 const models = {};
@@ -90,10 +60,10 @@ function drawBoxes(img, object) {
 
   // draw faces
   let faceDetails;
-  if (object.person && object.person.detection) {
+  if (object.person && object.person.boxes) {
     const displaySize = { width: div.canvas.width, height: div.canvas.height };
     faceapi.matchDimensions(div.canvas, displaySize);
-    const resized = faceapi.resizeResults(object.person.detection, displaySize);
+    const resized = faceapi.resizeResults(object.person.boxes, displaySize);
     new faceapi.draw.DrawBox(resized.detection.box, { boxColor: 'lightskyblue' }).draw(div.canvas);
     new faceapi.draw.DrawFaceLandmarks(resized.landmarks, { lineColor: 'skyblue', pointColor: 'deepskyblue' }).draw(div.canvas);
     const jaw = resized.landmarks.getJawOutline() || [];
@@ -124,7 +94,6 @@ function drawBoxes(img, object) {
       ctx.fillText(`${(100 * obj.score).toFixed(0)}% ${obj.class}`, x + 2, y + 18);
     }
   }
-
   return faceDetails;
 }
 
@@ -152,11 +121,10 @@ async function showDetails() {
   }
 
   let desc = '<h2>Description:</h2><ul>';
-  if (object.classify) {
-    for (const guess of object.classify) {
-      const descriptions = object.classify && object.classify[0] ? searchClasses(guess.wnid) : [];
-      for (const description of descriptions) {
-        desc += `<li><b>${description.name}</b>: <i>${description.desc}</i></li>`;
+  if (object.descriptions) {
+    for (const description of object.descriptions) {
+      for (const lines of description) {
+        desc += `<li><b>${lines.name}</b>: <i>${lines.desc}</i></li>`;
       }
       desc += '<br>';
     }
@@ -164,28 +132,32 @@ async function showDetails() {
   desc += '</ul>';
 
   const faceDetails = drawBoxes(div.PopupImage, object) || '';
-  const res = await fetch(`exif?image=${encodeURI(object.image)}`);
   let exif = '';
-  if (res.ok) {
-    const data = await res.json();
-    if (data) {
-      if (data.make) exif += `Camera: ${data.make} ${data.model || ''} ${data.lens || ''}<br>`;
-      if (data.created) exif += `Taken: ${new Date(1000 * data.created).toLocaleString()} Edited: ${new Date(1000 * data.modified).toLocaleString()}<br>`;
-      if (data.software) exif += `Software: ${data.software}<br>`;
-      if (data.lat) exif += `Coordinates: Lat ${data.lat.toFixed(3)} Lon ${data.lon.toFixed(3)}<br>`;
-      if (data.exposure) exif += `Settings: ${data.fov || 0}mm ISO${data.iso || 0} f/${data.apperture || 0} 1/${(1 / (data.exposure || 1)).toFixed(0)}sec<br>`;
-    }
+  let location = '';
+  if (object.exif) {
+    const mp = (div.PopupImage.naturalWidth * div.PopupImage.naturalHeight / 1000000).toFixed(1);
+    const complexity = (div.PopupImage.naturalWidth * div.PopupImage.naturalHeight) / object.exif.bytes;
+    if (object.exif.make) exif += `Camera: ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
+    if (object.exif.bytes) exif += `Size: ${mp} MP in ${object.exif.bytes.toLocaleString()} bytes with compression factor ${complexity.toFixed(2)}<br>`;
+    if (object.exif.created) exif += `Taken: ${new Date(1000 * object.exif.created).toLocaleString()} Edited: ${new Date(1000 * object.exif.modified).toLocaleString()}<br>`;
+    if (object.exif.software) exif += `Software: ${object.exif.software}<br>`;
+    if (object.exif.exposure) exif += `Settings: ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
+    if (object.exif.city) location += `Location: ${object.exif.city}, ${object.exif.country}, ${object.exif.continent} (near ${object.exif.near})<br>`;
+    if (object.exif.lat) location += `Coordinates: Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)}<br>`;
   }
 
   div.PopupDetails.innerHTML = `
       <h2>Image: ${object.image}</h2>
       Image size: ${div.PopupImage.naturalWidth} x ${div.PopupImage.naturalHeight}
-        Processed in ${object.perf.total.toFixed(0)}ms<br>
-        Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)}ms<br>
-        Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)}ms<br>
-        Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)}ms<br>
+        Processed in ${object.perf.total.toFixed(0)} ms<br>
+        Metadata extracted in ${object.exif ? object.perf.exif.toFixed(0) : 0} ms<br>
+        Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
+        Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
+        Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)} ms<br>
       <h2>Image Data</h2>
       ${exif}
+      <h2>Location</h2>
+      ${location}
       <h2>${classified}</h2>
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
@@ -325,6 +297,7 @@ async function printResult(object, image) {
     </div>
     <div id="desc-${object.id}" class="col" style="height: 114px; min-width: 575px; max-width: 575px">
       Image ${decodeURI(object.image)} processed in ${object.perf.total.toFixed(0)}ms src:${image.image.naturalWidth}x${image.image.naturalHeight} tgt:${image.canvas.width}x${image.canvas.height}<br>
+      Metadata in ${(object.perf.wordnet + object.perf.exif).toFixed(0)}ms<br>
       Classified in ${object.perf.classify.toFixed(0)}ms ${classified}<br>
       Detected in ${object.perf.detect.toFixed(0)}ms ${detected}<br>
       ${person} ${nsfw}<br>
@@ -368,7 +341,11 @@ async function getImage(img) {
 async function processImage(name) {
   active(`Loading: ${name}`);
   const t0 = window.performance.now();
+
+  const ti0 = window.performance.now();
   const image = await getImage(name);
+  const ti1 = window.performance.now();
+
   const res = {};
 
   active(`Classifying: ${name}`);
@@ -414,10 +391,33 @@ async function processImage(name) {
       emotion: (res.face && res.face.emotion) ? res.face.emotion.label : null,
       scoreClass: (res.nsfw && res.nsfw[0]) ? res.nsfw[0].probability : null,
       class: (res.nsfw && res.nsfw[0]) ? res.nsfw[0].className : null,
-      detection: (res.face && res.face.detection) ? res.face.detection : null,
+      boxes: (res.face && res.face.detection) ? { detection: res.face.detection.detection, landmarks: res.face.detection.landmarks } : null,
     };
   }
   const tp1 = window.performance.now();
+
+  const tw0 = window.performance.now();
+  if (res.classify) {
+    active(`WordNet Lookup: ${name}`);
+    res.descriptions = [];
+    for (const guess of res.classify) {
+      const descriptions = searchClasses(guess.wnid);
+      const lines = [];
+      for (const description of descriptions) {
+        lines.push({ name: description.name, desc: description.desc });
+      }
+      res.descriptions.push(lines);
+    }
+  }
+  const tw1 = window.performance.now();
+
+  const te0 = window.performance.now();
+  active(`Metadata Extraction: ${name}`);
+  const exif = await fetch(`exif?image=${encodeURI(name)}`);
+  if (exif.ok) {
+    res.exif = await exif.json();
+  }
+  const te1 = window.performance.now();
 
   const t1 = window.performance.now();
 
@@ -425,16 +425,42 @@ async function processImage(name) {
     id: id++,
     image: name,
     size: { width: image.canvas.width, height: image.canvas.height },
+    exif: res.exif,
     classify: res.classify,
     detect: res.detect,
     person: res.person,
-    perf: { total: t1 - t0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 },
+    descriptions: res.descriptions,
+    perf: { total: t1 - t0, load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0, wordnet: tw1 - tw0, exif: te1 - te0 },
   };
   results.push(obj);
   active(`Printing: ${name}`);
   printResult(obj, image);
   active(`Done: ${name}`);
   return obj;
+}
+
+function statSummary() {
+  const stats = { loadTime: 0, exif: 0, exifTime: 0, classify: 0, classifyTime: 0, detect: 0, detectTime: 0, person: 0, personTime: 0, wordnet: 0, wordnetTime: 0 };
+  for (const item of results) {
+    stats.loadTime += item.perf.load;
+    stats.exif += item.exif ? 1 : 0;
+    stats.exifTime += item.perf.exif;
+    stats.classify += item.classify ? 1 : 0;
+    stats.classifyTime += item.perf.classify;
+    stats.detect += item.detect ? 1 : 0;
+    stats.detectTime += item.perf.detect;
+    stats.person += item.person ? 1 : 0;
+    stats.personTime += item.perf.person;
+    stats.wordnet += item.descriptions ? 1 : 0;
+    stats.wordnetTime += item.perf.wordnet;
+  }
+  stats.loadAvg = stats.loadTime / results.length;
+  stats.exifAvg = stats.exif === 0 ? 0 : (stats.exifTime / stats.exif);
+  stats.classifyAvg = stats.classify === 0 ? 0 : (stats.classifyTime / stats.classify);
+  stats.detectAvg = stats.detect === 0 ? 0 : (stats.detectTime / stats.detect);
+  stats.personAvg = stats.person === 0 ? 0 : (stats.personTime / stats.person);
+  stats.wordnetAvg = stats.wordnet === 0 ? 0 : (stats.wordnetTime / stats.wordnet);
+  return stats;
 }
 
 async function loadGallery(what) {
@@ -454,6 +480,15 @@ async function loadGallery(what) {
   if (promises.length > 0) await Promise.all(promises);
   const t1 = window.performance.now();
   log(`Finished processed ${dir.files.length} images from ${dir.folder}/${what}: total: ${(t1 - t0).toLocaleString()}ms average: ${((t1 - t0) / dir.files.length).toLocaleString()}ms / image`);
+  log('Statistics:');
+  const s = statSummary();
+  log(`&nbsp Results: ${results.length} in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
+  log(`&nbsp Proepare Image: ${results.length} images in ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(2)} ms`);
+  log(`&nbsp Classification: ${s.classify} images in ${s.classifyTime.toFixed(0)} ms average ${s.classifyAvg.toFixed(2)} ms`);
+  log(`&nbsp Detection: ${s.detect} images in ${s.detectTime.toFixed(0)} ms average ${s.detectAvg.toFixed(2)} ms`);
+  log(`&nbsp Person Analysis: ${s.person} images in ${s.personTime.toFixed(0)} ms average ${s.personAvg.toFixed(2)} ms`);
+  log(`&nbsp Metadata Extraction: ${s.exif} images in ${s.exifTime.toFixed(0)} ms average ${s.exifAvg.toFixed(2)} ms`);
+  log(`&nbsp Definition Loopkup: ${s.wordnet} images in ${s.wordnetTime.toFixed(0)} ms average ${s.wordnetAvg.toFixed(2)} ms`);
   active('Idle...');
 }
 
@@ -471,8 +506,8 @@ async function main() {
   await warmupModels();
 
   await loadGallery('objects');
-  await loadGallery('people');
-  await loadGallery('large');
+  // await loadGallery('people');
+  // await loadGallery('large');
 }
 
 window.onload = main;
