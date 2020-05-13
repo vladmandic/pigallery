@@ -265,7 +265,7 @@ async function main() {
   await ml.load();
   await warmupModels();
 
-  // await loadGallery({ folder: 'samples', match: 'video' });
+  await loadGallery({ folder: 'samples', match: 'video' });
   await loadGallery({ folder: 'samples', match: 'objects' });
   await loadGallery({ folder: 'samples', match: 'people' });
   await loadGallery({ folder: 'samples', match: 'large' });
