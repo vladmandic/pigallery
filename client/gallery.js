@@ -217,7 +217,7 @@ async function loadGallery(spec) {
   log.active(`Fetching list for "${spec.folder}" matching "${spec.match}"`);
   const res = await fetch(`/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
   const dir = await res.json();
-  log.result(`Queued: ${dir.files.length} ...`);
+  log.result(`Queued: ${dir.files.length} images for processing ...`);
   const t0 = window.performance.now();
   const promises = [];
   for (const f of dir.files) {
