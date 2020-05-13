@@ -191,6 +191,11 @@ async function processImage(name) {
     log.active(`Face Detection: ${name}`);
     try {
       if (models.faceapi) res.face = await models.faceapi.classify(image.canvas, 1);
+      if (res.face && res.face.detection & res.face.detection.detections) { // remove unnecessary objects
+        delete res.face.detection.detections.detection.alignedRect;
+        delete res.face.detection.detections.detection.expressions;
+        delete res.face.detection.detections.detection.unshiftedLandmarks;
+      }
     } catch (err) {
       log.result(`Errror in FaceAPI for ${name}: ${err}`);
     }

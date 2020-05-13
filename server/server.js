@@ -2,7 +2,7 @@ const path = require('path');
 const log = require('pilogger');
 const express = require('express');
 const api = require('./api.js');
-const parcel = require('./bundler.js');
+const parcel = require('./distBundler.js');
 const nodeconfig = require('../package.json');
 
 function allowCORS(req, res, next) {
@@ -25,11 +25,13 @@ async function main() {
     next();
   });
 
-  app.use('/assets', express.static(path.join(__dirname, '../assets'), { maxAge: '365d', cacheControl: true }));
-  app.use('/models', express.static(path.join(__dirname, '../models'), { maxAge: '365d', cacheControl: true }));
-  app.use('/samples', express.static(path.join(__dirname, '../samples'), { maxAge: '365d', cacheControl: true }));
-  app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, '../favicon.ico')));
-  app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'gallery.html')));
+  // app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, '../favicon.ico')));
+  const root = path.join(__dirname, '../');
+  app.get('/', (req, res) => res.sendFile('client/gallery.html', { root }));
+  app.use('/', express.static(path.join(root, '.')));
+  app.use('/assets', express.static(path.join(root, './assets'), { maxAge: '365d', cacheControl: true }));
+  app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
+  app.use('/samples', express.static(path.join(root, './samples'), { maxAge: '365d', cacheControl: true }));
 
   api.init(app); // initialize api calls
   parcel.init(app); // initialize parceljs bundler

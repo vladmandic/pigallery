@@ -1,25 +1,35 @@
 const fs = require('fs');
 const parser = require('exif-parser');
 const log = require('pilogger');
-const distance = require('./distance.js');
+const distance = require('./geoNearest.js');
 const geo = require('../assets/cities.json');
 
 function geoLookup(json) {
   if (!json.lon || !json.lat) return json;
-  const loc = distance.nearest(json.lat, json.lon, geo.data, 2);
-  return { ...json, city: loc[0].name, near: loc[1] ? loc[1].name : '', country: loc[0].country, continent: loc[0].continent };
+  const loc = distance.nearest(json.lat, json.lon, geo.data, 1);
+  const near = distance.nearest(json.lat, json.lon, geo.large, 1);
+  const res = { city: loc[0].name, near: near[0].name, country: loc[0].country, continent: loc[0].continent };
+  return res;
 }
 
 function api(app) {
-  app.get('/list/:prefix', (req, res) => {
-    let matched = [];
+  geo.large = geo.data.filter((a) => a.population > 100000);
+  log.info('Geo all cities database:', geo.data.length);
+  log.info('Geo large cities database:', geo.large.length);
+  log.info('API ready');
+
+  app.get('/list', (req, res) => {
+    let dir = [];
     try {
-      const match = req.params.prefix ? req.params.prefix : '';
-      const dir = fs.readdirSync('./samples');
-      if (match) matched = dir.filter((a) => a.includes(match));
-      log.info(`Requested file listing for:${match} total:${dir.length} matched:${matched.length}`);
+      if (req.query.folder) {
+        const folder = decodeURI(req.query.folder);
+        const match = req.query.match ? decodeURI(req.query.match) : null;
+        if (fs.existsSync(folder)) dir = fs.readdirSync(folder);
+        if (dir && match) dir = dir.filter((a) => a.includes(match));
+        log.info(`Requested file listing for:${folder} matching:${match || '*'} matched:${dir.length}`);
+      }
     } catch { /**/ }
-    res.json({ files: matched, folder: '/samples' });
+    res.json({ files: dir });
   });
 
   async function getExif(url) {
@@ -62,8 +72,8 @@ function api(app) {
           stream.close();
         })
         .on('close', () => {
-          const data = geoLookup(json);
-          resolve(data);
+          const loc = geoLookup(json);
+          resolve({ ...json, ...loc });
         })
         .on('error', (err) => {
           log.warn('EXIF', JSON.stringify(err));
@@ -73,8 +83,7 @@ function api(app) {
   }
 
   app.get('/exif', async (req, res) => {
-    const url = `.${decodeURI(req.query.image)}`;
-    const json = await getExif(url);
+    const json = await getExif(decodeURI(req.query.image));
     res.json(json);
   });
 }

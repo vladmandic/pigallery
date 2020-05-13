@@ -3,7 +3,7 @@
 import * as faceapi from 'face-api.js';
 import config from './config.js';
 import log from './log.js';
-import ml from './process.js';
+import ml from './processImage.js';
 
 const results = [];
 const div = {};
@@ -19,6 +19,7 @@ function initDivs() {
   div.canvas = document.getElementById('popup-canvas');
 }
 
+// draw boxes for detected objects, faces and face elements
 function drawBoxes(img, object) {
   div.canvas.style.position = 'absolute';
   div.canvas.style.left = img.offsetLeft;
@@ -32,7 +33,6 @@ function drawBoxes(img, object) {
     const displaySize = { width: div.canvas.width, height: div.canvas.height };
     faceapi.matchDimensions(div.canvas, displaySize);
     const resized = faceapi.resizeResults(object.person.detections.detection, displaySize);
-    // const landmarkPoints = faceapi.resizeResults(object.person.boxes.landmarks, displaySize);
     new faceapi.draw.DrawBox(resized.detection.box, { boxColor: 'lightskyblue' }).draw(div.canvas);
     new faceapi.draw.DrawFaceLandmarks(resized.landmarks, { lineColor: 'skyblue', pointColor: 'deepskyblue' }).draw(div.canvas);
     /*
@@ -47,7 +47,7 @@ function drawBoxes(img, object) {
     */
   }
 
-  // draw objects
+  // draw detected objects
   const ctx = div.canvas.getContext('2d');
   ctx.strokeStyle = 'lightyellow';
   ctx.linewidth = 2;
@@ -68,8 +68,10 @@ function drawBoxes(img, object) {
   return faceDetails;
 }
 
+// show details popup
 async function showDetails() {
   const object = results[div.PopupImage.resid];
+  if (!object) return;
   div.Popup.style.display = 'flex';
 
   let classified = 'Classified ';
@@ -141,6 +143,7 @@ async function showDetails() {
   div.Popup.onclick = () => { div.Popup.style.display = 'none'; };
 }
 
+// print results strip with thumbnail for a given object
 async function printResult(object) {
   let classified = '';
   if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
@@ -184,6 +187,7 @@ async function printResult(object) {
   div.PopupImage.addEventListener('load', showDetails); // don't call showDetails directly to ensure image is loaded
 }
 
+// prepare stats
 function statSummary() {
   const stats = { loadTime: 0, exif: 0, exifTime: 0, classify: 0, classifyTime: 0, detect: 0, detectTime: 0, person: 0, personTime: 0, wordnet: 0, wordnetTime: 0 };
   for (const item of results) {
@@ -208,21 +212,16 @@ function statSummary() {
   return stats;
 }
 
-async function loadGallery(what) {
-  log.active(`Fetching list: ${what}`);
-  const res = await fetch(`/list/${what}`);
+// calls main detectxion and then print results for all images matching spec
+async function loadGallery(spec) {
+  log.active(`Fetching list for "${spec.folder}" matching "${spec.match}"`);
+  const res = await fetch(`/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
   const dir = await res.json();
-  log.result(`Queued: ${dir.files.length} images from ${dir.folder}/${what} ...`);
+  log.result(`Queued: ${dir.files.length} ...`);
   const t0 = window.performance.now();
   const promises = [];
   for (const f of dir.files) {
-    /*
-    const obj = await ml.process(`${dir.folder}/${f}`);
-    results.push(obj);
-    log.active(`Printing: ${name}`);
-    printResult(obj, `${dir.folder}/${f}`);
-    */
-    const url = `${dir.folder}/${f}`;
+    const url = `${spec.folder}/${f}`;
     promises.push(ml.process(url).then((obj) => {
       results.push(obj);
       log.active(`Printing: ${url}`);
@@ -235,7 +234,7 @@ async function loadGallery(what) {
   }
   if (promises.length > 0) await Promise.all(promises);
   const t1 = window.performance.now();
-  log.result(`Finished processed ${dir.files.length} images from ${dir.folder}/${what}: total: ${(t1 - t0).toLocaleString()}ms average: ${((t1 - t0) / dir.files.length).toLocaleString()}ms / image`);
+  log.result(`Finished processed ${dir.files.length} images from "${spec.folder}" matching "${spec.match}": total: ${(t1 - t0).toLocaleString()}ms average: ${((t1 - t0) / dir.files.length).toLocaleString()}ms / image`);
   log.result('Statistics:');
   const s = statSummary();
   log.result(`&nbsp Results: ${results.length} in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
@@ -248,10 +247,11 @@ async function loadGallery(what) {
   log.active('Idle...');
 }
 
+// initial complex image is used to trigger all models thus warming them up
 async function warmupModels() {
   log.result('Models warming up ...');
   const t0 = window.performance.now();
-  const obj = await ml.process('/samples/warmup.jpg');
+  const obj = await ml.process('samples/warmup.jpg');
   results.push(obj);
   log.active(`Printing: ${name}`);
   printResult(obj);
@@ -265,9 +265,10 @@ async function main() {
   await ml.load();
   await warmupModels();
 
-  // await loadGallery('objects');
-  await loadGallery('people');
-  // await loadGallery('large');
+  // await loadGallery({ folder: 'samples', match: 'video' });
+  await loadGallery({ folder: 'samples', match: 'objects' });
+  await loadGallery({ folder: 'samples', match: 'people' });
+  await loadGallery({ folder: 'samples', match: 'large' });
 }
 
 window.onload = main;
