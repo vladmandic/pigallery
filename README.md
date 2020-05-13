@@ -85,6 +85,12 @@ This allows for fallback solutions - if one model does not perform well on an im
 - BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
 - NSFW: <https://github.com/infinitered/nsfwjs>
 
-## TBD
+## Screenshots
 
-- Full ImageNet model
+### Gallery view
+
+![alt text](assets/screenshot-ml1.png)
+
+### Detailed View
+
+![alt text](assets/screenshot-ml2.png)
