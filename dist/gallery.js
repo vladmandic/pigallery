@@ -69470,8 +69470,11 @@ async function main() {
   _log.default.init();
 
   await _processImage.default.load();
-  await warmupModels(); // await loadGallery({ folder: 'samples', match: 'video' });
-
+  await warmupModels();
+  await loadGallery({
+    folder: 'samples',
+    match: 'video'
+  });
   await loadGallery({
     folder: 'samples',
     match: 'objects'
