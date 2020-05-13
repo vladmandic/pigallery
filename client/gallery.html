@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Photo Classification Test</title>
+    <meta http-equiv="content-type">
+    <meta content="text/html">
+    <meta charset="UTF-8">
+    <meta name="Description" content="Photo Classification Test; Author: Vladimir Mandic <mandic00@live.com>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=2.0, shrink-to-fit=yes, user-scalable=yes">
+    <meta name="theme-color" content="#555555"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="favicon.ico">
+    <link rel="stylesheet" href="assets/bootstrap.css">
+    <script type="text/javascript" src="dist/gallery.js"></script>
+    <style>
+      @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
+      ::-webkit-scrollbar { width: 20px; }
+      ::-webkit-scrollbar-track { border-radius: 0; }
+      ::-webkit-scrollbar-thumb { border-radius: 0; background: grey }
+      ::-webkit-scrollbar-button { background: transparent; }
+      body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; overflow-x: hidden; }
+      .row { width: 100%; margin: 10px }
+      .col { background: #555555; text-align: left; margin: 8px; padding: 4px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; }
+      .active { background: #555555; padding: 4px; overflow: hidden; position: fixed; top: 10px; right: 10px; width: 400px; height: 50px; }
+      .details { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 50px; left: 5%; width: 90%; display: none; }
+      h1 { font-size: 1.4rem; margin-top: 16px; font-weight: bold; }
+      h2 { font-size: 1.2rem; margin-top: 8px; font-weight: bold; }
+      a { color: white }
+      a:hover { background: darkcyan; color: white }
+    </style>
+</head>
+<body>
+  <div id="active" class="active"></div>
+  <div id="log" class="row"></div>
+  <div id="result" class="row"></div>
+  <div id="popup" class="details">
+    <img id="popup-image" style="width: auto; height: auto; max-width: 850px; max-height: 850px">
+    <canvas id="popup-canvas"></canvas>
+    <div id="popup-details" style="margin: 12px"></div>
+  </div>
+</body>
+</html>
