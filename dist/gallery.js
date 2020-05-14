@@ -69154,7 +69154,7 @@ async function getImage(url) {
       thumbnailCanvas.width = image.width;
       const thumbnailCtx = thumbnailCanvas.getContext('2d');
       thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
-      const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.95);
+      const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.8);
       resolve({
         image,
         canvas: offscreenCanvas,
@@ -69535,23 +69535,37 @@ async function printResult(object) {
   div.PopupImage.addEventListener('load', showDetails); // don't call showDetails directly to ensure image is loaded
 }
 
-function filterResults(what) {
-  _log.default.active('Searching ...');
-
-  const found = results.filter(obj => {
+function filterWord(object, word) {
+  if (!object) return null;
+  const skip = ['in', 'a', 'the', 'of'];
+  if (skip.includes(word)) return object;
+  const res = object.filter(obj => {
     let ok = false;
 
     for (const tag of obj.tags) {
       const str = Object.values(tag)[0].toString() || '';
-      ok |= str.startsWith(what);
+      ok |= str.includes(word);
     }
 
     return ok;
   });
+  return res;
+}
 
-  _log.default.result(`Searching for ${what} found ${found.length || 0} out of ${results.length} matches`);
+function filterResults(words) {
+  _log.default.active('Searching ...');
 
-  div.Found.innerText = `Found ${found.length || 0} results`;
+  let found = results;
+  let foundWords = 0;
+
+  for (const word of words.split(' ')) {
+    found = filterWord(found, word);
+    foundWords += found && found.length > 0 ? 1 : 0;
+  }
+
+  _log.default.result(`Searching for "${words}" found ${foundWords} words in ${found.length || 0} results out of ${results.length} matches`);
+
+  if (found && found.length > 0) div.Found.innerText = `Found ${found.length} results`;else div.Found.innerText = `Found ${foundWords} of ${words.split(' ').length} words`;
   div.Result.innerHTML = '';
 
   for (const obj of found) {
@@ -69598,6 +69612,23 @@ function statSummary() {
   stats.personAvg = stats.person === 0 ? 0 : stats.personTime / stats.person;
   stats.wordnetAvg = stats.wordnet === 0 ? 0 : stats.wordnetTime / stats.wordnet;
   return stats;
+}
+
+async function postResult(object) {
+  const json = JSON.stringify(object);
+  const post = await fetch('/post', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: json
+  });
+
+  try {
+    await post.json();
+  } catch (err) {
+    _log.default.result(`Post error ${JSON.stringify(err)}`);
+  }
 } // calls main detectxion and then print results for all images matching spec
 
 
@@ -69616,11 +69647,11 @@ async function loadGallery(spec) {
   for (const f of dir.files) {
     const url = `${spec.folder}/${f}`;
     promises.push(ml.process(url).then(obj => {
-      results.push(obj);
-      tmpResults.push(obj);
-
       _log.default.active(`Printing: ${url}`);
 
+      postResult(obj);
+      results.push(obj);
+      tmpResults.push(obj);
       printResult(obj, url);
     }));
 
@@ -69690,8 +69721,11 @@ async function main() {
   await loadGallery({
     folder: 'media',
     match: 'objects'
-  }); // await loadGallery({ folder: 'media', match: 'people' });
-  // await loadGallery({ folder: 'media', match: 'large' });
+  });
+  await loadGallery({
+    folder: 'media',
+    match: 'people'
+  }); // await loadGallery({ folder: 'media', match: 'large' });
 }
 
 window.onload = main;
