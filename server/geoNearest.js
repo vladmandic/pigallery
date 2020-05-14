@@ -4,7 +4,9 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-prototype-builtins */
 
-const invEarthDiameter = 1 / 12742018;
+const log = require('pilogger');
+
+const geo = {};
 
 function spherical2cartesian(lat, lon) {
   lat *= Math.PI / 180;
@@ -88,8 +90,7 @@ function buildrec(array, depth) {
   return new Node(axis, array[i].position[axis], buildrec(array.slice(0, i), depth), buildrec(array.slice(i), depth));
 }
 
-function kdlookup(position, node, n, max) {
-  if (!(max > 0)) max = Number.POSITIVE_INFINITY;
+function kdlookup(position, node, n) {
   const array = [];
   if (node === null || n <= 0) return array;
   const stack = [node, 0];
@@ -98,7 +99,6 @@ function kdlookup(position, node, n, max) {
   while (stack.length) {
     dist = stack.pop();
     node = stack.pop();
-    if (dist > max) continue;
     if (array.length === n && array[array.length - 1].dist < dist * dist) continue;
     while (node instanceof Node) {
       if (position[node.axis] < node.split) {
@@ -110,7 +110,7 @@ function kdlookup(position, node, n, max) {
       }
     }
     dist = distance(position, node.position);
-    if (dist <= max * max) insert({ object: node, dist }, array, byDistance);
+    insert({ object: node, dist }, array, byDistance);
     if (array.length > n) array.pop();
   }
   i = array.length;
@@ -118,9 +118,20 @@ function kdlookup(position, node, n, max) {
   return array;
 }
 
-function nearest(lat, lon, points, n, max) {
-  const node = buildrec(points.map(Position.create), 0);
-  return kdlookup(spherical2cartesian(lat, lon), node, n, max > 0 ? 2 * Math.sin(max * invEarthDiameter) : undefined).map(Position.extract);
+function nearest(lat, lon, where, n) {
+  // const node = buildrec(points.map(Position.create), 0);
+  let node;
+  if (where === 'all') node = geo.all;
+  if (where === 'large') node = geo.large;
+  return kdlookup(spherical2cartesian(lat, lon), node, n).map(Position.extract);
+}
+
+function init(all, large) {
+  geo.all = buildrec(all.map(Position.create), 0);
+  geo.large = buildrec(large.map(Position.create), 0);
+  log.info('Geo all cities database:', geo.all.length);
+  log.info('Geo large cities database:', geo.large.length);
 }
 
 exports.nearest = nearest;
+exports.init = init;

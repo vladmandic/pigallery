@@ -4,14 +4,22 @@
 
 ## Photo Analysis using TensorFlow/JS
 
-### Main app
+## Server
 
-Runs main classification, detection and prediction:
+Serves media files to client application and extracts metadata on-demand.
 
-- Modify `config` object in `gallery.js` as needed
-- Provide pretrained models or download them in runtime. Default is `/models`
-- Provide images. Default is `/samples`
-- Run server application `node server.js`. Server uses ParcelJS to build distribution in `/dist` and start HTTP ExpressJS server
+- Place all images and/or videos inside `./media`.
+- If you want to access images already on your drive, symlink folder to location inside `./media`
+- Run server application using `node server.js`
+- Server uses ParcelJS to build distribution in `./dist` and starts ExpressJS HTTP server
+- Note that files in `./dist` are provided only for reference as they will be rebuild on each server start from files in `./client`
+
+## Client
+
+Runs main classification, detection and prediction.
+
+- Modify `./client/config.js` as needed. Entries should be self-explanatory.
+- Provide pretrained models or download them in runtime. Default location for models is `./models`
 - Connect to <http://localhost/gallery> for image gallery processing
 - Connect to <http://localhost/video> for real-time video processing
 
@@ -85,6 +93,13 @@ This allows for fallback solutions - if one model does not perform well on an im
 - PoseNet: <https://github.com/tensorflow/tfjs-models/tree/master/posenet>
 - BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
 - NSFW: <https://github.com/infinitered/nsfwjs>
+
+## Todo
+
+- In video app, canvas overlaps video element so controls are unavailable
+- Cache results on server
+- Configurable locations
+- Client-side search and filter
 
 ## Screenshots
 

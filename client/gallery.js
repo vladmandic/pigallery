@@ -3,12 +3,10 @@
 import * as faceapi from 'face-api.js';
 import config from './config.js';
 import log from './log.js';
-import ml from './processImage.js';
+import * as ml from './processImage.js';
 
 const results = [];
 const div = {};
-
-window.config = config;
 
 // pre-fetching DOM elements to avoid multiple runtime lookups
 function initDivs() {
@@ -54,10 +52,10 @@ function drawBoxes(img, object) {
   if (object.detect) {
     for (const obj of object.detect) {
       ctx.beginPath();
-      const x = obj.box[0] * img.width / object.size.width;
-      const y = obj.box[1] * img.height / object.size.height;
-      const width = obj.box[2] * img.width / object.size.width;
-      const height = obj.box[3] * img.height / object.size.height;
+      const x = obj.box[0] * img.width / object.processedSize.width;
+      const y = obj.box[1] * img.height / object.processedSize.height;
+      const width = obj.box[2] * img.width / object.processedSize.width;
+      const height = obj.box[3] * img.height / object.processedSize.height;
       ctx.rect(x, y, width, height);
       ctx.stroke();
       ctx.fillStyle = 'lightyellow';
@@ -133,7 +131,8 @@ async function showDetails() {
       <h2>${classified}</h2>
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
-      ${desc}<br>
+      ${desc}
+      <h2>Tags</h2>${ml.JSONtoStr(object.tags)}<br>
       </div>
     `;
 
@@ -163,14 +162,13 @@ async function printResult(object) {
   const divItem = document.createElement('div');
   divItem.class = 'col';
   divItem.style = 'display: flex';
-  const img = await ml.getImage(object.image, 110);
-  const imageData = img.canvas.toDataURL('image/jpeg', 0.5);
   divItem.innerHTML = `
-    <div class="col" style="height: 114px; min-width: 114px; max-width: 114px">
-      <img id="thumb-${object.id}" src="${imageData}" width="106px" height="106px">
+    <div class="col" style="max-height: ${config.thumbnail}px; min-width: ${config.thumbnail}px; max-width: ${config.thumbnail}px; padding: 0">
+      <img id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width="${config.thumbnail}px" height="${config.thumbnail}px">
     </div>
-    <div id="desc-${object.id}" class="col" style="height: 114px; min-width: 575px; max-width: 575px">
-      Image ${decodeURI(object.image)} processed in ${object.perf.total.toFixed(0)}ms src:${img.image.naturalWidth}x${img.image.naturalHeight} tgt:${img.canvas.width}x${img.canvas.height}<br>
+    <div id="desc-${object.id}" class="col" style="height: ${config.thumbnail}px; min-width: 572px; max-width: 572px; padding: 4px">
+      Image ${decodeURI(object.image)} processed in ${object.perf.total.toFixed(0)}ms 
+      src:${object.naturalSize.width}x${object.naturalSize.height} tgt:${object.processedSize.width}x${object.processedSize.height}<br>
       Metadata in ${(object.perf.wordnet + object.perf.exif).toFixed(0)}ms<br>
       Classified in ${object.perf.classify.toFixed(0)}ms ${classified}<br>
       Detected in ${object.perf.detect.toFixed(0)}ms ${detected}<br>
@@ -237,13 +235,13 @@ async function loadGallery(spec) {
   log.result(`Finished processed ${dir.files.length} images from "${spec.folder}" matching "${spec.match}": total: ${(t1 - t0).toLocaleString()}ms average: ${((t1 - t0) / dir.files.length).toLocaleString()}ms / image`);
   log.result('Statistics:');
   const s = statSummary();
-  log.result(`&nbsp Results: ${results.length} in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
-  log.result(`&nbsp Proepare Image: ${results.length} images in ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(2)} ms`);
-  log.result(`&nbsp Classification: ${s.classify} images in ${s.classifyTime.toFixed(0)} ms average ${s.classifyAvg.toFixed(2)} ms`);
-  log.result(`&nbsp Detection: ${s.detect} images in ${s.detectTime.toFixed(0)} ms average ${s.detectAvg.toFixed(2)} ms`);
-  log.result(`&nbsp Person Analysis: ${s.person} images in ${s.personTime.toFixed(0)} ms average ${s.personAvg.toFixed(2)} ms`);
-  log.result(`&nbsp Metadata Extraction: ${s.exif} images in ${s.exifTime.toFixed(0)} ms average ${s.exifAvg.toFixed(2)} ms`);
-  log.result(`&nbsp Definition Loopkup: ${s.wordnet} images in ${s.wordnetTime.toFixed(0)} ms average ${s.wordnetAvg.toFixed(2)} ms`);
+  log.result(`  Results: ${results.length} in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
+  log.result(`  Prepare Image: ${results.length} images in ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(2)} ms`);
+  log.result(`  Classification: ${s.classify} images in ${s.classifyTime.toFixed(0)} ms average ${s.classifyAvg.toFixed(2)} ms`);
+  log.result(`  Detection: ${s.detect} images in ${s.detectTime.toFixed(0)} ms average ${s.detectAvg.toFixed(2)} ms`);
+  log.result(`  Person Analysis: ${s.person} images in ${s.personTime.toFixed(0)} ms average ${s.personAvg.toFixed(2)} ms`);
+  log.result(`  Metadata Extraction: ${s.exif} images in ${s.exifTime.toFixed(0)} ms average ${s.exifAvg.toFixed(2)} ms`);
+  log.result(`  Definition Loopkup: ${s.wordnet} images in ${s.wordnetTime.toFixed(0)} ms average ${s.wordnetAvg.toFixed(2)} ms`);
   log.active('Idle...');
 }
 
@@ -251,7 +249,7 @@ async function loadGallery(spec) {
 async function warmupModels() {
   log.result('Models warming up ...');
   const t0 = window.performance.now();
-  const obj = await ml.process('samples/warmup.jpg');
+  const obj = await ml.process('media/warmup.jpg');
   results.push(obj);
   log.active(`Printing: ${name}`);
   printResult(obj);
@@ -262,12 +260,13 @@ async function warmupModels() {
 async function main() {
   initDivs();
   log.init();
+  log.active('Starting ...');
   await ml.load();
   await warmupModels();
 
-  await loadGallery({ folder: 'samples', match: 'objects' });
-  await loadGallery({ folder: 'samples', match: 'people' });
-  await loadGallery({ folder: 'samples', match: 'large' });
+  await loadGallery({ folder: 'media', match: 'objects' });
+  // await loadGallery({ folder: 'media', match: 'people' });
+  // await loadGallery({ folder: 'media', match: 'large' });
 }
 
 window.onload = main;
