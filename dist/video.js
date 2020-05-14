@@ -33019,36 +33019,43 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+/* eslint-disable no-multi-spaces */
 const config = {
+  // General configuration
   backEnd: 'webgl',
-  // can be webgl, cpu, wasm
+  // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
   maxSize: 780,
-  // maximum image width or height before resizing is required
+  // maximum image width or height that will be used for processing before resizing is required
   thumbnail: 120,
-  // store image thumbnail in base64 encoding for future usage in specified resolution
+  // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 10,
   // how many images to process in parallel
   squareImage: false,
-  // resize proportional to original image or to square image
+  // resize proportional to the original image or to a square image
   floatPrecision: true,
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
-    name: 'MobileNet v1',
-    modelPath: '/models/mobilenet-v1/model.json'
-  } // classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },
-  // detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 },
-  // person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 1, type: 'ssdMobilenetv1' },
-  // alternative detect models: enable darknet/yolo model in a separate module
-  // alternative face-api models
-
-  /*
-  person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'ssdMobilenetv1' },
-  person: { name: 'FaceAPI Yolo', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyYolov2' },
-  person: { name: 'FaceAPI Tiny', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' },
-  person: { name: 'FaceAPI MTCNN', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'mtcnn' },
-  */
-  // alternative classification models
+    name: 'Inception v3',
+    modelPath: 'models/inception-v3/model.json',
+    score: 0.2,
+    topK: 3
+  },
+  detect: {
+    name: 'Coco/SSD v2',
+    modelPath: 'models/cocossd-v2/model.json',
+    score: 0.4,
+    topK: 6,
+    overlap: 0.1
+  },
+  person: {
+    name: 'FaceAPI SSD',
+    modelPath: 'models/faceapi/',
+    score: 0.4,
+    topK: 1,
+    type: 'ssdMobilenetv1'
+  } // alternative classification models - you can pick none of one
 
   /*
   classify: { name: 'MobileNet v1', modelPath: '/models/mobilenet-v1/model.json' },
@@ -33060,9 +33067,53 @@ const config = {
   classify: { name: 'ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/resnet_v2_101/classification/3/default/1' },
   classify: { name: 'NasNet Mobile', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/nasnet_mobile/classification/3/default/1' },
   */
+  // alternative detect models: enable darknet/yolo model in a separate module - you can pick none, enable coco/ssd-v2 or enable darknet/yolo (not js module is initialized by default)
+  // detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 },
+  // alternative face-api models - you can pick none or one of following
+
+  /*
+  person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'ssdMobilenetv1' },
+  person: { name: 'FaceAPI Yolo', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyYolov2' },
+  person: { name: 'FaceAPI Tiny', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' },
+  person: { name: 'FaceAPI MTCNN', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'mtcnn' },
+  */
 
 };
 var _default = config;
+exports.default = _default;
+},{}],"log.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+const div = {};
+
+async function result(...msg) {
+  let msgs = '';
+  msgs += msg.map(a => a);
+  if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`; // eslint-disable-next-line no-console
+
+  console.log(...msg);
+}
+
+async function active(...msg) {
+  if (div && div.Active) div.Active.innerHTML = `${msg}<br>`; // eslint-disable-next-line no-console
+  else console.log(...msg);
+}
+
+function init() {
+  div.Log = document.getElementById('log');
+  div.Active = document.getElementById('active');
+}
+
+const log = {
+  result,
+  active,
+  init
+};
+var _default = log;
 exports.default = _default;
 },{}],"../node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -68510,49 +68561,7 @@ var version = "1.7.4",
   tfjs: version
 };
 exports.version = version$1;
-},{"@tensorflow/tfjs-core":"../node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js","@tensorflow/tfjs-layers":"../node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js","@tensorflow/tfjs-converter":"../node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js","@tensorflow/tfjs-data":"../node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js"}],"log.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var tf = _interopRequireWildcard(require("@tensorflow/tfjs"));
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-const div = {};
-
-async function result(...msg) {
-  let msgs = '';
-  msgs += msg.map(a => a);
-  if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`; // eslint-disable-next-line no-console
-
-  console.log(...msg);
-}
-
-async function active(...msg) {
-  const mem = await tf.memory();
-  if (div && div.Active) div.Active.innerHTML = `${msg}<br>Memory State: Bytes:${mem.numBytes.toLocaleString()} Buffers:${mem.numDataBuffers.toLocaleString()} Tensors:${mem.numTensors.toLocaleString()}`; // eslint-disable-next-line no-console
-  else console.log(...msg);
-}
-
-function init() {
-  div.Log = document.getElementById('log');
-  div.Active = document.getElementById('active');
-}
-
-const log = {
-  result,
-  active,
-  init
-};
-var _default = log;
-exports.default = _default;
-},{"@tensorflow/tfjs":"../node_modules/@tensorflow/tfjs/dist/tf.esm.js"}],"modelClassify.js":[function(require,module,exports) {
+},{"@tensorflow/tfjs-core":"../node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js","@tensorflow/tfjs-layers":"../node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js","@tensorflow/tfjs-converter":"../node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js","@tensorflow/tfjs-data":"../node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js"}],"modelClassify.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
