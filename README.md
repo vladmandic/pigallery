@@ -12,7 +12,8 @@ Runs main classification, detection and prediction:
 - Provide pretrained models or download them in runtime. Default is `/models`
 - Provide images. Default is `/samples`
 - Run server application `node server.js`. Server uses ParcelJS to build distribution in `/dist` and start HTTP ExpressJS server
-- Connect to <http://localhost>
+- Connect to <http://localhost/gallery> for image gallery processing
+- Connect to <http://localhost/video> for real-time video processing
 
 ## General Notes
 
