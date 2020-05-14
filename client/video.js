@@ -10,7 +10,7 @@ const div = {};
 window.config = config;
 
 // draw boxes for detected objects, faces and face elements
-async function drawBoxes(object, alpha = 1, existing) {
+async function drawDetectionBoxes(object, alpha = 1, existing) {
   if (!object) return;
   let canvas;
   let ctx;
@@ -29,7 +29,6 @@ async function drawBoxes(object, alpha = 1, existing) {
     div.Main.appendChild(canvas);
   }
   ctx.globalAlpha = alpha;
-
   // draw detected objects
   if (object.detect && object.detect[0] && object.detect[0].box) {
     ctx.strokeStyle = 'lightyellow';
@@ -47,7 +46,26 @@ async function drawBoxes(object, alpha = 1, existing) {
       ctx.fillText(`${(100 * obj.score).toFixed(0)}% ${obj.class}`, x + 2, y + 18);
     }
   }
+  // fade out a ghost at a delay
+  if (ctx.globalAlpha > 0) {
+    setTimeout(() => {
+      drawDetectionBoxes(object, alpha - 0.2, canvas);
+    }, 25);
+  } else {
+    div.Main.removeChild(canvas);
+  }
+}
 
+async function drawFaces(object) {
+  if (!object) return;
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'absolute';
+  canvas.style.top = 0; // div.Video.offsetTop;
+  canvas.style.left = 0; // div.Video.offsetLeft;
+  canvas.width = div.Video.width;
+  canvas.height = div.Video.height;
+  div.Main.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
   // draw faces
   if (object.person && object.person.detections) {
     const displaySize = { width: canvas.width, height: canvas.height };
@@ -56,11 +74,11 @@ async function drawBoxes(object, alpha = 1, existing) {
     new faceapi.draw.DrawBox(resized.detection.box, { boxColor: 'lightskyblue' }).draw(canvas);
     new faceapi.draw.DrawFaceLandmarks(resized.landmarks, { lineColor: 'skyblue', pointColor: 'deepskyblue' }).draw(canvas);
   }
-
-  // fade out a ghost at a delay
-  if (ctx.globalAlpha > 0) {
-    setTimeout(() => drawBoxes(object, alpha - 0.2, canvas), 25);
-  }
+  // delete after delay
+  setTimeout(() => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    div.Main.removeChild(canvas);
+  }, 100);
 }
 
 async function showDetails(object, time) {
@@ -79,8 +97,21 @@ async function showDetails(object, time) {
   log.active(`${classified}<br>${person}`);
 }
 
+function getCameraStream() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    log.result('Camera not supported');
+    return;
+  }
+  const constraints = { video: { width: { min: 1920 } } };
+  div.Video.width = 1920;
+  div.Video.height = 1080;
+  navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    div.Video.srcObject = stream;
+  });
+}
+
 async function processVideo() {
-  log.result('Video loaded');
+  log.result(`Video loaded: ${div.Video.videoWidth} x ${div.Video.videoHeight}`);
   // div.Video.playbackRate = 0.2;
   div.Video.play();
   setInterval(async () => {
@@ -88,7 +119,8 @@ async function processVideo() {
     const object = div.Video.readyState > 1 ? await ml.process(div.Video) : null;
     const t1 = window.performance.now();
     showDetails(object, t1 - t0);
-    drawBoxes(object);
+    drawDetectionBoxes(object);
+    drawFaces(object);
   }, 25);
 }
 
@@ -101,10 +133,16 @@ async function main() {
   await ml.load();
   log.active('Warming up models ...<br>');
   div.Video.addEventListener('loadeddata', processVideo);
-  div.Video.src = 'media/video-appartment.mp4'; div.Video.width = 512; div.Video.height = 1090;
+
+  getCameraStream();
+  // div.Video.src = 'media/video-appartment.mp4'; div.Video.width = 512; div.Video.height = 1090;
   // div.Video.src = 'media/video-dash.mp4'; div.Video.width = 1280; div.Video.height = 800;
   // div.Video.src = 'media/video-r1.mp4'; div.Video.width = 320; div.Video.height = 240;
   // div.Video.src = 'media/video-jen.mp4'; div.Video.width = 582; div.Video.height = 1034;
+
+  // transcode rtsp from camera to m3u8
+  // ffmpeg -hide_banner -y -i rtsp://admin:Mon1900@reolink-black:554/h264Preview_01_main -vcodec copy reolink.m3u8
+  // div.Video.src = 'media/reolink.m3u8'; div.Video.width = 720; div.Video.height = 480;
 }
 
 window.onload = main;

@@ -229,7 +229,7 @@ async function getImage(url) {
       thumbnailCanvas.width = image.width;
       const thumbnailCtx = thumbnailCanvas.getContext('2d');
       thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
-      const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.95);
+      const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.8);
 
       resolve({ image, canvas: offscreenCanvas, naturalHeight: image.naturalHeight, naturalWidth: image.naturalHeight, thumbnail });
     });

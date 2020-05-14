@@ -19,9 +19,14 @@ async function main() {
 
   const app = express();
   app.disable('x-powered-by');
+  app.use(express.json());
   app.use(allowCORS);
   app.use((req, res, next) => {
-    res.on('finish', () => log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`));
+    res.on('finish', () => {
+      if (res.statusCode !== 200 && res.statusCode !== 202 && res.statusCode !== 304) {
+        log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
+      }
+    });
     next();
   });
 

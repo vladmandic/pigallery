@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const parser = require('exif-parser');
 const log = require('pilogger');
 const distance = require('./geoNearest.js');
@@ -104,11 +105,7 @@ function api(app) {
     let contentType;
     if (fileExt === 'jpeg' || fileExt === 'jpg') contentType = 'image/jpeg';
     if (fileExt === 'mp4') contentType = 'video/mp4';
-    if (!contentType) {
-      res.sendStatus(405);
-      return;
-    }
-    if (req.headers.range) {
+    if (contentType && req.headers.range) {
       const parts = req.headers.range.replace(/bytes=/, '').split('-');
       const start = parseInt(parts[0], 10);
       const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
@@ -121,14 +118,22 @@ function api(app) {
       };
       res.writeHead(206, head);
       fs.createReadStream(fileName, { start, end }).pipe(res);
-    } else {
+    } else if (contentType) {
       const head = {
         'Content-Length': fileSize,
         'Content-Type': contentType,
       };
       res.writeHead(200, head);
       fs.createReadStream(fileName).pipe(res);
+    } else {
+      res.sendFile(fileName, { root: path.join(__dirname, '../') });
     }
+  });
+
+  app.post('/post', (req, res) => {
+    const json = req.body;
+    log.data('Received data for:', json.image, JSON.stringify(json).length);
+    res.status(202).send({ ok: true });
   });
 }
 
