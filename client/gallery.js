@@ -192,18 +192,32 @@ async function printResult(object) {
   div.PopupImage.addEventListener('load', showDetails); // don't call showDetails directly to ensure image is loaded
 }
 
-function filterResults(what) {
-  log.active('Searching ...');
-  const found = results.filter((obj) => {
+function filterWord(object, word) {
+  if (!object) return null;
+  const skip = ['in', 'a', 'the', 'of'];
+  if (skip.includes(word)) return object;
+  const res = object.filter((obj) => {
     let ok = false;
     for (const tag of obj.tags) {
       const str = Object.values(tag)[0].toString() || '';
-      ok |= str.startsWith(what);
+      ok |= str.includes(word);
     }
     return ok;
   });
-  log.result(`Searching for ${what} found ${found.length || 0} out of ${results.length} matches`);
-  div.Found.innerText = `Found ${found.length || 0} results`;
+  return res;
+}
+
+function filterResults(words) {
+  log.active('Searching ...');
+  let found = results;
+  let foundWords = 0;
+  for (const word of words.split(' ')) {
+    found = filterWord(found, word);
+    foundWords += (found && found.length > 0) ? 1 : 0;
+  }
+  log.result(`Searching for "${words}" found ${foundWords} words in ${found.length || 0} results out of ${results.length} matches`);
+  if (found && found.length > 0) div.Found.innerText = `Found ${found.length} results`;
+  else div.Found.innerText = `Found ${foundWords} of ${words.split(' ').length} words`;
   div.Result.innerHTML = '';
   for (const obj of found) {
     printResult(obj);
@@ -236,6 +250,20 @@ function statSummary() {
   return stats;
 }
 
+async function postResult(object) {
+  const json = JSON.stringify(object);
+  const post = await fetch('/post', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: json,
+  });
+  try {
+    await post.json();
+  } catch (err) {
+    log.result(`Post error ${JSON.stringify(err)}`);
+  }
+}
+
 // calls main detectxion and then print results for all images matching spec
 async function loadGallery(spec) {
   log.active(`Fetching list for "${spec.folder}" matching "${spec.match}"`);
@@ -248,9 +276,10 @@ async function loadGallery(spec) {
   for (const f of dir.files) {
     const url = `${spec.folder}/${f}`;
     promises.push(ml.process(url).then((obj) => {
+      log.active(`Printing: ${url}`);
+      postResult(obj);
       results.push(obj);
       tmpResults.push(obj);
-      log.active(`Printing: ${url}`);
       printResult(obj, url);
     }));
     if (promises.length >= config.batchProcessing) {
@@ -298,7 +327,7 @@ async function main() {
   await warmupModels();
 
   await loadGallery({ folder: 'media', match: 'objects' });
-  // await loadGallery({ folder: 'media', match: 'people' });
+  await loadGallery({ folder: 'media', match: 'people' });
   // await loadGallery({ folder: 'media', match: 'large' });
 }
 
