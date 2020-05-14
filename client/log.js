@@ -1,5 +1,3 @@
-import * as tf from '@tensorflow/tfjs';
-
 const div = {};
 
 async function result(...msg) {
@@ -11,8 +9,7 @@ async function result(...msg) {
 }
 
 async function active(...msg) {
-  const mem = await tf.memory();
-  if (div && div.Active) div.Active.innerHTML = `${msg}<br>Memory State: Bytes:${mem.numBytes.toLocaleString()} Buffers:${mem.numDataBuffers.toLocaleString()} Tensors:${mem.numTensors.toLocaleString()}`;
+  if (div && div.Active) div.Active.innerHTML = `${msg}<br>`;
   // eslint-disable-next-line no-console
   else console.log(...msg);
 }

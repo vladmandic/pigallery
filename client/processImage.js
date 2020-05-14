@@ -111,11 +111,11 @@ function buildTags(object) {
   const tags = [];
   const filePart = object.image.split('/');
   for (const name of filePart) tags.push({ name: name.toLowerCase() });
-  if (object.image.pixels) {
+  if (object.pixels) {
     let size;
-    if (object.image.pixels / 1024 / 1024 > 40) size = 'huge';
-    else if (object.image.pixels / 1024 / 1024 > 10) size = 'large';
-    else if (object.image.pixels / 1024 / 1024 > 1) size = 'medium';
+    if (object.pixels / 1024 / 1024 > 40) size = 'huge';
+    else if (object.pixels / 1024 / 1024 > 10) size = 'large';
+    else if (object.pixels / 1024 / 1024 > 1) size = 'medium';
     else size = 'small';
     tags.push({ size });
   }
@@ -229,7 +229,7 @@ async function getImage(url) {
       thumbnailCanvas.width = image.width;
       const thumbnailCtx = thumbnailCanvas.getContext('2d');
       thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
-      const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.75);
+      const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.95);
 
       resolve({ image, canvas: offscreenCanvas, naturalHeight: image.naturalHeight, naturalWidth: image.naturalHeight, thumbnail });
     });
