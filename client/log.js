@@ -3,7 +3,9 @@ import * as tf from '@tensorflow/tfjs';
 const div = {};
 
 async function result(...msg) {
-  if (div && div.Log) div.Log.innerHTML += `${msg}<br>`;
+  let msgs = '';
+  msgs += msg.map((a) => a);
+  if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
   // eslint-disable-next-line no-console
   console.log(...msg);
 }

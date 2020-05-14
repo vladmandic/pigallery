@@ -33024,6 +33024,8 @@ const config = {
   // can be webgl, cpu, wasm
   maxSize: 780,
   // maximum image width or height before resizing is required
+  thumbnail: 120,
+  // store image thumbnail in base64 encoding for future usage in specified resolution
   batchProcessing: 10,
   // how many images to process in parallel
   squareImage: false,
@@ -33032,25 +33034,12 @@ const config = {
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
-    name: 'Inception v3',
-    modelPath: 'models/inception-v3/model.json',
-    score: 0.2,
-    topK: 3
-  },
-  detect: {
-    name: 'Coco/SSD v2',
-    modelPath: 'models/cocossd-v2/model.json',
-    score: 0.4,
-    topK: 6,
-    overlap: 0.1
-  },
-  person: {
-    name: 'FaceAPI SSD',
-    modelPath: 'models/faceapi/',
-    score: 0.4,
-    topK: 1,
-    type: 'ssdMobilenetv1'
-  } // alternative detect models: enable darknet/yolo model in a separate module
+    name: 'MobileNet v1',
+    modelPath: '/models/mobilenet-v1/model.json'
+  } // classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },
+  // detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 },
+  // person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 1, type: 'ssdMobilenetv1' },
+  // alternative detect models: enable darknet/yolo model in a separate module
   // alternative face-api models
 
   /*
@@ -68538,7 +68527,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 const div = {};
 
 async function result(...msg) {
-  if (div && div.Log) div.Log.innerHTML += `${msg}<br>`; // eslint-disable-next-line no-console
+  let msgs = '';
+  msgs += msg.map(a => a);
+  if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`; // eslint-disable-next-line no-console
 
   console.log(...msg);
 }
@@ -68972,7 +68963,7 @@ var _config = _interopRequireDefault(require("./config.js"));
 
 var _log = _interopRequireDefault(require("./log.js"));
 
-var _processVideo = _interopRequireDefault(require("./processVideo.js"));
+var ml = _interopRequireWildcard(require("./processVideo.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -69073,7 +69064,7 @@ async function processVideo() {
   div.Video.play();
   setInterval(async () => {
     const t0 = window.performance.now();
-    const object = div.Video.readyState > 1 ? await _processVideo.default.process(div.Video) : null;
+    const object = div.Video.readyState > 1 ? await ml.process(div.Video) : null;
     const t1 = window.performance.now();
     showDetails(object, t1 - t0);
     drawBoxes(object);
@@ -69089,18 +69080,18 @@ async function main() {
 
   _log.default.active('Loading models ...<br>');
 
-  await _processVideo.default.load();
+  await ml.load();
 
   _log.default.active('Warming up models ...<br>');
 
   div.Video.addEventListener('loadeddata', processVideo);
-  div.Video.src = 'samples/video-appartment.mp4';
+  div.Video.src = 'media/video-appartment.mp4';
   div.Video.width = 512;
-  div.Video.height = 1090; // div.Video.src = 'samples/video-dash.mp4'; div.Video.width = 1280; div.Video.height = 800;
-  // div.Video.src = 'samples/video-r1.mp4'; div.Video.width = 320; div.Video.height = 240;
-  // div.Video.src = 'samples/video-jen.mp4'; div.Video.width = 582; div.Video.height = 1034;
+  div.Video.height = 1090; // div.Video.src = 'media/video-dash.mp4'; div.Video.width = 1280; div.Video.height = 800;
+  // div.Video.src = 'media/video-r1.mp4'; div.Video.width = 320; div.Video.height = 240;
+  // div.Video.src = 'media/video-jen.mp4'; div.Video.width = 582; div.Video.height = 1034;
 }
 
-window.onload = main; // video stream: https://medium.com/better-programming/video-stream-with-node-js-and-html5-320b3191a6b6
+window.onload = main;
 },{"face-api.js":"../node_modules/face-api.js/build/es6/index.js","./config.js":"config.js","./log.js":"log.js","./processVideo.js":"processVideo.js"}]},{},["video.js"], null)
 //# sourceMappingURL=/video.js.map

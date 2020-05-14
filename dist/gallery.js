@@ -33024,6 +33024,8 @@ const config = {
   // can be webgl, cpu, wasm
   maxSize: 780,
   // maximum image width or height before resizing is required
+  thumbnail: 120,
+  // store image thumbnail in base64 encoding for future usage in specified resolution
   batchProcessing: 10,
   // how many images to process in parallel
   squareImage: false,
@@ -33032,25 +33034,12 @@ const config = {
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
-    name: 'Inception v3',
-    modelPath: 'models/inception-v3/model.json',
-    score: 0.2,
-    topK: 3
-  },
-  detect: {
-    name: 'Coco/SSD v2',
-    modelPath: 'models/cocossd-v2/model.json',
-    score: 0.4,
-    topK: 6,
-    overlap: 0.1
-  },
-  person: {
-    name: 'FaceAPI SSD',
-    modelPath: 'models/faceapi/',
-    score: 0.4,
-    topK: 1,
-    type: 'ssdMobilenetv1'
-  } // alternative detect models: enable darknet/yolo model in a separate module
+    name: 'MobileNet v1',
+    modelPath: '/models/mobilenet-v1/model.json'
+  } // classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },
+  // detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 },
+  // person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 1, type: 'ssdMobilenetv1' },
+  // alternative detect models: enable darknet/yolo model in a separate module
   // alternative face-api models
 
   /*
@@ -68538,7 +68527,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 const div = {};
 
 async function result(...msg) {
-  if (div && div.Log) div.Log.innerHTML += `${msg}<br>`; // eslint-disable-next-line no-console
+  let msgs = '';
+  msgs += msg.map(a => a);
+  if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`; // eslint-disable-next-line no-console
 
   console.log(...msg);
 }
@@ -68793,6 +68784,8 @@ var _modelDetect = _interopRequireDefault(require("./modelDetect.js"));
 
 var _log = _interopRequireDefault(require("./log.js"));
 
+var _config = _interopRequireDefault(require("./config.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
@@ -68835,72 +68828,72 @@ async function loadModels() {
 
   _log.default.result(`Initializing TensorFlow/JS version ${tf.version.tfjs}`);
 
-  await tf.setBackend(window.config.backEnd);
+  await tf.setBackend(_config.default.backEnd);
   await tf.enableProdMode();
-  if (!window.config.floatPrecision) await tf.webgl.forceHalfFloat();
+  if (!_config.default.floatPrecision) await tf.webgl.forceHalfFloat();
 
   _log.default.result(`Configured Backend: ${tf.getBackend().toUpperCase()}`);
 
   _log.default.result('Configuration:');
 
-  _log.default.result(`&nbsp Parallel processing: ${window.config.batchProcessing} parallel images`);
+  _log.default.result(`  Parallel processing: ${_config.default.batchProcessing} parallel images`);
 
-  _log.default.result(`&nbsp Forced image resize: ${window.config.maxSize}px maximum shape: ${window.config.squareImage ? 'square' : 'native'}`);
+  _log.default.result(`  Forced image resize: ${_config.default.maxSize}px maximum shape: ${_config.default.squareImage ? 'square' : 'native'}`);
 
-  _log.default.result(`&nbsp Flaoat Precision: ${window.config.floatPrecision ? '32bit' : '16bit'}`);
+  _log.default.result(`  Float Precision: ${_config.default.floatPrecision ? '32bit' : '16bit'}`);
 
-  _log.default.result(`&nbsp Classify: ${JSONtoStr(window.config.classify)}`);
+  _log.default.result(`  Classify: ${JSONtoStr(_config.default.classify)}`);
 
-  _log.default.result(`&nbsp Detect: ${JSONtoStr(window.config.detect)}`);
+  _log.default.result(`  Detect: ${JSONtoStr(_config.default.detect)}`);
 
-  _log.default.result(`&nbsp Person: ${JSONtoStr(window.config.person)}`);
+  _log.default.result(`  Person: ${JSONtoStr(_config.default.person)}`);
 
   _log.default.result('Loading models...');
 
   const t0 = window.performance.now();
 
-  if (window.config.classify) {
-    _log.default.result(`&nbsp Model: ${window.config.classify.name}`);
+  if (_config.default.classify) {
+    _log.default.result(`  Model: ${_config.default.classify.name}`);
 
-    models.classify = await _modelClassify.default.load(window.config.classify);
+    models.classify = await _modelClassify.default.load(_config.default.classify);
   }
 
-  if (window.config.detect) {
-    _log.default.result(`&nbsp Model: ${window.config.detect.name}`);
+  if (_config.default.detect) {
+    _log.default.result(`  Model: ${_config.default.detect.name}`);
 
-    models.detect = await _modelDetect.default.load(window.config.detect);
+    models.detect = await _modelDetect.default.load(_config.default.detect);
   }
 
-  if (window.config.person) {
-    _log.default.result(`&nbsp Model: ${window.config.person.name}`);
+  if (_config.default.person) {
+    _log.default.result(`  Model: ${_config.default.person.name}`);
 
-    switch (window.config.person.type) {
+    switch (_config.default.person.type) {
       case 'tinyFaceDetector':
-        await faceapi.nets.tinyFaceDetector.load(window.config.person.modelPath);
+        await faceapi.nets.tinyFaceDetector.load(_config.default.person.modelPath);
         faceapi.options = new faceapi.TinyFaceDetectorOptions({
-          scoreThreshold: window.config.person.score,
+          scoreThreshold: _config.default.person.score,
           inputSize: 416
         });
         break;
 
       case 'ssdMobilenetv1':
-        await faceapi.nets.ssdMobilenetv1.load(window.config.person.modelPath);
+        await faceapi.nets.ssdMobilenetv1.load(_config.default.person.modelPath);
         faceapi.options = new faceapi.SsdMobilenetv1Options({
-          minConfidence: window.config.person.score,
-          maxResults: window.config.person.topK
+          minConfidence: _config.default.person.score,
+          maxResults: _config.default.person.topK
         });
         break;
 
       case 'tinyYolov2':
-        await faceapi.nets.tinyYolov2.load(window.config.person.modelPath);
+        await faceapi.nets.tinyYolov2.load(_config.default.person.modelPath);
         faceapi.options = new faceapi.TinyYolov2Options({
-          scoreThreshold: window.config.person.score,
+          scoreThreshold: _config.default.person.score,
           inputSize: 416
         });
         break;
 
       case 'mtcnn':
-        await faceapi.nets.mtcnn.load(window.config.person.modelPath);
+        await faceapi.nets.mtcnn.load(_config.default.person.modelPath);
         faceapi.options = new faceapi.MtcnnOptions({
           minFaceSize: 100,
           scaleFactor: 0.8
@@ -68910,14 +68903,14 @@ async function loadModels() {
       default:
     }
 
-    await faceapi.nets.ageGenderNet.load(window.config.person.modelPath);
-    await faceapi.nets.faceLandmark68Net.load(window.config.person.modelPath);
-    await faceapi.nets.faceRecognitionNet.load(window.config.person.modelPath);
-    await faceapi.nets.faceExpressionNet.load(window.config.person.modelPath);
+    await faceapi.nets.ageGenderNet.load(_config.default.person.modelPath);
+    await faceapi.nets.faceLandmark68Net.load(_config.default.person.modelPath);
+    await faceapi.nets.faceRecognitionNet.load(_config.default.person.modelPath);
+    await faceapi.nets.faceExpressionNet.load(_config.default.person.modelPath);
     models.faceapi = faceapi;
   }
   /* working but unreliable
-  log.result('&nbsp Model: DarkNet/Yolo-v3');
+  log.result('  Model: DarkNet/Yolo-v3');
   models.yolo = await yolo.v1tiny('/models/yolo-v1-tiny/model.json');
   models.yolo = await yolo.v2tiny('/models/yolo-v2-tiny/model.json');
   models.yolo = await yolo.v3tiny('/models/yolo-v3-tiny/model.json');
@@ -68925,7 +68918,7 @@ async function loadModels() {
   */
 
   /* working but unreliable
-  log.result('&nbsp Model: NSFW');
+  log.result('  Model: NSFW');
   models.nsfw = await nsfwjs.load('/models/nsfw-mini/', { size: 224, type: 'layers' });
   models.nsfw = await nsfwjs.load('/models/nsfw-inception-v3/', { size: 299, type: 'layers' });
   */
@@ -68941,6 +68934,148 @@ async function loadModels() {
 
   const res = await fetch('/assets/WordNet-Synset.json');
   wordNet = await res.json();
+}
+
+function buildTags(object) {
+  const tags = [];
+  const filePart = object.image.split('/');
+
+  for (const name of filePart) tags.push({
+    name: name.toLowerCase()
+  });
+
+  if (object.image.pixels) {
+    let size;
+    if (object.image.pixels / 1024 / 1024 > 40) size = 'huge';else if (object.image.pixels / 1024 / 1024 > 10) size = 'large';else if (object.image.pixels / 1024 / 1024 > 1) size = 'medium';else size = 'small';
+    tags.push({
+      size
+    });
+  }
+
+  if (object.classify) {
+    tags.push({
+      property: 'classified'
+    });
+
+    for (const obj of object.classify) tags.push({
+      classified: obj.class
+    });
+  }
+
+  if (object.detect) {
+    tags.push({
+      property: 'detected'
+    });
+
+    for (const obj of object.detect) tags.push({
+      detected: obj.class
+    });
+  }
+
+  if (object.descriptions) {
+    tags.push({
+      property: 'described'
+    });
+
+    for (const description of object.descriptions) {
+      for (const lines of description) tags.push({
+        description: lines.name
+      });
+    }
+  }
+
+  if (object.person && object.person.age) {
+    let age;
+    if (object.person.age < 10) age = 'kid';else if (object.person.age < 20) age = 'teen';else if (object.person.age < 30) age = '20ies';else if (object.person.age < 40) age = '30ies';else if (object.person.age < 50) age = '40ies';else if (object.person.age < 60) age = '50ies';else if (object.person.age < 100) age = 'old';else age = 'uknown';
+    tags.push({
+      property: 'face'
+    });
+    tags.push({
+      gender: object.person.gender
+    }, {
+      emotion: object.person.emotion
+    }, {
+      age
+    });
+  }
+
+  if (object.exif && object.exif.created) {
+    tags.push({
+      property: 'exif'
+    });
+    if (object.exif.make) tags.push({
+      camera: object.exif.make.toLowerCase()
+    });
+    if (object.exif.model) tags.push({
+      camera: object.exif.model.toLowerCase()
+    });
+    if (object.exif.lens) tags.push({
+      lens: object.exif.lens.toLowerCase()
+    });
+    if (object.exif.created) tags.push({
+      created: new Date(1000 * object.exif.created)
+    });
+    if (object.exif.created) tags.push({
+      year: new Date(1000 * object.exif.created).getFullYear()
+    });
+    if (object.exif.modified) tags.push({
+      edited: new Date(1000 * object.exif.modified)
+    });
+    if (object.exif.software) tags.push({
+      software: object.exif.software.toLowerCase()
+    });
+
+    if (object.exif.city) {
+      tags.push({
+        city: object.exif.city.toLowerCase()
+      }, {
+        country: object.exif.country.toLowerCase()
+      }, {
+        continent: object.exif.continent.toLowerCase()
+      }, {
+        near: object.exif.near.toLowerCase()
+      });
+    }
+
+    if (object.exif.iso && object.exif.apperture && object.exif.exposure) {
+      const conditions = object.exif.iso / object.exif.apperture ** 2 * object.exif.exposure;
+      if (conditions < 0.01) tags.push({
+        conditions: 'bright'
+      }, {
+        conditions: 'outdoors'
+      });else if (conditions < 0.1) tags.push({
+        conditions: 'outdoors'
+      });else if (conditions < 5) tags.push({
+        conditions: 'indoors'
+      });else if (conditions < 20) tags.push({
+        conditions: 'night'
+      });else tags.push({
+        conditions: 'night'
+      }, {
+        conditions: 'long'
+      });
+    }
+
+    if (object.exif.fov) {
+      if (object.exif.fov > 200) tags.push({
+        zoom: 'superzoom'
+      }, {
+        zoom: 'zoom'
+      });else if (object.exif.fov > 100) tags.push({
+        zoom: 'zoom'
+      });else if (object.exif.fov > 40) tags.push({
+        zoom: 'portrait'
+      });else if (object.exif.fov > 20) tags.push({
+        zoom: 'wide'
+      });else tags.push({
+        zoom: 'wide'
+      }, {
+        zoom: 'ultrawide'
+      });
+    }
+  }
+
+  return tags;
 }
 
 faceapi.classify = async image => {
@@ -68973,18 +69108,19 @@ faceapi.classify = async image => {
   return null;
 };
 
-async function getImage(url, maxSize) {
+async function getImage(url) {
   return new Promise(resolve => {
     const image = new Image();
     image.addEventListener('load', () => {
-      if (Math.max(image.width, image.height) > maxSize) {
-        if (window.config.squareImage) {
-          image.height = maxSize;
-          image.width = maxSize;
+      const ratio = 1.0 * image.height / image.width;
+
+      if (Math.max(image.width, image.height) > _config.default.maxSize) {
+        if (_config.default.squareImage) {
+          image.height = _config.default.maxSize;
+          image.width = _config.default.maxSize;
         } else {
-          const ratio = 1.0 * image.height / image.width;
-          image.width = ratio < 1 ? maxSize : maxSize / ratio;
-          image.height = ratio > 1 ? maxSize : maxSize * ratio;
+          image.width = ratio <= 1 ? _config.default.maxSize : 1.0 * _config.default.maxSize / ratio;
+          image.height = ratio >= 1 ? _config.default.maxSize : 1.0 * _config.default.maxSize * ratio;
         }
       }
 
@@ -68993,9 +69129,29 @@ async function getImage(url, maxSize) {
       offscreenCanvas.width = image.width;
       const ctx = offscreenCanvas.getContext('2d');
       ctx.drawImage(image, 0, 0, image.width, image.height);
+
+      if (Math.max(image.width, image.height) > _config.default.thumbnail) {
+        if (_config.default.squareImage) {
+          image.height = _config.default.thumbnail;
+          image.width = _config.default.thumbnail;
+        } else {
+          image.width = ratio <= 1 ? _config.default.thumbnail : 1.0 * _config.default.thumbnail / ratio;
+          image.height = ratio >= 1 ? _config.default.thumbnail : 1.0 * _config.default.thumbnail * ratio;
+        }
+      }
+
+      const thumbnailCanvas = document.createElement('canvas');
+      thumbnailCanvas.height = image.height;
+      thumbnailCanvas.width = image.width;
+      const thumbnailCtx = thumbnailCanvas.getContext('2d');
+      thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
+      const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.75);
       resolve({
         image,
-        canvas: offscreenCanvas
+        canvas: offscreenCanvas,
+        naturalHeight: image.naturalHeight,
+        naturalWidth: image.naturalHeight,
+        thumbnail
       });
     });
     image.src = url;
@@ -69007,7 +69163,7 @@ async function processImage(name) {
 
   const t0 = window.performance.now();
   const ti0 = window.performance.now();
-  const image = await getImage(name, window.config.maxSize);
+  const image = await getImage(name);
   const ti1 = window.performance.now();
   const res = {};
 
@@ -69113,10 +69269,16 @@ async function processImage(name) {
   const obj = {
     id: id++,
     image: name,
-    size: {
+    processedSize: {
       width: image.canvas.width,
       height: image.canvas.height
     },
+    pixels: image.naturalHeight * image.naturalWidth,
+    naturalSize: {
+      width: image.naturalHeight,
+      height: image.naturalWidth
+    },
+    thumbnail: image.thumbnail,
     exif: res.exif,
     classify: res.classify,
     detect: res.detect,
@@ -69132,6 +69294,7 @@ async function processImage(name) {
       exif: te1 - te0
     }
   };
+  obj.tags = buildTags(obj);
 
   _log.default.active(`Done: ${name}`);
 
@@ -69141,7 +69304,8 @@ async function processImage(name) {
 exports.load = loadModels;
 exports.process = processImage;
 exports.getImage = getImage;
-},{"@tensorflow/tfjs":"../node_modules/@tensorflow/tfjs/dist/tf.esm.js","face-api.js":"../node_modules/face-api.js/build/es6/index.js","./modelClassify.js":"modelClassify.js","./modelDetect.js":"modelDetect.js","./log.js":"log.js"}],"gallery.js":[function(require,module,exports) {
+exports.JSONtoStr = JSONtoStr;
+},{"@tensorflow/tfjs":"../node_modules/@tensorflow/tfjs/dist/tf.esm.js","face-api.js":"../node_modules/face-api.js/build/es6/index.js","./modelClassify.js":"modelClassify.js","./modelDetect.js":"modelDetect.js","./log.js":"log.js","./config.js":"config.js"}],"gallery.js":[function(require,module,exports) {
 "use strict";
 
 var faceapi = _interopRequireWildcard(require("face-api.js"));
@@ -69150,7 +69314,7 @@ var _config = _interopRequireDefault(require("./config.js"));
 
 var _log = _interopRequireDefault(require("./log.js"));
 
-var _processImage = _interopRequireDefault(require("./processImage.js"));
+var ml = _interopRequireWildcard(require("./processImage.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -69161,8 +69325,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 // import * as nsfwjs from 'nsfwjs';
 // import yolo from './modelYolo.js';
 const results = [];
-const div = {};
-window.config = _config.default; // pre-fetching DOM elements to avoid multiple runtime lookups
+const div = {}; // pre-fetching DOM elements to avoid multiple runtime lookups
 
 function initDivs() {
   div.Result = document.getElementById('result');
@@ -69216,10 +69379,10 @@ function drawBoxes(img, object) {
   if (object.detect) {
     for (const obj of object.detect) {
       ctx.beginPath();
-      const x = obj.box[0] * img.width / object.size.width;
-      const y = obj.box[1] * img.height / object.size.height;
-      const width = obj.box[2] * img.width / object.size.width;
-      const height = obj.box[3] * img.height / object.size.height;
+      const x = obj.box[0] * img.width / object.processedSize.width;
+      const y = obj.box[1] * img.height / object.processedSize.height;
+      const width = obj.box[2] * img.width / object.processedSize.width;
+      const height = obj.box[3] * img.height / object.processedSize.height;
       ctx.rect(x, y, width, height);
       ctx.stroke();
       ctx.fillStyle = 'lightyellow';
@@ -69298,7 +69461,8 @@ async function showDetails() {
       <h2>${classified}</h2>
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
-      ${desc}<br>
+      ${desc}
+      <h2>Tags</h2>${ml.JSONtoStr(object.tags)}<br>
       </div>
     `; // const faceDetails = drawBoxes(div.PopupImage, object) || '';
 
@@ -69332,14 +69496,13 @@ async function printResult(object) {
   const divItem = document.createElement('div');
   divItem.class = 'col';
   divItem.style = 'display: flex';
-  const img = await _processImage.default.getImage(object.image, 110);
-  const imageData = img.canvas.toDataURL('image/jpeg', 0.5);
   divItem.innerHTML = `
-    <div class="col" style="height: 114px; min-width: 114px; max-width: 114px">
-      <img id="thumb-${object.id}" src="${imageData}" width="106px" height="106px">
+    <div class="col" style="max-height: ${_config.default.thumbnail}px; min-width: ${_config.default.thumbnail}px; max-width: ${_config.default.thumbnail}px; padding: 0">
+      <img id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width="${_config.default.thumbnail}px" height="${_config.default.thumbnail}px">
     </div>
-    <div id="desc-${object.id}" class="col" style="height: 114px; min-width: 575px; max-width: 575px">
-      Image ${decodeURI(object.image)} processed in ${object.perf.total.toFixed(0)}ms src:${img.image.naturalWidth}x${img.image.naturalHeight} tgt:${img.canvas.width}x${img.canvas.height}<br>
+    <div id="desc-${object.id}" class="col" style="height: ${_config.default.thumbnail}px; min-width: 572px; max-width: 572px; padding: 4px">
+      Image ${decodeURI(object.image)} processed in ${object.perf.total.toFixed(0)}ms 
+      src:${object.naturalSize.width}x${object.naturalSize.height} tgt:${object.processedSize.width}x${object.processedSize.height}<br>
       Metadata in ${(object.perf.wordnet + object.perf.exif).toFixed(0)}ms<br>
       Classified in ${object.perf.classify.toFixed(0)}ms ${classified}<br>
       Detected in ${object.perf.detect.toFixed(0)}ms ${detected}<br>
@@ -69409,7 +69572,7 @@ async function loadGallery(spec) {
 
   for (const f of dir.files) {
     const url = `${spec.folder}/${f}`;
-    promises.push(_processImage.default.process(url).then(obj => {
+    promises.push(ml.process(url).then(obj => {
       results.push(obj);
 
       _log.default.active(`Printing: ${url}`);
@@ -69432,19 +69595,19 @@ async function loadGallery(spec) {
 
   const s = statSummary();
 
-  _log.default.result(`&nbsp Results: ${results.length} in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
+  _log.default.result(`  Results: ${results.length} in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
 
-  _log.default.result(`&nbsp Proepare Image: ${results.length} images in ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(2)} ms`);
+  _log.default.result(`  Prepare Image: ${results.length} images in ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(2)} ms`);
 
-  _log.default.result(`&nbsp Classification: ${s.classify} images in ${s.classifyTime.toFixed(0)} ms average ${s.classifyAvg.toFixed(2)} ms`);
+  _log.default.result(`  Classification: ${s.classify} images in ${s.classifyTime.toFixed(0)} ms average ${s.classifyAvg.toFixed(2)} ms`);
 
-  _log.default.result(`&nbsp Detection: ${s.detect} images in ${s.detectTime.toFixed(0)} ms average ${s.detectAvg.toFixed(2)} ms`);
+  _log.default.result(`  Detection: ${s.detect} images in ${s.detectTime.toFixed(0)} ms average ${s.detectAvg.toFixed(2)} ms`);
 
-  _log.default.result(`&nbsp Person Analysis: ${s.person} images in ${s.personTime.toFixed(0)} ms average ${s.personAvg.toFixed(2)} ms`);
+  _log.default.result(`  Person Analysis: ${s.person} images in ${s.personTime.toFixed(0)} ms average ${s.personAvg.toFixed(2)} ms`);
 
-  _log.default.result(`&nbsp Metadata Extraction: ${s.exif} images in ${s.exifTime.toFixed(0)} ms average ${s.exifAvg.toFixed(2)} ms`);
+  _log.default.result(`  Metadata Extraction: ${s.exif} images in ${s.exifTime.toFixed(0)} ms average ${s.exifAvg.toFixed(2)} ms`);
 
-  _log.default.result(`&nbsp Definition Loopkup: ${s.wordnet} images in ${s.wordnetTime.toFixed(0)} ms average ${s.wordnetAvg.toFixed(2)} ms`);
+  _log.default.result(`  Definition Loopkup: ${s.wordnet} images in ${s.wordnetTime.toFixed(0)} ms average ${s.wordnetAvg.toFixed(2)} ms`);
 
   _log.default.active('Idle...');
 } // initial complex image is used to trigger all models thus warming them up
@@ -69454,7 +69617,7 @@ async function warmupModels() {
   _log.default.result('Models warming up ...');
 
   const t0 = window.performance.now();
-  const obj = await _processImage.default.process('samples/warmup.jpg');
+  const obj = await ml.process('media/warmup.jpg');
   results.push(obj);
 
   _log.default.active(`Printing: ${name}`);
@@ -69470,20 +69633,15 @@ async function main() {
 
   _log.default.init();
 
-  await _processImage.default.load();
+  _log.default.active('Starting ...');
+
+  await ml.load();
   await warmupModels();
   await loadGallery({
-    folder: 'samples',
+    folder: 'media',
     match: 'objects'
-  });
-  await loadGallery({
-    folder: 'samples',
-    match: 'people'
-  });
-  await loadGallery({
-    folder: 'samples',
-    match: 'large'
-  });
+  }); // await loadGallery({ folder: 'media', match: 'people' });
+  // await loadGallery({ folder: 'media', match: 'large' });
 }
 
 window.onload = main;

@@ -7,6 +7,9 @@
     "start": "node source/server.js",
     "upgrade": "npm update && npm dedupe && npm prune"
   },
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "browserslist": [
     "last 1 Chrome version"
   ],
