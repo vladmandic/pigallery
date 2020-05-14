@@ -14,6 +14,13 @@ function initDivs() {
   div.Popup = document.getElementById('popup');
   div.PopupImage = document.getElementById('popup-image');
   div.PopupDetails = document.getElementById('popup-details');
+  div.Found = document.getElementById('found');
+  div.Filter = document.getElementById('filter');
+  div.Filter.addEventListener('keyup', (event) => {
+    event.preventDefault();
+    // eslint-disable-next-line no-use-before-define
+    if (event.keyCode === 13) filterResults(div.Filter.value);
+  });
   div.canvas = document.getElementById('popup-canvas');
 }
 
@@ -185,6 +192,25 @@ async function printResult(object) {
   div.PopupImage.addEventListener('load', showDetails); // don't call showDetails directly to ensure image is loaded
 }
 
+function filterResults(what) {
+  log.active('Searching ...');
+  const found = results.filter((obj) => {
+    let ok = false;
+    for (const tag of obj.tags) {
+      const str = Object.values(tag)[0].toString() || '';
+      ok |= str.startsWith(what);
+    }
+    return ok;
+  });
+  log.result(`Searching for ${what} found ${found.length || 0} out of ${results.length} matches`);
+  div.Found.innerText = `Found ${found.length || 0} results`;
+  div.Result.innerHTML = '';
+  for (const obj of found) {
+    printResult(obj);
+  }
+  log.active('Idle ...');
+}
+
 // prepare stats
 function statSummary() {
   const stats = { loadTime: 0, exif: 0, exifTime: 0, classify: 0, classifyTime: 0, detect: 0, detectTime: 0, person: 0, personTime: 0, wordnet: 0, wordnetTime: 0 };
@@ -218,10 +244,12 @@ async function loadGallery(spec) {
   log.result(`Queued: ${dir.files.length} images for processing ...`);
   const t0 = window.performance.now();
   const promises = [];
+  const tmpResults = [];
   for (const f of dir.files) {
     const url = `${spec.folder}/${f}`;
     promises.push(ml.process(url).then((obj) => {
       results.push(obj);
+      tmpResults.push(obj);
       log.active(`Printing: ${url}`);
       printResult(obj, url);
     }));
@@ -232,7 +260,12 @@ async function loadGallery(spec) {
   }
   if (promises.length > 0) await Promise.all(promises);
   const t1 = window.performance.now();
-  log.result(`Finished processed ${dir.files.length} images from "${spec.folder}" matching "${spec.match}": total: ${(t1 - t0).toLocaleString()}ms average: ${((t1 - t0) / dir.files.length).toLocaleString()}ms / image`);
+  log.result(`Finished 
+    processed ${dir.files.length} images from "${spec.folder}" matching "${spec.match}"
+    time total : ${(t1 - t0).toLocaleString()}ms average: ${((t1 - t0) / dir.files.length).toLocaleString()}ms / image 
+    result set current size: ${JSON.stringify(tmpResults).length.toLocaleString()} bytes total size: ${JSON.stringify(results).length.toLocaleString()} bytes
+  `);
+  tmpResults.length = 0;
   log.result('Statistics:');
   const s = statSummary();
   log.result(`  Results: ${results.length} in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
