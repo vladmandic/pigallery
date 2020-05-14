@@ -5,6 +5,7 @@ import * as faceapi from 'face-api.js';
 import modelClassify from './modelClassify.js';
 import modelDetect from './modelDetect.js';
 import log from './log.js';
+import config from './config.js';
 
 let wordNet = {};
 const models = {};
@@ -30,61 +31,61 @@ function searchClasses(wnid) {
 async function loadModels() {
   log.result('Starting Image Analsys');
   log.result(`Initializing TensorFlow/JS version ${tf.version.tfjs}`);
-  await tf.setBackend(window.config.backEnd);
+  await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
-  if (!window.config.floatPrecision) await tf.webgl.forceHalfFloat();
+  if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
   log.result(`Configured Backend: ${tf.getBackend().toUpperCase()}`);
   log.result('Configuration:');
-  log.result(`&nbsp Parallel processing: ${window.config.batchProcessing} parallel images`);
-  log.result(`&nbsp Forced image resize: ${window.config.maxSize}px maximum shape: ${window.config.squareImage ? 'square' : 'native'}`);
-  log.result(`&nbsp Flaoat Precision: ${window.config.floatPrecision ? '32bit' : '16bit'}`);
-  log.result(`&nbsp Classify: ${JSONtoStr(window.config.classify)}`);
-  log.result(`&nbsp Detect: ${JSONtoStr(window.config.detect)}`);
-  log.result(`&nbsp Person: ${JSONtoStr(window.config.person)}`);
+  log.result(`  Parallel processing: ${config.batchProcessing} parallel images`);
+  log.result(`  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
+  log.result(`  Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);
+  log.result(`  Classify: ${JSONtoStr(config.classify)}`);
+  log.result(`  Detect: ${JSONtoStr(config.detect)}`);
+  log.result(`  Person: ${JSONtoStr(config.person)}`);
 
   log.result('Loading models...');
   const t0 = window.performance.now();
 
-  if (window.config.classify) {
-    log.result(`&nbsp Model: ${window.config.classify.name}`);
-    models.classify = await modelClassify.load(window.config.classify);
+  if (config.classify) {
+    log.result(`  Model: ${config.classify.name}`);
+    models.classify = await modelClassify.load(config.classify);
   }
 
-  if (window.config.detect) {
-    log.result(`&nbsp Model: ${window.config.detect.name}`);
-    models.detect = await modelDetect.load(window.config.detect);
+  if (config.detect) {
+    log.result(`  Model: ${config.detect.name}`);
+    models.detect = await modelDetect.load(config.detect);
   }
 
-  if (window.config.person) {
-    log.result(`&nbsp Model: ${window.config.person.name}`);
-    switch (window.config.person.type) {
+  if (config.person) {
+    log.result(`  Model: ${config.person.name}`);
+    switch (config.person.type) {
       case 'tinyFaceDetector':
-        await faceapi.nets.tinyFaceDetector.load(window.config.person.modelPath);
-        faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: window.config.person.score, inputSize: 416 });
+        await faceapi.nets.tinyFaceDetector.load(config.person.modelPath);
+        faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: config.person.score, inputSize: 416 });
         break;
       case 'ssdMobilenetv1':
-        await faceapi.nets.ssdMobilenetv1.load(window.config.person.modelPath);
-        faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: window.config.person.score, maxResults: window.config.person.topK });
+        await faceapi.nets.ssdMobilenetv1.load(config.person.modelPath);
+        faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: config.person.score, maxResults: config.person.topK });
         break;
       case 'tinyYolov2':
-        await faceapi.nets.tinyYolov2.load(window.config.person.modelPath);
-        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: window.config.person.score, inputSize: 416 });
+        await faceapi.nets.tinyYolov2.load(config.person.modelPath);
+        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: config.person.score, inputSize: 416 });
         break;
       case 'mtcnn':
-        await faceapi.nets.mtcnn.load(window.config.person.modelPath);
+        await faceapi.nets.mtcnn.load(config.person.modelPath);
         faceapi.options = new faceapi.MtcnnOptions({ minFaceSize: 100, scaleFactor: 0.8 });
         break;
       default:
     }
-    await faceapi.nets.ageGenderNet.load(window.config.person.modelPath);
-    await faceapi.nets.faceLandmark68Net.load(window.config.person.modelPath);
-    await faceapi.nets.faceRecognitionNet.load(window.config.person.modelPath);
-    await faceapi.nets.faceExpressionNet.load(window.config.person.modelPath);
+    await faceapi.nets.ageGenderNet.load(config.person.modelPath);
+    await faceapi.nets.faceLandmark68Net.load(config.person.modelPath);
+    await faceapi.nets.faceRecognitionNet.load(config.person.modelPath);
+    await faceapi.nets.faceExpressionNet.load(config.person.modelPath);
     models.faceapi = faceapi;
   }
 
   /* working but unreliable
-  log.result('&nbsp Model: DarkNet/Yolo-v3');
+  log.result('  Model: DarkNet/Yolo-v3');
   models.yolo = await yolo.v1tiny('/models/yolo-v1-tiny/model.json');
   models.yolo = await yolo.v2tiny('/models/yolo-v2-tiny/model.json');
   models.yolo = await yolo.v3tiny('/models/yolo-v3-tiny/model.json');
@@ -92,7 +93,7 @@ async function loadModels() {
   */
 
   /* working but unreliable
-  log.result('&nbsp Model: NSFW');
+  log.result('  Model: NSFW');
   models.nsfw = await nsfwjs.load('/models/nsfw-mini/', { size: 224, type: 'layers' });
   models.nsfw = await nsfwjs.load('/models/nsfw-inception-v3/', { size: 299, type: 'layers' });
   */
@@ -104,6 +105,76 @@ async function loadModels() {
   log.result('Loading WordNet classification classes ...');
   const res = await fetch('/assets/WordNet-Synset.json');
   wordNet = await res.json();
+}
+
+function buildTags(object) {
+  const tags = [];
+  const filePart = object.image.split('/');
+  for (const name of filePart) tags.push({ name: name.toLowerCase() });
+  if (object.image.pixels) {
+    let size;
+    if (object.image.pixels / 1024 / 1024 > 40) size = 'huge';
+    else if (object.image.pixels / 1024 / 1024 > 10) size = 'large';
+    else if (object.image.pixels / 1024 / 1024 > 1) size = 'medium';
+    else size = 'small';
+    tags.push({ size });
+  }
+  if (object.classify) {
+    tags.push({ property: 'classified' });
+    for (const obj of object.classify) tags.push({ classified: obj.class });
+  }
+  if (object.detect) {
+    tags.push({ property: 'detected' });
+    for (const obj of object.detect) tags.push({ detected: obj.class });
+  }
+  if (object.descriptions) {
+    tags.push({ property: 'described' });
+    for (const description of object.descriptions) {
+      for (const lines of description) tags.push({ description: lines.name });
+    }
+  }
+  if (object.person && object.person.age) {
+    let age;
+    if (object.person.age < 10) age = 'kid';
+    else if (object.person.age < 20) age = 'teen';
+    else if (object.person.age < 30) age = '20ies';
+    else if (object.person.age < 40) age = '30ies';
+    else if (object.person.age < 50) age = '40ies';
+    else if (object.person.age < 60) age = '50ies';
+    else if (object.person.age < 100) age = 'old';
+    else age = 'uknown';
+    tags.push({ property: 'face' });
+    tags.push({ gender: object.person.gender }, { emotion: object.person.emotion }, { age });
+  }
+  if (object.exif && object.exif.created) {
+    tags.push({ property: 'exif' });
+    if (object.exif.make) tags.push({ camera: object.exif.make.toLowerCase() });
+    if (object.exif.model) tags.push({ camera: object.exif.model.toLowerCase() });
+    if (object.exif.lens) tags.push({ lens: object.exif.lens.toLowerCase() });
+    if (object.exif.created) tags.push({ created: new Date(1000 * object.exif.created) });
+    if (object.exif.created) tags.push({ year: new Date(1000 * object.exif.created).getFullYear() });
+    if (object.exif.modified) tags.push({ edited: new Date(1000 * object.exif.modified) });
+    if (object.exif.software) tags.push({ software: object.exif.software.toLowerCase() });
+    if (object.exif.city) {
+      tags.push({ city: object.exif.city.toLowerCase() }, { country: object.exif.country.toLowerCase() }, { continent: object.exif.continent.toLowerCase() }, { near: object.exif.near.toLowerCase() });
+    }
+    if (object.exif.iso && object.exif.apperture && object.exif.exposure) {
+      const conditions = object.exif.iso / (object.exif.apperture ** 2) * object.exif.exposure;
+      if (conditions < 0.01) tags.push({ conditions: 'bright' }, { conditions: 'outdoors' });
+      else if (conditions < 0.1) tags.push({ conditions: 'outdoors' });
+      else if (conditions < 5) tags.push({ conditions: 'indoors' });
+      else if (conditions < 20) tags.push({ conditions: 'night' });
+      else tags.push({ conditions: 'night' }, { conditions: 'long' });
+    }
+    if (object.exif.fov) {
+      if (object.exif.fov > 200) tags.push({ zoom: 'superzoom' }, { zoom: 'zoom' });
+      else if (object.exif.fov > 100) tags.push({ zoom: 'zoom' });
+      else if (object.exif.fov > 40) tags.push({ zoom: 'portrait' });
+      else if (object.exif.fov > 20) tags.push({ zoom: 'wide' });
+      else tags.push({ zoom: 'wide' }, { zoom: 'ultrawide' });
+    }
+  }
+  return tags;
 }
 
 faceapi.classify = async (image) => {
@@ -124,18 +195,18 @@ faceapi.classify = async (image) => {
   return null;
 };
 
-async function getImage(url, maxSize) {
+async function getImage(url) {
   return new Promise((resolve) => {
     const image = new Image();
     image.addEventListener('load', () => {
-      if (Math.max(image.width, image.height) > maxSize) {
-        if (window.config.squareImage) {
-          image.height = maxSize;
-          image.width = maxSize;
+      const ratio = 1.0 * image.height / image.width;
+      if (Math.max(image.width, image.height) > config.maxSize) {
+        if (config.squareImage) {
+          image.height = config.maxSize;
+          image.width = config.maxSize;
         } else {
-          const ratio = 1.0 * image.height / image.width;
-          image.width = ratio < 1 ? maxSize : maxSize / ratio;
-          image.height = ratio > 1 ? maxSize : maxSize * ratio;
+          image.width = ratio <= 1 ? config.maxSize : 1.0 * config.maxSize / ratio;
+          image.height = ratio >= 1 ? config.maxSize : 1.0 * config.maxSize * ratio;
         }
       }
       const offscreenCanvas = document.createElement('canvas');
@@ -143,7 +214,24 @@ async function getImage(url, maxSize) {
       offscreenCanvas.width = image.width;
       const ctx = offscreenCanvas.getContext('2d');
       ctx.drawImage(image, 0, 0, image.width, image.height);
-      resolve({ image, canvas: offscreenCanvas });
+
+      if (Math.max(image.width, image.height) > config.thumbnail) {
+        if (config.squareImage) {
+          image.height = config.thumbnail;
+          image.width = config.thumbnail;
+        } else {
+          image.width = ratio <= 1 ? config.thumbnail : 1.0 * config.thumbnail / ratio;
+          image.height = ratio >= 1 ? config.thumbnail : 1.0 * config.thumbnail * ratio;
+        }
+      }
+      const thumbnailCanvas = document.createElement('canvas');
+      thumbnailCanvas.height = image.height;
+      thumbnailCanvas.width = image.width;
+      const thumbnailCtx = thumbnailCanvas.getContext('2d');
+      thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
+      const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.75);
+
+      resolve({ image, canvas: offscreenCanvas, naturalHeight: image.naturalHeight, naturalWidth: image.naturalHeight, thumbnail });
     });
     image.src = url;
   });
@@ -154,7 +242,7 @@ async function processImage(name) {
   const t0 = window.performance.now();
 
   const ti0 = window.performance.now();
-  const image = await getImage(name, window.config.maxSize);
+  const image = await getImage(name);
   const ti1 = window.performance.now();
 
   const res = {};
@@ -240,7 +328,10 @@ async function processImage(name) {
   const obj = {
     id: id++,
     image: name,
-    size: { width: image.canvas.width, height: image.canvas.height },
+    processedSize: { width: image.canvas.width, height: image.canvas.height },
+    pixels: image.naturalHeight * image.naturalWidth,
+    naturalSize: { width: image.naturalHeight, height: image.naturalWidth },
+    thumbnail: image.thumbnail,
     exif: res.exif,
     classify: res.classify,
     detect: res.detect,
@@ -248,6 +339,7 @@ async function processImage(name) {
     descriptions: res.descriptions,
     perf: { total: t1 - t0, load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0, wordnet: tw1 - tw0, exif: te1 - te0 },
   };
+  obj.tags = buildTags(obj);
   log.active(`Done: ${name}`);
   return obj;
 }
@@ -255,3 +347,4 @@ async function processImage(name) {
 exports.load = loadModels;
 exports.process = processImage;
 exports.getImage = getImage;
+exports.JSONtoStr = JSONtoStr;

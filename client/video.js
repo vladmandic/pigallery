@@ -3,7 +3,7 @@
 import * as faceapi from 'face-api.js';
 import config from './config.js';
 import log from './log.js';
-import ml from './processVideo.js';
+import * as ml from './processVideo.js';
 
 const div = {};
 
@@ -101,12 +101,10 @@ async function main() {
   await ml.load();
   log.active('Warming up models ...<br>');
   div.Video.addEventListener('loadeddata', processVideo);
-  div.Video.src = 'samples/video-appartment.mp4'; div.Video.width = 512; div.Video.height = 1090;
-  // div.Video.src = 'samples/video-dash.mp4'; div.Video.width = 1280; div.Video.height = 800;
-  // div.Video.src = 'samples/video-r1.mp4'; div.Video.width = 320; div.Video.height = 240;
-  // div.Video.src = 'samples/video-jen.mp4'; div.Video.width = 582; div.Video.height = 1034;
+  div.Video.src = 'media/video-appartment.mp4'; div.Video.width = 512; div.Video.height = 1090;
+  // div.Video.src = 'media/video-dash.mp4'; div.Video.width = 1280; div.Video.height = 800;
+  // div.Video.src = 'media/video-r1.mp4'; div.Video.width = 320; div.Video.height = 240;
+  // div.Video.src = 'media/video-jen.mp4'; div.Video.width = 582; div.Video.height = 1034;
 }
 
 window.onload = main;
-
-// video stream: https://medium.com/better-programming/video-stream-with-node-js-and-html5-320b3191a6b6

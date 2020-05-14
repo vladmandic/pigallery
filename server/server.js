@@ -21,21 +21,21 @@ async function main() {
   app.disable('x-powered-by');
   app.use(allowCORS);
   app.use((req, res, next) => {
-    res.on('finish', () => log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}/${req.baseUrl || ''}${req.url || ''}`));
+    res.on('finish', () => log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`));
     next();
   });
 
   // app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, '../favicon.ico')));
+  // app.get('/', (req, res) => res.sendFile('client/gallery.html', { root }));
+  api.init(app); // initialize api calls
   const root = path.join(__dirname, '../');
-  app.get('/', (req, res) => res.sendFile('client/gallery.html', { root }));
   app.use('/', express.static(path.join(root, '.')));
   app.get('/gallery', (req, res) => res.sendFile('client/gallery.html', { root }));
   app.get('/video', (req, res) => res.sendFile('client/video.html', { root }));
   app.use('/assets', express.static(path.join(root, './assets'), { maxAge: '365d', cacheControl: true }));
   app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
-  app.use('/samples', express.static(path.join(root, './samples'), { maxAge: '365d', cacheControl: true }));
+  // app.use('/media', express.static(path.join(root, './media'), { maxAge: '365d', cacheControl: true }));
 
-  api.init(app); // initialize api calls
   parcel.init(app); // initialize parceljs bundler
 
   const server = app.listen(80);
