@@ -1,11 +1,10 @@
-const path = require('path');
 const log = require('pilogger');
 const Parcel = require('parcel-bundler');
 
-const entryFiles = path.join(__dirname, '../client/gallery.js');
+const entryFiles = ['client/gallery.js', 'client/video.js'];
 const options = {
   outDir: './dist',
-  outFile: 'gallery.js',
+  // outFile: ['gallery.js', 'video.js'],
   publicUrl: '/',
   watch: true,
   cache: false,

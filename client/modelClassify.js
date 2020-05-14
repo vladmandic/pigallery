@@ -56,7 +56,8 @@ async function classify(image) {
     const data = softmax.dataSync();
     return data;
   });
-  return decodeValues(values);
+  const decoded = decodeValues(values);
+  return decoded;
 }
 
 const exported = {

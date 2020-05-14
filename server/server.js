@@ -29,6 +29,8 @@ async function main() {
   const root = path.join(__dirname, '../');
   app.get('/', (req, res) => res.sendFile('client/gallery.html', { root }));
   app.use('/', express.static(path.join(root, '.')));
+  app.get('/gallery', (req, res) => res.sendFile('client/gallery.html', { root }));
+  app.get('/video', (req, res) => res.sendFile('client/video.html', { root }));
   app.use('/assets', express.static(path.join(root, './assets'), { maxAge: '365d', cacheControl: true }));
   app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
   app.use('/samples', express.static(path.join(root, './samples'), { maxAge: '365d', cacheControl: true }));
