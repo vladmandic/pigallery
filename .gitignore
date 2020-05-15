@@ -1,3 +1,4 @@
 node_modules
 models/*
 media/*
+cache.json

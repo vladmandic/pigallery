@@ -97,11 +97,9 @@ This allows for fallback solutions - if one model does not perform well on an im
 ## Todo
 
 - Video app: canvas overlaps video element so controls are unavailable
-- Logging: client -> server
-- Cache: cerver store, server cache lookups, client cache requests
 - Locations: configurable
-- Client: separate processing and viewing
-- Gallery sort
+- Sort gallery
+- Show/hide gallery elements
 
 ## Screenshots
 

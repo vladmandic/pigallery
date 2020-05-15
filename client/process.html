@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Image Gallery</title>
+    <title>Image Processing</title>
     <meta http-equiv="content-type">
     <meta content="text/html">
     <meta charset="UTF-8">
@@ -11,7 +11,8 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
     <link rel="stylesheet" href="assets/bootstrap.css">
-    <script type="text/javascript" src="dist/gallery.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script type="text/javascript" src="dist/process.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
       ::-webkit-scrollbar { width: 20px; }
@@ -20,12 +21,8 @@
       ::-webkit-scrollbar-button { background: transparent; }
       body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; overflow-x: hidden; }
       .row { width: 100%; margin: 65px 4px 0px 4px; }
-      .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-      .active { background: #555555; padding: 4px; overflow: hidden; position: fixed; top: 10px; right: 10px; width: 450px; height: 34px; }
-      .details { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 50px; left: 5%; width: 90%; display: none; }
-      .search { background: lightyellow; color: black; padding: 4px; overflow: hidden; position: fixed; top: 10px; left: 10px; width: 620px; height: 34px; }
-      .input { border: none; background: lightyellow; width: 450px }
-      .input:focus { outline:none; border-bottom: solid #555555; }
+      .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; }
+      .active { background: #555555; padding: 4px; overflow: hidden; position: fixed; top: 10px; right: 10px; width: 400px; height: 28px; }
       h1 { font-size: 1.4rem; margin-top: 16px; font-weight: bold; }
       h2 { font-size: 1.2rem; margin-top: 8px; font-weight: bold; }
       a { color: white }
@@ -34,16 +31,6 @@
 </head>
 <body>
   <div id="active" class="active"></div>
-  <div id="search" class="search">
-    <label><b>Filter data:&nbsp&nbsp</b><input class="input" type="text" id="filter" placeholder="..." /></label>
-    <span id="found"></span>
-  </div>
-  <div id="result" class="row"></div>
   <div id="log" class="row"></div>
-  <div id="popup" class="details">
-    <img id="popup-image" style="width: auto; height: auto; max-width: 1350px; max-height: 1050px">
-    <canvas id="popup-canvas"></canvas>
-    <div id="popup-details" style="margin: 12px"></div>
-  </div>
 </body>
 </html>

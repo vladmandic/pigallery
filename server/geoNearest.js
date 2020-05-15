@@ -1,10 +1,9 @@
-// based on https://github.com/darkskyapp/sphere-knn
+// heavily based on https://github.com/darkskyapp/sphere-knn
+// simplified and modified to implement persistent lookup array for increased performance
 
 /* eslint-disable no-continue */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-prototype-builtins */
-
-const log = require('pilogger');
 
 const geo = {};
 
@@ -90,7 +89,7 @@ function buildrec(array, depth) {
   return new Node(axis, array[i].position[axis], buildrec(array.slice(0, i), depth), buildrec(array.slice(i), depth));
 }
 
-function kdlookup(position, node, n) {
+function lookup(position, node, n) {
   const array = [];
   if (node === null || n <= 0) return array;
   const stack = [node, 0];
@@ -119,18 +118,15 @@ function kdlookup(position, node, n) {
 }
 
 function nearest(lat, lon, where, n) {
-  // const node = buildrec(points.map(Position.create), 0);
   let node;
   if (where === 'all') node = geo.all;
   if (where === 'large') node = geo.large;
-  return kdlookup(spherical2cartesian(lat, lon), node, n).map(Position.extract);
+  return lookup(spherical2cartesian(lat, lon), node, n).map(Position.extract);
 }
 
 function init(all, large) {
   geo.all = buildrec(all.map(Position.create), 0);
   geo.large = buildrec(large.map(Position.create), 0);
-  log.info('Geo all cities database:', geo.all.length);
-  log.info('Geo large cities database:', geo.large.length);
 }
 
 exports.nearest = nearest;

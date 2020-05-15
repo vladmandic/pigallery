@@ -4,7 +4,7 @@ const config = {
   // General configuration
   backEnd: 'webgl',        // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
   maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
-  thumbnail: 120,          // resolution in which to store image thumbnail embedded in result set
+  thumbnail: 128,          // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 10,     // how many images to process in parallel
   squareImage: false,      // resize proportional to the original image or to a square image
   floatPrecision: true,    // use float32 or float16 for WebGL tensors
