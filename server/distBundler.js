@@ -1,7 +1,7 @@
 const log = require('pilogger');
 const Parcel = require('parcel-bundler');
 
-const entryFiles = ['client/gallery.js', 'client/video.js'];
+const entryFiles = ['client/gallery.js', 'client/video.js', 'client/process.js'];
 const options = {
   outDir: './dist',
   // outFile: ['gallery.js', 'video.js'],
@@ -25,10 +25,7 @@ const options = {
 function parcel(app) {
   const bundler = new Parcel(entryFiles, options);
   bundler.on('buildStart', (f) => log.state('Parcel start', f));
-  bundler.on('buildEnd', () => {
-    log.state('Parcel ready');
-    // log.data(bundler.mainBundle.assets);
-  });
+  bundler.on('buildEnd', () => log.state('Parcel ready'));
   bundler.on('buildError', (err) => log.state('Parcel error', err));
   app.use('/client', bundler.middleware()); // use for bundle as express middle-ware
 }

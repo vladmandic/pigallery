@@ -1,76 +1,24 @@
 const fs = require('fs');
 const path = require('path');
-const parser = require('exif-parser');
 const log = require('pilogger');
-const distance = require('./geoNearest.js');
-const geo = require('../assets/cities.json');
-
-function geoLookup(json) {
-  if (!json.lon || !json.lat) return json;
-  const loc = distance.nearest(json.lat, json.lon, 'all', 1);
-  const near = distance.nearest(json.lat, json.lon, 'large', 1);
-  const res = { city: loc[0].name, near: near[0].name, country: loc[0].country, continent: loc[0].continent };
-  return res;
-}
-
-async function getExif(url) {
-  return new Promise((resolve) => {
-    const json = {};
-    if (!fs.existsSync(url)) resolve(json);
-    const stream = fs.createReadStream(url, { start: 0, end: 65536 });
-    stream
-      .on('data', (chunk) => {
-        let raw;
-        let error = false;
-        try {
-          raw = parser.create(chunk).parse();
-        } catch {
-          error = true;
-        }
-        try {
-          if (error) raw = parser.create(chunk).parse();
-        } catch {
-          error = true;
-        }
-        try {
-          if (error) raw = parser.create(chunk).parse();
-        } catch {
-          error = true;
-        }
-        json.bytes = fs.statSync(url).size;
-        if (!error && raw.tags) {
-          json.make = raw.tags.Make;
-          json.model = raw.tags.Model;
-          json.lens = raw.tags.LensModel;
-          json.software = raw.tags.Software;
-          json.modified = raw.tags.ModifyDate;
-          json.created = raw.tags.CreateDate || raw.tags.DateTimeOriginal;
-          json.lat = raw.tags.GPSLatitude;
-          json.lon = raw.tags.GPSLongitude;
-          json.exposure = raw.tags.ExposureTime;
-          json.apperture = raw.tags.FNumber;
-          json.iso = raw.tags.ISO;
-          json.fov = raw.tags.FocalLengthIn35mmFormat;
-          json.width = raw.tags.ExifImageWidth;
-          json.heigh = raw.tags.ExifImageHeight;
-        }
-        stream.close();
-      })
-      .on('close', () => {
-        const loc = geoLookup(json);
-        resolve({ ...json, ...loc });
-      })
-      .on('error', (err) => {
-        log.warn('EXIF', JSON.stringify(err));
-        resolve(json);
-      });
-  });
-}
+const metadata = require('./metadata.js');
 
 function api(app) {
-  geo.large = geo.data.filter((a) => a.population > 100000);
-  distance.init(geo.data, geo.large);
   log.info('API ready');
+  metadata.init();
+
+  app.get('/log', (req, res) => {
+    const msg = decodeURI(req.query.msg || '').replace(/\s+/g, ' ');
+    log.info(req.client.remoteAddress, msg);
+    res.status(200).send('true');
+  });
+
+  app.get('/save', (req, res) => {
+    const data = JSON.stringify(global.results);
+    fs.writeFileSync(path.join(__dirname, global.cache), data);
+    log.info('Image cache saved:', path.join(__dirname, global.cache), 'records:', global.results.length, 'size:', data.length, 'bytes');
+    res.status(200).send('true');
+  });
 
   app.get('/list', (req, res) => {
     let dir = [];
@@ -80,15 +28,40 @@ function api(app) {
         const match = req.query.match ? decodeURI(req.query.match) : null;
         if (fs.existsSync(folder)) dir = fs.readdirSync(folder);
         if (dir && match) dir = dir.filter((a) => a.includes(match));
-        log.info(`Requested file listing for:${folder} matching:${match || '*'} matched:${dir.length}`);
+        log.info(`Lookup files:${folder} matching:${match || '*'} matched:${dir.length}`);
       }
     } catch { /**/ }
     res.status(200).json({ files: dir });
   });
 
-  app.get('/exif', async (req, res) => {
-    const json = await getExif(decodeURI(req.query.image));
-    res.status(200).json(json);
+  app.get('/get', (req, res) => {
+    if (!req.query.find) {
+      res.status(400).json([]);
+      return;
+    }
+    if (req.query.find === 'all') {
+      res.json(global.results);
+      log.info('Client requested all data: results:', global.results.length);
+    } else {
+      const img = decodeURI(req.query.find);
+      const filtered = global.results.filter((a) => a.image === img);
+      res.json(filtered || []);
+      log.info('Client requested data for:', img, 'results:', filtered.length || 0);
+    }
+  });
+
+  app.post('/metadata', async (req, res) => {
+    const data = req.body;
+    // log.data('Lookup meatadata:', data.image);
+    const t0 = process.hrtime.bigint();
+    const exif = await metadata.exif(data.image);
+    const location = await metadata.location(exif);
+    const descriptions = await metadata.descriptions(data.classify);
+    const result = { ...data, exif, location, descriptions };
+    const tags = await metadata.tags(result);
+    result.tags = tags;
+    res.status(200).json(result);
+    metadata.store(result, t0);
   });
 
   app.get('/media/*', async (req, res) => {
@@ -128,12 +101,6 @@ function api(app) {
     } else {
       res.sendFile(fileName, { root: path.join(__dirname, '../') });
     }
-  });
-
-  app.post('/post', (req, res) => {
-    const json = req.body;
-    log.data('Received data for:', json.image, JSON.stringify(json).length);
-    res.status(202).send({ ok: true });
   });
 }
 

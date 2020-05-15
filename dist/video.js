@@ -33027,7 +33027,7 @@ const config = {
   // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
   maxSize: 780,
   // maximum image width or height that will be used for processing before resizing is required
-  thumbnail: 120,
+  thumbnail: 128,
   // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 10,
   // how many images to process in parallel
@@ -33090,10 +33090,15 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 const div = {};
 
+async function dot() {
+  div.Log.innerHTML += '.';
+}
+
 async function result(...msg) {
   let msgs = '';
   msgs += msg.map(a => a);
-  if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`; // eslint-disable-next-line no-console
+  if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
+  if (msgs.length > 0) fetch(`/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
 
   console.log(...msg);
 }
@@ -33111,7 +33116,8 @@ function init() {
 const log = {
   result,
   active,
-  init
+  init,
+  dot
 };
 var _default = log;
 exports.default = _default;
