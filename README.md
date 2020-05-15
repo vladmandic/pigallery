@@ -110,3 +110,9 @@ This allows for fallback solutions - if one model does not perform well on an im
 ### Detailed View
 
 ![alt text](assets/screenshot-ml2.png)
+
+### Comples Search Results
+
+![alt text](assets/screenshot-ml3.png)
+
+![alt text](assets/screenshot-ml4.png)
