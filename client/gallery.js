@@ -300,7 +300,7 @@ async function loadGallery() {
   const res = await fetch('/get?find=all');
   results = await res.json();
   filtered = results;
-  log.result(`Received ${results.length} images in ${JSON.stringify(results).length} bytes`);
+  log.result(`Received ${results.length} images in ${JSON.stringify(results).length.toLocaleString()} bytes`);
   $('#number').html(results.length);
   $('#results').html('');
   for (const id in results) {
