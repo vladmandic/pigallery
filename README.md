@@ -105,10 +105,13 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 
 - Bug: canvas overlaps video element so controls are unavailable
 - Feature: Configurable locations
-- Feature: Sort gallery
-- Feature: Show/hide gallery elements
+- Feature: Recursive download
 - Feature: Resizable thumbnails
-- Future: Server-side paging
+- Feature: Image hash and duplicate check
+- Feature: Skip already processed images
+- Feature: Multi-person face detection
+- Feature: View raw photo
+- Future: Switch to DB and implement server-side paging
 
 ## Screenshots
 

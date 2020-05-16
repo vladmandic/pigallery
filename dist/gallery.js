@@ -559,7 +559,7 @@ async function loadGallery() {
   results = await res.json();
   filtered = results;
 
-  _log.default.result(`Received ${results.length} images in ${JSON.stringify(results).length} bytes`);
+  _log.default.result(`Received ${results.length} images in ${JSON.stringify(results).length.toLocaleString()} bytes`);
 
   $('#number').html(results.length);
   $('#results').html('');
