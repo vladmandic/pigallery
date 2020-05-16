@@ -236,56 +236,31 @@ var _log = _interopRequireDefault(require("./log.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 let results = [];
-const div = {}; // pre-fetching DOM elements to avoid multiple runtime lookups
-
-function initDivs() {
-  div.Result = document.getElementById('result');
-  div.Popup = document.getElementById('popup');
-  div.PopupImage = document.getElementById('popup-image');
-  div.PopupDetails = document.getElementById('popup-details');
-  div.Found = document.getElementById('found');
-  div.Toggle = document.getElementById('toggle'); // eslint-disable-next-line no-use-before-define
-
-  div.Toggle.addEventListener('click', evt => toggleDetails(evt));
-  div.Filter = document.getElementById('filter');
-  div.Filter.addEventListener('keyup', event => {
-    event.preventDefault(); // eslint-disable-next-line no-use-before-define
-
-    if (event.keyCode === 13) filterResults(div.Filter.value);
-  });
-  div.canvas = document.getElementById('popup-canvas');
-}
-
-function toggleDetails() {
-  if (div.Toggle.style.background === 'lightcoral') {
-    div.Toggle.style.background = 'lightgreen';
-
-    for (const item of document.getElementsByClassName('desc')) {
-      item.style.display = 'inline  ';
-    }
-  } else {
-    div.Toggle.style.background = 'lightcoral';
-
-    for (const item of document.getElementsByClassName('desc')) {
-      item.style.display = 'none';
-    }
-  }
-} // draw boxes for detected objects, faces and face elements
-
+let filtered = [];
+const popupConfig = {
+  showDetails: true,
+  showBoxes: true,
+  showFaces: true
+};
+const listConfig = {
+  showDetails: true
+}; // draw boxes for detected objects, faces and face elements
 
 function drawBoxes(img, object) {
-  div.canvas.style.position = 'absolute';
-  div.canvas.style.left = img.offsetLeft;
-  div.canvas.style.top = img.offsetTop;
-  div.canvas.width = img.width;
-  div.canvas.height = img.height;
-  const ctx = div.canvas.getContext('2d');
+  const canvas = document.getElementById('popup-canvas');
+  canvas.style.position = 'absolute';
+  canvas.style.left = img.offsetLeft;
+  canvas.style.top = img.offsetTop;
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.linewidth = 2;
   ctx.font = '16px Roboto';
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height; // draw detected objects
 
-  if (object.detect) {
+  if (popupConfig.showBoxes && object.detect) {
     ctx.strokeStyle = 'lightyellow';
     ctx.fillStyle = 'lightyellow';
 
@@ -300,7 +275,7 @@ function drawBoxes(img, object) {
   } // draw faces
 
 
-  if (object.person && object.person.face) {
+  if (popupConfig.showFaces && object.person && object.person.face) {
     // draw box around face
     const x = object.person.face.box.x * resizeX;
     const y = object.person.face.box.y * resizeY;
@@ -331,13 +306,18 @@ function drawBoxes(img, object) {
     */
 
   }
+}
+
+function JSONtoStr(json) {
+  if (json) return JSON.stringify(json).replace(/{|}|"/g, '').replace(/,/g, ', ');
 } // show details popup
 
 
-async function showDetails() {
-  const object = results[div.PopupImage.resid];
+async function showPopup() {
+  $('#popup').toggle(true);
+  const img = document.getElementById('popup-image');
+  const object = filtered.find(a => a.image === img.img);
   if (!object) return;
-  div.Popup.style.display = 'flex';
   let classified = 'Classified ';
   if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
   let detected = 'Detected ';
@@ -373,8 +353,8 @@ async function showDetails() {
   let exif = '';
 
   if (object.exif) {
-    const mp = (div.PopupImage.naturalWidth * div.PopupImage.naturalHeight / 1000000).toFixed(1);
-    const complexity = div.PopupImage.naturalWidth * div.PopupImage.naturalHeight / object.exif.bytes;
+    const mp = (img.naturalWidth * img.naturalHeight / 1000000).toFixed(1);
+    const complexity = img.naturalWidth * img.naturalHeight / object.exif.bytes;
     if (object.exif.make) exif += `Camera: ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
     if (object.exif.bytes) exif += `Size: ${mp} MP in ${object.exif.bytes.toLocaleString()} bytes with compression factor ${complexity.toFixed(2)}<br>`;
     if (object.exif.created) exif += `Taken: ${new Date(1000 * object.exif.created).toLocaleString()} Edited: ${new Date(1000 * object.exif.modified).toLocaleString()}<br>`;
@@ -385,9 +365,9 @@ async function showDetails() {
   let location = '';
   if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
   if (object.exif && object.exif.lat) location += `Coordinates: Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)}<br>`;
-  div.PopupDetails.innerHTML = `
+  const html = `
       <h2>Image: ${object.image}</h2>
-      Image size: ${div.PopupImage.naturalWidth} x ${div.PopupImage.naturalHeight}
+      Image size: ${img.naturalWidth} x ${img.naturalHeight}
         Processed in ${object.perf.total.toFixed(0)} ms<br>
         Classified using ${_config.default.classify ? _config.default.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
         Detected using ${_config.default.detect ? _config.default.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
@@ -400,14 +380,35 @@ async function showDetails() {
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
       ${desc}
+      <h2>Tags</h2>
+      ${JSONtoStr(object.tags)}
       </div>
-    `; // const faceDetails = drawBoxes(div.PopupImage, object) || '';
+    `;
 
-  drawBoxes(div.PopupImage, object);
+  if (popupConfig.showDetails) {
+    $('#popup-details').toggle(true);
+    $('#popup-image').css('max-width', '80vw');
+    $('#popup-details').html(html);
+  } else {
+    $('#popup-details').toggle(false);
+    $('#popup-image').css('max-width', '100vw');
+  }
 
-  div.Popup.onclick = () => {
-    div.Popup.style.display = 'none';
-  };
+  drawBoxes(img, object);
+}
+
+async function showNextDetails(left) {
+  const img = document.getElementById('popup-image');
+  const id = filtered.findIndex(a => a.image === img.img);
+  if (id === -1) return;
+
+  if (left === true && id > 0 && filtered[id - 1]) {
+    img.img = filtered[id - 1].image;
+    img.src = filtered[id - 1].image;
+  } else if (left === false && id <= filtered.length && filtered[id + 1]) {
+    img.img = filtered[id + 1].image;
+    img.src = filtered[id + 1].image;
+  }
 } // print results strip with thumbnail for a given object
 
 
@@ -458,13 +459,12 @@ async function printResult(object) {
   }
 
   const divItem = document.createElement('div');
-  divItem.class = 'col';
-  divItem.style = 'display: flex';
+  divItem.className = 'listitem';
   divItem.innerHTML = `
-    <div class="col" style="max-height: ${_config.default.thumbnail}px; min-width: ${_config.default.thumbnail}px; max-width: ${_config.default.thumbnail}px; padding: 0">
+    <div class="col thumbnail" style="min-height: ${_config.default.thumbnail}px; max-height: ${_config.default.thumbnail}px; min-width: ${_config.default.thumbnail}px; max-width: ${_config.default.thumbnail}px">
       <img id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width="${_config.default.thumbnail}px" height="${_config.default.thumbnail}px">
     </div>
-    <div id="desc-${object.id}" class="col desc" style="height: ${_config.default.thumbnail}px; min-width: 564px; max-width: 564px; padding: 4px">
+    <div id="desc-${object.id}" class="col description">
       <b>${decodeURI(object.image)}</b><br>
       Image: ${object.naturalSize.width}x${object.naturalSize.height} ${camera}<br>
       ${location}<br>
@@ -473,14 +473,16 @@ async function printResult(object) {
       ${person} ${nsfw}<br>
     </div>
   `;
-  div.Result.appendChild(divItem);
-  document.getElementById(`thumb-${object.id}`).resid = object.id;
-  document.getElementById(`desc-${object.id}`).resid = object.id;
+  await $('#results').append(divItem);
+  $('.description').toggle(listConfig.showDetails);
+  document.getElementById(`thumb-${object.id}`).img = object.image;
+  document.getElementById(`desc-${object.id}`).img = object.image;
+  const img = document.getElementById('popup-image');
+  img.addEventListener('load', showPopup);
   divItem.addEventListener('click', evt => {
-    div.PopupImage.resid = evt.target.resid;
-    div.PopupImage.src = object.image; // this triggers showDetails via onLoad event
+    img.img = evt.target.img;
+    img.src = object.image; // this triggers showDetails via onLoad event(
   });
-  div.PopupImage.addEventListener('load', showDetails); // don't call showDetails directly to ensure image is loaded
 }
 
 function filterWord(object, word) {
@@ -501,57 +503,213 @@ function filterWord(object, word) {
 }
 
 function filterResults(words) {
-  _log.default.active('Searching ...');
-
-  let found = results;
+  filtered = results;
   let foundWords = 0;
 
   for (const word of words.split(' ')) {
-    found = filterWord(found, word);
-    foundWords += found && found.length > 0 ? 1 : 0;
+    filtered = filterWord(filtered, word);
+    foundWords += filtered && filtered.length > 0 ? 1 : 0;
   }
 
-  _log.default.result(`Searching for "${words}" found ${foundWords} words in ${found.length || 0} results out of ${results.length} matches`);
+  if (filtered && filtered.length > 0) _log.default.result(`Searching for "${words}" found ${foundWords} words in ${filtered.length || 0} results out of ${results.length} matches`);else _log.default.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
+  $('#results').html('');
+  $('#number').html(filtered.length);
 
-  if (found && found.length > 0) div.Found.innerText = `Found ${found.length} results`;else div.Found.innerText = `Found ${foundWords} of ${words.split(' ').length} words`;
-  div.Result.innerHTML = '';
+  for (const obj of filtered) printResult(obj);
+} // Fisher-Yates (aka Knuth) Shuffle
 
-  for (const obj of found) {
-    printResult(obj);
+
+function shuffle(array) {
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
+
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex]; // eslint-disable-next-line no-param-reassign
+
+    array[currentIndex] = array[randomIndex]; // eslint-disable-next-line no-param-reassign
+
+    array[randomIndex] = temporaryValue;
   }
 
-  _log.default.active('Idle ...');
+  return array;
+}
+
+function sortResults(sort) {
+  if (!filtered || filtered.length === 0) filtered = results;
+  if (sort.includes('random')) shuffle(filtered);
+  if (sort.includes('alpha-down')) filtered.sort((a, b) => a.image > b.image ? 1 : -1);
+  if (sort.includes('alpha-up')) filtered.sort((a, b) => a.image < b.image ? 1 : -1);
+  if (sort.includes('numeric-down')) filtered.sort((a, b) => b.exif.created - a.exif.created);
+  if (sort.includes('numeric-up')) filtered.sort((a, b) => a.exif.created - b.exif.created);
+  if (sort.includes('amount-down')) filtered.sort((a, b) => b.pixels - a.pixels);
+  if (sort.includes('amount-up')) filtered.sort((a, b) => a.pixels - b.pixels);
+  $('#results').html('');
+
+  for (const obj of filtered) printResult(obj);
 } // calls main detectxion and then print results for all images matching spec
 
 
 async function loadGallery() {
   _log.default.result('Loading gallery ...');
 
-  _log.default.active('Loading gallery ...');
-
   const res = await fetch('/get?find=all');
   results = await res.json();
+  filtered = results;
 
   _log.default.result(`Received ${results.length} images in ${JSON.stringify(results).length} bytes`);
 
+  $('#number').html(results.length);
+  $('#results').html('');
+
   for (const id in results) {
     results[id].id = id;
-
-    _log.default.active(`Printing: ${results[id].image}`);
-
     printResult(results[id]);
   }
+} // pre-fetching DOM elements to avoid multiple runtime lookups
 
-  _log.default.active('Idle ...');
+
+function initHandlers() {
+  // hide those elements initially
+  $('#popup').toggle(false);
+  $('#searchbar').toggle(false);
+  $('#sortbar').toggle(false);
+  $('#sortbar').toggle(false);
+  $('#configbar').toggle(false);
+  $('#btn-search').click(() => {
+    $('#sortbar').toggle(false);
+    $('#configbar').toggle(false);
+    $('#searchbar').toggle('fast');
+    $('#btn-search').toggleClass('fa-search fa-search-location');
+    $('#search-input').focus();
+  });
+  $('#search-input').keyup(() => {
+    event.preventDefault();
+    if (event.keyCode === 191) $('#search-input')[0].value = ''; // reset on key=/
+
+    if (event.keyCode === 13) filterResults($('#search-input')[0].value);
+  });
+  $('#btn-sort').click(() => {
+    $('#searchbar').toggle(false);
+    $('#configbar').toggle(false);
+    $('#sortbar').toggle('fast');
+  });
+  $('.sortbutton').click(evt => {
+    sortResults(evt.target.className);
+  });
+  $('#btn-desc').click(() => {
+    listConfig.showDetails = !listConfig.showDetails;
+    $('.description').toggle('slow');
+    $('#btn-desc').toggleClass('fa-eye fa-eye-slash');
+  });
+  $('#btn-config').click(() => {
+    $('#searchbar').toggle(false);
+    $('#sortbar').toggle(false);
+    $('#configbar').toggle('fast');
+  });
+  $('#details-desc').click(() => {
+    $('#details-desc').toggleClass('fa-comment fa-comment-slash');
+    popupConfig.showDetails = !popupConfig.showDetails;
+  });
+  $('#details-boxes').click(() => {
+    $('#details-boxes').toggleClass('fa-store fa-store-slash');
+    popupConfig.showBoxes = !popupConfig.showBoxes;
+  });
+  $('#details-faces').click(() => {
+    $('#details-faces').toggleClass('fa-user fa-user-slash');
+    popupConfig.showFaces = !popupConfig.showFaces;
+  });
+  $('#popup').click(() => {
+    if (event.screenX < 50) showNextDetails(true);else if (event.screenX > window.innerWidth - 50) showNextDetails(false);else $('#popup').toggle('fast');
+  });
+  $('html').keydown(() => {
+    const current = $('#results').scrollTop();
+    const page = $('#results').height();
+    const bottom = $('#results').prop('scrollHeight');
+    $('#results').stop();
+
+    switch (event.keyCode) {
+      case 33:
+      case 36:
+        $('#results').animate({
+          scrollTop: 0
+        }, 1000);
+        break;
+      // pgup or home
+
+      case 34:
+      case 35:
+        $('#results').animate({
+          scrollTop: bottom
+        }, 1000);
+        break;
+      // pgdn or end
+
+      case 38:
+        $('#results').animate({
+          scrollTop: current - page + 36
+        }, 400);
+        break;
+      // up
+
+      case 40:
+        $('#results').animate({
+          scrollTop: current + page - 36
+        }, 400);
+        break;
+      // down
+
+      case 37:
+        showNextDetails(true);
+        break;
+
+      case 39:
+        showNextDetails(false);
+        break;
+
+      case 191:
+        $('#btn-search').click();
+        break;
+      // key=/
+
+      case 190:
+        $('#btn-sort').click();
+        break;
+      // key=.
+
+      case 32:
+        $('#btn-desc').click();
+        break;
+      // key=space
+
+      case 82:
+        $('#results').scrollTop(0);
+        loadGallery();
+        break;
+      // r
+
+      case 27:
+        $('#searchbar').toggle(false);
+        $('#sortbar').toggle(false);
+        $('#sortbar').toggle(false);
+        $('#configbar').toggle(false);
+        $('#popup').toggle(false);
+        break;
+      // escape
+
+      default:
+        _log.default.result('Unhandled keydown event', event.keyCode);
+
+    }
+  });
 }
 
 async function main() {
-  initDivs();
-
   _log.default.init();
 
-  _log.default.active('Starting ...');
-
+  initHandlers();
   await loadGallery();
 }
 
