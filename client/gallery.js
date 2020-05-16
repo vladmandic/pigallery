@@ -11,6 +11,9 @@ function initDivs() {
   div.PopupImage = document.getElementById('popup-image');
   div.PopupDetails = document.getElementById('popup-details');
   div.Found = document.getElementById('found');
+  div.Toggle = document.getElementById('toggle');
+  // eslint-disable-next-line no-use-before-define
+  div.Toggle.addEventListener('click', (evt) => toggleDetails(evt));
   div.Filter = document.getElementById('filter');
   div.Filter.addEventListener('keyup', (event) => {
     event.preventDefault();
@@ -20,6 +23,19 @@ function initDivs() {
   div.canvas = document.getElementById('popup-canvas');
 }
 
+function toggleDetails() {
+  if (div.Toggle.style.background === 'lightcoral') {
+    div.Toggle.style.background = 'lightgreen';
+    for (const item of document.getElementsByClassName('desc')) {
+      item.style.display = 'inline  ';
+    }
+  } else {
+    div.Toggle.style.background = 'lightcoral';
+    for (const item of document.getElementsByClassName('desc')) {
+      item.style.display = 'none';
+    }
+  }
+}
 // draw boxes for detected objects, faces and face elements
 function drawBoxes(img, object) {
   div.canvas.style.position = 'absolute';
@@ -196,7 +212,7 @@ async function printResult(object) {
     <div class="col" style="max-height: ${config.thumbnail}px; min-width: ${config.thumbnail}px; max-width: ${config.thumbnail}px; padding: 0">
       <img id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width="${config.thumbnail}px" height="${config.thumbnail}px">
     </div>
-    <div id="desc-${object.id}" class="col" style="height: ${config.thumbnail}px; min-width: 564px; max-width: 564px; padding: 4px">
+    <div id="desc-${object.id}" class="col desc" style="height: ${config.thumbnail}px; min-width: 564px; max-width: 564px; padding: 4px">
       <b>${decodeURI(object.image)}</b><br>
       Image: ${object.naturalSize.width}x${object.naturalSize.height} ${camera}<br>
       ${location}<br>
@@ -260,6 +276,7 @@ async function loadGallery() {
     log.active(`Printing: ${results[id].image}`);
     printResult(results[id]);
   }
+  log.active('Idle ...');
 }
 
 async function main() {

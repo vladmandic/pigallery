@@ -134,11 +134,11 @@ const config = {
   // maximum image width or height that will be used for processing before resizing is required
   thumbnail: 128,
   // resolution in which to store image thumbnail embedded in result set
-  batchProcessing: 10,
+  batchProcessing: 20,
   // how many images to process in parallel
   squareImage: false,
   // resize proportional to the original image or to a square image
-  floatPrecision: true,
+  floatPrecision: false,
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
@@ -69025,11 +69025,11 @@ async function processImage(name) {
     width: image.canvas.width,
     height: image.canvas.height
   };
-  obj.pixels = image.naturalHeight * image.naturalWidth;
   obj.naturalSize = {
     width: image.naturalHeight,
     height: image.naturalWidth
   };
+  obj.pixels = image.naturalHeight * image.naturalWidth;
   obj.thumbnail = image.thumbnail;
   const ti1 = window.performance.now();
 
@@ -69103,18 +69103,17 @@ async function processImage(name) {
 
   _log.default.active(`Storing: ${name}`);
 
-  const post = await fetch('/metadata', {
+  fetch('/metadata', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(obj)
-  });
-  const object = await post.json();
+  }).then(post => post.json());
 
   _log.default.active(`Done: ${name}`);
 
-  return object;
+  return obj;
 }
 
 exports.load = loadModels;

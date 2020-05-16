@@ -83,6 +83,13 @@ ResNet on it's own is not that great, but Inception based on ResNet does provide
 Note that with object detection, accuracy is typically lower, but there are much fewer false-positives.
 This allows for fallback solutions - if one model does not perform well on an image, you can try another.
 
+### Impact of Precision
+
+Time to analyze sample of simple/medium/complex images also depends on chosen float precision (configurable in `config.js`)
+
+- 32bit: 436/654/866 ms average
+- 16bit: 406/628/779 ms average
+
 ## Links
 
 - TensorFlowJS: <https://www.tensorflow.org/js/>
@@ -96,10 +103,12 @@ This allows for fallback solutions - if one model does not perform well on an im
 
 ## Todo
 
-- Video app: canvas overlaps video element so controls are unavailable
-- Locations: configurable
-- Sort gallery
-- Show/hide gallery elements
+- Bug: canvas overlaps video element so controls are unavailable
+- Feature: Configurable locations
+- Feature: Sort gallery
+- Feature: Show/hide gallery elements
+- Feature: Resizable thumbnails
+- Future: Server-side paging
 
 ## Screenshots
 
