@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
     <link rel="stylesheet" href="assets/bootstrap.css">
+    <link rel="stylesheet" href="assets/fontawsome.css">
     <script type="text/javascript" src="dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
@@ -21,23 +22,31 @@
       body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; overflow-x: hidden; }
       .row { width: 100%; margin: 65px 4px 0px 4px; }
       .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-      .active { background: #555555; padding: 4px; overflow: hidden; position: fixed; top: 10px; right: 10px; width: 450px; height: 34px; }
+      .active { background: #555555; padding-left: 8px; overflow: hidden; position: fixed; top: 10px; right: 10px; width: 450px; height: 42px; line-height: 42px; }
       .details { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 50px; left: 5%; width: 90%; display: none; }
-      .search { background: lightyellow; color: black; padding: 4px; overflow: hidden; position: fixed; top: 10px; left: 10px; width: 620px; height: 34px; }
-      .input { border: none; background: lightyellow; width: 450px }
-      .input:focus { outline:none; border-bottom: solid #555555; }
+      .search { background: #555555; color: black; padding: 4px; overflow: hidden; position: fixed; top: 10px; left: 10px; width: 620px; line-height: 32px; }
+      .toggle { background: lightgreen; color: black; padding: 4px; overflow: hidden; position: fixed; top: 10px; left: 640px; min-width: 42px; min-height: 42px; }
+      .input { margin: 0 16px 0 10px; padding-left: 8px; outline:none; border: none; background: #555555; width: 400px; }
+      .input:hover { background: lightyellow; }
+      .input:focus { background: lightyellow; }
       h1 { font-size: 1.4rem; margin-top: 16px; font-weight: bold; }
       h2 { font-size: 1.2rem; margin-top: 8px; font-weight: bold; }
       a { color: white }
       a:hover { background: darkcyan; color: white }
+
     </style>
 </head>
 <body>
   <div id="active" class="active"></div>
-  <div id="search" class="search">
-    <label><b>Filter data:&nbsp&nbsp</b><input class="input" type="text" id="filter" placeholder="..." /></label>
+
+  <div id="search" class="search input-group">
+    <img src="assets/search.png" width=32 height=28>
+    <input class="input" type="search" id="filter" placeholder="what do you want to search for?" />
     <span id="found"></span>
   </div>
+
+  <div id="toggle" class="toggle"></div>
+
   <div id="result" class="row"></div>
   <div id="log" class="row"></div>
   <div id="popup" class="details">

@@ -166,8 +166,8 @@ async function processImage(name) {
   const ti0 = window.performance.now();
   const image = await getImage(name);
   obj.processedSize = { width: image.canvas.width, height: image.canvas.height };
-  obj.pixels = image.naturalHeight * image.naturalWidth;
   obj.naturalSize = { width: image.naturalHeight, height: image.naturalWidth };
+  obj.pixels = image.naturalHeight * image.naturalWidth;
   obj.thumbnail = image.thumbnail;
   const ti1 = window.performance.now();
 
@@ -225,14 +225,13 @@ async function processImage(name) {
   obj.perf = { total: t1 - t0, load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
 
   log.active(`Storing: ${name}`);
-  const post = await fetch('/metadata', {
+  fetch('/metadata', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(obj),
-  });
-  const object = await post.json();
+  }).then((post) => post.json());
   log.active(`Done: ${name}`);
-  return object;
+  return obj;
 }
 
 exports.load = loadModels;
