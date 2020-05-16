@@ -134,11 +134,11 @@ const config = {
   // maximum image width or height that will be used for processing before resizing is required
   thumbnail: 128,
   // resolution in which to store image thumbnail embedded in result set
-  batchProcessing: 10,
+  batchProcessing: 20,
   // how many images to process in parallel
   squareImage: false,
   // resize proportional to the original image or to a square image
-  floatPrecision: true,
+  floatPrecision: false,
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
@@ -244,6 +244,9 @@ function initDivs() {
   div.PopupImage = document.getElementById('popup-image');
   div.PopupDetails = document.getElementById('popup-details');
   div.Found = document.getElementById('found');
+  div.Toggle = document.getElementById('toggle'); // eslint-disable-next-line no-use-before-define
+
+  div.Toggle.addEventListener('click', evt => toggleDetails(evt));
   div.Filter = document.getElementById('filter');
   div.Filter.addEventListener('keyup', event => {
     event.preventDefault(); // eslint-disable-next-line no-use-before-define
@@ -251,6 +254,22 @@ function initDivs() {
     if (event.keyCode === 13) filterResults(div.Filter.value);
   });
   div.canvas = document.getElementById('popup-canvas');
+}
+
+function toggleDetails() {
+  if (div.Toggle.style.background === 'lightcoral') {
+    div.Toggle.style.background = 'lightgreen';
+
+    for (const item of document.getElementsByClassName('desc')) {
+      item.style.display = 'inline  ';
+    }
+  } else {
+    div.Toggle.style.background = 'lightcoral';
+
+    for (const item of document.getElementsByClassName('desc')) {
+      item.style.display = 'none';
+    }
+  }
 } // draw boxes for detected objects, faces and face elements
 
 
@@ -445,7 +464,7 @@ async function printResult(object) {
     <div class="col" style="max-height: ${_config.default.thumbnail}px; min-width: ${_config.default.thumbnail}px; max-width: ${_config.default.thumbnail}px; padding: 0">
       <img id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width="${_config.default.thumbnail}px" height="${_config.default.thumbnail}px">
     </div>
-    <div id="desc-${object.id}" class="col" style="height: ${_config.default.thumbnail}px; min-width: 564px; max-width: 564px; padding: 4px">
+    <div id="desc-${object.id}" class="col desc" style="height: ${_config.default.thumbnail}px; min-width: 564px; max-width: 564px; padding: 4px">
       <b>${decodeURI(object.image)}</b><br>
       Image: ${object.naturalSize.width}x${object.naturalSize.height} ${camera}<br>
       ${location}<br>
@@ -522,6 +541,8 @@ async function loadGallery() {
 
     printResult(results[id]);
   }
+
+  _log.default.active('Idle ...');
 }
 
 async function main() {
