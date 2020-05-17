@@ -12,16 +12,16 @@ let config = {
   classes: 'assets/Coco-Labels.json',
   labels: {},
 };
-let model;
 
 async function load(cfg) {
+  let model;
   config = { ...config, ...cfg };
   if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath);
   if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath);
   const res = await fetch(config.classes);
   config.labels = await res.json();
   // eslint-disable-next-line no-use-before-define
-  return exported;
+  return model;
 }
 
 function buildDetectedObjects(batched, result, maxScores, classes, index) {
@@ -73,7 +73,7 @@ function calculateMaxScores(result) {
   return [scores, classes];
 }
 
-async function detect(image) {
+async function detect(model, image) {
   const imgBuf = tf.browser.fromPixels(image, 3);
   const batched = imgBuf.expandDims(0);
   const result = await model.executeAsync(batched);

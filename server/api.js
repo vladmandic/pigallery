@@ -53,7 +53,6 @@ function api(app) {
   app.post('/metadata', async (req, res) => {
     const data = req.body;
     // log.data('Lookup meatadata:', data.image);
-    const t0 = process.hrtime.bigint();
     const exif = await metadata.exif(data.image);
     const hash = await metadata.hash(data.image, 'sha256');
     const location = await metadata.location(exif);
@@ -62,7 +61,7 @@ function api(app) {
     const tags = await metadata.tags(result);
     result.tags = tags;
     res.status(200).json(result);
-    metadata.store(result, t0);
+    metadata.store(result);
   });
 
   app.get('/media/*', async (req, res) => {

@@ -138,12 +138,18 @@ const config = {
   // how many images to process in parallel
   squareImage: false,
   // resize proportional to the original image or to a square image
-  floatPrecision: false,
+  floatPrecision: true,
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
     name: 'Inception v3',
     modelPath: 'models/inception-v3/model.json',
+    score: 0.2,
+    topK: 3
+  },
+  alternative: {
+    name: 'MobileNet v2',
+    modelPath: '/models/mobilenet-v2/model.json',
     score: 0.2,
     topK: 3
   },
@@ -68595,9 +68601,9 @@ let config = {
   classes: 'assets/ImageNet-Labels1000.json',
   labels: {}
 };
-let model;
 
 async function load(cfg) {
+  let model;
   config = { ...config,
     ...cfg
   };
@@ -68611,7 +68617,7 @@ async function load(cfg) {
   const res = await fetch(config.classes);
   config.labels = await res.json(); // eslint-disable-next-line no-use-before-define
 
-  return exported;
+  return model;
 }
 
 async function decodeValues(values) {
@@ -68638,7 +68644,7 @@ async function decodeValues(values) {
   return results;
 }
 
-async function classify(image) {
+async function classify(model, image) {
   const values = tf.tidy(() => {
     const imgBuf = tf.browser.fromPixels(image, 3);
     const bufFloat = imgBuf.toFloat();
@@ -68690,9 +68696,9 @@ let config = {
   classes: 'assets/Coco-Labels.json',
   labels: {}
 };
-let model;
 
 async function load(cfg) {
+  let model;
   config = { ...config,
     ...cfg
   };
@@ -68701,7 +68707,7 @@ async function load(cfg) {
   const res = await fetch(config.classes);
   config.labels = await res.json(); // eslint-disable-next-line no-use-before-define
 
-  return exported;
+  return model;
 }
 
 function buildDetectedObjects(batched, result, maxScores, classes, index) {
@@ -68765,7 +68771,7 @@ function calculateMaxScores(result) {
   return [scores, classes];
 }
 
-async function detect(image) {
+async function detect(model, image) {
   const imgBuf = tf.browser.fromPixels(image, 3);
   const batched = imgBuf.expandDims(0);
   const result = await model.executeAsync(batched);
@@ -68847,6 +68853,12 @@ async function loadModels() {
     _log.default.result(`  Model: ${_config.default.classify.name}`);
 
     models.classify = await _modelClassify.default.load(_config.default.classify);
+  }
+
+  if (_config.default.alternative) {
+    _log.default.result(`  Model: ${_config.default.alternative.name}`);
+
+    models.alternative = await _modelClassify.default.load(_config.default.alternative);
   }
 
   if (_config.default.detect) {
@@ -69005,7 +69017,7 @@ async function getImage(url) {
         image,
         canvas: offscreenCanvas,
         naturalHeight: image.naturalHeight,
-        naturalWidth: image.naturalHeight,
+        naturalWidth: image.naturalWidth,
         thumbnail
       });
     });
@@ -69039,9 +69051,15 @@ async function processImage(name) {
   const tc0 = window.performance.now();
 
   try {
-    if (models.classify) obj.classify = await models.classify.classify(image.canvas);
+    if (models.classify) obj.classify = await _modelClassify.default.classify(models.classify, image.canvas);
   } catch (err) {
-    _log.default.result(`Errror in MobileNet for ${name}: ${err}`);
+    _log.default.result(`Errror during primary classification for ${name}: ${err}`);
+  }
+
+  try {
+    if (models.alternative) obj.alternative = await _modelClassify.default.classify(models.alternative, image.canvas);
+  } catch (err) {
+    _log.default.result(`Errror during alternate classification for ${name}: ${err}`);
   }
 
   const tc1 = window.performance.now();
@@ -69051,9 +69069,9 @@ async function processImage(name) {
   const td0 = window.performance.now();
 
   try {
-    if (models.detect) obj.detect = await models.detect.detect(image.canvas);
+    if (models.detect) obj.detect = await _modelDetect.default.detect(models.detect, image.canvas);
   } catch (err) {
-    _log.default.result(`Errror in CocoSSD for ${name}: ${err}`);
+    _log.default.result(`Errror during detection for ${name}: ${err}`);
   }
 
   const td1 = window.performance.now(); // const detect = await models.yolo.predict(image.canvas, { maxBoxes: 3, scoreThreshold: 0.3 });
@@ -69223,14 +69241,16 @@ async function processGallery(spec) {
 
   _log.default.result(`  Person Analysis: ${s.person} images in ${s.personTime.toFixed(0)} ms average ${s.personAvg.toFixed(0)} ms`);
 
-  _log.default.result('Saving results to persistent cache ...');
+  setTimeout(async () => {
+    _log.default.result('Saving results to persistent cache ...');
 
-  _log.default.active('Saving...');
+    _log.default.active('Saving...');
 
-  const save = await fetch('/save');
-  if (save.ok) await save.text();
+    const save = await fetch('/save');
+    if (save.ok) await save.text();
 
-  _log.default.active('Idle...');
+    _log.default.active('Idle...');
+  }, 1000);
 } // initial complex image is used to trigger all models thus warming them up
 
 

@@ -7,10 +7,12 @@ const config = {
   thumbnail: 128,          // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 20,     // how many images to process in parallel
   squareImage: false,      // resize proportional to the original image or to a square image
-  floatPrecision: false,    // use float32 or float16 for WebGL tensors
+  floatPrecision: true,    // use float32 or float16 for WebGL tensors
 
   // Default models
   classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },
+  alternative: { name: 'MobileNet v2', modelPath: '/models/mobilenet-v2/model.json', score: 0.2, topK: 3 },
+
   detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 },
   person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 1, type: 'ssdMobilenetv1' },
 

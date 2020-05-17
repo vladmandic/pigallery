@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="assets/bootstrap.css">
     <link rel="stylesheet" href="assets/fontawesome/css/all.css">
     <script type="text/javascript" src="assets/jquery.js"></script>
+    <script type="text/javascript" src="assets/moment.js"></script>
     <script type="text/javascript" src="dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
@@ -28,32 +29,29 @@
 
       .row { width: 100vw; margin: 0 }
       .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+      .log { height: 80px; overflow-y:scroll; margin-top: 10px; overflow: hidden }
 
       .navbar { background: #555555; min-height: 70px; max-height: 70px; position: fixed; top: 0; }
-      .navbutton { font-size: 32px; color: lightyellow; padding: 0 50px 0 50px }
-      .navbutton:hover { color: lightblue; }
-      .navline { background: #555555; min-height: 50px; max-height: 50px; position: fixed; top: 70px; justify-content: center;}
+      .navbarbutton { font-size: 32px; color: lightyellow; padding: 0 20px 0 20px; cursor: pointer; }
+      .navbarbutton:hover { color: lightblue; }
+      .number { font-size: 24px; color: gray}
       .btntext { padding: 0 0 0 50px }
 
-      .separator { font-size: 20px; color: grey; padding: 0 0 0 50px; }
+      .navline { background: #555555; min-height: 50px; max-height: 50px; position: fixed; top: 70px; justify-content: center;}
+      .navlinebutton { font-size: 24px; color: lightyellow; padding: 0 0 0 50px; cursor: pointer; }
+      .navlinebutton:hover { color: lightblue; }
 
-      .input { font-size: 1.2rem; margin: 0 16px 4px 10px; padding: 0 16px 0 16px; outline:none; border: none; background: #555555; width: 80%; height: 44px }
+      .input { font-size: 1.2rem; margin: 0 16px 4px 10px; padding: 0 16px 0 16px; outline:none; border: none; background: #555555; width: 80%; height: 44px; border-radius: 20px }
       .input:hover { background: lightyellow; }
       .input:focus { background: lightyellow; }
 
-      .sortbutton { font-size: 24px; color: lightyellow; padding: 0 0 0 50px; }
-      .sortbutton:hover { color: lightblue; }
-
-      .configbutton { font-size: 24px; color: lightyellow; padding: 0 0 0 50px; }
-      .configbutton:hover { color: lightblue; }
-
       .results { height: 900px; overflow-y: scroll; margin-top: 125px; }
       .listitem { display: flex; max-height: 144px; }
-      .thumbnail { padding: 0; }
-      .description { min-width: 550px; max-width: 550px; padding: 4px; }
-
-      .log { height: 80px; overflow-y:scroll; margin-top: 10px; overflow: hidden }
-      .number { font-size: 24px; color: gray}
+      .divider { background: #222222; padding: 4px 0 4px 8px; font-size: 1.2rem; margin: 4px; font-weight: bold;}
+      .thumbnail { padding: 0; cursor: zoom-in; }
+      .description { min-width: 275px; max-width: 275px; padding: 4px; }
+      .download { font-size: 16px; color: gray; position: absolute; top: 4px; right: 4px; cursor: grab; }
+      .download:hover { color: lightblue; }
 
       .popup { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 70px; left: 0; width: 100%; display: flex; }
       .popup-image { width: auto; height: auto; max-height: 94vh; }
@@ -63,37 +61,37 @@
 <body>
 
   <div id="navbar" class="row navbar text-center">
-    <div><i id="btn-user" class="navbutton fas fa-user"></i><p id="user">User</p></div>
-    <div><i id="btn-search" class="navbutton fas fa-search"></i><p>Search</p></div>
-    <div><i id="btn-sort" class="navbutton fas fa-sort"></i><p>Sort</p></div>
-    <div><i id="btn-desc" class="navbutton fas fa-eye"></i><p>Description</p></div>
-    <div><i id="btn-config" class="navbutton fas fa-cog"></i><p>Configuration</p></div>
+    <div><i id="btn-user" class="navbarbutton fas fa-user-slash"></i><p id="user">User</p></div>
+    <div><i id="btn-search" class="navbarbutton fas fa-search"></i><p>Search</p></div>
+    <div><i id="btn-list" class="navbarbutton fas fa-images"></i><p>List Options</p></div>
+    <div><i id="btn-view" class="navbarbutton fas fa-image"></i><p>View Options</p></div>
+    <div><i id="btn-update" class="navbarbutton fas fa-sync"></i><p>Update Database</p></div>
     <div><i class="number fas fa-images"></i><p id="number">0</p></div>
   </div>
 
-  <div id="searchbar" class="row navline">
+  <div id="searchbar" class="row navline text-center">
     <input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
+    <i class="navlinebutton fas fa-check-circle" style="font-size: 38px; padding: 4px" id="btn-searchnow"></i>
+    <i class="navlinebutton fas fa-times-circle" style="font-size: 38px; padding: 4px" id="btn-resetsearch"></i>
   </div>
 
-  <div id="sortbar" class="row navline text-center">
-    <div><i class="sortbutton fas fa-random"></i><p class="btntext">Random</p></div>
-    <span class="separator fas fa-grip-lines-vertical"></span>
-    <div><i class="sortbutton fas fa-sort-alpha-down"></i><p class="btntext">Name</p></div>
-    <div><i class="sortbutton fas fa-sort-alpha-up"></i></div>
-    <span class="separator fas fa-grip-lines-vertical"></span>
-    <div><i class="sortbutton fas fa-sort-numeric-down"></i><p class="btntext">Date</p></div>
-    <div><i class="sortbutton fas fa-sort-numeric-up"></i></div>
-    <span class="separator fas fa-grip-lines-vertical"></span>
-    <div><i class="sortbutton fas fa-sort-amount-down"></i><p class="btntext">Size</p></div>
-    <div><i class="sortbutton fas fa-sort-amount-up"></i></div>
+  <div id="optionslist" class="row navline text-center">
+    <div><i class="navlinebutton fas fa-eye" id="btn-desc"></i><p class="btntext">Descriptions</p></div>
+    <div><i class="navlinebutton fas fa-clone" id="find-duplicates"></i><p class="btntext">Find Duplicates</p></div>
+    <div><i class="navlinebutton fas sort fa-random"></i><p class="btntext">Randomize</p></div>
+    <div><i class="navlinebutton fas sort fa-sort-alpha-down"></i><i class="navlinebutton fas sort fa-sort-alpha-up" style="padding-left: 20px"></i>
+      <p class="btntext">Sort by Name</p></div>
+    <div><i class="navlinebutton fas sort fa-sort-numeric-down"></i><i class="navlinebutton fas sort fa-sort-numeric-up" style="padding-left: 20px"></i>
+      <p class="btntext">Sort by Date</p></div>
+    <div><i class="navlinebutton fas sort fa-sort-amount-down"></i><i class="navlinebutton fas sort fa-sort-amount-up" style="padding-left: 20px"></i>
+      <p class="btntext">Sort by Size</p></div>
   </div>
 
-  <div id="configbar" class="row navline text-center">
-    <div><i class="configbutton fas fa-comment" id='details-desc'></i><p class="btntext">Show Details</p></div>
-    <div><i class="configbutton fas fa-store" id='details-boxes'></i><p class="btntext">Detect Boxes</p></div>
-    <div><i class="configbutton fas fa-user" id='details-faces'></i><p class="btntext">Faces</p></div>
-    <div><i class="separator fas fa-grip-lines-vertical"></i></div>
-    <div><i class="configbutton fas fa-clone" id='find-duplicates'></i><p class="btntext">Duplicate Images</p></div>
+  <div id="optionsview" class="row navline text-center">
+    <div><i class="navlinebutton fas fa-comment" id='details-desc'></i><p class="btntext">Show Details</p></div>
+    <div><i class="navlinebutton fas fa-store" id='details-boxes'></i><p class="btntext">Show Detect Boxes</p></div>
+    <div><i class="navlinebutton fas fa-head-side-cough" id='details-faces'></i><p class="btntext">Show Faces</p></div>
+    <div><i class="navlinebutton fas fa-video-slash" id='details-raw'></i><p class="btntext">View Raw Image</p></div>
   </div>
 
   <div id="results" class="row results"></div>

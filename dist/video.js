@@ -33033,12 +33033,18 @@ const config = {
   // how many images to process in parallel
   squareImage: false,
   // resize proportional to the original image or to a square image
-  floatPrecision: false,
+  floatPrecision: true,
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
     name: 'Inception v3',
     modelPath: 'models/inception-v3/model.json',
+    score: 0.2,
+    topK: 3
+  },
+  alternative: {
+    name: 'MobileNet v2',
+    modelPath: '/models/mobilenet-v2/model.json',
     score: 0.2,
     topK: 3
   },
@@ -68595,9 +68601,9 @@ let config = {
   classes: 'assets/ImageNet-Labels1000.json',
   labels: {}
 };
-let model;
 
 async function load(cfg) {
+  let model;
   config = { ...config,
     ...cfg
   };
@@ -68611,7 +68617,7 @@ async function load(cfg) {
   const res = await fetch(config.classes);
   config.labels = await res.json(); // eslint-disable-next-line no-use-before-define
 
-  return exported;
+  return model;
 }
 
 async function decodeValues(values) {
@@ -68638,7 +68644,7 @@ async function decodeValues(values) {
   return results;
 }
 
-async function classify(image) {
+async function classify(model, image) {
   const values = tf.tidy(() => {
     const imgBuf = tf.browser.fromPixels(image, 3);
     const bufFloat = imgBuf.toFloat();
@@ -68690,9 +68696,9 @@ let config = {
   classes: 'assets/Coco-Labels.json',
   labels: {}
 };
-let model;
 
 async function load(cfg) {
+  let model;
   config = { ...config,
     ...cfg
   };
@@ -68701,7 +68707,7 @@ async function load(cfg) {
   const res = await fetch(config.classes);
   config.labels = await res.json(); // eslint-disable-next-line no-use-before-define
 
-  return exported;
+  return model;
 }
 
 function buildDetectedObjects(batched, result, maxScores, classes, index) {
@@ -68765,7 +68771,7 @@ function calculateMaxScores(result) {
   return [scores, classes];
 }
 
-async function detect(image) {
+async function detect(model, image) {
   const imgBuf = tf.browser.fromPixels(image, 3);
   const batched = imgBuf.expandDims(0);
   const result = await model.executeAsync(batched);
