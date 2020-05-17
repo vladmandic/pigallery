@@ -112,6 +112,7 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 - Feature: Multi-person face detection
 - Feature: View raw photo
 - Future: Switch to DB and implement server-side paging
+- Future: Authentication & Authorization
 
 ## Screenshots
 
