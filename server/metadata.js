@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 
 const fs = require('fs');
+const crypto = require('crypto');
 const parser = require('exif-parser');
 const log = require('pilogger');
 const distance = require('./geoNearest.js');
@@ -16,7 +17,7 @@ function init() {
   }
   wordNet = JSON.parse(data);
   log.info('Loaded WordNet database:', terms, 'terms in', data.length, 'bytes');
-  data = fs.readFileSync('assets/cities.json');
+  data = fs.readFileSync('assets/Cities.json');
   const cities = JSON.parse(data);
   const large = cities.data.filter((a) => a.population > 100000);
   log.info('Loaded all cities database:', cities.data.length, 'all cities', large.length, 'large cities');
@@ -99,7 +100,13 @@ function buildTags(object) {
     }
   }
   if (object.location && object.location.city) {
-    tags.push({ city: object.location.city.toLowerCase() }, { country: object.location.country.toLowerCase() }, { continent: object.location.continent.toLowerCase() }, { near: object.location.near.toLowerCase() });
+    tags.push(
+      { city: object.location.city.toLowerCase() },
+      { state: object.location.state.toLowerCase() },
+      { country: object.location.country.toLowerCase() },
+      { continent: object.location.continent.toLowerCase() },
+      { near: object.location.near.toLowerCase() },
+    );
   }
   return tags;
 }
@@ -136,7 +143,8 @@ function getLocation(json) {
   if (!json.lon || !json.lat) return json;
   const loc = distance.nearest(json.lat, json.lon, 'all', 1);
   const near = distance.nearest(json.lat, json.lon, 'large', 1);
-  const res = { city: loc[0].name, near: near[0].name, country: loc[0].country, continent: loc[0].continent };
+  const state = isNaN(loc[0].state) ? loc[0].state : '';
+  const res = { city: loc[0].name, near: near[0].name, state, country: loc[0].country, continent: loc[0].continent };
   return res;
 }
 
@@ -194,9 +202,25 @@ async function getExif(url) {
   });
 }
 
+async function getHash(file, hashType) {
+  if (!fs.existsSync(file) || !fs.statSync(file).isFile()) return null;
+  return new Promise((resolve) => {
+    const stream = fs.createReadStream(file, { highWaterMark: 4 * 16 * 65536 });
+    stream.on('data', (chunk) => {
+      const digest = crypto
+        .createHash(hashType)
+        .update(chunk)
+        .digest('hex');
+      stream.close();
+      resolve(digest);
+    });
+  });
+}
+
 exports.init = init;
 exports.descriptions = getDescription;
 exports.location = getLocation;
 exports.exif = getExif;
+exports.hash = getHash;
 exports.tags = buildTags;
 exports.store = storeObject;

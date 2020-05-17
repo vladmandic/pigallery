@@ -8,6 +8,7 @@ async function result(...msg) {
   let msgs = '';
   msgs += msg.map((a) => a);
   if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
+  div.Log.scrollTop = div.Log.scrollHeight;
   if (msgs.length > 0) fetch(`/log?msg=${msgs}`).then((res) => res.text());
   // eslint-disable-next-line no-console
   console.log(...msg);
