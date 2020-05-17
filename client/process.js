@@ -62,11 +62,13 @@ async function processGallery(spec) {
   log.result(`  Classification: ${s.classify} images in ${s.classifyTime.toFixed(0)} ms average ${s.classifyAvg.toFixed(0)} ms`);
   log.result(`  Detection: ${s.detect} images in ${s.detectTime.toFixed(0)} ms average ${s.detectAvg.toFixed(0)} ms`);
   log.result(`  Person Analysis: ${s.person} images in ${s.personTime.toFixed(0)} ms average ${s.personAvg.toFixed(0)} ms`);
-  log.result('Saving results to persistent cache ...');
-  log.active('Saving...');
-  const save = await fetch('/save');
-  if (save.ok) await save.text();
-  log.active('Idle...');
+  setTimeout(async () => {
+    log.result('Saving results to persistent cache ...');
+    log.active('Saving...');
+    const save = await fetch('/save');
+    if (save.ok) await save.text();
+    log.active('Idle...');
+  }, 1000);
 }
 
 // initial complex image is used to trigger all models thus warming them up

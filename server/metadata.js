@@ -25,13 +25,11 @@ function init() {
   data = null;
 }
 
-function storeObject(json, t0) {
-  let found = global.results.find((a) => a.image === json.image);
-  if (found) found = json;
+function storeObject(json) {
+  const index = global.results.findIndex((a) => a.image === json.image);
+  if (index > -1) global.results[index] = json;
   else global.results.push(json);
-  const t1 = process.hrtime.bigint();
-  const stamp = Math.round(parseFloat(t1 - t0) / 1000 / 1000);
-  log.data(`${found ? 'Update' : 'Create'} metadata: "${json.image}" time:`, stamp, 'ms', JSON.stringify(json).length, 'bytes total:', global.results.length, 'records', JSON.stringify(global.results).length, 'bytes');
+  log.data(`${index > -1 ? 'Update' : 'Create'}: "${json.image}"`, JSON.stringify(json).length, 'bytes');
 }
 
 function buildTags(object) {
@@ -39,6 +37,8 @@ function buildTags(object) {
   const tags = [];
   const filePart = object.image.split('/');
   for (const name of filePart) tags.push({ name: name.toLowerCase() });
+  const fileExt = object.image.split('.');
+  tags.push({ ext: fileExt[fileExt.length - 1].toLowerCase() });
   if (object.pixels) {
     let size;
     if (object.pixels / 1024 / 1024 > 40) size = 'huge';
@@ -50,6 +50,10 @@ function buildTags(object) {
   if (object.classify) {
     tags.push({ property: 'classified' });
     for (const obj of object.classify) tags.push({ classified: obj.class });
+  }
+  if (object.alternative) {
+    tags.push({ property: 'alternative' });
+    for (const obj of object.alternative) tags.push({ classified: obj.class });
   }
   if (object.detect) {
     tags.push({ property: 'detected' });
@@ -173,7 +177,10 @@ async function getExif(url) {
         } catch {
           error = true;
         }
-        json.bytes = fs.statSync(url).size;
+        const stat = fs.statSync(url);
+        json.bytes = stat.bytes;
+        json.timestamp = raw && raw.tags ? (raw.tags.ModifyDate || raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
+        if (!json.timestamp) json.timestamp = parseFloat(stat.ctimeMs / 1000);
         if (!error && raw.tags) {
           json.make = raw.tags.Make;
           json.model = raw.tags.Model;

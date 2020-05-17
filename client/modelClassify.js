@@ -13,9 +13,9 @@ let config = {
   classes: 'assets/ImageNet-Labels1000.json',
   labels: {},
 };
-let model;
 
 async function load(cfg) {
+  let model;
   config = { ...config, ...cfg };
   const tfHub = config.modelPath.includes('tfhub.dev');
   if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath, { fromTFHub: tfHub });
@@ -23,7 +23,7 @@ async function load(cfg) {
   const res = await fetch(config.classes);
   config.labels = await res.json();
   // eslint-disable-next-line no-use-before-define
-  return exported;
+  return model;
 }
 
 async function decodeValues(values) {
@@ -42,7 +42,7 @@ async function decodeValues(values) {
   return results;
 }
 
-async function classify(image) {
+async function classify(model, image) {
   const values = tf.tidy(() => {
     const imgBuf = tf.browser.fromPixels(image, 3);
     const bufFloat = imgBuf.toFloat();

@@ -104,15 +104,13 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 ## Todo
 
 - Bug: canvas overlaps video element so controls are unavailable
-- Feature: Configurable locations
-- Feature: Recursive download
-- Feature: Resizable thumbnails
-- Feature: Image hash and duplicate check
-- Feature: Skip already processed images
-- Feature: Multi-person face detection
-- Feature: View raw photo
-- Future: Switch to DB and implement server-side paging
-- Future: Authentication & Authorization
+- RFE: Configurable locations
+- RFE: Recursive download
+- RFE: Resizable thumbnails
+- RFE: Skip already processed images
+- RFE: Multi-person face detection
+- TBD: Switch to DB and implement server-side paging
+- TBD: Authentication & Authorization
 
 ## Screenshots
 
