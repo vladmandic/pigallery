@@ -1,3 +1,5 @@
+/* global moment */
+
 import config from './config.js';
 import log from './log.js';
 
@@ -7,9 +9,11 @@ const popupConfig = {
   showDetails: true,
   showBoxes: true,
   showFaces: true,
+  rawView: false,
 };
 const listConfig = {
   showDetails: true,
+  divider: '',
 };
 
 // draw boxes for detected objects, faces and face elements
@@ -76,18 +80,24 @@ function drawBoxes(img, object) {
 }
 
 function JSONtoStr(json) {
-  if (json) return JSON.stringify(json).replace(/{|}|"/g, '').replace(/,/g, ', ');
+  if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
 }
 
 // show details popup
 async function showPopup() {
-  $('#popup').toggle(true);
   const img = document.getElementById('popup-image');
+  if (popupConfig.rawView) {
+    window.open(img.img, '_blank');
+    return;
+  }
+  $('#popup').toggle(true);
   const object = filtered.find((a) => a.image === img.img);
   if (!object) return;
 
   let classified = 'Classified ';
   if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+  let alternative = 'Alternate ';
+  if (object.alternative) for (const obj of object.alternative) alternative += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
 
   let detected = 'Detected ';
   if (object.detect) for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
@@ -122,7 +132,7 @@ async function showPopup() {
     const complexity = (img.naturalWidth * img.naturalHeight) / object.exif.bytes;
     if (object.exif.make) exif += `Camera: ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
     if (object.exif.bytes) exif += `Size: ${mp} MP in ${object.exif.bytes.toLocaleString()} bytes with compression factor ${complexity.toFixed(2)}<br>`;
-    if (object.exif.created) exif += `Taken: ${new Date(1000 * object.exif.created).toLocaleString()} Edited: ${new Date(1000 * object.exif.modified).toLocaleString()}<br>`;
+    if (object.exif.created) exif += `Taken: ${moment(1000 * object.exif.created).format('dddd YYYY/MM/DD')} Edited: ${moment(1000 * object.exif.modified).format('dddd YYYY/MM/DD')}<br>`;
     if (object.exif.software) exif += `Software: ${object.exif.software}<br>`;
     if (object.exif.exposure) exif += `Settings: ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
   }
@@ -130,11 +140,13 @@ async function showPopup() {
   if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
   if (object.exif && object.exif.lat) location += `Coordinates: Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)}<br>`;
 
+  const link = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
   const html = `
-      <h2>Image: ${object.image}</h2>
+      <h2>Image: ${object.image}</h2>${link}
       Image size: ${img.naturalWidth} x ${img.naturalHeight}
         Processed in ${object.perf.total.toFixed(0)} ms<br>
         Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
+        Alternative using ${config.alternative ? config.alternative.name : 'N/A'}<br>
         Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
         Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)} ms<br>
       <h2>Image Data</h2>
@@ -142,6 +154,7 @@ async function showPopup() {
       <h2>Location</h2>
       ${location}
       <h2>${classified}</h2>
+      <h2>${alternative}</h2>
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
       ${desc}
@@ -173,24 +186,48 @@ async function showNextDetails(left) {
   }
 }
 
+// adds dividiers based on sort order
+let previous;
+function addDividers(object) {
+  if (listConfig.divider === 'month') {
+    const curr = moment(1000 * object.exif.timestamp).format('MMMM, YYYY');
+    const prev = moment(previous ? 1000 * previous.exif.timestamp : 0).format('MMMM, YYYY');
+    if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
+  }
+  if (listConfig.divider === 'size') {
+    const curr = Math.round(object.pixels / 1000 / 1000);
+    const prev = Math.round((previous ? previous.pixels : 1) / 1000 / 1000);
+    if (curr !== prev) $('#results').append(`<div class="row divider">Size: ${curr} MP</div>`);
+  }
+  if (listConfig.divider === 'folder') {
+    const curr = object.image.substr(0, object.image.lastIndexOf('/'));
+    const prev = previous ? previous.image.substr(0, previous.image.lastIndexOf('/')) : 'none';
+    if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
+  }
+}
+
 // print results strip with thumbnail for a given object
 async function printResult(object) {
+  addDividers(object);
+  previous = object;
   let classified = '';
-  if (object.classify && object.classify[0]) {
+  let all = [...object.classify || [], ...object.alternative || []];
+  if (all.length > 0) {
     classified = 'Classified';
-    for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+    all = all.sort((a, b) => b.score - a.score).map((a) => a.class);
+    all = [...new Set(all)];
+    for (const item of all) {
+      classified += ` | ${item}`;
+    }
   }
   let detected = '';
   if (object.detect && object.detect[0]) {
     detected = 'Detected';
-    for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+    for (const obj of object.detect) detected += ` | ${obj.class}`;
   }
   let person = '';
   if (object.person && object.person.age) {
-    person = `Person | 
-      Gender: ${(100 * object.person.scoreGender).toFixed(0)}% ${object.person.gender} 
-      Age: ${object.person.age.toFixed(1)} 
-      Emotion: ${(100 * object.person.scoreEmotion).toFixed(0)}% ${object.person.emotion}`;
+    person = `Gender ${(100 * object.person.scoreGender).toFixed(0)}% ${object.person.gender} | Age ${object.person.age.toFixed(1)}`;
   }
   let nsfw = '';
   if (object.person && object.person.class) {
@@ -199,14 +236,11 @@ async function printResult(object) {
   let location = '';
   if (object.location && object.location.city) {
     location = 'Location';
-    location += ` | ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})`;
-  }
-  let camera = '';
-  if (object.exif.make) {
-    camera = 'Camera';
-    camera += `: ${object.exif.make} ${object.exif.model || ''}`;
+    location += ` | ${object.location.city}, ${object.location.state} ${object.location.country} (near ${object.location.near})`;
   }
 
+  const timestamp = moment(1000 * object.exif.timestamp).format('dddd YYYY/MM/DD');
+  const link = `<a class="download fa fa-arrow-alt-circle-down" href="${object.image}" download></a>`;
   const divItem = document.createElement('div');
   divItem.className = 'listitem';
   divItem.innerHTML = `
@@ -214,21 +248,21 @@ async function printResult(object) {
       <img id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width="${config.thumbnail}px" height="${config.thumbnail}px">
     </div>
     <div id="desc-${object.id}" class="col description">
-      <b>${decodeURI(object.image)}</b><br>
-      Image: ${object.naturalSize.width}x${object.naturalSize.height} ${camera}<br>
+      <b>${decodeURI(object.image)}</b>${link}<br>
+      ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
       ${location}<br>
       ${classified}<br>
       ${detected}<br>
       ${person} ${nsfw}<br>
     </div>
   `;
-  await $('#results').append(divItem);
+  $('#results').append(divItem);
   $('.description').toggle(listConfig.showDetails);
-  document.getElementById(`thumb-${object.id}`).img = object.image;
-  document.getElementById(`desc-${object.id}`).img = object.image;
+  const divThumb = document.getElementById(`thumb-${object.id}`);
+  divThumb.img = object.image;
   const img = document.getElementById('popup-image');
   img.addEventListener('load', showPopup);
-  divItem.addEventListener('click', (evt) => {
+  divThumb.addEventListener('click', (evt) => {
     img.img = evt.target.img;
     img.src = object.image; // this triggers showDetails via onLoad event(
   });
@@ -251,6 +285,7 @@ function filterWord(object, word) {
 
 function filterResults(words) {
   filtered = results;
+  previous = null;
   let foundWords = 0;
   for (const word of words.split(' ')) {
     filtered = filterWord(filtered, word);
@@ -282,6 +317,7 @@ function shuffle(array) {
 }
 
 function findDuplicates() {
+  previous = null;
   filtered = [];
   for (const obj of results) {
     const items = results.filter((a) => a.hash === obj.hash);
@@ -295,12 +331,19 @@ function findDuplicates() {
 function sortResults(sort) {
   if (!filtered || filtered.length === 0) filtered = results;
   if (sort.includes('random')) shuffle(filtered);
+  previous = null;
+  // sort by
   if (sort.includes('alpha-down')) filtered.sort((a, b) => (a.image > b.image ? 1 : -1));
   if (sort.includes('alpha-up')) filtered.sort((a, b) => (a.image < b.image ? 1 : -1));
-  if (sort.includes('numeric-down')) filtered.sort((a, b) => (b.exif.created - a.exif.created));
-  if (sort.includes('numeric-up')) filtered.sort((a, b) => (a.exif.created - b.exif.created));
+  if (sort.includes('numeric-down')) filtered.sort((a, b) => (b.exif.timestamp - a.exif.timestamp));
+  if (sort.includes('numeric-up')) filtered.sort((a, b) => (a.exif.timestamp - b.exif.timestamp));
   if (sort.includes('amount-down')) filtered.sort((a, b) => (b.pixels - a.pixels));
   if (sort.includes('amount-up')) filtered.sort((a, b) => (a.pixels - b.pixels));
+  // how to group
+  if (sort.includes('numeric-down') || sort.includes('numeric-up')) listConfig.divider = 'month';
+  else if (sort.includes('amount-down') || sort.includes('amount-up')) listConfig.divider = 'size';
+  else if (sort.includes('alpha-down') || sort.includes('alpha-up')) listConfig.divider = 'folder';
+  else listConfig.divider = '';
   $('#results').html('');
   for (const obj of filtered) printResult(obj);
 }
@@ -310,13 +353,16 @@ async function loadGallery() {
   log.result('Loading gallery ...');
   const res = await fetch('/get?find=all');
   results = await res.json();
-  filtered = results;
   log.result(`Received ${results.length} images in ${JSON.stringify(results).length.toLocaleString()} bytes`);
   $('#number').html(results.length);
   $('#results').html('');
   for (const id in results) {
     results[id].id = id;
-    printResult(results[id]);
+  }
+  listConfig.divider = 'month';
+  filtered = results.sort((a, b) => (b.exif.timestamp - a.exif.timestamp));
+  for (const obj of filtered) {
+    printResult(obj);
   }
 }
 
@@ -325,69 +371,97 @@ function initHandlers() {
   // hide those elements initially
   $('#popup').toggle(false);
   $('#searchbar').toggle(false);
-  $('#sortbar').toggle(false);
-  $('#sortbar').toggle(false);
-  $('#configbar').toggle(false);
+  $('#optionslist').toggle(false);
+  $('#optionsview').toggle(false);
 
+  // navbar
   $('#btn-search').click(() => {
-    $('#sortbar').toggle(false);
-    $('#configbar').toggle(false);
+    $('#optionslist').toggle(false);
+    $('#optionsview').toggle(false);
     $('#searchbar').toggle('fast');
     $('#btn-search').toggleClass('fa-search fa-search-location');
     $('#search-input').focus();
   });
 
+  $('#btn-list').click(() => {
+    $('#searchbar').toggle(false);
+    $('#optionsview').toggle(false);
+    $('#optionslist').toggle('fast');
+  });
+
+  $('#btn-view').click(() => {
+    $('#searchbar').toggle(false);
+    $('#optionslist').toggle(false);
+    $('#optionsview').toggle('fast');
+  });
+
+  $('#btn-update').click(() => {
+    $('#searchbar').toggle(false);
+    $('#optionslist').toggle(false);
+    $('#optionsview').toggle(false);
+    window.open('/process', '_blank');
+  });
+
+  // navline-search
   $('#search-input').keyup(() => {
     event.preventDefault();
     if (event.keyCode === 191) $('#search-input')[0].value = ''; // reset on key=/
     if (event.keyCode === 13) filterResults($('#search-input')[0].value);
   });
 
-  $('#btn-sort').click(() => {
-    $('#searchbar').toggle(false);
-    $('#configbar').toggle(false);
-    $('#sortbar').toggle('fast');
+  $('#btn-searchnow').click(() => {
+    filterResults($('#search-input')[0].value);
   });
 
-  $('.sortbutton').click((evt) => {
-    sortResults(evt.target.className);
+  $('#btn-resetsearch').click(() => {
+    $('#search-input')[0].value = '';
+    filterResults('');
   });
 
+  // navline-list
   $('#btn-desc').click(() => {
     listConfig.showDetails = !listConfig.showDetails;
     $('.description').toggle('slow');
     $('#btn-desc').toggleClass('fa-eye fa-eye-slash');
   });
 
-  $('#btn-config').click(() => {
-    $('#searchbar').toggle(false);
-    $('#sortbar').toggle(false);
-    $('#configbar').toggle('fast');
-  });
-
-  $('#details-desc').click(() => {
-    $('#details-desc').toggleClass('fa-comment fa-comment-slash');
-    popupConfig.showDetails = !popupConfig.showDetails;
-  });
-  $('#details-boxes').click(() => {
-    $('#details-boxes').toggleClass('fa-store fa-store-slash');
-    popupConfig.showBoxes = !popupConfig.showBoxes;
-  });
-  $('#details-faces').click(() => {
-    $('#details-faces').toggleClass('fa-user fa-user-slash');
-    popupConfig.showFaces = !popupConfig.showFaces;
-  });
-
   $('#find-duplicates').click(() => {
     findDuplicates();
   });
 
+  $('.sort').click((evt) => {
+    sortResults(evt.target.className);
+  });
+
+  // navline-view
+  $('#details-desc').click(() => {
+    $('#details-desc').toggleClass('fa-comment fa-comment-slash');
+    popupConfig.showDetails = !popupConfig.showDetails;
+  });
+
+  $('#details-boxes').click(() => {
+    $('#details-boxes').toggleClass('fa-store fa-store-slash');
+    popupConfig.showBoxes = !popupConfig.showBoxes;
+  });
+
+  $('#details-faces').click(() => {
+    $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
+    popupConfig.showFaces = !popupConfig.showFaces;
+  });
+
+  $('#details-raw').click(() => {
+    $('#details-raw').toggleClass('fa-video fa-video-slash');
+    popupConfig.rawView = !popupConfig.rawView;
+  });
+
+  // handle clicks inside popup
   $('#popup').click(() => {
     if (event.screenX < 50) showNextDetails(true);
     else if (event.screenX > window.innerWidth - 50) showNextDetails(false);
     else $('#popup').toggle('fast');
   });
 
+  // handle keypresses on main
   $('html').keydown(() => {
     const current = $('#results').scrollTop();
     const page = $('#results').height();

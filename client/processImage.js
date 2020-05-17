@@ -34,6 +34,11 @@ async function loadModels() {
     models.classify = await modelClassify.load(config.classify);
   }
 
+  if (config.alternative) {
+    log.result(`  Model: ${config.alternative.name}`);
+    models.alternative = await modelClassify.load(config.alternative);
+  }
+
   if (config.detect) {
     log.result(`  Model: ${config.detect.name}`);
     models.detect = await modelDetect.load(config.detect);
@@ -149,7 +154,7 @@ async function getImage(url) {
       thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
       const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.8);
 
-      resolve({ image, canvas: offscreenCanvas, naturalHeight: image.naturalHeight, naturalWidth: image.naturalHeight, thumbnail });
+      resolve({ image, canvas: offscreenCanvas, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
     });
     image.src = url;
   });
@@ -174,18 +179,23 @@ async function processImage(name) {
   log.active(`Classifying: ${name}`);
   const tc0 = window.performance.now();
   try {
-    if (models.classify) obj.classify = await models.classify.classify(image.canvas);
+    if (models.classify) obj.classify = await modelClassify.classify(models.classify, image.canvas);
   } catch (err) {
-    log.result(`Errror in MobileNet for ${name}: ${err}`);
+    log.result(`Errror during primary classification for ${name}: ${err}`);
+  }
+  try {
+    if (models.alternative) obj.alternative = await modelClassify.classify(models.alternative, image.canvas);
+  } catch (err) {
+    log.result(`Errror during alternate classification for ${name}: ${err}`);
   }
   const tc1 = window.performance.now();
 
   log.active(`Detecting: ${name}`);
   const td0 = window.performance.now();
   try {
-    if (models.detect) obj.detect = await models.detect.detect(image.canvas);
+    if (models.detect) obj.detect = await modelDetect.detect(models.detect, image.canvas);
   } catch (err) {
-    log.result(`Errror in CocoSSD for ${name}: ${err}`);
+    log.result(`Errror during detection for ${name}: ${err}`);
   }
   const td1 = window.performance.now();
 
