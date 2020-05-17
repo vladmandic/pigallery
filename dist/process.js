@@ -203,6 +203,7 @@ async function result(...msg) {
   let msgs = '';
   msgs += msg.map(a => a);
   if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
+  div.Log.scrollTop = div.Log.scrollHeight;
   if (msgs.length > 0) fetch(`/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
 
   console.log(...msg);
@@ -69250,10 +69251,19 @@ async function main() {
   _log.default.active('Starting ...');
 
   await ml.load();
-  await warmupModels(); // await processGallery({ folder: 'media', match: 'objects' });
-  // await processGallery({ folder: 'media', match: 'people' });
-  // await processGallery({ folder: 'media', match: 'large' });
-  // await processGallery({ folder: 'media/onedrive/Pictures/Snapseed/', match: '' });
+  await warmupModels();
+  await processGallery({
+    folder: 'media',
+    match: 'objects'
+  });
+  await processGallery({
+    folder: 'media',
+    match: 'people'
+  });
+  await processGallery({
+    folder: 'media',
+    match: 'large'
+  }); // await processGallery({ folder: 'media/onedrive/Pictures/Snapseed/', match: '' });
   // await processGallery({ folder: 'media/onedrive/Photos/Random/', match: '' });
 }
 

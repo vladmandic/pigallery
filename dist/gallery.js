@@ -203,6 +203,7 @@ async function result(...msg) {
   let msgs = '';
   msgs += msg.map(a => a);
   if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
+  div.Log.scrollTop = div.Log.scrollHeight;
   if (msgs.length > 0) fetch(`/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
 
   console.log(...msg);
@@ -363,7 +364,7 @@ async function showPopup() {
   }
 
   let location = '';
-  if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
+  if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
   if (object.exif && object.exif.lat) location += `Coordinates: Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)}<br>`;
   const html = `
       <h2>Image: ${object.image}</h2>
@@ -448,7 +449,7 @@ async function printResult(object) {
 
   if (object.location && object.location.city) {
     location = 'Location';
-    location += ` | ${object.location.city}, ${object.location.country}, ${object.location.continent} (near ${object.location.near})`;
+    location += ` | ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})`;
   }
 
   let camera = '';
@@ -537,6 +538,20 @@ function shuffle(array) {
   return array;
 }
 
+function findDuplicates() {
+  filtered = [];
+
+  for (const obj of results) {
+    const items = results.filter(a => a.hash === obj.hash);
+    if (items.length !== 1) filtered.push(...items);
+  }
+
+  filtered = [...new Set(filtered)];
+  $('#results').html('');
+
+  for (const obj of filtered) printResult(obj);
+}
+
 function sortResults(sort) {
   if (!filtered || filtered.length === 0) filtered = results;
   if (sort.includes('random')) shuffle(filtered);
@@ -621,6 +636,9 @@ function initHandlers() {
     $('#details-faces').toggleClass('fa-user fa-user-slash');
     popupConfig.showFaces = !popupConfig.showFaces;
   });
+  $('#find-duplicates').click(() => {
+    findDuplicates();
+  });
   $('#popup').click(() => {
     if (event.screenX < 50) showNextDetails(true);else if (event.screenX > window.innerWidth - 50) showNextDetails(false);else $('#popup').toggle('fast');
   });
@@ -699,8 +717,7 @@ function initHandlers() {
         break;
       // escape
 
-      default:
-        _log.default.result('Unhandled keydown event', event.keyCode);
+      default: // log.result('Unhandled keydown event', event.keyCode);
 
     }
   });
