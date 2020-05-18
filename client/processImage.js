@@ -145,13 +145,13 @@ async function getImage(url) {
       const ctx = offscreenCanvas.getContext('2d');
       ctx.drawImage(image, 0, 0, image.width, image.height);
 
-      if (Math.max(image.width, image.height) > config.thumbnail) {
+      if (Math.max(image.width, image.height) > config.renderThumbnail) {
         if (config.squareImage) {
-          image.height = config.thumbnail;
-          image.width = config.thumbnail;
+          image.height = config.renderThumbnail;
+          image.width = config.renderThumbnail;
         } else {
-          image.width = ratio <= 1 ? config.thumbnail : 1.0 * config.thumbnail / ratio;
-          image.height = ratio >= 1 ? config.thumbnail : 1.0 * config.thumbnail * ratio;
+          image.width = ratio <= 1 ? config.renderThumbnail : 1.0 * config.renderThumbnail / ratio;
+          image.height = ratio >= 1 ? config.renderThumbnail : 1.0 * config.renderThumbnail * ratio;
         }
       }
       const thumbnailCanvas = document.createElement('canvas');
