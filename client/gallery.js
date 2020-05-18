@@ -94,6 +94,7 @@ async function showPopup() {
     return;
   }
   $('#popup').toggle(true);
+
   const object = filtered.find((a) => a.image === img.img);
   if (!object) return;
 
@@ -244,9 +245,9 @@ async function printResult(object) {
       if (obj.class !== 'person') detected += ` | ${obj.class}`;
       else personCount++;
     }
-    personCount = Math.max(personCount, object.person.length);
+    personCount = Math.max(personCount, object.person ? object.person.length : 0);
     if (personCount === 1) detected += ' | person';
-    else detected += ` | ${personCount} persons`;
+    else if (personCount > 1) detected += ` | ${personCount} persons`;
   }
   let location = '';
   if (object.location && object.location.city) {
@@ -285,6 +286,7 @@ async function printResult(object) {
 
 function resizeResults() {
   const size = parseInt($('#thumbsize')[0].value, 10);
+  config.listThumbnail = size;
   $('#thumblabel').text(`Size: ${size}px`);
   $('.thumbnail').width(size);
   $('.thumbnail').height(size);
@@ -428,6 +430,7 @@ function initHandlers() {
     $('#optionsview').toggle('fast');
   });
 
+  // this starts image processing in a separate window
   $('#btn-update').click(() => {
     $('#searchbar').toggle(false);
     $('#optionslist').toggle(false);
@@ -500,16 +503,17 @@ function initHandlers() {
   // handle keypresses on main
   $('html').keydown(() => {
     const current = $('#results').scrollTop();
-    const page = $('#results').height();
+    const line = config.listThumbnail + 16;
+    const page = $('#results').height() - config.listThumbnail;
     const bottom = $('#results').prop('scrollHeight');
     $('#results').stop();
     switch (event.keyCode) {
-      case 33:
-      case 36: $('#results').animate({ scrollTop: 0 }, 1000); break; // pgup or home
-      case 34:
-      case 35: $('#results').animate({ scrollTop: bottom }, 1000); break; // pgdn or end
-      case 38: $('#results').animate({ scrollTop: current - page + 36 }, 400); break; // up
-      case 40: $('#results').animate({ scrollTop: current + page - 36 }, 400); break; // down
+      case 38: $('#results').animate({ scrollTop: current - line }, 400); break; // up
+      case 40: $('#results').animate({ scrollTop: current + line }, 400); break; // down
+      case 33: $('#results').animate({ scrollTop: current - page }, 400); break; // pgup
+      case 34: $('#results').animate({ scrollTop: current + page }, 400); break; // pgdn
+      case 36: $('#results').animate({ scrollTop: 0 }, 1000); break; // home
+      case 35: $('#results').animate({ scrollTop: bottom }, 1000); break; // end
       case 37: showNextDetails(true); break;
       case 39: showNextDetails(false); break;
       case 191: $('#btn-search').click(); break; // key=/
