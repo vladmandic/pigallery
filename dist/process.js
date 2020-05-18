@@ -164,7 +164,7 @@ const config = {
     name: 'FaceAPI SSD',
     modelPath: 'models/faceapi/',
     score: 0.4,
-    topK: 1,
+    topK: 4,
     type: 'ssdMobilenetv1'
   } // alternative classification models - you can pick none of one
 
@@ -68841,6 +68841,8 @@ async function loadModels() {
 
   _log.default.result(`  Classify: ${JSONtoStr(_config.default.classify)}`);
 
+  _log.default.result(`  Alternate: ${JSONtoStr(_config.default.alternative)}`);
+
   _log.default.result(`  Detect: ${JSONtoStr(_config.default.detect)}`);
 
   _log.default.result(`  Person: ${JSONtoStr(_config.default.person)}`);
@@ -68945,34 +68947,26 @@ function flattenObject(object) {
 }
 
 faceapi.classify = async image => {
-  const result = await faceapi.detectSingleFace(image, faceapi.options).withFaceLandmarks() // .withFaceDescriptor()
+  // const result = await faceapi.detectSingleFace(image, faceapi.options)
+  const results = await faceapi.detectAllFaces(image, faceapi.options).withFaceLandmarks() // .withFaceDescriptor()
   .withFaceExpressions().withAgeAndGender();
+  const faces = [];
 
-  if (result) {
-    const box = flattenObject(result.detection.box);
-    const points = result.landmarks.positions.map(a => flattenObject(a));
-    let emotion = Object.entries(result.expressions).reduce(([keyPrev, valPrev], [keyCur, valCur]) => valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]);
-    emotion = {
-      label: emotion && emotion[0] ? emotion[0] : '',
-      confidence: emotion && emotion[1] ? emotion[1] : 0
-    };
+  for (const result of results) {
+    const emotion = Object.entries(result.expressions).reduce(([keyPrev, valPrev], [keyCur, valCur]) => valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]);
     const object = {
-      gender: {
-        confidence: result.genderProbability,
-        label: result.gender
-      },
+      scoreGender: result.genderProbability,
+      gender: result.gender,
       age: result.age,
-      emotion: {
-        confidence: emotion.confidence,
-        label: emotion.label
-      },
-      box,
-      points
+      scoreEmotion: emotion && emotion[1] ? emotion[1] : 0,
+      emotion: emotion && emotion[0] ? emotion[0] : '',
+      box: flattenObject(result.detection.box),
+      points: result.landmarks.positions.map(a => flattenObject(a))
     };
-    return object;
+    faces.push(object);
   }
 
-  return null;
+  return faces;
 };
 
 async function getImage(url) {
@@ -69080,33 +69074,24 @@ async function processImage(name) {
   const tp0 = window.performance.now();
 
   if (obj.detect && obj.detect.find(a => a.class === 'person')) {
+    _log.default.active(`Face Detection: ${name}`);
+
+    try {
+      if (models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
+    } catch (err) {
+      _log.default.result(`Errror in FaceAPI for ${name}: ${err}`);
+    }
+
     _log.default.active(`NSFW Detection: ${name}`);
 
     let nsfw;
 
     try {
       if (models.nsfw) nsfw = await models.nsfw.classify(image.canvas, 1);
+      obj.person.scoreClass = nsfw && nsfw[0] ? nsfw[0].probability : null;
+      obj.person.class = nsfw && nsfw[0] ? nsfw[0].className : null;
     } catch (err) {
       _log.default.result(`Errror in NSFW for ${name}: ${err}`);
-    }
-
-    _log.default.active(`Face Detection: ${name}`);
-
-    try {
-      let face;
-      if (models.faceapi) face = await models.faceapi.classify(image.canvas, 1);
-      obj.person = {
-        scoreGender: face && face.gender ? face.gender.confidence : null,
-        gender: face && face.gender ? face.gender.label : null,
-        age: face && face.age ? face.age : null,
-        scoreEmotion: face && face.emotion ? face.emotion.confidence : null,
-        emotion: face && face.emotion ? face.emotion.label : null,
-        scoreClass: nsfw && nsfw[0] ? nsfw[0].probability : null,
-        class: nsfw && nsfw[0] ? nsfw[0].className : null,
-        face
-      };
-    } catch (err) {
-      _log.default.result(`Errror in FaceAPI for ${name}: ${err}`);
     }
   }
 
@@ -69199,7 +69184,16 @@ async function processGallery(spec) {
   const res = await fetch(`/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
   const dir = await res.json();
 
-  _log.default.result(`Processing ${dir.files.length} images from "${spec.folder}" matching "${spec.match}"`);
+  _log.default.result(`Processing folder:${dir.folder}
+    matching:${dir.match || '*'} 
+    recursive:${dir.recursive} 
+    force:${dir.force} 
+    total:${dir.stats.all} 
+    files:${dir.stats.files} 
+    matched:${dir.files.length} 
+    skipped:${dir.stats.processed} 
+    remaining:${dir.stats.list}
+  `);
 
   const t0 = window.performance.now();
   const promises = [];
@@ -69257,12 +69251,13 @@ async function processGallery(spec) {
 async function warmupModels() {
   _log.default.result('Models warming up ...');
 
-  const t0 = window.performance.now();
-  results[id] = await ml.process('media/warmup.jpg');
+  const t0 = window.performance.now(); // results[id] = await ml.process('media/warmup.jpg');
+
+  results[id] = await ml.process('media/people (68).jpg');
   id += 1;
   const t1 = window.performance.now();
 
-  _log.default.result(`Models warmed up in ${(t1 - t0).toFixed(0)}ms`);
+  _log.default.result(`Models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
 
 async function main() {

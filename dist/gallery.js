@@ -164,7 +164,7 @@ const config = {
     name: 'FaceAPI SSD',
     modelPath: 'models/faceapi/',
     score: 0.4,
-    topK: 1,
+    topK: 4,
     type: 'ssdMobilenetv1'
   } // alternative classification models - you can pick none of one
 
@@ -285,36 +285,40 @@ function drawBoxes(img, object) {
   } // draw faces
 
 
-  if (popupConfig.showFaces && object.person && object.person.face) {
-    // draw box around face
-    const x = object.person.face.box.x * resizeX;
-    const y = object.person.face.box.y * resizeY;
-    ctx.strokeStyle = 'deepskyblue';
-    ctx.fillStyle = 'deepskyblue';
-    ctx.beginPath();
-    ctx.rect(x, y, object.person.face.box.width * resizeX, object.person.face.box.height * resizeY);
-    ctx.stroke();
-    ctx.fillText('face', x + 2, y + 18); // draw face points
+  if (popupConfig.showFaces && object.person) {
+    for (const i in object.person) {
+      if (object.person[i].box) {
+        // draw box around face
+        const x = object.person[i].box.x * resizeX;
+        const y = object.person[i].box.y * resizeY;
+        ctx.strokeStyle = 'deepskyblue';
+        ctx.fillStyle = 'deepskyblue';
+        ctx.beginPath();
+        ctx.rect(x, y, object.person[i].box.width * resizeX, object.person[i].box.height * resizeY);
+        ctx.stroke();
+        ctx.fillText(`face#${1 + parseInt(i, 10)}`, x + 2, y + 18); // draw face points
 
-    ctx.fillStyle = 'lightblue';
-    const pointSize = 2;
+        ctx.fillStyle = 'lightblue';
+        const pointSize = 2;
 
-    for (const pt of object.person.face.points) {
-      ctx.beginPath();
-      ctx.arc(pt.x * resizeX, pt.y * resizeY, pointSize, 0, 2 * Math.PI);
-      ctx.fill();
+        for (const pt of object.person[i].points) {
+          ctx.beginPath();
+          ctx.arc(pt.x * resizeX, pt.y * resizeY, pointSize, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+        /*
+        const jaw = person.boxes.landmarks.getJawOutline() || [];
+        const nose = person.boxes.landmarks.getNose() || [];
+        const mouth = person.boxes.landmarks.getMouth() || [];
+        const leftEye = person.boxes.landmarks.getLeftEye() || [];
+        const rightEye = person.boxes.landmarks.getRightEye() || [];
+        const leftEyeBrow = person.boxes.landmarks.getLeftEyeBrow() || [];
+        const rightEyeBrow = person.boxes.landmarks.getRightEyeBrow() || [];
+        faceDetails = `Points jaw:${jaw.length} mouth:${mouth.length} nose:${nose.length} left-eye:${leftEye.length} right-eye:${rightEye.length} left-eyebrow:${leftEyeBrow.length} right-eyebrow:${rightEyeBrow.length}`;
+        */
+
+      }
     }
-    /*
-    const jaw = object.person.boxes.landmarks.getJawOutline() || [];
-    const nose = object.person.boxes.landmarks.getNose() || [];
-    const mouth = object.person.boxes.landmarks.getMouth() || [];
-    const leftEye = object.person.boxes.landmarks.getLeftEye() || [];
-    const rightEye = object.person.boxes.landmarks.getRightEye() || [];
-    const leftEyeBrow = object.person.boxes.landmarks.getLeftEyeBrow() || [];
-    const rightEyeBrow = object.person.boxes.landmarks.getRightEyeBrow() || [];
-    faceDetails = `Points jaw:${jaw.length} mouth:${mouth.length} nose:${nose.length} left-eye:${leftEye.length} right-eye:${rightEye.length} left-eyebrow:${leftEyeBrow.length} right-eyebrow:${rightEyeBrow.length}`;
-    */
-
   }
 }
 
@@ -341,18 +345,21 @@ async function showPopup() {
   let detected = 'Detected ';
   if (object.detect) for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
   let person = '';
-
-  if (object.person && object.person.age) {
-    person = `Person | 
-        Gender: ${(100 * object.person.scoreGender).toFixed(0)}% ${object.person.gender} | 
-        Age: ${object.person.age.toFixed(1)} | 
-        Emotion: ${(100 * object.person.scoreEmotion).toFixed(0)}% ${object.person.emotion}`;
-  }
-
   let nsfw = '';
 
-  if (object.person && object.person.class) {
-    nsfw = `Class: ${(100 * object.person.scoreClass).toFixed(0)}% ${object.person.class} `;
+  for (const i in object.person) {
+    if (object.person[i].age) {
+      person += `Person ${1 + parseInt(i, 10)} | 
+          Gender: ${(100 * object.person[i].scoreGender).toFixed(0)}% ${object.person[i].gender} | 
+          Age: ${object.person[i].age.toFixed(1)} | 
+          Emotion: ${(100 * object.person[i].scoreEmotion).toFixed(0)}% ${object.person[i].emotion}<br>`;
+    }
+
+    if (object.person[i].class) {
+      nsfw += `Class: ${(100 * object.person[i].scoreClass).toFixed(0)}% ${object.person[i].class} `;
+    }
+
+    if (object.person.length === 1) person = person.replace('Person 1', 'Person');
   }
 
   let desc = '<h2>Description:</h2><ul>';
@@ -409,6 +416,7 @@ async function showPopup() {
   if (popupConfig.showDetails) {
     $('#popup-details').toggle(true);
     $('#popup-image').css('max-width', '80vw');
+    $('#popup-details').width(window.innerWidth - $('#popup-image').width());
     $('#popup-details').html(html);
   } else {
     $('#popup-details').toggle(false);
@@ -481,15 +489,15 @@ async function printResult(object) {
   }
 
   let person = '';
-
-  if (object.person && object.person.age) {
-    person = `Gender ${(100 * object.person.scoreGender).toFixed(0)}% ${object.person.gender} | Age ${object.person.age.toFixed(1)}`;
-  }
-
   let nsfw = '';
+  if (object.person && object.person[0]) person = 'People';
 
-  if (object.person && object.person.class) {
-    nsfw = `Class: ${(100 * object.person.scoreClass).toFixed(0)}% ${object.person.class} `;
+  for (const i in object.person) {
+    person += ` | ${object.person[i].gender} ${object.person[i].age.toFixed(0)}`;
+
+    if (object.person[i].class) {
+      nsfw += `Class: ${object.person[i].class} `;
+    }
   }
 
   let location = '';
