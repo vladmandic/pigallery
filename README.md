@@ -107,8 +107,6 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 - RFE: Configurable locations
 - RFE: Recursive download
 - RFE: Resizable thumbnails
-- RFE: Skip already processed images
-- RFE: Multi-person face detection
 - TBD: Switch to DB and implement server-side paging
 - TBD: Authentication & Authorization
 

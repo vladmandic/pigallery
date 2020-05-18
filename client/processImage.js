@@ -23,6 +23,7 @@ async function loadModels() {
   log.result(`  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
   log.result(`  Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);
   log.result(`  Classify: ${JSONtoStr(config.classify)}`);
+  log.result(`  Alternate: ${JSONtoStr(config.alternative)}`);
   log.result(`  Detect: ${JSONtoStr(config.detect)}`);
   log.result(`  Person: ${JSONtoStr(config.person)}`);
 
@@ -101,21 +102,27 @@ function flattenObject(object) {
 }
 
 faceapi.classify = async (image) => {
-  const result = await faceapi.detectSingleFace(image, faceapi.options)
+  // const result = await faceapi.detectSingleFace(image, faceapi.options)
+  const results = await faceapi.detectAllFaces(image, faceapi.options)
     .withFaceLandmarks()
     // .withFaceDescriptor()
     .withFaceExpressions()
     .withAgeAndGender();
-  if (result) {
-    const box = flattenObject(result.detection.box);
-    const points = result.landmarks.positions.map((a) => flattenObject(a));
-    let emotion = Object.entries(result.expressions)
-      .reduce(([keyPrev, valPrev], [keyCur, valCur]) => (valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]));
-    emotion = { label: emotion && emotion[0] ? emotion[0] : '', confidence: emotion && emotion[1] ? emotion[1] : 0 };
-    const object = { gender: { confidence: result.genderProbability, label: result.gender }, age: result.age, emotion: { confidence: emotion.confidence, label: emotion.label }, box, points };
-    return object;
+  const faces = [];
+  for (const result of results) {
+    const emotion = Object.entries(result.expressions).reduce(([keyPrev, valPrev], [keyCur, valCur]) => (valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]));
+    const object = {
+      scoreGender: result.genderProbability,
+      gender: result.gender,
+      age: result.age,
+      scoreEmotion: emotion && emotion[1] ? emotion[1] : 0,
+      emotion: emotion && emotion[0] ? emotion[0] : '',
+      box: flattenObject(result.detection.box),
+      points: result.landmarks.positions.map((a) => flattenObject(a)),
+    };
+    faces.push(object);
   }
-  return null;
+  return faces;
 };
 
 async function getImage(url) {
@@ -204,29 +211,20 @@ async function processImage(name) {
 
   const tp0 = window.performance.now();
   if (obj.detect && obj.detect.find((a) => a.class === 'person')) {
+    log.active(`Face Detection: ${name}`);
+    try {
+      if (models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
+    } catch (err) {
+      log.result(`Errror in FaceAPI for ${name}: ${err}`);
+    }
     log.active(`NSFW Detection: ${name}`);
     let nsfw;
     try {
       if (models.nsfw) nsfw = await models.nsfw.classify(image.canvas, 1);
+      obj.person.scoreClass = (nsfw && nsfw[0]) ? nsfw[0].probability : null;
+      obj.person.class = (nsfw && nsfw[0]) ? nsfw[0].className : null;
     } catch (err) {
       log.result(`Errror in NSFW for ${name}: ${err}`);
-    }
-    log.active(`Face Detection: ${name}`);
-    try {
-      let face;
-      if (models.faceapi) face = await models.faceapi.classify(image.canvas, 1);
-      obj.person = {
-        scoreGender: (face && face.gender) ? face.gender.confidence : null,
-        gender: (face && face.gender) ? face.gender.label : null,
-        age: (face && face.age) ? face.age : null,
-        scoreEmotion: (face && face.emotion) ? face.emotion.confidence : null,
-        emotion: (face && face.emotion) ? face.emotion.label : null,
-        scoreClass: (nsfw && nsfw[0]) ? nsfw[0].probability : null,
-        class: (nsfw && nsfw[0]) ? nsfw[0].className : null,
-        face,
-      };
-    } catch (err) {
-      log.result(`Errror in FaceAPI for ${name}: ${err}`);
     }
   }
   const tp1 = window.performance.now();

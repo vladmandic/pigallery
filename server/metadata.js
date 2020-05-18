@@ -65,18 +65,20 @@ function buildTags(object) {
       for (const lines of description) tags.push({ description: lines.name });
     }
   }
-  if (object.person && object.person.age) {
-    let age;
-    if (object.person.age < 10) age = 'kid';
-    else if (object.person.age < 20) age = 'teen';
-    else if (object.person.age < 30) age = '20ies';
-    else if (object.person.age < 40) age = '30ies';
-    else if (object.person.age < 50) age = '40ies';
-    else if (object.person.age < 60) age = '50ies';
-    else if (object.person.age < 100) age = 'old';
-    else age = 'uknown';
-    tags.push({ property: 'face' });
-    tags.push({ gender: object.person.gender }, { emotion: object.person.emotion }, { age });
+  if (object.person && object.person.length > 0) {
+    for (const person of object.person) {
+      let age;
+      if (person.age < 10) age = 'kid';
+      else if (person.age < 20) age = 'teen';
+      else if (person.age < 30) age = '20ies';
+      else if (person.age < 40) age = '30ies';
+      else if (person.age < 50) age = '40ies';
+      else if (person.age < 60) age = '50ies';
+      else if (person.age < 100) age = 'old';
+      else age = 'uknown';
+      tags.push({ property: 'face' });
+      tags.push({ gender: person.gender }, { emotion: person.emotion }, { age });
+    }
   }
   if (object.exif && object.exif.created) {
     tags.push({ property: 'exif' });
@@ -152,6 +154,18 @@ function getLocation(json) {
   return res;
 }
 
+function parseExif(chunk, tries) {
+  let raw;
+  let error = false;
+  try {
+    raw = parser.create(chunk).parse();
+  } catch {
+    error = true;
+  }
+  if (error && tries > 0) raw = parseExif(chunk, tries - 1);
+  return raw;
+}
+
 async function getExif(url) {
   // log.data('Lookup EXIF:', url);
   return new Promise((resolve) => {
@@ -160,28 +174,13 @@ async function getExif(url) {
     const stream = fs.createReadStream(url, { start: 0, end: 65536 });
     stream
       .on('data', (chunk) => {
-        let raw;
-        let error = false;
-        try {
-          raw = parser.create(chunk).parse();
-        } catch {
-          error = true;
-        }
-        try {
-          if (error) raw = parser.create(chunk).parse();
-        } catch {
-          error = true;
-        }
-        try {
-          if (error) raw = parser.create(chunk).parse();
-        } catch {
-          error = true;
-        }
+        const raw = parseExif(chunk, 5);
+        if (!raw || !raw.tags) log.warn('Could not get EXIF data:', url);
         const stat = fs.statSync(url);
         json.bytes = stat.bytes;
         json.timestamp = raw && raw.tags ? (raw.tags.ModifyDate || raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
         if (!json.timestamp) json.timestamp = parseFloat(stat.ctimeMs / 1000);
-        if (!error && raw.tags) {
+        if (raw && raw.tags) {
           json.make = raw.tags.Make;
           json.model = raw.tags.Model;
           json.lens = raw.tags.LensModel;
@@ -224,6 +223,42 @@ async function getHash(file, hashType) {
   });
 }
 
+async function listFiles(inFolder, inMatch, recursive, force) {
+  let files = [];
+  const stats = {};
+  const folder = inFolder ? decodeURI(inFolder) : '.';
+  const match = inMatch ? decodeURI(inMatch) : null;
+  try {
+    if (fs.existsSync(folder)) files = fs.readdirSync(folder);
+  } catch { /**/ }
+  stats.all = files.length;
+  files = files.filter((a) => {
+    let stat;
+    try {
+      stat = fs.statSync(`${folder}/${a}`);
+    } catch { /**/ }
+    if (stat && stat.isFile()) return true;
+    return false;
+  });
+  stats.files = files.length;
+  if (match) {
+    files = files.filter((a) => a.includes(match));
+  }
+  stats.matched = files.length;
+  if (!force) {
+    files = files.filter((a) => {
+      for (const item of global.results) {
+        if (item.image === `${folder}/${a}`) return false;
+      }
+      return true;
+    });
+  }
+  stats.processed = stats.matched - files.length;
+  stats.list = files.length;
+  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:${recursive} force:${force} total:${stats.all} files:${stats.files} matched:${files.length} processed:${stats.processed} returned:${stats.list}`);
+  return { files, folder, recursive, force, stats };
+}
+
 exports.init = init;
 exports.descriptions = getDescription;
 exports.location = getLocation;
@@ -231,3 +266,4 @@ exports.exif = getExif;
 exports.hash = getHash;
 exports.tags = buildTags;
 exports.store = storeObject;
+exports.list = listFiles;
