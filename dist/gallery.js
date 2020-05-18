@@ -132,8 +132,10 @@ const config = {
   // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
   maxSize: 780,
   // maximum image width or height that will be used for processing before resizing is required
-  thumbnail: 128,
+  renderThumbnail: 230,
   // resolution in which to store image thumbnail embedded in result set
+  listThumbnail: 130,
+  // initial resolution in which to render stored thumbnail in gallery list view
   batchProcessing: 20,
   // how many images to process in parallel
   squareImage: false,
@@ -394,7 +396,8 @@ async function showPopup() {
   const html = `
       <h2>Image: ${object.image}</h2>${link}
       Image size: ${img.naturalWidth} x ${img.naturalHeight}
-        Processed in ${object.perf.total.toFixed(0)} ms<br>
+        Total time ${object.perf.total.toFixed(0)} ms<br>
+        Processed in ${object.perf.load.toFixed(0)} ms<br>
         Classified using ${_config.default.classify ? _config.default.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
         Alternative using ${_config.default.alternative ? _config.default.alternative.name : 'N/A'}<br>
         Detected using ${_config.default.detect ? _config.default.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
@@ -409,7 +412,7 @@ async function showPopup() {
       <h2>${person} ${nsfw}</h2>
       ${desc}
       <h2>Tags</h2>
-      ${JSONtoStr(object.tags)}
+      <i>${JSONtoStr(object.tags)}</i>
       </div>
     `;
 
@@ -480,14 +483,6 @@ async function printResult(object) {
     }
   }
 
-  let detected = '';
-
-  if (object.detect && object.detect[0]) {
-    detected = 'Detected';
-
-    for (const obj of object.detect) detected += ` | ${obj.class}`;
-  }
-
   let person = '';
   let nsfw = '';
   if (object.person && object.person[0]) person = 'People';
@@ -498,6 +493,20 @@ async function printResult(object) {
     if (object.person[i].class) {
       nsfw += `Class: ${object.person[i].class} `;
     }
+  }
+
+  let detected = '';
+  let personCount = 0;
+
+  if (object.detect && object.detect[0]) {
+    detected = 'Detected';
+
+    for (const obj of object.detect) {
+      if (obj.class !== 'person') detected += ` | ${obj.class}`;else personCount++;
+    }
+
+    personCount = Math.max(personCount, object.person.length);
+    if (personCount === 1) detected += ' | person';else detected += ` | ${personCount} persons`;
   }
 
   let location = '';
@@ -512,8 +521,8 @@ async function printResult(object) {
   const divItem = document.createElement('div');
   divItem.className = 'listitem';
   divItem.innerHTML = `
-    <div class="col thumbnail" style="min-height: ${_config.default.thumbnail}px; max-height: ${_config.default.thumbnail}px; min-width: ${_config.default.thumbnail}px; max-width: ${_config.default.thumbnail}px">
-      <img id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width="${_config.default.thumbnail}px" height="${_config.default.thumbnail}px">
+    <div class="col thumbnail">
+      <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle">
     </div>
     <div id="desc-${object.id}" class="col description">
       <b>${decodeURI(object.image)}</b>${link}<br>
@@ -534,6 +543,19 @@ async function printResult(object) {
     img.img = evt.target.img;
     img.src = object.image; // this triggers showDetails via onLoad event(
   });
+}
+
+function resizeResults() {
+  const size = parseInt($('#thumbsize')[0].value, 10);
+  $('#thumblabel').text(`Size: ${size}px`);
+  $('.thumbnail').width(size);
+  $('.thumbnail').height(size);
+  $('.thumbnail').css('min-width', `${size}px`);
+  $('.thumbnail').css('min-height', `${size}px`);
+  $('.thumbnail').css('max-width', `${size}px`);
+  $('.thumbnail').css('max-height', `${size}px`);
+  $('.listitem').css('min-height', `${Math.max(144, 16 + size)}px`);
+  $('.listitem').css('max-height', '144px');
 }
 
 function filterWord(object, word) {
@@ -568,6 +590,8 @@ function filterResults(words) {
   $('#number').html(filtered.length);
 
   for (const obj of filtered) printResult(obj);
+
+  resizeResults();
 } // Fisher-Yates (aka Knuth) Shuffle
 
 
@@ -602,6 +626,8 @@ function findDuplicates() {
   $('#results').html('');
 
   for (const obj of filtered) printResult(obj);
+
+  resizeResults();
 }
 
 function sortResults(sort) {
@@ -620,6 +646,8 @@ function sortResults(sort) {
   $('#results').html('');
 
   for (const obj of filtered) printResult(obj);
+
+  resizeResults();
 } // calls main detectxion and then print results for all images matching spec
 
 
@@ -644,6 +672,9 @@ async function loadGallery() {
   for (const obj of filtered) {
     printResult(obj);
   }
+
+  $('#thumbsize')[0].value = _config.default.listThumbnail;
+  resizeResults();
 } // pre-fetching DOM elements to avoid multiple runtime lookups
 
 
@@ -702,6 +733,9 @@ function initHandlers() {
   });
   $('.sort').click(evt => {
     sortResults(evt.target.className);
+  });
+  $('#thumbsize').on('input', () => {
+    resizeResults();
   }); // navline-view
 
   $('#details-desc').click(() => {
@@ -797,6 +831,8 @@ function initHandlers() {
         $('#sortbar').toggle(false);
         $('#configbar').toggle(false);
         $('#popup').toggle(false);
+        $('#search-input')[0].value = '';
+        filterResults('');
         break;
       // escape
 

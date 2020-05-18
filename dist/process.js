@@ -132,8 +132,10 @@ const config = {
   // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
   maxSize: 780,
   // maximum image width or height that will be used for processing before resizing is required
-  thumbnail: 128,
+  renderThumbnail: 230,
   // resolution in which to store image thumbnail embedded in result set
+  listThumbnail: 130,
+  // initial resolution in which to render stored thumbnail in gallery list view
   batchProcessing: 20,
   // how many images to process in parallel
   squareImage: false,
@@ -68991,13 +68993,13 @@ async function getImage(url) {
       const ctx = offscreenCanvas.getContext('2d');
       ctx.drawImage(image, 0, 0, image.width, image.height);
 
-      if (Math.max(image.width, image.height) > _config.default.thumbnail) {
+      if (Math.max(image.width, image.height) > _config.default.renderThumbnail) {
         if (_config.default.squareImage) {
-          image.height = _config.default.thumbnail;
-          image.width = _config.default.thumbnail;
+          image.height = _config.default.renderThumbnail;
+          image.width = _config.default.renderThumbnail;
         } else {
-          image.width = ratio <= 1 ? _config.default.thumbnail : 1.0 * _config.default.thumbnail / ratio;
-          image.height = ratio >= 1 ? _config.default.thumbnail : 1.0 * _config.default.thumbnail * ratio;
+          image.width = ratio <= 1 ? _config.default.renderThumbnail : 1.0 * _config.default.renderThumbnail / ratio;
+          image.height = ratio >= 1 ? _config.default.renderThumbnail : 1.0 * _config.default.renderThumbnail * ratio;
         }
       }
 

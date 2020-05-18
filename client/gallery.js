@@ -149,7 +149,8 @@ async function showPopup() {
   const html = `
       <h2>Image: ${object.image}</h2>${link}
       Image size: ${img.naturalWidth} x ${img.naturalHeight}
-        Processed in ${object.perf.total.toFixed(0)} ms<br>
+        Total time ${object.perf.total.toFixed(0)} ms<br>
+        Processed in ${object.perf.load.toFixed(0)} ms<br>
         Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
         Alternative using ${config.alternative ? config.alternative.name : 'N/A'}<br>
         Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
@@ -164,7 +165,7 @@ async function showPopup() {
       <h2>${person} ${nsfw}</h2>
       ${desc}
       <h2>Tags</h2>
-      ${JSONtoStr(object.tags)}
+      <i>${JSONtoStr(object.tags)}</i>
       </div>
     `;
   if (popupConfig.showDetails) {
@@ -226,11 +227,6 @@ async function printResult(object) {
       classified += ` | ${item}`;
     }
   }
-  let detected = '';
-  if (object.detect && object.detect[0]) {
-    detected = 'Detected';
-    for (const obj of object.detect) detected += ` | ${obj.class}`;
-  }
   let person = '';
   let nsfw = '';
   if (object.person && object.person[0]) person = 'People';
@@ -239,6 +235,18 @@ async function printResult(object) {
     if (object.person[i].class) {
       nsfw += `Class: ${object.person[i].class} `;
     }
+  }
+  let detected = '';
+  let personCount = 0;
+  if (object.detect && object.detect[0]) {
+    detected = 'Detected';
+    for (const obj of object.detect) {
+      if (obj.class !== 'person') detected += ` | ${obj.class}`;
+      else personCount++;
+    }
+    personCount = Math.max(personCount, object.person.length);
+    if (personCount === 1) detected += ' | person';
+    else detected += ` | ${personCount} persons`;
   }
   let location = '';
   if (object.location && object.location.city) {
@@ -251,8 +259,8 @@ async function printResult(object) {
   const divItem = document.createElement('div');
   divItem.className = 'listitem';
   divItem.innerHTML = `
-    <div class="col thumbnail" style="min-height: ${config.thumbnail}px; max-height: ${config.thumbnail}px; min-width: ${config.thumbnail}px; max-width: ${config.thumbnail}px">
-      <img id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width="${config.thumbnail}px" height="${config.thumbnail}px">
+    <div class="col thumbnail">
+      <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle">
     </div>
     <div id="desc-${object.id}" class="col description">
       <b>${decodeURI(object.image)}</b>${link}<br>
@@ -273,6 +281,19 @@ async function printResult(object) {
     img.img = evt.target.img;
     img.src = object.image; // this triggers showDetails via onLoad event(
   });
+}
+
+function resizeResults() {
+  const size = parseInt($('#thumbsize')[0].value, 10);
+  $('#thumblabel').text(`Size: ${size}px`);
+  $('.thumbnail').width(size);
+  $('.thumbnail').height(size);
+  $('.thumbnail').css('min-width', `${size}px`);
+  $('.thumbnail').css('min-height', `${size}px`);
+  $('.thumbnail').css('max-width', `${size}px`);
+  $('.thumbnail').css('max-height', `${size}px`);
+  $('.listitem').css('min-height', `${Math.max(144, 16 + size)}px`);
+  $('.listitem').css('max-height', '144px');
 }
 
 function filterWord(object, word) {
@@ -304,6 +325,7 @@ function filterResults(words) {
   $('#results').html('');
   $('#number').html(filtered.length);
   for (const obj of filtered) printResult(obj);
+  resizeResults();
 }
 
 // Fisher-Yates (aka Knuth) Shuffle
@@ -333,6 +355,7 @@ function findDuplicates() {
   filtered = [...new Set(filtered)];
   $('#results').html('');
   for (const obj of filtered) printResult(obj);
+  resizeResults();
 }
 
 function sortResults(sort) {
@@ -353,6 +376,7 @@ function sortResults(sort) {
   else listConfig.divider = '';
   $('#results').html('');
   for (const obj of filtered) printResult(obj);
+  resizeResults();
 }
 
 // calls main detectxion and then print results for all images matching spec
@@ -371,6 +395,8 @@ async function loadGallery() {
   for (const obj of filtered) {
     printResult(obj);
   }
+  $('#thumbsize')[0].value = config.listThumbnail;
+  resizeResults();
 }
 
 // pre-fetching DOM elements to avoid multiple runtime lookups
@@ -440,6 +466,9 @@ function initHandlers() {
     sortResults(evt.target.className);
   });
 
+  $('#thumbsize').on('input', () => {
+    resizeResults();
+  });
   // navline-view
   $('#details-desc').click(() => {
     $('#details-desc').toggleClass('fa-comment fa-comment-slash');
@@ -496,6 +525,8 @@ function initHandlers() {
         $('#sortbar').toggle(false);
         $('#configbar').toggle(false);
         $('#popup').toggle(false);
+        $('#search-input')[0].value = '';
+        filterResults('');
         break; // escape
       default: // log.result('Unhandled keydown event', event.keyCode);
     }
