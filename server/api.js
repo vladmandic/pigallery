@@ -20,18 +20,9 @@ function api(app) {
     res.status(200).send('true');
   });
 
-  app.get('/list', (req, res) => {
-    let dir = [];
-    try {
-      if (req.query.folder) {
-        const folder = decodeURI(req.query.folder);
-        const match = req.query.match ? decodeURI(req.query.match) : null;
-        if (fs.existsSync(folder)) dir = fs.readdirSync(folder);
-        if (dir && match) dir = dir.filter((a) => a.includes(match));
-        log.info(`Lookup files:${folder} matching:${match || '*'} matched:${dir.length}`);
-      }
-    } catch { /**/ }
-    res.status(200).json({ files: dir });
+  app.get('/list', async (req, res) => {
+    const json = await metadata.list(req.query.folder || '', req.query.match || null, req.query.recursive || false, req.query.force || false);
+    res.json(json);
   });
 
   app.get('/get', (req, res) => {

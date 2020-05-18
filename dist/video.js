@@ -33059,7 +33059,7 @@ const config = {
     name: 'FaceAPI SSD',
     modelPath: 'models/faceapi/',
     score: 0.4,
-    topK: 1,
+    topK: 4,
     type: 'ssdMobilenetv1'
   } // alternative classification models - you can pick none of one
 

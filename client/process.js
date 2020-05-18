@@ -34,7 +34,16 @@ async function processGallery(spec) {
   log.active(`Fetching list for "${spec.folder}" matching "${spec.match}"`);
   const res = await fetch(`/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
   const dir = await res.json();
-  log.result(`Processing ${dir.files.length} images from "${spec.folder}" matching "${spec.match}"`);
+  log.result(`Processing folder:${dir.folder}
+    matching:${dir.match || '*'} 
+    recursive:${dir.recursive} 
+    force:${dir.force} 
+    total:${dir.stats.all} 
+    files:${dir.stats.files} 
+    matched:${dir.files.length} 
+    skipped:${dir.stats.processed} 
+    remaining:${dir.stats.list}
+  `);
   const t0 = window.performance.now();
   const promises = [];
   const tmpResults = [];
@@ -75,10 +84,11 @@ async function processGallery(spec) {
 async function warmupModels() {
   log.result('Models warming up ...');
   const t0 = window.performance.now();
-  results[id] = await ml.process('media/warmup.jpg');
+  // results[id] = await ml.process('media/warmup.jpg');
+  results[id] = await ml.process('media/people (68).jpg');
   id += 1;
   const t1 = window.performance.now();
-  log.result(`Models warmed up in ${(t1 - t0).toFixed(0)}ms`);
+  log.result(`Models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
 
 async function main() {
