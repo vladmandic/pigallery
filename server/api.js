@@ -9,7 +9,7 @@ function api(app) {
 
   app.get('/log', (req, res) => {
     const msg = decodeURI(req.query.msg || '').replace(/\s+/g, ' ');
-    log.info(req.client.remoteAddress, msg);
+    log.info(`${req.session.user}@${req.client.remoteAddress}`, msg);
     res.status(200).send('true');
   });
 
@@ -31,13 +31,8 @@ function api(app) {
       return;
     }
     if (req.query.find === 'all') {
+      log.info(`Get ${req.session.user}@${req.client.remoteAddress} all data:`, global.results.length);
       res.json(global.results);
-      log.info('Client requested all data: results:', global.results.length);
-    } else {
-      const img = decodeURI(req.query.find);
-      const filtered = global.results.filter((a) => a.image === img);
-      res.json(filtered || []);
-      log.info('Client requested data for:', img, 'results:', filtered.length || 0);
     }
   });
 
@@ -92,6 +87,19 @@ function api(app) {
     } else {
       res.sendFile(fileName, { root: path.join(__dirname, '../') });
     }
+  });
+
+  app.post('/client/auth.html', (req, res) => {
+    const email = req.body.authEmail;
+    const passwd = req.body.authPassword;
+    if (!req.body.authEmail || req.body.authEmail === '') req.session.user = undefined;
+    if (global.users.find((a) => (a.email === email && a.passwd === passwd))) req.session.user = email;
+    log.info(`Login request: ${email} from ${req.client.remoteAddress} ${req.session.user ? 'success' : 'fail'}`);
+    res.redirect('/gallery');
+  });
+
+  app.get('/user', (req, res) => {
+    res.send(req.session.user);
   });
 }
 
