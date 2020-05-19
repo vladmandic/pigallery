@@ -136,7 +136,7 @@ const config = {
   // resolution in which to store image thumbnail embedded in result set
   listThumbnail: 130,
   // initial resolution in which to render stored thumbnail in gallery list view
-  batchProcessing: 20,
+  batchProcessing: 10,
   // how many images to process in parallel
   squareImage: false,
   // resize proportional to the original image or to a square image
@@ -649,6 +649,37 @@ function sortResults(sort) {
   for (const obj of filtered) printResult(obj);
 
   resizeResults();
+}
+
+async function enumerateFolders() {
+  const list = [];
+
+  for (const item of filtered) {
+    const path = item.image.substr(0, item.image.lastIndexOf('/'));
+    const folders = path.split('/').filter(a => a !== '');
+    if (!list.find(a => a.path === path)) list.push({
+      path,
+      folders
+    });
+  }
+
+  let html = '';
+
+  for (const item of list) {
+    html += `<p class="folder" tag="${item.path}">${item.path}</p>`;
+  }
+
+  $('#folders').html(html);
+  $('.folder').click(evt => {
+    const path = $(evt.target).attr('tag');
+    filtered = results.filter(a => a.image.startsWith(path));
+    $('#results').html('');
+    $('#number').html(filtered.length);
+
+    for (const obj of filtered) printResult(obj);
+
+    resizeResults();
+  });
 } // calls main detectxion and then print results for all images matching spec
 
 
@@ -676,6 +707,7 @@ async function loadGallery() {
 
   $('#thumbsize')[0].value = _config.default.listThumbnail;
   resizeResults();
+  enumerateFolders();
 }
 
 async function initUser() {
@@ -745,6 +777,10 @@ function initHandlers() {
     filterResults('');
   }); // navline-list
 
+  $('#btn-folder').click(() => {
+    $('#folders').toggle('slow');
+    $('#btn-folders').toggleClass('fa-folder fa-folder-open');
+  });
   $('#btn-desc').click(() => {
     listConfig.showDetails = !listConfig.showDetails;
     $('.description').toggle('slow');

@@ -136,7 +136,7 @@ const config = {
   // resolution in which to store image thumbnail embedded in result set
   listThumbnail: 130,
   // initial resolution in which to render stored thumbnail in gallery list view
-  batchProcessing: 20,
+  batchProcessing: 10,
   // how many images to process in parallel
   squareImage: false,
   // resize proportional to the original image or to a square image
@@ -69283,11 +69283,11 @@ async function main() {
     match: 'large'
   });
   await processGallery({
-    folder: 'media/onedrive/Pictures/Snapseed/',
+    folder: 'media/onedrive/Pictures/Snapseed',
     match: ''
   });
   await processGallery({
-    folder: 'media/onedrive/Photos/Random/',
+    folder: 'media/onedrive/Photos/Random',
     match: ''
   });
 }
