@@ -43,7 +43,7 @@
   },
   "homepage": "https://github.com/vladmandic/photo-analysis#readme",
   "dependencies": {
-    "@tensorflow/tfjs": "^2.0.0-rc.4",
+    "@tensorflow/tfjs": "^1.7.4",
     "@tensorflow/tfjs-backend-cpu": "^2.0.0-rc.4",
     "@tensorflow/tfjs-backend-wasm": "^2.0.0-rc.4",
     "@tensorflow/tfjs-backend-webgl": "^2.0.0-rc.4",

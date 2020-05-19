@@ -27,26 +27,21 @@ async function loadModels() {
   log.result(`  Detect: ${JSONtoStr(config.detect)}`);
   log.result(`  Person: ${JSONtoStr(config.person)}`);
 
-  log.result('Loading models...');
   const t0 = window.performance.now();
 
   if (config.classify) {
-    log.result(`  Model: ${config.classify.name}`);
     models.classify = await modelClassify.load(config.classify);
   }
 
   if (config.alternative) {
-    log.result(`  Model: ${config.alternative.name}`);
     models.alternative = await modelClassify.load(config.alternative);
   }
 
   if (config.detect) {
-    log.result(`  Model: ${config.detect.name}`);
     models.detect = await modelDetect.load(config.detect);
   }
 
   if (config.person) {
-    log.result(`  Model: ${config.person.name}`);
     switch (config.person.type) {
       case 'tinyFaceDetector':
         await faceapi.nets.tinyFaceDetector.load(config.person.modelPath);
@@ -89,7 +84,7 @@ async function loadModels() {
 
   log.result(`Models loaded in ${(window.performance.now() - t0).toLocaleString()}ms`);
   const engine = await tf.engine();
-  log.result(`Engine State: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+  log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
 }
 
 function flattenObject(object) {
@@ -189,11 +184,15 @@ async function processImage(name) {
     if (models.classify) obj.classify = await modelClassify.classify(models.classify, image.canvas);
   } catch (err) {
     log.result(`Errror during primary classification for ${name}: ${err}`);
+    const engine = await tf.engine();
+    log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
   }
   try {
     if (models.alternative) obj.alternative = await modelClassify.classify(models.alternative, image.canvas);
   } catch (err) {
     log.result(`Errror during alternate classification for ${name}: ${err}`);
+    const engine = await tf.engine();
+    log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
   }
   const tc1 = window.performance.now();
 
@@ -203,6 +202,8 @@ async function processImage(name) {
     if (models.detect) obj.detect = await modelDetect.detect(models.detect, image.canvas);
   } catch (err) {
     log.result(`Errror during detection for ${name}: ${err}`);
+    const engine = await tf.engine();
+    log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
   }
   const td1 = window.performance.now();
 
@@ -216,6 +217,8 @@ async function processImage(name) {
       if (models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
     } catch (err) {
       log.result(`Errror in FaceAPI for ${name}: ${err}`);
+      const engine = await tf.engine();
+      log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
     }
     log.active(`NSFW Detection: ${name}`);
     let nsfw;
