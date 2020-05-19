@@ -384,7 +384,7 @@ function sortResults(sort) {
 // calls main detectxion and then print results for all images matching spec
 async function loadGallery() {
   log.result('Loading gallery ...');
-  const res = await fetch('/get?find=all');
+  const res = await fetch('/api/get?find=all');
   results = await res.json();
   log.result(`Received ${results.length} images in ${JSON.stringify(results).length.toLocaleString()} bytes`);
   $('#number').html(results.length);
@@ -402,7 +402,7 @@ async function loadGallery() {
 }
 
 async function initUser() {
-  const res = await fetch('/user');
+  const res = await fetch('/api/user');
   let user;
   if (res.ok) user = await res.text();
   if (user) {
@@ -446,12 +446,17 @@ function initHandlers() {
     $('#optionsview').toggle('fast');
   });
 
-  // this starts image processing in a separate window
+  // starts image processing in a separate window
   $('#btn-update').click(() => {
     $('#searchbar').toggle(false);
     $('#optionslist').toggle(false);
     $('#optionsview').toggle(false);
     window.open('/process', '_blank');
+  });
+
+  // starts live video detection in a separate window
+  $('#btn-video').click(() => {
+    window.open('/video', '_blank');
   });
 
   // navline-search

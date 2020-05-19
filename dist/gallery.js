@@ -204,15 +204,15 @@ exports.default = void 0;
 const div = {};
 
 async function dot() {
-  div.Log.innerHTML += '.';
+  if (div.Log) div.Log.innerHTML += '.';
 }
 
 async function result(...msg) {
   let msgs = '';
   msgs += msg.map(a => a);
-  if (div && div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
-  div.Log.scrollTop = div.Log.scrollHeight;
-  if (msgs.length > 0) fetch(`/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
+  if (div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
+  if (div.Log) div.Log.scrollTop = div.Log.scrollHeight;
+  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
 
   console.log(...msg);
 }
@@ -655,7 +655,7 @@ function sortResults(sort) {
 async function loadGallery() {
   _log.default.result('Loading gallery ...');
 
-  const res = await fetch('/get?find=all');
+  const res = await fetch('/api/get?find=all');
   results = await res.json();
 
   _log.default.result(`Received ${results.length} images in ${JSON.stringify(results).length.toLocaleString()} bytes`);
@@ -679,7 +679,7 @@ async function loadGallery() {
 }
 
 async function initUser() {
-  const res = await fetch('/user');
+  const res = await fetch('/api/user');
   let user;
   if (res.ok) user = await res.text();
 
@@ -718,13 +718,17 @@ function initHandlers() {
     $('#searchbar').toggle(false);
     $('#optionslist').toggle(false);
     $('#optionsview').toggle('fast');
-  }); // this starts image processing in a separate window
+  }); // starts image processing in a separate window
 
   $('#btn-update').click(() => {
     $('#searchbar').toggle(false);
     $('#optionslist').toggle(false);
     $('#optionsview').toggle(false);
     window.open('/process', '_blank');
+  }); // starts live video detection in a separate window
+
+  $('#btn-video').click(() => {
+    window.open('/video', '_blank');
   }); // navline-search
 
   $('#search-input').keyup(() => {

@@ -106,6 +106,7 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 - BUG: canvas overlaps video element so controls are unavailable
 - PKG: Update screenshots
 - PKG: Test remote
+- RFE: Add HTTP, exception handling HTTPS, document HTTPS
 - RFE: Recursive download
 - RFE: Provide default model locations
 - TBD: Switch to DB, implement server-side paging and filtering

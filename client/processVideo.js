@@ -5,6 +5,7 @@ import * as faceapi from 'face-api.js';
 import modelClassify from './modelClassify.js';
 import modelDetect from './modelDetect.js';
 import log from './log.js';
+import config from './config.js';
 
 const models = {};
 
@@ -13,62 +14,53 @@ function JSONtoStr(json) {
 }
 
 async function loadModels() {
-  log.result('Starting Image Analsys');
+  log.result('Starting Video Analsys');
   log.result(`Initializing TensorFlow/JS version ${tf.version.tfjs}`);
-  await tf.setBackend(window.config.backEnd);
+  await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
-  if (!window.config.floatPrecision) await tf.webgl.forceHalfFloat();
+  if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
   log.result(`Configured Backend: ${tf.getBackend().toUpperCase()}`);
   log.result('Configuration:');
-  log.result(`&nbsp Parallel processing: ${window.config.batchProcessing} parallel images`);
-  log.result(`&nbsp Forced image resize: ${window.config.maxSize}px maximum shape: ${window.config.squareImage ? 'square' : 'native'}`);
-  log.result(`&nbsp Flaoat Precision: ${window.config.floatPrecision ? '32bit' : '16bit'}`);
-  log.result(`&nbsp Classify: ${JSONtoStr(window.config.classify)}`);
-  log.result(`&nbsp Detect: ${JSONtoStr(window.config.detect)}`);
-  log.result(`&nbsp Person: ${JSONtoStr(window.config.person)}`);
+  log.result(`  Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);
+  log.result(`  Classify: ${JSONtoStr(config.classify)}`);
+  log.result(`  Detect: ${JSONtoStr(config.detect)}`);
+  log.result(`  Person: ${JSONtoStr(config.person)}`);
 
-  log.result('Loading models...');
-  const t0 = window.performance.now();
-
-  if (window.config.classify) {
-    log.result(`&nbsp Model: ${window.config.classify.name}`);
-    models.classify = await modelClassify.load(window.config.classify);
+  if (config.classify) {
+    models.classify = await modelClassify.load(config.classify);
   }
 
-  if (window.config.detect) {
-    log.result(`&nbsp Model: ${window.config.detect.name}`);
-    models.detect = await modelDetect.load(window.config.detect);
+  if (config.detect) {
+    models.detect = await modelDetect.load(config.detect);
   }
 
-  if (window.config.person) {
-    log.result(`&nbsp Model: ${window.config.person.name}`);
-    switch (window.config.person.type) {
+  if (config.person) {
+    switch (config.person.type) {
       case 'tinyFaceDetector':
-        await faceapi.nets.tinyFaceDetector.load(window.config.person.modelPath);
-        faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: window.config.person.score, inputSize: 416 });
+        await faceapi.nets.tinyFaceDetector.load(config.person.modelPath);
+        faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: config.person.score, inputSize: 416 });
         break;
       case 'ssdMobilenetv1':
-        await faceapi.nets.ssdMobilenetv1.load(window.config.person.modelPath);
-        faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: window.config.person.score, maxResults: window.config.person.topK });
+        await faceapi.nets.ssdMobilenetv1.load(config.person.modelPath);
+        faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: config.person.score, maxResults: config.person.topK });
         break;
       case 'tinyYolov2':
-        await faceapi.nets.tinyYolov2.load(window.config.person.modelPath);
-        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: window.config.person.score, inputSize: 416 });
+        await faceapi.nets.tinyYolov2.load(config.person.modelPath);
+        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: config.person.score, inputSize: 416 });
         break;
       case 'mtcnn':
-        await faceapi.nets.mtcnn.load(window.config.person.modelPath);
+        await faceapi.nets.mtcnn.load(config.person.modelPath);
         faceapi.options = new faceapi.MtcnnOptions({ minFaceSize: 100, scaleFactor: 0.8 });
         break;
       default:
     }
-    await faceapi.nets.ageGenderNet.load(window.config.person.modelPath);
-    await faceapi.nets.faceLandmark68Net.load(window.config.person.modelPath);
-    await faceapi.nets.faceRecognitionNet.load(window.config.person.modelPath);
-    await faceapi.nets.faceExpressionNet.load(window.config.person.modelPath);
+    await faceapi.nets.ageGenderNet.load(config.person.modelPath);
+    await faceapi.nets.faceLandmark68Net.load(config.person.modelPath);
+    await faceapi.nets.faceRecognitionNet.load(config.person.modelPath);
+    await faceapi.nets.faceExpressionNet.load(config.person.modelPath);
     models.faceapi = faceapi;
   }
 
-  log.result(`Models loaded in ${(window.performance.now() - t0).toLocaleString()}ms`);
   const engine = await tf.engine();
   log.result(`Engine State: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
 }
@@ -90,8 +82,8 @@ faceapi.classify = async (image) => {
 async function processVideo(video) {
   const res = {};
 
-  if (models.classify) res.classify = await models.classify.classify(video);
-  if (models.detect) res.detect = await models.detect.detect(video);
+  if (models.classify) res.classify = await modelClassify.classify(models.classify, video);
+  if (models.detect) res.detect = await modelDetect.detect(models.detect, video);
   if (res.detect && res.detect.find((a) => a.class === 'person')) {
     if (models.faceapi) res.face = await models.faceapi.classify(video, 1);
     if (res.face && res.face.detection & res.face.detection.detections) { // remove unnecessary objects

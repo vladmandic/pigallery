@@ -233,7 +233,7 @@ async function processImage(name) {
   obj.perf = { total: t1 - t0, load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
 
   log.active(`Storing: ${name}`);
-  fetch('/metadata', {
+  fetch('/api/metadata', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(obj),
