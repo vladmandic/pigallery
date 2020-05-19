@@ -34,16 +34,8 @@ async function processGallery(spec) {
   log.active(`Fetching list for "${spec.folder}" matching "${spec.match}"`);
   const res = await fetch(`/api/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
   const dir = await res.json();
-  log.result(`Processing folder:${dir.folder}
-    matching:${dir.match || '*'} 
-    recursive:${dir.recursive} 
-    force:${dir.force} 
-    total:${dir.stats.all} 
-    files:${dir.stats.files} 
-    matched:${dir.files.length} 
-    skipped:${dir.stats.processed} 
-    remaining:${dir.stats.list}
-  `);
+  // eslint-disable-next-line max-len
+  log.result(`Processing folder:${dir.folder} matching:${dir.match || '*'} recursive:${dir.recursive} force:${dir.force} total:${dir.stats.all} files:${dir.stats.files} matched:${dir.stats.matched} processed:${dir.stats.processed} remaining:${dir.stats.list}`);
   const t0 = window.performance.now();
   const promises = [];
   const tmpResults = [];
@@ -62,31 +54,34 @@ async function processGallery(spec) {
   }
   if (promises.length > 0) await Promise.all(promises);
   const t1 = window.performance.now();
-  log.result('');
-  log.result(`Processed ${dir.files.length} images in ${(t1 - t0).toLocaleString()}ms ${((t1 - t0) / dir.files.length).toLocaleString()}ms avg result is ${JSON.stringify(tmpResults).length.toLocaleString()} bytes`);
   tmpResults.length = 0;
-  const s = statSummary();
-  log.result(`  Results: ${results.length} images in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
-  log.result(`  Image Preparation: ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(0)} ms`);
-  log.result(`  Classification: ${s.classify} images in ${s.classifyTime.toFixed(0)} ms average ${s.classifyAvg.toFixed(0)} ms`);
-  log.result(`  Detection: ${s.detect} images in ${s.detectTime.toFixed(0)} ms average ${s.detectAvg.toFixed(0)} ms`);
-  log.result(`  Person Analysis: ${s.person} images in ${s.personTime.toFixed(0)} ms average ${s.personAvg.toFixed(0)} ms`);
-  setTimeout(async () => {
-    log.result('Saving results to persistent cache ...');
-    log.active('Saving...');
-    const save = await fetch('/api/save');
-    if (save.ok) await save.text();
-    log.active('Idle...');
-  }, 1000);
+  if (dir.files.length > 0) {
+    log.result('');
+    log.result(`Processed ${dir.files.length} images in ${(t1 - t0).toLocaleString()}ms ${((t1 - t0) / dir.files.length).toLocaleString()}ms avg result is ${JSON.stringify(tmpResults).length.toLocaleString()} bytes`);
+    const s = statSummary();
+    log.result(`  Results: ${results.length} images in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
+    log.result(`  Image Preparation: ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(0)} ms`);
+    log.result(`  Classification: ${s.classify} images in ${s.classifyTime.toFixed(0)} ms average ${s.classifyAvg.toFixed(0)} ms`);
+    log.result(`  Detection: ${s.detect} images in ${s.detectTime.toFixed(0)} ms average ${s.detectAvg.toFixed(0)} ms`);
+    log.result(`  Person Analysis: ${s.person} images in ${s.personTime.toFixed(0)} ms average ${s.personAvg.toFixed(0)} ms`);
+    setTimeout(async () => {
+      log.result('Saving results to persistent cache ...');
+      log.active('Saving...');
+      const save = await fetch('/api/save');
+      if (save.ok) await save.text();
+      log.active('Idle...');
+    }, 1000);
+  }
+  log.active('Idle...');
 }
 
 // initial complex image is used to trigger all models thus warming them up
 async function warmupModels() {
   log.result('Models warming up ...');
   const t0 = window.performance.now();
+  await ml.process('media/warmup.jpg');
   // results[id] = await ml.process('media/warmup.jpg');
-  results[id] = await ml.process('media/people (68).jpg');
-  id += 1;
+  // id += 1;
   const t1 = window.performance.now();
   log.result(`Models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
@@ -99,8 +94,8 @@ async function main() {
   await processGallery({ folder: 'media', match: 'objects' });
   await processGallery({ folder: 'media', match: 'people' });
   await processGallery({ folder: 'media', match: 'large' });
-  // await processGallery({ folder: 'media/onedrive/Pictures/Snapseed/', match: '' });
-  // await processGallery({ folder: 'media/onedrive/Photos/Random/', match: '' });
+  await processGallery({ folder: 'media/onedrive/Pictures/Snapseed/', match: '' });
+  await processGallery({ folder: 'media/onedrive/Photos/Random/', match: '' });
 }
 
 window.onload = main;
