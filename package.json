@@ -5,7 +5,7 @@
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "upgrade": "npm update && npm dedupe && npm prune"
+    "upgrade": "ncu -nu; npm update; npm install; npm dedupe; npm prune"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -43,16 +43,16 @@
   },
   "homepage": "https://github.com/vladmandic/photo-analysis#readme",
   "dependencies": {
-    "@tensorflow/tfjs": "^1.7.4",
-    "@tensorflow/tfjs-backend-cpu": "^2.0.0-rc.3",
-    "@tensorflow/tfjs-backend-wasm": "^1.7.4",
-    "@tensorflow/tfjs-backend-webgl": "^2.0.0-rc.1",
+    "@tensorflow/tfjs": "^2.0.0-rc.4",
+    "@tensorflow/tfjs-backend-cpu": "^2.0.0-rc.4",
+    "@tensorflow/tfjs-backend-wasm": "^2.0.0-rc.4",
+    "@tensorflow/tfjs-backend-webgl": "^2.0.0-rc.4",
     "eslint-config-airbnb-base": "^14.1.0",
     "exif-parser": "^0.1.12",
-    "express": "^4.17.1",
+    "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
     "face-api.js": "^0.22.2",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.0.0-beta.5",
     "nsfwjs": "^2.2.0",
     "parcel-bundler": "^1.12.4",
     "pilogger": "git+https://github.com/vladmandic/pilogger.git"

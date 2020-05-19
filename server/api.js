@@ -4,28 +4,28 @@ const log = require('pilogger');
 const metadata = require('./metadata.js');
 
 function api(app) {
-  log.info('API ready');
+  log.state('API ready');
   metadata.init();
 
-  app.get('/log', (req, res) => {
+  app.get('/api/log', (req, res) => {
     const msg = decodeURI(req.query.msg || '').replace(/\s+/g, ' ');
     log.info(`${req.session.user}@${req.client.remoteAddress}`, msg);
     res.status(200).send('true');
   });
 
-  app.get('/save', (req, res) => {
+  app.get('/api/save', (req, res) => {
     const data = JSON.stringify(global.results);
     fs.writeFileSync(path.join(__dirname, global.cache), data);
     log.info('Image cache saved:', path.join(__dirname, global.cache), 'records:', global.results.length, 'size:', data.length, 'bytes');
     res.status(200).send('true');
   });
 
-  app.get('/list', async (req, res) => {
+  app.get('/api/list', async (req, res) => {
     const json = await metadata.list(req.query.folder || '', req.query.match || null, req.query.recursive || false, req.query.force || false);
     res.json(json);
   });
 
-  app.get('/get', (req, res) => {
+  app.get('/api/get', (req, res) => {
     if (!req.query.find) {
       res.status(400).json([]);
       return;
@@ -36,7 +36,7 @@ function api(app) {
     }
   });
 
-  app.post('/metadata', async (req, res) => {
+  app.post('/api/metadata', async (req, res) => {
     const data = req.body;
     // log.data('Lookup meatadata:', data.image);
     const exif = await metadata.exif(data.image);
@@ -48,6 +48,10 @@ function api(app) {
     result.tags = tags;
     res.status(200).json(result);
     metadata.store(result);
+  });
+
+  app.get('/api/user', (req, res) => {
+    res.send(req.session.user);
   });
 
   app.get('/media/*', async (req, res) => {
@@ -96,10 +100,6 @@ function api(app) {
     if (global.users.find((a) => (a.email === email && a.passwd === passwd))) req.session.user = email;
     log.info(`Login request: ${email} from ${req.client.remoteAddress} ${req.session.user ? 'success' : 'fail'}`);
     res.redirect('/gallery');
-  });
-
-  app.get('/user', (req, res) => {
-    res.send(req.session.user);
   });
 }
 

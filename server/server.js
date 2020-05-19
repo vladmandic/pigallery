@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const log = require('pilogger');
+const http = require('http');
 const https = require('https');
 const express = require('express');
 const session = require('express-session');
@@ -15,6 +16,7 @@ global.users = [
 ];
 global.server = {
   httpPort: 8000,
+  httpsPort: 8080,
   SSLKey: '/home/vlado/dev/pidash/cert/private.pem',
   SSLCrt: '/home/vlado/dev/pidash/cert/fullchain.pem',
 };
@@ -29,7 +31,7 @@ const cookie = {
     httpOnly: false,
     sameSite: true,
     secure: false,
-    maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
   },
 };
 
@@ -48,11 +50,14 @@ async function main() {
   const root = path.join(__dirname, '../');
   const app = express();
   app.disable('x-powered-by');
+
+  // load expressjs middleware
   app.use(session(cookie));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-  log.info('CORS Enabled');
   app.use(allowCORS);
+
+  // expressjs passthrough for all requests
   app.use((req, res, next) => {
     res.on('finish', () => {
       if (res.statusCode !== 200 && res.statusCode !== 202 && res.statusCode !== 304 && !req.url.endsWith('.map')) {
@@ -64,9 +69,8 @@ async function main() {
     else res.status(401).sendFile('client/auth.html', { root });
   });
 
-  // app.get('/favicon.ico', (req, res) => res.sendFile(path.join(__dirname, '../favicon.ico')));
-  // app.get('/', (req, res) => res.sendFile('client/gallery.html', { root }));
   api.init(app); // initialize api calls
+  // define routes
   app.use('/', express.static(path.join(root, '.')));
   app.get('/gallery', (req, res) => res.sendFile('client/gallery.html', { root }));
   app.get('/process', (req, res) => res.sendFile('client/process.html', { root }));
@@ -75,31 +79,44 @@ async function main() {
   app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
   // app.use('/media', express.static(path.join(root, './media'), { maxAge: '365d', cacheControl: true }));
 
-  await parcel.init(app); // initialize parceljs bundler
+  // initialize parceljs bundler
+  await parcel.init(app);
 
-  // const server = app.listen(80);
-  // server.on('error', (err) => log.warn('Express', err));
-  // server.on('listening', () => log.state('Express listening'));
-  // server.on('close', () => log.state('Express close'));
-  const httpOptions = {
-    maxHeaderSize: 65536,
-    key: fs.readFileSync(global.server.SSLKey, 'utf8'),
-    cert: fs.readFileSync(global.server.SSLCrt, 'utf8'),
-    requestCert: false,
-    rejectUnauthorized: false,
-  };
-  const server = https.createServer(httpOptions, app);
-  server.on('error', (err) => log.error(err.message));
-  server.on('listening', () => log.state(`Server HTTPS listening on ${server.address().family} ${server.address().address}:${server.address().port}`));
-  server.on('close', () => log.state('Server HTTPS closed'));
-  server.listen(global.server.httpPort);
+  // start http server
+  if (global.server.httpPort && global.server.httpPort !== 0) {
+    const httpOptions = {
+      maxHeaderSize: 65536,
+    };
+    const serverhttp = http.createServer(httpOptions, app);
+    serverhttp.on('error', (err) => log.error(err.message));
+    serverhttp.on('listening', () => log.state(`Server HTTP listening on ${serverhttp.address().family} ${serverhttp.address().address}:${serverhttp.address().port}`));
+    serverhttp.on('close', () => log.state('Server http closed'));
+    serverhttp.listen(global.server.httpPort);
+  }
 
+  // start https server
+  if (global.server.httpsPort && global.server.httpsPort !== 0) {
+    const httpsOptions = {
+      maxHeaderSize: 65536,
+      key: fs.readFileSync(global.server.SSLKey, 'utf8'),
+      cert: fs.readFileSync(global.server.SSLCrt, 'utf8'),
+      requestCert: false,
+      rejectUnauthorized: false,
+    };
+    const serverHttps = https.createServer(httpsOptions, app);
+    serverHttps.on('error', (err) => log.error(err.message));
+    serverHttps.on('listening', () => log.state(`Server HTTPS listening on ${serverHttps.address().family} ${serverHttps.address().address}:${serverHttps.address().port}`));
+    serverHttps.on('close', () => log.state('Server HTTPS closed'));
+    serverHttps.listen(global.server.httpsPort);
+  }
+
+  // load image cache
   if (fs.existsSync(path.join(__dirname, global.cache))) {
     const data = fs.readFileSync(path.join(__dirname, global.cache), 'utf8');
     global.results = JSON.parse(data);
-    log.info('Image cache loaded:', path.join(__dirname, global.cache), 'records:', global.results.length, 'size:', data.length, 'bytes');
+    log.state('Image cache loaded:', path.join(__dirname, global.cache), 'records:', global.results.length, 'size:', data.length, 'bytes');
   } else {
-    log.info('Image cache not found:', path.join(__dirname, global.cache));
+    log.warn('Image cache not found:', path.join(__dirname, global.cache));
   }
 }
 
