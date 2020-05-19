@@ -16,11 +16,11 @@ function init() {
     if (line.includes('_wnid')) terms++;
   }
   wordNet = JSON.parse(data);
-  log.info('Loaded WordNet database:', terms, 'terms in', data.length, 'bytes');
+  log.state('Loaded WordNet database:', terms, 'terms in', data.length, 'bytes');
   data = fs.readFileSync('assets/Cities.json');
   const cities = JSON.parse(data);
   const large = cities.data.filter((a) => a.population > 100000);
-  log.info('Loaded all cities database:', cities.data.length, 'all cities', large.length, 'large cities');
+  log.state('Loaded all cities database:', cities.data.length, 'all cities', large.length, 'large cities');
   distance.init(cities.data, large);
   data = null;
 }

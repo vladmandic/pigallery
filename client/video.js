@@ -102,9 +102,9 @@ function getCameraStream() {
     log.result('Camera not supported');
     return;
   }
-  const constraints = { video: { width: { min: 1920 } } };
-  div.Video.width = 1920;
-  div.Video.height = 1080;
+  const constraints = { video: { width: { min: 1280 } } };
+  div.Video.width = 1280;
+  div.Video.height = 720;
   navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
     div.Video.srcObject = stream;
   });
@@ -121,7 +121,7 @@ async function processVideo() {
     showDetails(object, t1 - t0);
     drawDetectionBoxes(object);
     drawFaces(object);
-  }, 25);
+  }, 300);
 }
 
 async function main() {

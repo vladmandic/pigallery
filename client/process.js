@@ -32,7 +32,7 @@ function statSummary() {
 // calls main detectxion and then print results for all images matching spec
 async function processGallery(spec) {
   log.active(`Fetching list for "${spec.folder}" matching "${spec.match}"`);
-  const res = await fetch(`/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
+  const res = await fetch(`/api/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
   const dir = await res.json();
   log.result(`Processing folder:${dir.folder}
     matching:${dir.match || '*'} 
@@ -74,7 +74,7 @@ async function processGallery(spec) {
   setTimeout(async () => {
     log.result('Saving results to persistent cache ...');
     log.active('Saving...');
-    const save = await fetch('/save');
+    const save = await fetch('/api/save');
     if (save.ok) await save.text();
     log.active('Idle...');
   }, 1000);
