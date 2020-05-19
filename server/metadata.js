@@ -255,7 +255,7 @@ async function listFiles(inFolder, inMatch, recursive, force) {
   }
   stats.processed = stats.matched - files.length;
   stats.list = files.length;
-  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:${recursive} force:${force} total:${stats.all} files:${stats.files} matched:${files.length} processed:${stats.processed} returned:${stats.list}`);
+  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:${recursive} force:${force} total:${stats.all} files:${stats.files} matched:${stats.matched} processed:${stats.processed} returned:${stats.list}`);
   return { files, folder, recursive, force, stats };
 }
 
