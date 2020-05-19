@@ -50,6 +50,7 @@
     "eslint-config-airbnb-base": "^14.1.0",
     "exif-parser": "^0.1.12",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "face-api.js": "^0.22.2",
     "node-fetch": "^2.6.0",
     "nsfwjs": "^2.2.0",

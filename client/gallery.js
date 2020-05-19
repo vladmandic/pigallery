@@ -401,6 +401,16 @@ async function loadGallery() {
   resizeResults();
 }
 
+async function initUser() {
+  const res = await fetch('/user');
+  let user;
+  if (res.ok) user = await res.text();
+  if (user) {
+    $('#btn-user').toggleClass('fa-user-slash fa-user');
+    $('#user').text(user);
+  }
+}
+
 // pre-fetching DOM elements to avoid multiple runtime lookups
 function initHandlers() {
   // hide those elements initially
@@ -410,6 +420,12 @@ function initHandlers() {
   $('#optionsview').toggle(false);
 
   // navbar
+  $('#btn-user').click(() => {
+    $.post('/client/auth.html');
+    if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
+    $('#btn-user').toggleClass('fa-user-slash fa-user');
+  });
+
   $('#btn-search').click(() => {
     $('#optionslist').toggle(false);
     $('#optionsview').toggle(false);
@@ -540,6 +556,7 @@ function initHandlers() {
 async function main() {
   log.init();
   initHandlers();
+  initUser();
   await loadGallery();
 }
 
