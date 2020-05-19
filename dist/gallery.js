@@ -676,6 +676,17 @@ async function loadGallery() {
 
   $('#thumbsize')[0].value = _config.default.listThumbnail;
   resizeResults();
+}
+
+async function initUser() {
+  const res = await fetch('/user');
+  let user;
+  if (res.ok) user = await res.text();
+
+  if (user) {
+    $('#btn-user').toggleClass('fa-user-slash fa-user');
+    $('#user').text(user);
+  }
 } // pre-fetching DOM elements to avoid multiple runtime lookups
 
 
@@ -686,6 +697,11 @@ function initHandlers() {
   $('#optionslist').toggle(false);
   $('#optionsview').toggle(false); // navbar
 
+  $('#btn-user').click(() => {
+    $.post('/client/auth.html');
+    if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
+    $('#btn-user').toggleClass('fa-user-slash fa-user');
+  });
   $('#btn-search').click(() => {
     $('#optionslist').toggle(false);
     $('#optionsview').toggle(false);
@@ -863,6 +879,7 @@ async function main() {
   _log.default.init();
 
   initHandlers();
+  initUser();
   await loadGallery();
 }
 
