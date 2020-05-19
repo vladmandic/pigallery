@@ -381,6 +381,28 @@ function sortResults(sort) {
   resizeResults();
 }
 
+async function enumerateFolders() {
+  const list = [];
+  for (const item of filtered) {
+    const path = item.image.substr(0, item.image.lastIndexOf('/'));
+    const folders = path.split('/').filter((a) => a !== '');
+    if (!list.find((a) => a.path === path)) list.push({ path, folders });
+  }
+  let html = '';
+  for (const item of list) {
+    html += `<p class="folder" tag="${item.path}">${item.path}</p>`;
+  }
+  $('#folders').html(html);
+  $('.folder').click((evt) => {
+    const path = $(evt.target).attr('tag');
+    filtered = results.filter((a) => a.image.startsWith(path));
+    $('#results').html('');
+    $('#number').html(filtered.length);
+    for (const obj of filtered) printResult(obj);
+    resizeResults();
+  });
+}
+
 // calls main detectxion and then print results for all images matching spec
 async function loadGallery() {
   log.result('Loading gallery ...');
@@ -399,6 +421,7 @@ async function loadGallery() {
   }
   $('#thumbsize')[0].value = config.listThumbnail;
   resizeResults();
+  enumerateFolders();
 }
 
 async function initUser() {
@@ -476,6 +499,11 @@ function initHandlers() {
   });
 
   // navline-list
+  $('#btn-folder').click(() => {
+    $('#folders').toggle('slow');
+    $('#btn-folders').toggleClass('fa-folder fa-folder-open');
+  });
+
   $('#btn-desc').click(() => {
     listConfig.showDetails = !listConfig.showDetails;
     $('.description').toggle('slow');

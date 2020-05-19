@@ -101,16 +101,6 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 - BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
 - NSFW: <https://github.com/infinitered/nsfwjs>
 
-## Todo
-
-- BUG: canvas overlaps video element so controls are unavailable
-- PKG: Test remote
-- RFE: Recursive download
-- RFE: Provide default model locations
-- TBD: Switch to DB, implement server-side paging and filtering
-- TBD: Multi-user mode: database, locations, sizes, etc.
-- DOC: Server, Screenshots, Search, Auth
-
 ## Screenshots
 
 ### Gallery view
@@ -126,3 +116,15 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 ![alt text](assets/screenshot-ml3.png)
 
 ![alt text](assets/screenshot-ml4.png)
+
+## Todo
+
+- BUG: canvas overlaps video element so controls are unavailable
+- PKG: Test remote
+- RFE: Recursive download
+- RFE: Provide default model locations
+- RFE: Gallery performance optimizations
+- RFE: Gallery folder in hierarchical form
+- TBD: Switch to DB, implement server-side paging and filtering
+- TBD: Multi-user mode: database, locations, sizes, etc.
+- DOC: Server, Screenshots, Search, Auth

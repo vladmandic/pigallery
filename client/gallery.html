@@ -40,16 +40,22 @@
       .navline { background: #555555; min-height: 50px; max-height: 50px; position: fixed; top: 70px; justify-content: center;}
       .navlinebutton { font-size: 24px; color: lightyellow; padding: 0 0 0 50px; cursor: pointer; }
       .navlinebutton:hover { color: lightblue; }
+      .blank { background: #555555; min-height: 50px; max-height: 50px; position: fixed; top: 70px; }
 
       .input { font-size: 1.2rem; margin: 0 16px 4px 10px; padding: 0 16px 0 16px; outline: none; border: none; background: #555555; width: 80%; height: 44px; border-radius: 20px }
       .input:hover { background: lightyellow; }
       .input:focus { background: lightyellow; }
 
-      .results { height: 900px; overflow-y: scroll; margin-top: 125px; }
+      .main { height: 900px; overflow: hidden; margin-top: 120px; display: flex }
+      .folders { min-width: 200px; max-width: 200px; background: #555555; font-size: 1.2rem; line-height: 2rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+      .folder { background: #555555; margin: 0; padding: 8px; cursor: pointer; }
+      .folder:hover { background: lightyellow; }
+      .results { overflow-y: scroll; }
+
       .listitem { display: flex; max-height: 144px; }
       .divider { background: #222222; padding: 4px 0 4px 8px; font-size: 1.2rem; margin: 4px; font-weight: bold;}
       .thumbnail { padding: 0; cursor: zoom-in; }
-      .description { min-width: 273px; max-width: 273px; padding: 4px; }
+      .description { min-width: 331px; max-width: 331px; padding: 4px; }
       .download { font-size: 16px; color: gray; position: absolute; top: 4px; right: 4px; cursor: grab; }
       .download:hover { color: lightblue; }
 
@@ -72,6 +78,7 @@
     <div><i id="btn-update" class="navbarbutton fas fa-sync"></i><p>Update Database</p></div>
     <div><i class="number fas fa-images"></i><p id="number">0</p></div>
   </div>
+  <div id="blank" class="row blank"></div>
 
   <div id="searchbar" class="row navline text-center">
     <input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
@@ -80,6 +87,7 @@
   </div>
 
   <div id="optionslist" class="row navline text-center">
+    <div><i class="navlinebutton fas fa-folder-open" id="btn-folder"></i><p class="btntext">Show Folders</p></div>
     <div><i class="navlinebutton fas fa-eye" id="btn-desc"></i><p class="btntext">Descriptions</p></div>
     <div><i class="navlinebutton fas fa-clone" id="find-duplicates"></i><p class="btntext">Find Duplicates</p></div>
     <div><i class="navlinebutton fas sort fa-random"></i><p class="btntext">Randomize</p></div>
@@ -102,7 +110,10 @@
     <div><i class="navlinebutton fas fa-video-slash" id='details-raw'></i><p class="btntext">View Raw Image</p></div>
   </div>
 
-  <div id="results" class="row results"></div>
+  <div id="main" class="main">
+    <div id="folders" class="folders">blaa</div>
+    <div id="results" class="row results"></div>  
+  </div>
 
   <div id="log" class="row log"></div>
 
