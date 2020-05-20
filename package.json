@@ -1,11 +1,11 @@
 {
   "name": "photo-analysis",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Photo Analysis using TensorFlow/JS",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "upgrade": "ncu -nu; npm update; npm install; npm dedupe; npm prune"
+    "upgrade": "npm update; npm install; npm dedupe; npm prune"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -34,7 +34,9 @@
     "yolo",
     "faceapi",
     "resnet",
-    "inception"
+    "inception",
+    "gallery",
+    "metadata"
   ],
   "author": "Vladimir Mandic <mandic00@live.com>",
   "license": "MIT",
