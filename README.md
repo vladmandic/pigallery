@@ -51,22 +51,24 @@ Processing builds tags from all available image metadata:
 - Image timestamp determined from EXIF data if present or using FS stat if not
 - Each part of the image path
 - TensofFlow
-  - Primary and alternate image classification
-  - Object detection
-  - Face, age and gender analysis
+  - Primary and alternate image classification as defined by ImageNet 1,000 classes <http://image-net.org/>
+  - Object detection as defined by Coco 90 classes <http://cocodataset.org/>
+  - Face, age and gender analysis using <https://github.com/justadudewhohacks/face-api.js>
 - Definition lookup for any term detected by TensorFlow
+  - Definition lookup is done using WordNet Lexical Database <https://wordnet.princeton.edu/>
   - This includes hierarchical lookups - for example, *gown* will also include *dress, clothing, etc.*
 - EXIF data extracted from image:
   - Location with lookup of geographic location and nearest large city
+  - Location database includes 195,175 places from <geonames.org>
   - Camera make, model and lens
   - Camera settings used to take the photo
   - Software used to edit the photo
 
 Collected metadata is additionally analyzed to render human-readable search terms
 
-- Age can be specified as *20ies, 30ies, kid, old, etc.*
-- Camera settings can be specified as *bright, dark, indoors, outdoors, etc.*
-- Lens settings can be specified as *superzoom, zoom, portrait, wide, ultrawide*
+- Age can be specified as: *20ies, 30ies, kid, old, etc.*
+- Camera settings can be specified as: *bright, dark, indoors, outdoors, etc.*
+- Lens settings can be specified as: *superzoom, zoom, portrait, wide, ultrawide*
 - Special words can be used in search terms to form a sentence: *the, a, in, wearing, having, etc.*
 
 ### Search
@@ -93,7 +95,7 @@ Result of all metadata processing is a very flexbile search engine - take a look
   - Can lead to out of memory errors in your GPU
 - On pretrained models
   - Size of pretrained model is not related to performance as larger models can sometimes predict objects easier.
-  - All models are pretrained using ImageNet dataset with 1,000 classes
+  - All models are pretrained using ImageNet dataset with 1,000 classes <http://image-net.org/>
     - Ideally, models should be trained using full ImageNet dataset that contains 14,197,087 images in 21,841 classes
   - If model is depth-based, testing is provided with depth factor 1.0. Lower depth decreases accuracy and higher depth rarely increases it.
   - Typcal resolution for selected pretrained models is 224px resolution although it can vary
@@ -150,11 +152,9 @@ This allows for fallback solutions - if one model does not perform well on an im
 - TensorFlowJS: <https://www.tensorflow.org/js/>
 - Datasets: <https://www.tensorflow.org/resources/models-datasets>
 - MobileNet: <https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/README.md>
+- Inception: <https://towardsdatascience.com/review-inception-v4-evolved-from-googlenet-merged-with-resnet-idea-image-classification-5e8c339d18bc>
 - DarkNet Yolo: <https://pjreddie.com/darknet/yolo/>
 - Face/Gender/Age: <https://github.com/justadudewhohacks/face-api.js>
-- PoseNet: <https://github.com/tensorflow/tfjs-models/tree/master/posenet>
-- BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
-- NSFW: <https://github.com/infinitered/nsfwjs>
 
 ## Screenshots
 
@@ -166,7 +166,7 @@ This allows for fallback solutions - if one model does not perform well on an im
 
 ![alt text](assets/screenshot-details.png)
 
-### Comples Search Results
+### Complex Search Results
 
 ![alt text](assets/screenshot-search.png)
 
@@ -182,4 +182,3 @@ This allows for fallback solutions - if one model does not perform well on an im
 - RFE: Switch to DB, implement server-side paging and filtering
 - RFE: Save user preferences
 - RFE: Process GIF, PNG and HEIF
-- RFE: Link to docs
