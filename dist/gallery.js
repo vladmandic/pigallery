@@ -568,6 +568,7 @@ function resizeResults() {
 }
 
 async function enumerateFolders() {
+  $('#folders').html('');
   const list = [];
 
   for (const item of filtered) {
@@ -593,7 +594,7 @@ async function enumerateFolders() {
         const html = `
           <li id="dir-${folder}">
             <span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp
-              <i class="fas fa-caret-right">&nbsp</i>${name}
+              <i tag="${path}" class="fas fa-caret-right">&nbsp</i>${name}
             </span>
           </li>
         `;
@@ -693,11 +694,17 @@ function findDuplicates() {
   }
 
   filtered = [...new Set(filtered)];
+
+  _log.default.result(`Duplicates: ${filtered.length}`);
+
   redrawResults();
 }
 
 function sortResults(sort) {
   $('body').css('cursor', 'wait');
+
+  _log.default.result(`Sorting: ${sort}`);
+
   if (!filtered || filtered.length === 0) filtered = results;
   if (sort.includes('random')) shuffle(filtered);
   previous = null; // sort by
@@ -738,6 +745,8 @@ async function initUser() {
   if (window.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user);
+
+    _log.default.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
   }
 } // pre-fetching DOM elements to avoid multiple runtime lookups
 
@@ -806,7 +815,7 @@ function initHandlers() {
 
   $('#btn-folder').click(() => {
     $('#folders').toggle('slow');
-    $('#btn-folders').toggleClass('fa-folder fa-folder-open');
+    $('#btn-folder').toggleClass('fa-folder fa-folder-open');
   });
   $('#btn-desc').click(() => {
     listConfig.showDetails = !listConfig.showDetails;
