@@ -26,7 +26,6 @@
       h2 { font-size: 1.2rem; margin-top: 8px; font-weight: bold; }
       a { color: white }
       a:hover { background: darkcyan; color: white }
-
       .row { width: 100vw; margin: 0 }
       .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
       .log { height: 80px; overflow-y:scroll; margin-top: 10px; overflow: hidden }
@@ -47,13 +46,13 @@
       .input:focus { background: lightyellow; }
 
       .main { height: 900px; overflow: hidden; margin-top: 120px; display: flex }
-      .folders { min-width: 200px; max-width: 200px; background: #555555; font-size: 1.2rem; line-height: 2rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-      .folder { background: #555555; margin: 0; padding: 8px; cursor: pointer; }
+      .folders { min-width: 200px; max-width: 200px; background: #555555; font-size: 1.2rem; line-height: 2rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0; margin: 0 }
+      .folder { background: #555555; margin: 0; padding: 4px 200px 4px 0; cursor: pointer; }
       .folder:hover { background: lightyellow; }
       .results { overflow-y: scroll; }
 
       .listitem { display: flex; max-height: 144px; }
-      .divider { background: #222222; padding: 4px 0 4px 8px; font-size: 1.2rem; margin: 4px; font-weight: bold;}
+      .divider { background: #222222; padding: 4px 0 4px 8px; font-size: 1.2rem; margin: 4px; font-weight: bold; height: 38px; }
       .thumbnail { padding: 0; cursor: zoom-in; }
       .description { min-width: 331px; max-width: 331px; padding: 4px; }
       .download { font-size: 16px; color: gray; position: absolute; top: 4px; right: 4px; cursor: grab; }
@@ -98,7 +97,7 @@
     <div><i class="navlinebutton fas sort fa-sort-amount-down"></i><i class="navlinebutton fas sort fa-sort-amount-up" style="padding-left: 20px"></i>
       <p class="btntext">Sort by Size</p></div>
     <div style="width: 100px; margin-left: 50px">
-      <input type="range" class="thumbsize" name="thumbsize" id="thumbsize" min="50" max="1000" step="10" value="230">
+      <input type="range" class="thumbsize" name="thumbsize" id="thumbsize" min="50" max="1000" step="10" value="130">
       <label id="thumblabel" for="thumbsize">Thumbnail Size</label>
     </div>
   </div>
@@ -111,7 +110,7 @@
   </div>
 
   <div id="main" class="main">
-    <div id="folders" class="folders">blaa</div>
+    <div class="folders"><ul id="folders" class="folders"></ul></div>
     <div id="results" class="row results"></div>  
   </div>
 

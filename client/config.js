@@ -6,9 +6,9 @@ const config = {
   maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
   renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
   listThumbnail: 130,      // initial resolution in which to render stored thumbnail in gallery list view
-  batchProcessing: 10,     // how many images to process in parallel
+  batchProcessing: 1,      // how many images to process in parallel
   squareImage: false,      // resize proportional to the original image or to a square image
-  floatPrecision: true,    // use float32 or float16 for WebGL tensors
+  floatPrecision: false,    // use float32 or float16 for WebGL tensors
 
   // Default models
   classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },

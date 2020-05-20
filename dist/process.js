@@ -136,11 +136,11 @@ const config = {
   // resolution in which to store image thumbnail embedded in result set
   listThumbnail: 130,
   // initial resolution in which to render stored thumbnail in gallery list view
-  batchProcessing: 10,
+  batchProcessing: 1,
   // how many images to process in parallel
   squareImage: false,
   // resize proportional to the original image or to a square image
-  floatPrecision: true,
+  floatPrecision: false,
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
@@ -69192,7 +69192,7 @@ async function processGallery(spec) {
   const res = await fetch(`/api/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
   const dir = await res.json(); // eslint-disable-next-line max-len
 
-  _log.default.result(`Processing folder:${dir.folder} matching:${dir.match || '*'} recursive:${dir.recursive} force:${dir.force} total:${dir.stats.all} files:${dir.stats.files} matched:${dir.stats.matched} processed:${dir.stats.processed} remaining:${dir.stats.list}`);
+  _log.default.result(`Processing folder:${dir.folder} matching:${dir.match || '*'} recursive:${dir.recursive} force:${dir.force} total:${dir.stats.all} files:${dir.stats.files} matched:${dir.stats.matched} excluded:${dir.stats.excluded} processed:${dir.stats.processed} remaining:${dir.stats.list}`);
 
   const t0 = window.performance.now();
   const promises = [];
@@ -69255,9 +69255,7 @@ async function warmupModels() {
   _log.default.result('Models warming up ...');
 
   const t0 = window.performance.now();
-  await ml.process('media/warmup.jpg'); // results[id] = await ml.process('media/warmup.jpg');
-  // id += 1;
-
+  await ml.process('assets/warmup.jpg');
   const t1 = window.performance.now();
 
   _log.default.result(`Models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
@@ -69269,25 +69267,20 @@ async function main() {
   _log.default.active('Starting ...');
 
   await ml.load();
-  await warmupModels();
+  await warmupModels(); // await processGallery({ folder: 'media', match: 'objects' });
+  // await processGallery({ folder: 'media', match: 'people' });
+  // await processGallery({ folder: 'media', match: 'large' });
+
   await processGallery({
-    folder: 'media',
-    match: 'objects'
-  });
-  await processGallery({
-    folder: 'media',
-    match: 'people'
-  });
-  await processGallery({
-    folder: 'media',
-    match: 'large'
-  });
-  await processGallery({
-    folder: 'media/onedrive/Pictures/Snapseed',
+    folder: 'media/Pictures/Snapseed',
     match: ''
   });
   await processGallery({
-    folder: 'media/onedrive/Photos/Random',
+    folder: 'media/Pictures/Random',
+    match: ''
+  });
+  await processGallery({
+    folder: 'media/Photos/Objects',
     match: ''
   });
 }
