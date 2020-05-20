@@ -496,6 +496,10 @@ function initHandlers() {
     $('#optionsview').toggle('fast');
   });
 
+  $('#btn-doc').click(() => {
+    window.open('https://github.com/vladmandic/photo-analysis/blob/master/README.md', '_blank');
+  });
+
   // starts image processing in a separate window
   $('#btn-update').click(() => {
     if (window.user.admin) {
