@@ -31,20 +31,22 @@ function statSummary() {
 
 // calls main detectxion and then print results for all images matching spec
 async function processGallery(spec) {
-  log.active(`Fetching list for "${spec.folder}" matching "${spec.match}"`);
-  const res = await fetch(`/api/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
+  const options = {
+    folder: spec.folder || '',
+    match: spec.match || '',
+    recursive: spec.recursive || false,
+    force: spec.force || false,
+  };
+  log.active(`Fetching list for "${options.folder}" matching "${options.match}"`);
+  const res = await fetch(`/api/list?folder=${encodeURI(options.folder)}&match=${encodeURI(options.match)}&recursive=${options.recursive}&force=${options.force}`);
   const dir = await res.json();
-  // eslint-disable-next-line max-len
-  log.result(`Processing folder:${dir.folder} matching:${dir.match || '*'} recursive:${dir.recursive} force:${dir.force} total:${dir.stats.all} files:${dir.stats.files} matched:${dir.stats.matched} excluded:${dir.stats.excluded} processed:${dir.stats.processed} remaining:${dir.stats.list}`);
+  log.result(`Processing folder:${dir.folder} matching:${dir.match || '*'} recursive:${dir.recursive} force:${dir.force} results:${dir.files.length}`);
   const t0 = window.performance.now();
   const promises = [];
-  const tmpResults = [];
-  for (const f of dir.files) {
-    const url = `${spec.folder}/${f}`;
+  for (const url of dir.files) {
     promises.push(ml.process(url).then((obj) => {
       log.dot();
       results[id] = obj;
-      tmpResults.push(results[id]);
       id += 1;
     }));
     if (promises.length >= config.batchProcessing) {
@@ -54,10 +56,9 @@ async function processGallery(spec) {
   }
   if (promises.length > 0) await Promise.all(promises);
   const t1 = window.performance.now();
-  tmpResults.length = 0;
   if (dir.files.length > 0) {
     log.result('');
-    log.result(`Processed ${dir.files.length} images in ${(t1 - t0).toLocaleString()}ms ${((t1 - t0) / dir.files.length).toLocaleString()}ms avg result is ${JSON.stringify(tmpResults).length.toLocaleString()} bytes`);
+    log.result(`Processed ${dir.files.length} images in ${(t1 - t0).toLocaleString()}ms ${((t1 - t0) / dir.files.length).toLocaleString()}ms avg`);
     const s = statSummary();
     log.result(`  Results: ${results.length} images in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
     log.result(`  Image Preparation: ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(0)} ms`);
@@ -92,9 +93,11 @@ async function main() {
   // await processGallery({ folder: 'media', match: 'objects' });
   // await processGallery({ folder: 'media', match: 'people' });
   // await processGallery({ folder: 'media', match: 'large' });
-  await processGallery({ folder: 'media/Pictures/Snapseed', match: '' });
-  await processGallery({ folder: 'media/Pictures/Random', match: '' });
-  await processGallery({ folder: 'media/Photos/Objects', match: '' });
+  await processGallery({ folder: 'Samples/', match: '', recursive: true });
+  await processGallery({ folder: 'Temp/', match: '', recursive: true });
+  await processGallery({ folder: 'Pictures/Snapseed/', match: '' });
+  await processGallery({ folder: 'Pictures/Random/', match: '' });
+  await processGallery({ folder: 'Photos/Objects/', match: '' });
 }
 
 window.onload = main;

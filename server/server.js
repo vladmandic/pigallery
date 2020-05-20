@@ -24,6 +24,9 @@ async function main() {
   log.logFile(config.server.logFile);
   log.info(nodeconfig.name, 'version', nodeconfig.version);
   log.info('Platform:', process.platform, 'Arch:', process.arch, 'Node:', process.version);
+  log.info('Authentication required:', config.server.authForce);
+  log.info('Media root:', config.server.mediaRoot);
+  log.info('Allowed image file types:', config.server.allowedImageFileTypes);
   const root = path.join(__dirname, '../');
   const app = express();
   app.disable('x-powered-by');
@@ -42,7 +45,7 @@ async function main() {
       }
     });
     if (req.url.startsWith('/assets') || req.url.startsWith('/client') || req.url.startsWith('/favicon.ico')) next();
-    else if (req.session.user) next();
+    else if (req.session.user || !config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
   });
 

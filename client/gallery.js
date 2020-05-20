@@ -259,12 +259,14 @@ async function printResult(object) {
   const link = `<a class="download fa fa-arrow-alt-circle-down" href="${object.image}" download></a>`;
   const divItem = document.createElement('div');
   divItem.className = 'listitem';
+
+  const root = window.user && window.user.root ? window.user.root : 'media/';
   divItem.innerHTML = `
     <div class="col thumbnail">
-      <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle">
+      <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width=${config.listThumbnail}px height=${config.listThumbnail}px>
     </div>
     <div id="desc-${object.id}" class="col description">
-      <b>${decodeURI(object.image).replace('media/', '')}</b>${link}<br>
+      <b>${decodeURI(object.image).replace(root, '')}</b>${link}<br>
       ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
       ${location}<br>
       ${classified}<br>
@@ -273,7 +275,6 @@ async function printResult(object) {
     </div>
   `;
   $('#results').append(divItem);
-  $('.description').toggle(listConfig.showDetails);
   const divThumb = document.getElementById(`thumb-${object.id}`);
   divThumb.img = object.image;
   const img = document.getElementById('popup-image');
@@ -285,17 +286,20 @@ async function printResult(object) {
 }
 
 function resizeResults() {
-  config.listThumbnail = parseInt($('#thumbsize')[0].value, 10);
-  $('#thumblabel').text(`Size: ${config.listThumbnail}px`);
-  $('#thumbsize')[0].value = config.listThumbnail;
-  $('.thumbnail').width(config.listThumbnail);
-  $('.thumbnail').height(config.listThumbnail);
-  $('.thumbnail').css('min-width', `${config.listThumbnail}px`);
-  $('.thumbnail').css('min-height', `${config.listThumbnail}px`);
-  $('.thumbnail').css('max-width', `${config.listThumbnail}px`);
-  $('.thumbnail').css('max-height', `${config.listThumbnail}px`);
-  $('.listitem').css('min-height', `${Math.max(144, 16 + config.listThumbnail)}px`);
-  $('.listitem').css('max-height', '144px');
+  const thumbSize = parseInt($('#thumbsize')[0].value, 10);
+  if (thumbSize !== config.listThumbnail) {
+    config.listThumbnail = parseInt($('#thumbsize')[0].value, 10);
+    $('#thumblabel').text(`Size: ${config.listThumbnail}px`);
+    $('#thumbsize')[0].value = config.listThumbnail;
+    $('.thumbnail').width(config.listThumbnail);
+    $('.thumbnail').height(config.listThumbnail);
+    // $('.thumbnail').css('min-width', `${config.listThumbnail}px`);
+    // $('.thumbnail').css('min-height', `${config.listThumbnail}px`);
+    // $('.thumbnail').css('max-width', `${config.listThumbnail}px`);
+    // $('.thumbnail').css('max-height', `${config.listThumbnail}px`);
+    $('.listitem').css('min-height', `${Math.max(144, 16 + config.listThumbnail)}px`);
+    $('.listitem').css('max-height', '144px');
+  }
 }
 
 async function enumerateFolders() {
@@ -310,10 +314,10 @@ async function enumerateFolders() {
       if (item.folders[i]) {
         const folder = item.folders[i];
         const parent = item.folders[i > 0 ? i - 1 : 0];
-        console.log(item.path, folder, parent);
         let path = '';
         for (let j = 0; j <= i; j++) path += `${item.folders[j]}/`;
-        const name = folder === 'media' ? 'All' : folder;
+        const root = window.user && window.user.root ? window.user.root : 'media/';
+        const name = folder === root.replace(/\//g, '') ? 'All' : folder;
         const html = `
           <li id="dir-${folder}">
             <span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp
@@ -331,21 +335,25 @@ async function enumerateFolders() {
 
   // $('#folders').html(html);
   $('.folder').click((evt) => {
+    $('body').css('cursor', 'wait');
     const path = $(evt.target).attr('tag');
-    filtered = results.filter((a) => a.image.startsWith(path));
+    log.result(`Showing path: ${path}`);
+    const root = window.user && window.user.root ? window.user.root : 'media/';
+    if (path === root) filtered = results;
+    else filtered = results.filter((a) => a.image.startsWith(path));
     // eslint-disable-next-line no-use-before-define
     redrawResults(false);
   });
 }
 
 async function redrawResults(generateFolders = true) {
-  $('#results').html('');
-  for (const obj of filtered) {
-    printResult(obj);
-  }
   $('#number').html(filtered.length);
-  resizeResults();
+  $('#results').html('');
   if (generateFolders) enumerateFolders();
+  for await (const obj of filtered) printResult(obj);
+  $('.description').toggle(listConfig.showDetails);
+  await resizeResults();
+  $('body').css('cursor', 'pointer');
 }
 
 function filterWord(object, word) {
@@ -364,6 +372,7 @@ function filterWord(object, word) {
 }
 
 function filterResults(words) {
+  $('body').css('cursor', 'wait');
   filtered = results;
   previous = null;
   let foundWords = 0;
@@ -394,6 +403,7 @@ function shuffle(array) {
 }
 
 function findDuplicates() {
+  $('body').css('cursor', 'wait');
   previous = null;
   filtered = [];
   for (const obj of results) {
@@ -405,6 +415,7 @@ function findDuplicates() {
 }
 
 function sortResults(sort) {
+  $('body').css('cursor', 'wait');
   if (!filtered || filtered.length === 0) filtered = results;
   if (sort.includes('random')) shuffle(filtered);
   previous = null;
@@ -425,15 +436,12 @@ function sortResults(sort) {
 
 // calls main detectxion and then print results for all images matching spec
 async function loadGallery() {
+  $('body').css('cursor', 'wait');
   log.result('Loading gallery ...');
   const res = await fetch('/api/get?find=all');
   results = await res.json();
   log.result(`Received ${results.length} images in ${JSON.stringify(results).length.toLocaleString()} bytes`);
-  $('#number').html(results.length);
-  $('#results').html('');
-  for (const id in results) {
-    results[id].id = id;
-  }
+  for (const id in results) results[id].id = id;
   listConfig.divider = 'month';
   filtered = results.sort((a, b) => (b.exif.timestamp - a.exif.timestamp));
   redrawResults();
