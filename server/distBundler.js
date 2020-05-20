@@ -25,8 +25,8 @@ const options = {
 function parcel(app) {
   const bundler = new Parcel(entryFiles, options);
   // bundler.on('buildStart', (f) => log.state('Build start', f));
-  bundler.on('buildEnd', () => log.state('Application ready'));
-  bundler.on('buildError', (err) => log.state('Build error', err));
+  bundler.on('buildEnd', () => log.state('Client application rebuild ready'));
+  bundler.on('buildError', (err) => log.state('Client application build error', err));
   app.use('/client', bundler.middleware()); // use for bundle as express middle-ware
 }
 
