@@ -264,7 +264,7 @@ async function printResult(object) {
       <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle">
     </div>
     <div id="desc-${object.id}" class="col description">
-      <b>${decodeURI(object.image)}</b>${link}<br>
+      <b>${decodeURI(object.image).replace('media/', '')}</b>${link}<br>
       ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
       ${location}<br>
       ${classified}<br>
@@ -285,17 +285,59 @@ async function printResult(object) {
 }
 
 function resizeResults() {
-  const size = parseInt($('#thumbsize')[0].value, 10);
-  config.listThumbnail = size;
-  $('#thumblabel').text(`Size: ${size}px`);
-  $('.thumbnail').width(size);
-  $('.thumbnail').height(size);
-  $('.thumbnail').css('min-width', `${size}px`);
-  $('.thumbnail').css('min-height', `${size}px`);
-  $('.thumbnail').css('max-width', `${size}px`);
-  $('.thumbnail').css('max-height', `${size}px`);
-  $('.listitem').css('min-height', `${Math.max(144, 16 + size)}px`);
+  config.listThumbnail = parseInt($('#thumbsize')[0].value, 10);
+  $('#thumblabel').text(`Size: ${config.listThumbnail}px`);
+  $('#thumbsize')[0].value = config.listThumbnail;
+  $('.thumbnail').width(config.listThumbnail);
+  $('.thumbnail').height(config.listThumbnail);
+  $('.thumbnail').css('min-width', `${config.listThumbnail}px`);
+  $('.thumbnail').css('min-height', `${config.listThumbnail}px`);
+  $('.thumbnail').css('max-width', `${config.listThumbnail}px`);
+  $('.thumbnail').css('max-height', `${config.listThumbnail}px`);
+  $('.listitem').css('min-height', `${Math.max(144, 16 + config.listThumbnail)}px`);
   $('.listitem').css('max-height', '144px');
+}
+
+async function enumerateFolders() {
+  const list = [];
+  for (const item of filtered) {
+    const path = item.image.substr(0, item.image.lastIndexOf('/'));
+    const folders = path.split('/').filter((a) => a !== '');
+    if (!list.find((a) => a.path === path)) list.push({ path, folders });
+  }
+  for (let i = 0; i < 10; i++) {
+    for (const item of list) {
+      if (item.folders[i]) {
+        const dir = item.folders[i];
+        let path = '';
+        for (let j = 0; j <= i; j++) path += `${item.folders[j]}/`;
+        const name = dir === 'media' ? 'All' : dir;
+        const html = `<li id="dir-${i}${dir}"><span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp<i class="fas fa-caret-right">&nbsp</i>${name}</span></li>`;
+        let prev = $(`#dir-${i}${item.folders[i > 0 ? i - 1 : 0]}`);
+        const curr = $(`#dir-${i}${dir}`);
+        if (prev.length === 0) prev = $('#folders');
+        if (curr.length === 0) prev.append(html);
+      }
+    }
+  }
+
+  // $('#folders').html(html);
+  $('.folder').click((evt) => {
+    const path = $(evt.target).attr('tag');
+    filtered = results.filter((a) => a.image.startsWith(path));
+    // eslint-disable-next-line no-use-before-define
+    redrawResults(false);
+  });
+}
+
+async function redrawResults(generateFolders = true) {
+  $('#results').html('');
+  for (const obj of filtered) {
+    printResult(obj);
+  }
+  $('#number').html(filtered.length);
+  resizeResults();
+  if (generateFolders) enumerateFolders();
 }
 
 function filterWord(object, word) {
@@ -305,7 +347,7 @@ function filterWord(object, word) {
   const res = object.filter((obj) => {
     let ok = false;
     for (const tag of obj.tags) {
-      const str = Object.values(tag)[0].toString() || '';
+      const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0].toString() : '';
       ok |= str.startsWith(word.toLowerCase());
     }
     return ok;
@@ -323,11 +365,7 @@ function filterResults(words) {
   }
   if (filtered && filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${filtered.length || 0} results out of ${results.length} matches`);
   else log.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
-
-  $('#results').html('');
-  $('#number').html(filtered.length);
-  for (const obj of filtered) printResult(obj);
-  resizeResults();
+  redrawResults();
 }
 
 // Fisher-Yates (aka Knuth) Shuffle
@@ -355,9 +393,7 @@ function findDuplicates() {
     if (items.length !== 1) filtered.push(...items);
   }
   filtered = [...new Set(filtered)];
-  $('#results').html('');
-  for (const obj of filtered) printResult(obj);
-  resizeResults();
+  redrawResults();
 }
 
 function sortResults(sort) {
@@ -376,31 +412,7 @@ function sortResults(sort) {
   else if (sort.includes('amount-down') || sort.includes('amount-up')) listConfig.divider = 'size';
   else if (sort.includes('alpha-down') || sort.includes('alpha-up')) listConfig.divider = 'folder';
   else listConfig.divider = '';
-  $('#results').html('');
-  for (const obj of filtered) printResult(obj);
-  resizeResults();
-}
-
-async function enumerateFolders() {
-  const list = [];
-  for (const item of filtered) {
-    const path = item.image.substr(0, item.image.lastIndexOf('/'));
-    const folders = path.split('/').filter((a) => a !== '');
-    if (!list.find((a) => a.path === path)) list.push({ path, folders });
-  }
-  let html = '';
-  for (const item of list) {
-    html += `<p class="folder" tag="${item.path}">${item.path}</p>`;
-  }
-  $('#folders').html(html);
-  $('.folder').click((evt) => {
-    const path = $(evt.target).attr('tag');
-    filtered = results.filter((a) => a.image.startsWith(path));
-    $('#results').html('');
-    $('#number').html(filtered.length);
-    for (const obj of filtered) printResult(obj);
-    resizeResults();
-  });
+  redrawResults();
 }
 
 // calls main detectxion and then print results for all images matching spec
@@ -416,12 +428,7 @@ async function loadGallery() {
   }
   listConfig.divider = 'month';
   filtered = results.sort((a, b) => (b.exif.timestamp - a.exif.timestamp));
-  for (const obj of filtered) {
-    printResult(obj);
-  }
-  $('#thumbsize')[0].value = config.listThumbnail;
-  resizeResults();
-  enumerateFolders();
+  redrawResults();
 }
 
 async function initUser() {
@@ -521,6 +528,7 @@ function initHandlers() {
   $('#thumbsize').on('input', () => {
     resizeResults();
   });
+
   // navline-view
   $('#details-desc').click(() => {
     $('#details-desc').toggleClass('fa-comment fa-comment-slash');
@@ -557,21 +565,21 @@ function initHandlers() {
     const bottom = $('#results').prop('scrollHeight');
     $('#results').stop();
     switch (event.keyCode) {
-      case 38: $('#results').animate({ scrollTop: current - line }, 400); break; // up
-      case 40: $('#results').animate({ scrollTop: current + line }, 400); break; // down
-      case 33: $('#results').animate({ scrollTop: current - page }, 400); break; // pgup
-      case 34: $('#results').animate({ scrollTop: current + page }, 400); break; // pgdn
-      case 36: $('#results').animate({ scrollTop: 0 }, 1000); break; // home
-      case 35: $('#results').animate({ scrollTop: bottom }, 1000); break; // end
+      case 38: $('#results').animate({ scrollTop: current - line }, 400); break; // key=up
+      case 40: $('#results').animate({ scrollTop: current + line }, 400); break; // key=down
+      case 33: $('#results').animate({ scrollTop: current - page }, 400); break; // key=pgup
+      case 34: $('#results').animate({ scrollTop: current + page }, 400); break; // key=pgdn
+      case 36: $('#results').animate({ scrollTop: 0 }, 1000); break; // key=home
+      case 35: $('#results').animate({ scrollTop: bottom }, 1000); break; // key=end
       case 37: showNextDetails(true); break;
       case 39: showNextDetails(false); break;
       case 191: $('#btn-search').click(); break; // key=/
       case 190: $('#btn-sort').click(); break; // key=.
-      case 32: $('#btn-desc').click(); break; // key=space
-      case 82:
+      case 188: $('#btn-desc').click(); break; // key=,
+      case 220:
         $('#results').scrollTop(0);
         loadGallery();
-        break; // r
+        break; // key=\
       case 27:
         $('#searchbar').toggle(false);
         $('#sortbar').toggle(false);
@@ -580,7 +588,7 @@ function initHandlers() {
         $('#popup').toggle(false);
         $('#search-input')[0].value = '';
         filterResults('');
-        break; // escape
+        break; // key=esc
       default: // log.result('Unhandled keydown event', event.keyCode);
     }
   });

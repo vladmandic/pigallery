@@ -136,11 +136,11 @@ const config = {
   // resolution in which to store image thumbnail embedded in result set
   listThumbnail: 130,
   // initial resolution in which to render stored thumbnail in gallery list view
-  batchProcessing: 10,
+  batchProcessing: 1,
   // how many images to process in parallel
   squareImage: false,
   // resize proportional to the original image or to a square image
-  floatPrecision: true,
+  floatPrecision: false,
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
@@ -525,7 +525,7 @@ async function printResult(object) {
       <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle">
     </div>
     <div id="desc-${object.id}" class="col description">
-      <b>${decodeURI(object.image)}</b>${link}<br>
+      <b>${decodeURI(object.image).replace('media/', '')}</b>${link}<br>
       ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
       ${location}<br>
       ${classified}<br>
@@ -546,17 +546,68 @@ async function printResult(object) {
 }
 
 function resizeResults() {
-  const size = parseInt($('#thumbsize')[0].value, 10);
-  _config.default.listThumbnail = size;
-  $('#thumblabel').text(`Size: ${size}px`);
-  $('.thumbnail').width(size);
-  $('.thumbnail').height(size);
-  $('.thumbnail').css('min-width', `${size}px`);
-  $('.thumbnail').css('min-height', `${size}px`);
-  $('.thumbnail').css('max-width', `${size}px`);
-  $('.thumbnail').css('max-height', `${size}px`);
-  $('.listitem').css('min-height', `${Math.max(144, 16 + size)}px`);
+  _config.default.listThumbnail = parseInt($('#thumbsize')[0].value, 10);
+  $('#thumblabel').text(`Size: ${_config.default.listThumbnail}px`);
+  $('#thumbsize')[0].value = _config.default.listThumbnail;
+  $('.thumbnail').width(_config.default.listThumbnail);
+  $('.thumbnail').height(_config.default.listThumbnail);
+  $('.thumbnail').css('min-width', `${_config.default.listThumbnail}px`);
+  $('.thumbnail').css('min-height', `${_config.default.listThumbnail}px`);
+  $('.thumbnail').css('max-width', `${_config.default.listThumbnail}px`);
+  $('.thumbnail').css('max-height', `${_config.default.listThumbnail}px`);
+  $('.listitem').css('min-height', `${Math.max(144, 16 + _config.default.listThumbnail)}px`);
   $('.listitem').css('max-height', '144px');
+}
+
+async function enumerateFolders() {
+  const list = [];
+
+  for (const item of filtered) {
+    const path = item.image.substr(0, item.image.lastIndexOf('/'));
+    const folders = path.split('/').filter(a => a !== '');
+    if (!list.find(a => a.path === path)) list.push({
+      path,
+      folders
+    });
+  }
+
+  for (let i = 0; i < 10; i++) {
+    for (const item of list) {
+      if (item.folders[i]) {
+        const dir = item.folders[i];
+        let path = '';
+
+        for (let j = 0; j <= i; j++) path += `${item.folders[j]}/`;
+
+        const name = dir === 'media' ? 'All' : dir;
+        const html = `<li id="dir-${i}${dir}"><span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp<i class="fas fa-caret-right">&nbsp</i>${name}</span></li>`;
+        let prev = $(`#dir-${i}${item.folders[i > 0 ? i - 1 : 0]}`);
+        const curr = $(`#dir-${i}${dir}`);
+        if (prev.length === 0) prev = $('#folders');
+        if (curr.length === 0) prev.append(html);
+      }
+    }
+  } // $('#folders').html(html);
+
+
+  $('.folder').click(evt => {
+    const path = $(evt.target).attr('tag');
+    filtered = results.filter(a => a.image.startsWith(path)); // eslint-disable-next-line no-use-before-define
+
+    redrawResults(false);
+  });
+}
+
+async function redrawResults(generateFolders = true) {
+  $('#results').html('');
+
+  for (const obj of filtered) {
+    printResult(obj);
+  }
+
+  $('#number').html(filtered.length);
+  resizeResults();
+  if (generateFolders) enumerateFolders();
 }
 
 function filterWord(object, word) {
@@ -567,7 +618,7 @@ function filterWord(object, word) {
     let ok = false;
 
     for (const tag of obj.tags) {
-      const str = Object.values(tag)[0].toString() || '';
+      const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0].toString() : '';
       ok |= str.startsWith(word.toLowerCase());
     }
 
@@ -587,12 +638,7 @@ function filterResults(words) {
   }
 
   if (filtered && filtered.length > 0) _log.default.result(`Searching for "${words}" found ${foundWords} words in ${filtered.length || 0} results out of ${results.length} matches`);else _log.default.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
-  $('#results').html('');
-  $('#number').html(filtered.length);
-
-  for (const obj of filtered) printResult(obj);
-
-  resizeResults();
+  redrawResults();
 } // Fisher-Yates (aka Knuth) Shuffle
 
 
@@ -624,11 +670,7 @@ function findDuplicates() {
   }
 
   filtered = [...new Set(filtered)];
-  $('#results').html('');
-
-  for (const obj of filtered) printResult(obj);
-
-  resizeResults();
+  redrawResults();
 }
 
 function sortResults(sort) {
@@ -644,42 +686,7 @@ function sortResults(sort) {
   if (sort.includes('amount-up')) filtered.sort((a, b) => a.pixels - b.pixels); // how to group
 
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) listConfig.divider = 'month';else if (sort.includes('amount-down') || sort.includes('amount-up')) listConfig.divider = 'size';else if (sort.includes('alpha-down') || sort.includes('alpha-up')) listConfig.divider = 'folder';else listConfig.divider = '';
-  $('#results').html('');
-
-  for (const obj of filtered) printResult(obj);
-
-  resizeResults();
-}
-
-async function enumerateFolders() {
-  const list = [];
-
-  for (const item of filtered) {
-    const path = item.image.substr(0, item.image.lastIndexOf('/'));
-    const folders = path.split('/').filter(a => a !== '');
-    if (!list.find(a => a.path === path)) list.push({
-      path,
-      folders
-    });
-  }
-
-  let html = '';
-
-  for (const item of list) {
-    html += `<p class="folder" tag="${item.path}">${item.path}</p>`;
-  }
-
-  $('#folders').html(html);
-  $('.folder').click(evt => {
-    const path = $(evt.target).attr('tag');
-    filtered = results.filter(a => a.image.startsWith(path));
-    $('#results').html('');
-    $('#number').html(filtered.length);
-
-    for (const obj of filtered) printResult(obj);
-
-    resizeResults();
-  });
+  redrawResults();
 } // calls main detectxion and then print results for all images matching spec
 
 
@@ -700,14 +707,7 @@ async function loadGallery() {
 
   listConfig.divider = 'month';
   filtered = results.sort((a, b) => b.exif.timestamp - a.exif.timestamp);
-
-  for (const obj of filtered) {
-    printResult(obj);
-  }
-
-  $('#thumbsize')[0].value = _config.default.listThumbnail;
-  resizeResults();
-  enumerateFolders();
+  redrawResults();
 }
 
 async function initUser() {
@@ -832,42 +832,42 @@ function initHandlers() {
           scrollTop: current - line
         }, 400);
         break;
-      // up
+      // key=up
 
       case 40:
         $('#results').animate({
           scrollTop: current + line
         }, 400);
         break;
-      // down
+      // key=down
 
       case 33:
         $('#results').animate({
           scrollTop: current - page
         }, 400);
         break;
-      // pgup
+      // key=pgup
 
       case 34:
         $('#results').animate({
           scrollTop: current + page
         }, 400);
         break;
-      // pgdn
+      // key=pgdn
 
       case 36:
         $('#results').animate({
           scrollTop: 0
         }, 1000);
         break;
-      // home
+      // key=home
 
       case 35:
         $('#results').animate({
           scrollTop: bottom
         }, 1000);
         break;
-      // end
+      // key=end
 
       case 37:
         showNextDetails(true);
@@ -887,16 +887,16 @@ function initHandlers() {
         break;
       // key=.
 
-      case 32:
+      case 188:
         $('#btn-desc').click();
         break;
-      // key=space
+      // key=,
 
-      case 82:
+      case 220:
         $('#results').scrollTop(0);
         loadGallery();
         break;
-      // r
+      // key=\
 
       case 27:
         $('#searchbar').toggle(false);
@@ -907,7 +907,7 @@ function initHandlers() {
         $('#search-input')[0].value = '';
         filterResults('');
         break;
-      // escape
+      // key=esc
 
       default: // log.result('Unhandled keydown event', event.keyCode);
 

@@ -33031,11 +33031,11 @@ const config = {
   // resolution in which to store image thumbnail embedded in result set
   listThumbnail: 130,
   // initial resolution in which to render stored thumbnail in gallery list view
-  batchProcessing: 10,
+  batchProcessing: 1,
   // how many images to process in parallel
   squareImage: false,
   // resize proportional to the original image or to a square image
-  floatPrecision: true,
+  floatPrecision: false,
   // use float32 or float16 for WebGL tensors
   // Default models
   classify: {
