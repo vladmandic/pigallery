@@ -33066,17 +33066,21 @@ const config = {
   } // alternative classification models - you can pick none of one
 
   /*
-  classify: { name: 'MobileNet v1', modelPath: '/models/mobilenet-v1/model.json' },
-  classify: { name: 'MobileNet v2', modelPath: '/models/mobilenet-v2/model.json' },
+  classify: { name: 'MobileNet v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v1_100_224/classification/3/default/1' },
+  classify: { name: 'MobileNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/classification/3/default/1' },
   classify: { name: 'Inception v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1' },
   classify: { name: 'Inception v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v2/classification/3/default/1' },
-  classify: { name: 'Inception v3', modelPath: '/models/inception-v3/model.json' },
-  classify: { name: 'Inception ResNet v2', modelPath: '/models/inception-resnet-v2/model.json' },
+  classify: { name: 'Inception v3', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v3/classification/3/default/1' },
+  classify: { name: 'Inception ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_resnet_v2/classification/3/default/1' },
   classify: { name: 'ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/resnet_v2_101/classification/3/default/1' },
   classify: { name: 'NasNet Mobile', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/nasnet_mobile/classification/3/default/1' },
   */
   // alternative detect models: enable darknet/yolo model in a separate module - you can pick none, enable coco/ssd-v2 or enable darknet/yolo (not js module is initialized by default)
-  // detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 },
+
+  /*
+  detect: { name: 'Coco/SSD v1', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v1/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
+  detect: { name: 'Coco/SSD v2', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
+  */
   // alternative face-api models - you can pick none or one of following
 
   /*

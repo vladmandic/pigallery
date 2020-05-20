@@ -1,0 +1,23 @@
+{
+  "users": [
+    { "email": "mandic00@live.com", "passwd": "qwe", "admin": true, "mediaRoot": "media/" }
+  ],
+  "server": {
+    "httpPort": 8000,
+    "httpsPort": 8080,
+    "allowCORS": true,
+    "logFile": "server.log",
+    "allowedImageFileTypes": [ ".jpeg", ".jpg" ],
+    "mediaRoot": "media/",
+    "cacheFile": "data/cache.json",
+    "descriptionsDB": "assets/WordNet-Synset.json",
+    "citiesDB": "assets/Cities.json",
+    "warmupImage": "assets/warmup.jpg",
+    "SSLKey": "/home/vlado/dev/pidash/cert/private.pem",
+    "SSLCrt": "/home/vlado/dev/pidash/cert/fullchain.pem"
+  },
+  "cookie": {
+    "secret": "whaTEvEr!42", "proxy": false, "resave": false, "rolling": true, "saveUninitialized": false,
+    "cookie": { "httpOnly": false, "sameSite": true, "secure": false, "maxAge": 6048000001000 }
+  }
+}

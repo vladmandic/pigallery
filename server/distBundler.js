@@ -24,9 +24,9 @@ const options = {
 
 function parcel(app) {
   const bundler = new Parcel(entryFiles, options);
-  bundler.on('buildStart', (f) => log.state('Parcel start', f));
-  bundler.on('buildEnd', () => log.state('Parcel ready'));
-  bundler.on('buildError', (err) => log.state('Parcel error', err));
+  // bundler.on('buildStart', (f) => log.state('Build start', f));
+  bundler.on('buildEnd', () => log.state('Application ready'));
+  bundler.on('buildError', (err) => log.state('Build error', err));
   app.use('/client', bundler.middleware()); // use for bundle as express middle-ware
 }
 

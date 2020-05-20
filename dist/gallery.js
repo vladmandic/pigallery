@@ -171,17 +171,21 @@ const config = {
   } // alternative classification models - you can pick none of one
 
   /*
-  classify: { name: 'MobileNet v1', modelPath: '/models/mobilenet-v1/model.json' },
-  classify: { name: 'MobileNet v2', modelPath: '/models/mobilenet-v2/model.json' },
+  classify: { name: 'MobileNet v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v1_100_224/classification/3/default/1' },
+  classify: { name: 'MobileNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/classification/3/default/1' },
   classify: { name: 'Inception v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1' },
   classify: { name: 'Inception v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v2/classification/3/default/1' },
-  classify: { name: 'Inception v3', modelPath: '/models/inception-v3/model.json' },
-  classify: { name: 'Inception ResNet v2', modelPath: '/models/inception-resnet-v2/model.json' },
+  classify: { name: 'Inception v3', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v3/classification/3/default/1' },
+  classify: { name: 'Inception ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_resnet_v2/classification/3/default/1' },
   classify: { name: 'ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/resnet_v2_101/classification/3/default/1' },
   classify: { name: 'NasNet Mobile', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/nasnet_mobile/classification/3/default/1' },
   */
   // alternative detect models: enable darknet/yolo model in a separate module - you can pick none, enable coco/ssd-v2 or enable darknet/yolo (not js module is initialized by default)
-  // detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 },
+
+  /*
+  detect: { name: 'Coco/SSD v1', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v1/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
+  detect: { name: 'Coco/SSD v2', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
+  */
   // alternative face-api models - you can pick none or one of following
 
   /*
@@ -574,17 +578,25 @@ async function enumerateFolders() {
   for (let i = 0; i < 10; i++) {
     for (const item of list) {
       if (item.folders[i]) {
-        const dir = item.folders[i];
+        const folder = item.folders[i];
+        const parent = item.folders[i > 0 ? i - 1 : 0];
+        console.log(item.path, folder, parent);
         let path = '';
 
         for (let j = 0; j <= i; j++) path += `${item.folders[j]}/`;
 
-        const name = dir === 'media' ? 'All' : dir;
-        const html = `<li id="dir-${i}${dir}"><span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp<i class="fas fa-caret-right">&nbsp</i>${name}</span></li>`;
-        let prev = $(`#dir-${i}${item.folders[i > 0 ? i - 1 : 0]}`);
-        const curr = $(`#dir-${i}${dir}`);
-        if (prev.length === 0) prev = $('#folders');
-        if (curr.length === 0) prev.append(html);
+        const name = folder === 'media' ? 'All' : folder;
+        const html = `
+          <li id="dir-${folder}">
+            <span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp
+              <i class="fas fa-caret-right">&nbsp</i>${name}
+            </span>
+          </li>
+        `;
+        let parentElem = $(`#dir-${parent}`);
+        if (parentElem.length === 0) parentElem = $('#folders');
+        const currentElem = $(`#dir-${folder}`);
+        if (currentElem.length === 0) parentElem.append(html);
       }
     }
   } // $('#folders').html(html);
@@ -712,12 +724,11 @@ async function loadGallery() {
 
 async function initUser() {
   const res = await fetch('/api/user');
-  let user;
-  if (res.ok) user = await res.text();
+  if (res.ok) window.user = await res.json();
 
-  if (user) {
+  if (window.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
-    $('#user').text(user);
+    $('#user').text(window.user.user);
   }
 } // pre-fetching DOM elements to avoid multiple runtime lookups
 
@@ -727,7 +738,8 @@ function initHandlers() {
   $('#popup').toggle(false);
   $('#searchbar').toggle(false);
   $('#optionslist').toggle(false);
-  $('#optionsview').toggle(false); // navbar
+  $('#optionsview').toggle(false);
+  if (!window.user.admin) $('#btn-update').css('color', 'grey'); // navbar
 
   $('#btn-user').click(() => {
     $.post('/client/auth.html');
@@ -753,10 +765,16 @@ function initHandlers() {
   }); // starts image processing in a separate window
 
   $('#btn-update').click(() => {
-    $('#searchbar').toggle(false);
-    $('#optionslist').toggle(false);
-    $('#optionsview').toggle(false);
-    window.open('/process', '_blank');
+    if (window.user.admin) {
+      _log.default.result('Image database update requested ...');
+
+      $('#searchbar').toggle(false);
+      $('#optionslist').toggle(false);
+      $('#optionsview').toggle(false);
+      window.open('/process', '_blank');
+    } else {
+      _log.default.result('Image database update not authorized');
+    }
   }); // starts live video detection in a separate window
 
   $('#btn-video').click(() => {
@@ -918,8 +936,8 @@ function initHandlers() {
 async function main() {
   _log.default.init();
 
+  await initUser();
   initHandlers();
-  initUser();
   await loadGallery();
 }
 
