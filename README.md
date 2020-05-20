@@ -121,9 +121,11 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 
 - BUG: Canvas overlaps video element so controls are unavailable
 - BUG: Handle duplicate folder names
-- PKG: Test remote
-- RFE: Recursive processing
-- RFE: Gallery performance optimizations
-- TBD: Switch to DB, implement server-side paging and filtering
-- TBD: Multi-user mode: database, locations, sizes, etc.
+- BUG: EXIF processing exceptions
+- BUG: Exception handling during processing
+- PKG: Test remote deployment
+- PKG: Git private files for user database
+- RFE: Switch to DB, implement server-side paging and filtering
+- RFE: Save user preferences
+- RFE: Process GIF, PNG and HEIF
 - DOC: Models, Server, Screenshots, Search, Auth

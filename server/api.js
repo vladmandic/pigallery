@@ -16,8 +16,8 @@ function api(app) {
 
   app.get('/api/save', (req, res) => {
     const data = JSON.stringify(global.results);
-    fs.writeFileSync(path.join(__dirname, global.cache), data);
-    log.info('Image cache saved:', path.join(__dirname, global.cache), 'records:', global.results.length, 'size:', data.length, 'bytes');
+    fs.writeFileSync(config.server.cacheFile, data);
+    log.info('Image cache saved:', config.server.cacheFile, 'records:', global.results.length, 'size:', data.length, 'bytes');
     res.status(200).send('true');
   });
 
@@ -32,7 +32,8 @@ function api(app) {
       return;
     }
     if (req.query.find === 'all') {
-      const data = global.results.filter((a) => a.image.startsWith(req.session.root));
+      let data = global.results;
+      if (config.server.authForce) data = data.filter((a) => a.image.startsWith(req.session.root));
       log.info(`Get ${req.session.user}@${req.client.remoteAddress} root: ${req.session.root} data:`, data.length, 'of', global.results.length);
       res.json(data);
     }

@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 
 const fs = require('fs');
+const path = require('path');
 const crypto = require('crypto');
 const parser = require('exif-parser');
 const log = require('pilogger');
@@ -177,12 +178,12 @@ async function getExif(url) {
     const stream = fs.createReadStream(url, { start: 0, end: 65536 });
     stream
       .on('data', (chunk) => {
-        const raw = parseExif(chunk, 5);
+        const raw = parseExif(chunk, 10);
         if (!raw || !raw.tags) log.warn('Could not get EXIF data:', url);
         const stat = fs.statSync(url);
         json.bytes = stat.bytes;
-        json.timestamp = raw && raw.tags ? (raw.tags.ModifyDate || raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
-        if (!json.timestamp) json.timestamp = parseFloat(stat.ctimeMs / 1000);
+        json.timestamp = raw && raw.tags ? (raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
+        if (!json.timestamp) json.timestamp = parseFloat(stat.mtimeMs / 1000);
         if (raw && raw.tags) {
           json.make = raw.tags.Make;
           json.model = raw.tags.Model;
@@ -226,51 +227,68 @@ async function getHash(file, hashType) {
   });
 }
 
-async function listFiles(inFolder, inMatch, recursive, force) {
+function readDir(folder, match = null, recursive = false) {
   let files = [];
-  const stats = {};
+  try {
+    if (!fs.existsSync(folder)) return files;
+    const dir = fs.readdirSync(folder);
+    for (const file of dir) {
+      const name = path.join(folder, file);
+      const stat = fs.statSync(name);
+      if (stat.isFile()) {
+        if (match) {
+          if (path.includes(match)) files.push(name);
+        } else {
+          files.push(name);
+        }
+      }
+      if (stat.isSymbolicLink()) {
+        const subdir = readDir(name, match, recursive);
+        files = [...files, ...subdir];
+      }
+      if (stat.isDirectory()) {
+        if (recursive) {
+          const subdir = readDir(name, match, recursive);
+          files = [...files, ...subdir];
+        }
+      }
+    }
+  } catch (err) {
+    log.warn('Filesystem:', folder, 'error:', err);
+  }
+  return files;
+}
+
+async function listFiles(inFolder, inMatch, inRecursive, inForce) {
+  let files = [];
   const folder = inFolder ? decodeURI(inFolder) : '.';
   const match = inMatch ? decodeURI(inMatch) : null;
-  try {
-    if (fs.existsSync(folder)) files = fs.readdirSync(folder);
-  } catch { /**/ }
-  stats.all = files.length;
+  const recursive = inRecursive ? inRecursive.toLowerCase() === 'true' : false;
+  const force = inForce ? inForce.toLowerCase() === 'true' : false;
+  files = readDir(`${config.server.mediaRoot}${folder}`, match, recursive);
   files = files.filter((a) => {
-    let stat;
-    try {
-      stat = fs.statSync(`${folder}/${a}`);
-    } catch { /**/ }
-    if (stat && stat.isFile()) return true;
-    return false;
-  });
-  stats.files = files.length;
-  if (match) {
-    files = files.filter((a) => a.includes(match));
-  }
-  stats.matched = files.length;
-  files = files.filter((a) => {
-    for (const ext of config.allowedImageFileTypes) {
+    for (const ext of config.server.allowedImageFileTypes) {
       if (a.toLowerCase().endsWith(ext)) return true;
     }
     return false;
   });
-  stats.excluded = stats.matched - files.length;
+  let processed = 0;
   if (!force) {
     files = files.filter((a) => {
       for (const item of global.results) {
-        if (item.image === `${folder}/${a}`) {
-          if ((item.classify && item.classify.length > 0) || (item.detect && item.detect.length > 0)) return false;
+        if (item.image === a) {
+          if ((item.classify && item.classify.length > 0) || (item.detect && item.detect.length > 0)) {
+            processed++;
+            return false;
+          }
           return true;
         }
       }
       return true;
     });
   }
-  stats.processed = stats.matched - stats.excluded - files.length;
-  stats.list = files.length;
-  // eslint-disable-next-line max-len
-  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:${recursive} force:${force} total:${stats.all} files:${stats.files} matched:${stats.matched} excluded:${stats.excluded} processed:${stats.processed} returned:${stats.list}`);
-  return { files, folder, recursive, force, stats };
+  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:`, recursive, 'force:', force, 'processed:', processed, 'results:', files.length);
+  return { files, folder, recursive, force };
 }
 
 exports.init = init;
