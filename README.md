@@ -122,9 +122,8 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 - BUG: Canvas overlaps video element so controls are unavailable
 - BUG: Handle duplicate folder names
 - PKG: Test remote
-- RFE: Recursive download
-- RFE: Provide default model locations
+- RFE: Recursive processing
 - RFE: Gallery performance optimizations
 - TBD: Switch to DB, implement server-side paging and filtering
 - TBD: Multi-user mode: database, locations, sizes, etc.
-- DOC: Server, Screenshots, Search, Auth
+- DOC: Models, Server, Screenshots, Search, Auth

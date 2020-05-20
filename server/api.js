@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const log = require('pilogger');
 const metadata = require('./metadata.js');
+const config = require('../data/config.json');
 
 function api(app) {
   log.state('API ready');
@@ -31,8 +32,9 @@ function api(app) {
       return;
     }
     if (req.query.find === 'all') {
-      log.info(`Get ${req.session.user}@${req.client.remoteAddress} all data:`, global.results.length);
-      res.json(global.results);
+      const data = global.results.filter((a) => a.image.startsWith(req.session.root));
+      log.info(`Get ${req.session.user}@${req.client.remoteAddress} root: ${req.session.root} data:`, data.length, 'of', global.results.length);
+      res.json(data);
     }
   });
 
@@ -51,12 +53,17 @@ function api(app) {
   });
 
   app.get('/api/user', (req, res) => {
-    res.send(req.session.user);
+    res.json({ user: req.session.user, admin: req.session.admin, root: req.session.root });
   });
 
-  app.get('/media/*', async (req, res) => {
+  app.get(`${config.server.mediaRoot}/*`, async (req, res) => {
     // console.log(req); res.sendStatus(404); return;
-    const fileName = decodeURI(req.url).replace('/media/', 'media/');
+    const fileName = decodeURI(req.url);
+    if (fileName.startsWith('/')) fileName.substr(1);
+    if (!fileName.startsWith(req.session.root)) {
+      res.sendStatus(401);
+      return;
+    }
     if (!fs.existsSync(fileName)) {
       res.sendStatus(404);
       return;
@@ -97,7 +104,12 @@ function api(app) {
     const email = req.body.authEmail;
     const passwd = req.body.authPassword;
     if (!req.body.authEmail || req.body.authEmail === '') req.session.user = undefined;
-    if (global.users.find((a) => (a.email === email && a.passwd === passwd))) req.session.user = email;
+    const found = config.users.find((a) => (a.email === email && a.passwd === passwd));
+    if (found) {
+      req.session.user = found.email;
+      req.session.admin = found.admin;
+      req.session.root = found.mediaRoot;
+    }
     log.info(`Login request: ${email} from ${req.client.remoteAddress} ${req.session.user ? 'success' : 'fail'}`);
     res.redirect('/gallery');
   });
