@@ -303,6 +303,7 @@ function resizeResults() {
 }
 
 async function enumerateFolders() {
+  $('#folders').html('');
   const list = [];
   for (const item of filtered) {
     const path = item.image.substr(0, item.image.lastIndexOf('/'));
@@ -321,7 +322,7 @@ async function enumerateFolders() {
         const html = `
           <li id="dir-${folder}">
             <span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp
-              <i class="fas fa-caret-right">&nbsp</i>${name}
+              <i tag="${path}" class="fas fa-caret-right">&nbsp</i>${name}
             </span>
           </li>
         `;
@@ -411,11 +412,13 @@ function findDuplicates() {
     if (items.length !== 1) filtered.push(...items);
   }
   filtered = [...new Set(filtered)];
+  log.result(`Duplicates: ${filtered.length}`);
   redrawResults();
 }
 
 function sortResults(sort) {
   $('body').css('cursor', 'wait');
+  log.result(`Sorting: ${sort}`);
   if (!filtered || filtered.length === 0) filtered = results;
   if (sort.includes('random')) shuffle(filtered);
   previous = null;
@@ -453,6 +456,7 @@ async function initUser() {
   if (window.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user);
+    log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
   }
 }
 
@@ -529,7 +533,7 @@ function initHandlers() {
   // navline-list
   $('#btn-folder').click(() => {
     $('#folders').toggle('slow');
-    $('#btn-folders').toggleClass('fa-folder fa-folder-open');
+    $('#btn-folder').toggleClass('fa-folder fa-folder-open');
   });
 
   $('#btn-desc').click(() => {

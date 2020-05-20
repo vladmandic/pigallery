@@ -128,4 +128,5 @@ Time to analyze sample of simple/medium/complex images also depends on chosen fl
 - RFE: Switch to DB, implement server-side paging and filtering
 - RFE: Save user preferences
 - RFE: Process GIF, PNG and HEIF
+- RFE: Link to docs
 - DOC: Models, Server, Screenshots, Search, Auth
