@@ -35,7 +35,7 @@ async function processGallery(spec) {
   const res = await fetch(`/api/list?folder=${encodeURI(spec.folder)}&match=${encodeURI(spec.match)}`);
   const dir = await res.json();
   // eslint-disable-next-line max-len
-  log.result(`Processing folder:${dir.folder} matching:${dir.match || '*'} recursive:${dir.recursive} force:${dir.force} total:${dir.stats.all} files:${dir.stats.files} matched:${dir.stats.matched} processed:${dir.stats.processed} remaining:${dir.stats.list}`);
+  log.result(`Processing folder:${dir.folder} matching:${dir.match || '*'} recursive:${dir.recursive} force:${dir.force} total:${dir.stats.all} files:${dir.stats.files} matched:${dir.stats.matched} excluded:${dir.stats.excluded} processed:${dir.stats.processed} remaining:${dir.stats.list}`);
   const t0 = window.performance.now();
   const promises = [];
   const tmpResults = [];
@@ -79,9 +79,7 @@ async function processGallery(spec) {
 async function warmupModels() {
   log.result('Models warming up ...');
   const t0 = window.performance.now();
-  await ml.process('media/warmup.jpg');
-  // results[id] = await ml.process('media/warmup.jpg');
-  // id += 1;
+  await ml.process('assets/warmup.jpg');
   const t1 = window.performance.now();
   log.result(`Models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
@@ -91,11 +89,12 @@ async function main() {
   log.active('Starting ...');
   await ml.load();
   await warmupModels();
-  await processGallery({ folder: 'media', match: 'objects' });
-  await processGallery({ folder: 'media', match: 'people' });
-  await processGallery({ folder: 'media', match: 'large' });
-  await processGallery({ folder: 'media/onedrive/Pictures/Snapseed', match: '' });
-  await processGallery({ folder: 'media/onedrive/Photos/Random', match: '' });
+  // await processGallery({ folder: 'media', match: 'objects' });
+  // await processGallery({ folder: 'media', match: 'people' });
+  // await processGallery({ folder: 'media', match: 'large' });
+  await processGallery({ folder: 'media/Pictures/Snapseed', match: '' });
+  await processGallery({ folder: 'media/Pictures/Random', match: '' });
+  await processGallery({ folder: 'media/Photos/Objects', match: '' });
 }
 
 window.onload = main;

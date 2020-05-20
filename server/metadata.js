@@ -26,6 +26,7 @@ function init() {
 }
 
 function storeObject(json) {
+  if (json.image === 'assets/warmup.jpg') return;
   const index = global.results.findIndex((a) => a.image === json.image);
   if (index > -1) global.results[index] = json;
   else global.results.push(json);
@@ -133,6 +134,7 @@ function searchClasses(wnid) {
 function getDescription(json) {
   // log.data('Lookup WordNet:', JSON.stringify(json));
   const results = [];
+  if (!json || !Array.isArray(json)) return results;
   for (const guess of json) {
     const descriptions = searchClasses(guess.wnid);
     const lines = [];
@@ -245,17 +247,23 @@ async function listFiles(inFolder, inMatch, recursive, force) {
     files = files.filter((a) => a.includes(match));
   }
   stats.matched = files.length;
+  files = files.filter((a) => (a.toLowerCase().endsWith('.jpg') || a.toLowerCase().endsWith('.jpeg')));
+  stats.excluded = stats.matched - files.length;
   if (!force) {
     files = files.filter((a) => {
       for (const item of global.results) {
-        if (item.image === `${folder}/${a}`) return false;
+        if (item.image === `${folder}/${a}`) {
+          if ((item.classify && item.classify.length > 0) || (item.detect && item.detect.length > 0)) return false;
+          return true;
+        }
       }
       return true;
     });
   }
-  stats.processed = stats.matched - files.length;
+  stats.processed = stats.matched - stats.excluded - files.length;
   stats.list = files.length;
-  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:${recursive} force:${force} total:${stats.all} files:${stats.files} matched:${stats.matched} processed:${stats.processed} returned:${stats.list}`);
+  // eslint-disable-next-line max-len
+  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:${recursive} force:${force} total:${stats.all} files:${stats.files} matched:${stats.matched} excluded:${stats.excluded} processed:${stats.processed} returned:${stats.list}`);
   return { files, folder, recursive, force, stats };
 }
 
