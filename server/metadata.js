@@ -5,28 +5,29 @@ const crypto = require('crypto');
 const parser = require('exif-parser');
 const log = require('pilogger');
 const distance = require('./geoNearest.js');
+const config = require('../data/config.json');
 
 let wordNet = {};
 
 function init() {
   let data;
-  data = fs.readFileSync('assets/WordNet-Synset.json', 'utf8');
+  data = fs.readFileSync(config.server.descriptionsDB, 'utf8');
   let terms = 0;
   for (const line of data.split('\n')) {
     if (line.includes('_wnid')) terms++;
   }
   wordNet = JSON.parse(data);
-  log.state('Loaded WordNet database:', terms, 'terms in', data.length, 'bytes');
-  data = fs.readFileSync('assets/Cities.json');
+  log.state('Loaded WordNet database:', config.server.descriptionsDB, terms, 'terms in', data.length, 'bytes');
+  data = fs.readFileSync(config.server.citiesDB);
   const cities = JSON.parse(data);
   const large = cities.data.filter((a) => a.population > 100000);
-  log.state('Loaded all cities database:', cities.data.length, 'all cities', large.length, 'large cities');
+  log.state('Loaded all cities database:', config.server.citiesDB, cities.data.length, 'all cities', large.length, 'large cities');
   distance.init(cities.data, large);
   data = null;
 }
 
 function storeObject(json) {
-  if (json.image === 'assets/warmup.jpg') return;
+  if (json.image === config.server.warmupImage) return;
   const index = global.results.findIndex((a) => a.image === json.image);
   if (index > -1) global.results[index] = json;
   else global.results.push(json);
@@ -247,7 +248,12 @@ async function listFiles(inFolder, inMatch, recursive, force) {
     files = files.filter((a) => a.includes(match));
   }
   stats.matched = files.length;
-  files = files.filter((a) => (a.toLowerCase().endsWith('.jpg') || a.toLowerCase().endsWith('.jpeg')));
+  files = files.filter((a) => {
+    for (const ext of config.allowedImageFileTypes) {
+      if (a.toLowerCase().endsWith(ext)) return true;
+    }
+    return false;
+  });
   stats.excluded = stats.matched - files.length;
   if (!force) {
     files = files.filter((a) => {

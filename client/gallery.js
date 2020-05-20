@@ -308,15 +308,23 @@ async function enumerateFolders() {
   for (let i = 0; i < 10; i++) {
     for (const item of list) {
       if (item.folders[i]) {
-        const dir = item.folders[i];
+        const folder = item.folders[i];
+        const parent = item.folders[i > 0 ? i - 1 : 0];
+        console.log(item.path, folder, parent);
         let path = '';
         for (let j = 0; j <= i; j++) path += `${item.folders[j]}/`;
-        const name = dir === 'media' ? 'All' : dir;
-        const html = `<li id="dir-${i}${dir}"><span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp<i class="fas fa-caret-right">&nbsp</i>${name}</span></li>`;
-        let prev = $(`#dir-${i}${item.folders[i > 0 ? i - 1 : 0]}`);
-        const curr = $(`#dir-${i}${dir}`);
-        if (prev.length === 0) prev = $('#folders');
-        if (curr.length === 0) prev.append(html);
+        const name = folder === 'media' ? 'All' : folder;
+        const html = `
+          <li id="dir-${folder}">
+            <span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp
+              <i class="fas fa-caret-right">&nbsp</i>${name}
+            </span>
+          </li>
+        `;
+        let parentElem = $(`#dir-${parent}`);
+        if (parentElem.length === 0) parentElem = $('#folders');
+        const currentElem = $(`#dir-${folder}`);
+        if (currentElem.length === 0) parentElem.append(html);
       }
     }
   }
@@ -433,11 +441,10 @@ async function loadGallery() {
 
 async function initUser() {
   const res = await fetch('/api/user');
-  let user;
-  if (res.ok) user = await res.text();
-  if (user) {
+  if (res.ok) window.user = await res.json();
+  if (window.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
-    $('#user').text(user);
+    $('#user').text(window.user.user);
   }
 }
 
@@ -448,6 +455,7 @@ function initHandlers() {
   $('#searchbar').toggle(false);
   $('#optionslist').toggle(false);
   $('#optionsview').toggle(false);
+  if (!window.user.admin) $('#btn-update').css('color', 'grey');
 
   // navbar
   $('#btn-user').click(() => {
@@ -478,10 +486,15 @@ function initHandlers() {
 
   // starts image processing in a separate window
   $('#btn-update').click(() => {
-    $('#searchbar').toggle(false);
-    $('#optionslist').toggle(false);
-    $('#optionsview').toggle(false);
-    window.open('/process', '_blank');
+    if (window.user.admin) {
+      log.result('Image database update requested ...');
+      $('#searchbar').toggle(false);
+      $('#optionslist').toggle(false);
+      $('#optionsview').toggle(false);
+      window.open('/process', '_blank');
+    } else {
+      log.result('Image database update not authorized');
+    }
   });
 
   // starts live video detection in a separate window
@@ -596,8 +609,8 @@ function initHandlers() {
 
 async function main() {
   log.init();
+  await initUser();
   initHandlers();
-  initUser();
   await loadGallery();
 }
 
