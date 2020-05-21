@@ -1,1 +1,1 @@
-dist/config.json  filter=users
+data/config.json  filter=user
