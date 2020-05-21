@@ -251,7 +251,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /* global moment */
 let results = [];
 let filtered = [];
-const popupConfig = {
+const detailsConfig = {
   showDetails: true,
   showBoxes: true,
   showFaces: true,
@@ -276,7 +276,7 @@ function drawBoxes(img, object) {
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height; // draw detected objects
 
-  if (popupConfig.showBoxes && object.detect) {
+  if (detailsConfig.showBoxes && object.detect) {
     ctx.strokeStyle = 'lightyellow';
     ctx.fillStyle = 'lightyellow';
 
@@ -291,7 +291,7 @@ function drawBoxes(img, object) {
   } // draw faces
 
 
-  if (popupConfig.showFaces && object.person) {
+  if (detailsConfig.showFaces && object.person) {
     for (const i in object.person) {
       if (object.person[i].box) {
         // draw box around face
@@ -333,10 +333,10 @@ function JSONtoStr(json) {
 } // show details popup
 
 
-async function showPopup() {
+async function showDetails() {
   const img = document.getElementById('popup-image');
 
-  if (popupConfig.rawView) {
+  if (detailsConfig.rawView) {
     window.open(img.img, '_blank');
     return;
   }
@@ -368,7 +368,7 @@ async function showPopup() {
     if (object.person.length === 1) person = person.replace('Person 1', 'Person');
   }
 
-  let desc = '<h2>Description:</h2><ul>';
+  let desc = '<h2>Lexicon:</h2><ul>';
 
   if (object.descriptions) {
     for (const description of object.descriptions) {
@@ -401,7 +401,7 @@ async function showPopup() {
       <h2>Image: ${object.image}</h2>${link}
       Image size: ${img.naturalWidth} x ${img.naturalHeight}
         Total time ${object.perf.total.toFixed(0)} ms<br>
-        Processed in ${object.perf.load.toFixed(0)} ms<br>
+        Processed on ${moment(object.processed).format('dddd YYYY/MM/DD')} in ${object.perf.load.toFixed(0)} ms<br>
         Classified using ${_config.default.classify ? _config.default.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
         Alternative using ${_config.default.alternative ? _config.default.alternative.name : 'N/A'}<br>
         Detected using ${_config.default.detect ? _config.default.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
@@ -420,7 +420,7 @@ async function showPopup() {
       </div>
     `;
 
-  if (popupConfig.showDetails) {
+  if (detailsConfig.showDetails) {
     $('#popup-details').toggle(true);
     $('#popup-image').css('max-width', '80vw');
     $('#popup-details').width(window.innerWidth - $('#popup-image').width());
@@ -434,6 +434,7 @@ async function showPopup() {
 }
 
 async function showNextDetails(left) {
+  if ($('#popup').css('display') === 'none') return;
   const img = document.getElementById('popup-image');
   const id = filtered.findIndex(a => a.image === img.img);
   if (id === -1) return;
@@ -542,7 +543,7 @@ async function printResult(object) {
   const divThumb = document.getElementById(`thumb-${object.id}`);
   divThumb.img = object.image;
   const img = document.getElementById('popup-image');
-  img.addEventListener('load', showPopup);
+  img.addEventListener('load', showDetails);
   divThumb.addEventListener('click', evt => {
     img.img = evt.target.img;
     img.src = object.image; // this triggers showDetails via onLoad event(
@@ -837,19 +838,19 @@ function initHandlers() {
 
   $('#details-desc').click(() => {
     $('#details-desc').toggleClass('fa-comment fa-comment-slash');
-    popupConfig.showDetails = !popupConfig.showDetails;
+    detailsConfig.showDetails = !detailsConfig.showDetails;
   });
   $('#details-boxes').click(() => {
     $('#details-boxes').toggleClass('fa-store fa-store-slash');
-    popupConfig.showBoxes = !popupConfig.showBoxes;
+    detailsConfig.showBoxes = !detailsConfig.showBoxes;
   });
   $('#details-faces').click(() => {
     $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
-    popupConfig.showFaces = !popupConfig.showFaces;
+    detailsConfig.showFaces = !detailsConfig.showFaces;
   });
   $('#details-raw').click(() => {
     $('#details-raw').toggleClass('fa-video fa-video-slash');
-    popupConfig.rawView = !popupConfig.rawView;
+    detailsConfig.rawView = !detailsConfig.rawView;
   }); // handle clicks inside popup
 
   $('#popup').click(() => {
@@ -871,82 +872,83 @@ function initHandlers() {
           scrollTop: current - line
         }, 400);
         break;
-      // key=up
+      // key=up: scroll line up
 
       case 40:
         $('#results').animate({
           scrollTop: current + line
         }, 400);
         break;
-      // key=down
+      // key=down; scroll line down
 
       case 33:
         $('#results').animate({
           scrollTop: current - page
         }, 400);
         break;
-      // key=pgup
+      // key=pgup; scroll page up
 
       case 34:
         $('#results').animate({
           scrollTop: current + page
         }, 400);
         break;
-      // key=pgdn
+      // key=pgdn; scroll page down
 
       case 36:
         $('#results').animate({
           scrollTop: 0
         }, 1000);
         break;
-      // key=home
+      // key=home; scroll to top
 
       case 35:
         $('#results').animate({
           scrollTop: bottom
         }, 1000);
         break;
-      // key=end
+      // key=end; scroll to bottom
 
       case 37:
         showNextDetails(true);
         break;
+      // key=left; previous image in details view
 
       case 39:
         showNextDetails(false);
         break;
+      // key=right; next image in details view
 
       case 191:
         $('#btn-search').click();
         break;
-      // key=/
+      // key=/; open search input
 
       case 190:
         $('#btn-sort').click();
         break;
-      // key=.
+      // key=.; open sort options
 
       case 188:
         $('#btn-desc').click();
         break;
-      // key=,
+      // key=,; show/hide list descriptions
 
       case 220:
-        $('#results').scrollTop(0);
         loadGallery();
         break;
-      // key=\
+      // key=\; refresh all
 
       case 27:
         $('#searchbar').toggle(false);
         $('#sortbar').toggle(false);
         $('#sortbar').toggle(false);
         $('#configbar').toggle(false);
-        $('#popup').toggle(false);
-        $('#search-input')[0].value = '';
+        $('#popup').toggle(false); // $('#search-input')[0].value = '';
+
         filterResults('');
         break;
-      // key=esc
+      // key=esc; clear all filters
 
       default: // log.result('Unhandled keydown event', event.keyCode);
 

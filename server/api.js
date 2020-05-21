@@ -22,8 +22,16 @@ function api(app) {
   });
 
   app.get('/api/list', async (req, res) => {
-    const json = await metadata.list(req.query.folder || '', req.query.match || null, req.query.recursive || false, req.query.force || false);
-    res.json(json);
+    // const json = await metadata.list(req.query.folder || '', req.query.match || null, req.query.recursive || false, req.query.force || false);
+    const list = [];
+    let filesAll = [];
+    for (const location of config.locations) {
+      const folder = await metadata.list(location.folder, location.match, location.recursive, location.force);
+      list.push({ location, files: folder.process });
+      filesAll = [...filesAll, ...folder.files];
+    }
+    res.json(list);
+    metadata.check(filesAll);
   });
 
   app.get('/api/get', (req, res) => {
@@ -105,7 +113,7 @@ function api(app) {
     const email = req.body.authEmail;
     const passwd = req.body.authPassword;
     if (!req.body.authEmail || req.body.authEmail === '') req.session.user = undefined;
-    const found = config.users.find((a) => (a.email === email && a.passwd === passwd));
+    const found = config.users.find((a) => (a.email === email && a.passwd === passwd && (a.disabled ? a.disabled === 'false' : true)));
     if (found) {
       req.session.user = found.email;
       req.session.admin = found.admin;

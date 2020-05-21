@@ -68925,11 +68925,13 @@ async function loadModels() {
   */
 
 
-  _log.default.result(`Models loaded in ${(window.performance.now() - t0).toLocaleString()}ms`);
+  const t1 = window.performance.now();
+
+  _log.default.result(`TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
 
   const engine = await tf.engine();
 
-  _log.default.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+  _log.default.result(`TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
 }
 
 function flattenObject(object) {
@@ -69187,28 +69189,40 @@ function statSummary() {
   stats.detectAvg = stats.detect === 0 ? 0 : stats.detectTime / stats.detect;
   stats.personAvg = stats.person === 0 ? 0 : stats.personTime / stats.person;
   return stats;
+} // initial complex image is used to trigger all models thus warming them up
+
+
+async function warmupModels() {
+  _log.default.result('TensorFlow models warming up ...');
+
+  const t0 = window.performance.now();
+  await ml.process('assets/warmup.jpg');
+  const t1 = window.performance.now();
+
+  _log.default.result(`TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 } // calls main detectxion and then print results for all images matching spec
 
 
-async function processGallery(spec) {
-  const options = {
-    folder: spec.folder || '',
-    match: spec.match || '',
-    recursive: spec.recursive || false,
-    force: spec.force || false
-  };
+async function processFiles() {
+  _log.default.result('Requesting file list from server ...');
 
-  _log.default.active(`Fetching list for "${options.folder}" matching "${options.match}"`);
+  const res = await fetch('/api/list');
+  const dirs = await res.json();
+  let files = [];
 
-  const res = await fetch(`/api/list?folder=${encodeURI(options.folder)}&match=${encodeURI(options.match)}&recursive=${options.recursive}&force=${options.force}`);
-  const dir = await res.json();
+  for (const dir of dirs) {
+    _log.default.result(`  Queued folder: ${dir.location.folder} matching: ${dir.location.match || '*'} recursive: ${dir.location.recursive || false} force: ${dir.location.force || false} pending: ${dir.files.length}`);
 
-  _log.default.result(`Processing folder:${dir.folder} matching:${dir.match || '*'} recursive:${dir.recursive} force:${dir.force} results:${dir.files.length}`);
+    files = [...files, ...dir.files];
+  }
 
+  await warmupModels();
   const t0 = window.performance.now();
   const promises = [];
 
-  for (const url of dir.files) {
+  _log.default.result(`Processing images: ${files.length}`);
+
+  for (const url of files) {
     promises.push(ml.process(url).then(obj => {
       _log.default.dot();
 
@@ -69225,14 +69239,14 @@ async function processGallery(spec) {
   if (promises.length > 0) await Promise.all(promises);
   const t1 = window.performance.now();
 
-  if (dir.files.length > 0) {
+  if (files.length > 0) {
     _log.default.result('');
 
-    _log.default.result(`Processed ${dir.files.length} images in ${(t1 - t0).toLocaleString()}ms ${((t1 - t0) / dir.files.length).toLocaleString()}ms avg`);
+    _log.default.result(`Processed ${files.length} images in ${Math.round(t1 - t0).toLocaleString()}ms ${Math.round((t1 - t0) / files.length).toLocaleString()}ms avg`);
 
     const s = statSummary();
 
-    _log.default.result(`  Results: ${results.length} images in ${JSON.stringify(results).length} total bytes ${(JSON.stringify(results).length / results.length).toFixed(0)} average bytes`);
+    _log.default.result(`  Results: ${results.length} images in total ${JSON.stringify(results).length.toLocaleString()} bytes average ${Math.round(JSON.stringify(results).length / results.length).toLocaleString()} bytes`);
 
     _log.default.result(`  Image Preparation: ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(0)} ms`);
 
@@ -69255,51 +69269,20 @@ async function processGallery(spec) {
   }
 
   _log.default.active('Idle...');
-} // initial complex image is used to trigger all models thus warming them up
-
-
-async function warmupModels() {
-  _log.default.result('Models warming up ...');
-
-  const t0 = window.performance.now();
-  await ml.process('assets/warmup.jpg');
-  const t1 = window.performance.now();
-
-  _log.default.result(`Models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
 
 async function main() {
+  const t0 = window.performance.now();
+
   _log.default.init();
 
   _log.default.active('Starting ...');
 
   await ml.load();
-  await warmupModels(); // await processGallery({ folder: 'media', match: 'objects' });
-  // await processGallery({ folder: 'media', match: 'people' });
-  // await processGallery({ folder: 'media', match: 'large' });
+  await processFiles();
+  const t1 = window.performance.now();
 
-  await processGallery({
-    folder: 'Samples/',
-    match: '',
-    recursive: true
-  });
-  await processGallery({
-    folder: 'Temp/',
-    match: '',
-    recursive: true
-  });
-  await processGallery({
-    folder: 'Pictures/Snapseed/',
-    match: ''
-  });
-  await processGallery({
-    folder: 'Pictures/Random/',
-    match: ''
-  });
-  await processGallery({
-    folder: 'Photos/Objects/',
-    match: ''
-  });
+  _log.default.result(`Image Analysis done: ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
 
 window.onload = main;

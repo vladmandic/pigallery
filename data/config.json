@@ -1,6 +1,14 @@
 {
   "users": [
-    { "email": "mandic00@live.com", "passwd": "qwe", "admin": true, "mediaRoot": "media/" }
+    { "email": "user@example.com", "passwd": "secret", "admin": true, "mediaRoot": "media/", "disabled": true },
+    { "email": "mandic00@live.com", "passwd": "qwe", "admin": true, "mediaRoot": "media/", "git": false }
+  ],
+  "locations": [
+    { "folder": "Samples/", "match": "", "recursive": true },
+    { "folder": "Temp/", "match": "", "recursive": true },
+    { "folder": "Pictures/Snapseed/", "match": "" },
+    { "folder": "Pictures/Random/", "match": "" },
+    { "folder": "Photos/Objects/", "match": "" }
   ],
   "server": {
     "httpPort": 8000,
