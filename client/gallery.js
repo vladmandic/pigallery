@@ -442,10 +442,13 @@ function sortResults(sort) {
 // calls main detectxion and then print results for all images matching spec
 async function loadGallery() {
   $('body').css('cursor', 'wait');
+  const t0 = window.performance.now();
   log.result('Loading gallery ...');
   const res = await fetch('/api/get?find=all');
   results = await res.json();
-  log.result(`Received ${results.length} images in ${JSON.stringify(results).length.toLocaleString()} bytes`);
+  const t1 = window.performance.now();
+  const size = JSON.stringify(results).length;
+  log.result(`Received ${results.length} images in ${size.toLocaleString()} bytes (${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec)`);
   for (const id in results) results[id].id = id;
   listConfig.divider = 'month';
   filtered = results.sort((a, b) => (b.exif.timestamp - a.exif.timestamp));

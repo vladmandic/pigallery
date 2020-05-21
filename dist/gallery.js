@@ -729,13 +729,16 @@ function sortResults(sort) {
 
 async function loadGallery() {
   $('body').css('cursor', 'wait');
+  const t0 = window.performance.now();
 
   _log.default.result('Loading gallery ...');
 
   const res = await fetch('/api/get?find=all');
   results = await res.json();
+  const t1 = window.performance.now();
+  const size = JSON.stringify(results).length;
 
-  _log.default.result(`Received ${results.length} images in ${JSON.stringify(results).length.toLocaleString()} bytes`);
+  _log.default.result(`Received ${results.length} images in ${size.toLocaleString()} bytes (${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec)`);
 
   for (const id in results) results[id].id = id;
 
