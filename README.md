@@ -1,8 +1,8 @@
-# photo-analysis
+# PiGallery
+
+## Multi-user image galley with TensorFlow/JS image processing and full EXIF data extraction and analysis
 
 ![alt text](favicon.ico)
-
-## Photo Analysis using TensorFlow/JS
 
 ## Install, Configure & Run
 
@@ -10,13 +10,13 @@
 
 #### Quick
 
-      git clone --depth 1 https://github.com/vladmandic/photo-analysis
+      git clone --depth 1 https://github.com/vladmandic/pigallery
       npm run upgrade
 
 #### Manual
 
 - Install NodeJS: <https://nodejs.org/en/>
-- Download application: <https://github.com/vladmandic/photo-analysis/archive/master.zip>
+- Download application: <https://github.com/vladmandic/pigallery/archive/master.zip>
 - Unpack it
 - Install dependencies: `npm run upgrade`
 
