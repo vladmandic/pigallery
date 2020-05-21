@@ -33104,47 +33104,6 @@ const config = {
 };
 var _default = config;
 exports.default = _default;
-},{}],"log.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-const div = {};
-
-async function dot() {
-  if (div.Log) div.Log.innerHTML += '.';
-}
-
-async function result(...msg) {
-  let msgs = '';
-  msgs += msg.map(a => a);
-  if (div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
-  if (div.Log) div.Log.scrollTop = div.Log.scrollHeight;
-  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
-
-  console.log(...msg);
-}
-
-async function active(...msg) {
-  if (div && div.Active) div.Active.innerHTML = `${msg}<br>`; // eslint-disable-next-line no-console
-  else console.log(...msg);
-}
-
-function init() {
-  div.Log = document.getElementById('log');
-  div.Active = document.getElementById('active');
-}
-
-const log = {
-  result,
-  active,
-  init,
-  dot
-};
-var _default = log;
-exports.default = _default;
 },{}],"../node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js":[function(require,module,exports) {
 var global = arguments[3];
 var process = require("process");
@@ -68810,7 +68769,48 @@ const exported = {
 };
 var _default = exported;
 exports.default = _default;
-},{"@tensorflow/tfjs":"../node_modules/@tensorflow/tfjs/dist/tf.esm.js"}],"processVideo.js":[function(require,module,exports) {
+},{"@tensorflow/tfjs":"../node_modules/@tensorflow/tfjs/dist/tf.esm.js"}],"log.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+const div = {};
+
+async function dot() {
+  if (div.Log) div.Log.innerHTML += '.';
+}
+
+async function result(...msg) {
+  let msgs = '';
+  msgs += msg.map(a => a);
+  if (div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
+  if (div.Log) div.Log.scrollTop = div.Log.scrollHeight;
+  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
+
+  console.log(...msg);
+}
+
+async function active(...msg) {
+  if (div && div.Active) div.Active.innerHTML = `${msg}<br>`; // eslint-disable-next-line no-console
+  else console.log(...msg);
+}
+
+function init() {
+  div.Log = document.getElementById('log');
+  div.Active = document.getElementById('active');
+}
+
+const log = {
+  result,
+  active,
+  init,
+  dot
+};
+var _default = log;
+exports.default = _default;
+},{}],"processVideo.js":[function(require,module,exports) {
 "use strict";
 
 var tf = _interopRequireWildcard(require("@tensorflow/tfjs"));
@@ -68986,9 +68986,7 @@ var faceapi = _interopRequireWildcard(require("face-api.js"));
 
 var _config = _interopRequireDefault(require("./config.js"));
 
-var _log = _interopRequireDefault(require("./log.js"));
-
-var ml = _interopRequireWildcard(require("./processVideo.js"));
+var tf = _interopRequireWildcard(require("./processVideo.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -68998,8 +68996,11 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 // import * as nsfwjs from 'nsfwjs';
 // import yolo from './modelYolo.js';
-const div = {};
-window.config = _config.default; // draw boxes for detected objects, faces and face elements
+window.config = _config.default;
+let video;
+let parent;
+let front = true;
+let ready = false; // draw boxes for detected objects, faces and face elements
 
 async function drawDetectionBoxes(object, alpha = 1, existing) {
   if (!object) return;
@@ -69013,14 +69014,14 @@ async function drawDetectionBoxes(object, alpha = 1, existing) {
   } else {
     canvas = document.createElement('canvas');
     canvas.style.position = 'absolute';
-    canvas.style.top = 0; // div.Video.offsetTop;
+    canvas.style.top = 0; // video.offsetTop;
 
-    canvas.style.left = 0; // div.Video.offsetLeft;
+    canvas.style.left = 0; // video.offsetLeft;
 
-    canvas.width = div.Video.width;
-    canvas.height = div.Video.height;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
     ctx = canvas.getContext('2d');
-    div.Main.appendChild(canvas);
+    parent.appendChild(canvas);
   }
 
   ctx.globalAlpha = alpha; // draw detected objects
@@ -69033,10 +69034,10 @@ async function drawDetectionBoxes(object, alpha = 1, existing) {
 
     for (const obj of object.detect) {
       ctx.beginPath();
-      const x = obj.box[0] * canvas.width / div.Video.videoWidth;
-      const y = obj.box[1] * canvas.height / div.Video.videoHeight;
-      const width = obj.box[2] * canvas.width / div.Video.videoWidth;
-      const height = obj.box[3] * canvas.height / div.Video.videoHeight;
+      const x = obj.box[0] * canvas.width / video.videoWidth;
+      const y = obj.box[1] * canvas.height / video.videoHeight;
+      const width = obj.box[2] * canvas.width / video.videoWidth;
+      const height = obj.box[3] * canvas.height / video.videoHeight;
       ctx.rect(x, y, width, height);
       ctx.stroke();
       ctx.fillText(`${(100 * obj.score).toFixed(0)}% ${obj.class}`, x + 2, y + 18);
@@ -69049,7 +69050,7 @@ async function drawDetectionBoxes(object, alpha = 1, existing) {
       drawDetectionBoxes(object, alpha - 0.2, canvas);
     }, 25);
   } else {
-    div.Main.removeChild(canvas);
+    parent.removeChild(canvas);
   }
 }
 
@@ -69057,13 +69058,13 @@ async function drawFaces(object) {
   if (!object) return;
   const canvas = document.createElement('canvas');
   canvas.style.position = 'absolute';
-  canvas.style.top = 0; // div.Video.offsetTop;
+  canvas.style.top = 0; // video.offsetTop;
 
-  canvas.style.left = 0; // div.Video.offsetLeft;
+  canvas.style.left = 0; // video.offsetLeft;
 
-  canvas.width = div.Video.width;
-  canvas.height = div.Video.height;
-  div.Main.appendChild(canvas);
+  canvas.width = video.width;
+  canvas.height = video.height;
+  parent.appendChild(canvas);
   const ctx = canvas.getContext('2d'); // draw faces
 
   if (object.person && object.person.detections) {
@@ -69085,85 +69086,139 @@ async function drawFaces(object) {
 
   setTimeout(() => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    div.Main.removeChild(canvas);
+    parent.removeChild(canvas);
   }, 100);
 }
 
-async function showDetails(object, time) {
+async function showDetails(object) {
   if (!object) return;
-  let classified = `Analyzed in ${time.toFixed(0)}ms `;
-  if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+  let classified = '';
+
+  if (object.classify) {
+    for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+  }
+
+  let detected = '';
+
+  if (object.detect) {
+    for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+  }
+
   let person = '';
 
   if (object.person && object.person.age) {
-    person = `Person | 
-        Gender: ${(100 * object.person.scoreGender).toFixed(0)}% ${object.person.gender} | 
+    person = ` | Gender: ${(100 * object.person.scoreGender).toFixed(0)}% ${object.person.gender} | 
         Age: ${object.person.age.toFixed(1)} | 
         Emotion: ${(100 * object.person.scoreEmotion).toFixed(0)}% ${object.person.emotion}`;
   }
 
-  _log.default.active(`${classified}<br>${person}`);
+  const html = `Classified ${classified}<br>Detected ${detected}<br>Person ${person}`;
+  $('#analysis').html(html);
 }
 
-function getCameraStream() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    _log.default.result('Camera not supported');
+async function getCameraStream() {
+  // eslint-disable-next-line no-use-before-define
+  video.addEventListener('loadeddata', startProcessing);
 
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    $('#active').text('Camera not supported');
     return;
   }
 
+  video.srcObject = null;
   const constraints = {
+    audio: false,
     video: {
       width: {
-        min: 1280
-      }
+        min: 480,
+        ideal: 1920,
+        max: 3840
+      },
+      height: {
+        min: 480,
+        ideal: 1920,
+        max: 3840
+      },
+      facingMode: front ? 'user' : 'environment'
     }
   };
-  div.Video.width = 1280;
-  div.Video.height = 720;
   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-    div.Video.srcObject = stream;
+    video.srcObject = stream;
   });
+  await video.play();
+  $('#text-resolution').text(`${video.videoWidth} x ${video.videoHeight}`); // console.log(await navigator.mediaDevices.enumerateDevices());
+  // console.log(navigator.mediaDevices.getSupportedConstraints());
 }
 
-async function processVideo() {
-  _log.default.result(`Video loaded: ${div.Video.videoWidth} x ${div.Video.videoHeight}`); // div.Video.playbackRate = 0.2;
+async function sleep(period) {
+  return new Promise(resolve => setTimeout(resolve(), period));
+}
 
+function time(t0) {
+  const t1 = window.performance.now();
+  return Math.round(t1 - t0).toLocaleString();
+}
 
-  div.Video.play();
-  setInterval(async () => {
+async function loadModels() {
+  let t0;
+  $('#active').text('Preparing models');
+  t0 = window.performance.now();
+  await tf.load();
+  $('#active').text(`Models loaded: ${time(t0)} ms`);
+  t0 = window.performance.now();
+  await tf.process(video);
+  $('#active').text(`Models warmed up: ${time(t0)} ms`);
+  ready = true;
+}
+
+async function startProcessing() {
+  video.removeEventListener('loadeddata', startProcessing);
+  if (!ready) await loadModels();
+
+  while (!video.paused) {
     const t0 = window.performance.now();
-    const object = div.Video.readyState > 1 ? await ml.process(div.Video) : null;
-    const t1 = window.performance.now();
-    showDetails(object, t1 - t0);
+    const object = video.readyState > 1 ? await tf.process(video) : null;
+    $('#active').text(`Detection: ${time(t0)} ms`);
+    showDetails(object);
     drawDetectionBoxes(object);
     drawFaces(object);
-  }, 300);
+    await sleep(500);
+  }
+
+  $('#active').text('Idle ...');
 }
 
 async function main() {
-  div.Main = document.getElementById('main');
-  div.Details = document.getElementById('details');
-  div.Video = document.getElementById('video');
+  $('#active').text('Starting ...');
+  video = document.getElementById('video');
+  video.width = window.innerWidth;
+  video.height = window.innerHeight;
+  parent = document.getElementById('main');
+  getCameraStream();
+  $('#btn-facing').click(() => {
+    front = !front;
+    $('#text-facing').text(front ? 'Front' : 'Back');
+    getCameraStream();
+  });
+  $('#btn-pause').click(() => {
+    $('#btn-pause').toggleClass('fa-pause-circle fa-play-circle');
+    $('#text-pause').text(video.paused ? 'Play' : 'Pause');
 
-  _log.default.init();
-
-  _log.default.active('Loading models ...<br>');
-
-  await ml.load();
-
-  _log.default.active('Warming up models ...<br>');
-
-  div.Video.addEventListener('loadeddata', processVideo);
-  getCameraStream(); // div.Video.src = 'media/video-appartment.mp4'; div.Video.width = 512; div.Video.height = 1090;
-  // div.Video.src = 'media/video-dash.mp4'; div.Video.width = 1280; div.Video.height = 800;
-  // div.Video.src = 'media/video-r1.mp4'; div.Video.width = 320; div.Video.height = 240;
-  // div.Video.src = 'media/video-jen.mp4'; div.Video.width = 582; div.Video.height = 1034;
+    if (video.paused) {
+      video.play();
+      getCameraStream();
+    } else {
+      video.pause();
+    }
+  }); // video.src = 'media/video-appartment.mp4'; video.width = 512; video.height = 1090;
+  // video.src = 'media/video-dash.mp4'; video.width = 1280; video.height = 800;
+  // video.src = 'media/video-r1.mp4'; video.width = 320; video.height = 240;
+  // video.src = 'media/video-jen.mp4'; video.width = 582; video.height = 1034;
   // transcode rtsp from camera to m3u8
   // ffmpeg -hide_banner -y -i rtsp://admin:Mon1900@reolink-black:554/h264Preview_01_main -vcodec copy reolink.m3u8
-  // div.Video.src = 'media/reolink.m3u8'; div.Video.width = 720; div.Video.height = 480;
+  // video.src = 'media/reolink.m3u8'; video.width = 720; video.height = 480;
 }
 
 window.onload = main;
-},{"face-api.js":"../node_modules/face-api.js/build/es6/index.js","./config.js":"config.js","./log.js":"log.js","./processVideo.js":"processVideo.js"}]},{},["video.js"], null)
+},{"face-api.js":"../node_modules/face-api.js/build/es6/index.js","./config.js":"config.js","./processVideo.js":"processVideo.js"}]},{},["video.js"], null)
 //# sourceMappingURL=/video.js.map

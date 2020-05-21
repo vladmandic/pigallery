@@ -2,7 +2,7 @@
 // import yolo from './modelYolo.js';
 import config from './config.js';
 import log from './log.js';
-import * as ml from './processImage.js';
+import * as tf from './processImage.js';
 
 const results = [];
 let id = 0;
@@ -33,7 +33,7 @@ function statSummary() {
 async function warmupModels() {
   log.result('TensorFlow models warming up ...');
   const t0 = window.performance.now();
-  await ml.process('assets/warmup.jpg');
+  await tf.process('assets/warmup.jpg');
   const t1 = window.performance.now();
   log.result(`TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
@@ -53,7 +53,7 @@ async function processFiles() {
   const promises = [];
   log.result(`Processing images: ${files.length}`);
   for (const url of files) {
-    promises.push(ml.process(url).then((obj) => {
+    promises.push(tf.process(url).then((obj) => {
       log.dot();
       results[id] = obj;
       id += 1;
@@ -89,7 +89,7 @@ async function main() {
   const t0 = window.performance.now();
   log.init();
   log.active('Starting ...');
-  await ml.load();
+  await tf.load();
   await processFiles();
   const t1 = window.performance.now();
   log.result(`Image Analysis done: ${Math.round(t1 - t0).toLocaleString()}ms`);

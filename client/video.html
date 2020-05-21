@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Video Analysis</title>
+    <title>PiGallery Video</title>
     <meta http-equiv="content-type">
     <meta content="text/html">
     <meta charset="UTF-8">
-    <meta name="Description" content="Photo Classification Test; Author: Vladimir Mandic <mandic00@live.com>">
+    <meta name="Description" content="Image Gallery and Classification; Author: Vladimir Mandic <mandic00@live.com>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=2.0, shrink-to-fit=yes, user-scalable=yes">
     <meta name="theme-color" content="#555555"/>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="favicon.ico">
-    <link rel="stylesheet" href="assets/bootstrap.css">
-    <script type="text/javascript" src="dist/video.js"></script>
+    <link rel="stylesheet" href="/assets/bootstrap.css">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.css">
+    <script type="text/javascript" src="/assets/jquery.js"></script>
+    <script type="text/javascript" src="/dist/video.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
-      ::-webkit-scrollbar { width: 20px; }
-      ::-webkit-scrollbar-track { border-radius: 0; }
-      ::-webkit-scrollbar-thumb { border-radius: 0; background: grey }
-      ::-webkit-scrollbar-button { background: transparent; }
-      body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; overflow-x: hidden; }
-      .row { width: 100%; margin: 10px }
-      .col { background: #555555; text-align: left; margin: 8px; padding: 4px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; }
-      .active { background: #555555; padding: 4px; overflow: hidden; position: fixed; top: 10px; right: 10px; width: 600px; height: 70px; }
-      video { margin-top: 50px; margin-left: 50px } /* { transform: scale(-1, 1); filter: FlipH; } */
-      h1 { font-size: 1.4rem; margin-top: 16px; font-weight: bold; }
-      h2 { font-size: 1.2rem; margin-top: 8px; font-weight: bold; }
-      a { color: white }
-      a:hover { background: darkcyan; color: white }
+      body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; overflow: hidden; }
+      p { padding: 0; margin: 0; }
+      .row { width: 100vw; margin: 0; vertical-align: top; }
+      .navbar { background: #555555; min-height: 6rem; max-height: 6rem; position: fixed; top: 0; padding: 0; }
+      .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
+      .navbarbutton:hover { color: lightblue; }
+      .main { width: 100%; height: 100%; position: fixed; top: 6rem; }
+      .video { object-fit: contain; object-position: 50% 50% }
+      .text { text-align: left; min-width: 400px; max-width: 400px; padding: 4px; }
     </style>
 </head>
 <body>
-  <div id="active" class="active">Activity monitor ...</div>
-  <div id="main">
-    <video id="video" controls loop controlslist="nodownload,nofullscreen,noremoteplayback" style="object-position: left top;"></video>
-    <div id="details" style="margin: 12px"></div>    
+  <div id="navbar" class="row navbar text-center">
+    <div id="text" class="text">
+      <p id="active"></p>
+      <p id="analysis"></p>
+    </div>
+    <div><i id="btn-pause" class="navbarbutton fas fa-pause-circle"></i><p id="text-pause">Pause</p></div>
+    <div><i id="btn-facing" class="navbarbutton fas fa-sync-alt"></i><p id="text-facing">Front</p></div>
+    <div><i id="btn-start" class="navbarbutton fas fa-film"></i><p id="text-resolution"></p></div>
   </div>
-  <div id="log" style="margin: 12px"></div>    
+  <div id="main" class="row main">
+    <video class="video" id="video" nocontrols loop controlslist="nodownload,nofullscreen,noremoteplayback"></video>
+  </div>
 </body>
 </html>

@@ -69156,7 +69156,7 @@ var _config = _interopRequireDefault(require("./config.js"));
 
 var _log = _interopRequireDefault(require("./log.js"));
 
-var ml = _interopRequireWildcard(require("./processImage.js"));
+var tf = _interopRequireWildcard(require("./processImage.js"));
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
@@ -69207,7 +69207,7 @@ async function warmupModels() {
   _log.default.result('TensorFlow models warming up ...');
 
   const t0 = window.performance.now();
-  await ml.process('assets/warmup.jpg');
+  await tf.process('assets/warmup.jpg');
   const t1 = window.performance.now();
 
   _log.default.result(`TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
@@ -69234,7 +69234,7 @@ async function processFiles() {
   _log.default.result(`Processing images: ${files.length}`);
 
   for (const url of files) {
-    promises.push(ml.process(url).then(obj => {
+    promises.push(tf.process(url).then(obj => {
       _log.default.dot();
 
       results[id] = obj;
@@ -69289,7 +69289,7 @@ async function main() {
 
   _log.default.active('Starting ...');
 
-  await ml.load();
+  await tf.load();
   await processFiles();
   const t1 = window.performance.now();
 
