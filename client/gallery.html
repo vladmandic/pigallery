@@ -36,10 +36,10 @@
       .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
       .navbarbutton:hover { color: lightblue; }
       .number { font-size: 1.6rem; color: gray}
-      .btntext { padding: 0 0 0 3rem }
+      .btntext { text-align: center; }
 
       .navline { background: #555555; min-height: 3rem; position: fixed; top: 5rem; justify-content: center; z-index: 10;}
-      .navlinebutton { font-size: 1.6rem; color: lightyellow; padding: 0 0 0 1rem; cursor: pointer; }
+      .navlinebutton { font-size: 1.6rem; color: lightyellow; padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
       .navlinebutton:hover { color: lightblue; }
       .blank { background: #555555; min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
 
@@ -48,7 +48,7 @@
       .input:focus { background: lightyellow; }
 
       .main { height: 87vh; overflow: hidden; margin-top: 5rem; display: flex }
-      .folders { margin: 0; min-width: 10rem; max-width: 10rem; background: #555555; font-size: 1.2rem; line-height: 2.2rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 2rem 0 0 0; }
+      .folders { margin: 0; min-width: 10rem; max-width: 10rem; background: #555555; font-size: 1.0rem; line-height: 2.2rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 2rem 0 0 0; }
       .folder { background: #555555; margin: 0; padding: 0.4rem 200px 0.4rem 0; cursor: pointer; }
       .folder:hover { background: lightyellow; color: #555555; }
       .results { height: 87vh; overflow-y: scroll; }
@@ -89,15 +89,15 @@
   </div>
 
   <div id="optionslist" class="row navline text-center">
-    <div><i class="navlinebutton fas fa-folder-open" id="btn-folder"></i><p class="btntext">Show Folders</p></div>
+    <div><i class="navlinebutton fas fa-folder-open" id="btn-folder"></i><p class="btntext">Folders</p></div>
     <div><i class="navlinebutton fas fa-eye" id="btn-desc"></i><p class="btntext">Descriptions</p></div>
-    <div><i class="navlinebutton fas fa-clone" id="find-duplicates"></i><p class="btntext">Find Duplicates</p></div>
+    <div><i class="navlinebutton fas fa-clone" id="find-duplicates"></i><p class="btntext">Duplicates</p></div>
     <div><i class="navlinebutton fas sort fa-random"></i><p class="btntext">Randomize</p></div>
-    <div><i class="navlinebutton fas sort fa-sort-alpha-down"></i><i class="navlinebutton fas sort fa-sort-alpha-up" style="padding-left: 20px"></i>
+    <div><i class="navlinebutton fas sort fa-sort-alpha-down"></i><i class="navlinebutton fas sort fa-sort-alpha-up" style="padding-left: 0"></i>
       <p class="btntext">Sort by Name</p></div>
-    <div><i class="navlinebutton fas sort fa-sort-numeric-down"></i><i class="navlinebutton fas sort fa-sort-numeric-up" style="padding-left: 20px"></i>
+    <div><i class="navlinebutton fas sort fa-sort-numeric-down"></i><i class="navlinebutton fas sort fa-sort-numeric-up" style="padding-left: 0"></i>
       <p class="btntext">Sort by Date</p></div>
-    <div><i class="navlinebutton fas sort fa-sort-amount-down"></i><i class="navlinebutton fas sort fa-sort-amount-up" style="padding-left: 20px"></i>
+    <div><i class="navlinebutton fas sort fa-sort-amount-down"></i><i class="navlinebutton fas sort fa-sort-amount-up" style="padding-left: 0"></i>
       <p class="btntext">Sort by Size</p></div>
     <div style="width: 100px; margin-left: 50px">
       <input type="range" class="thumbsize" name="thumbsize" id="thumbsize" min="50" max="1000" step="10" value="130">
@@ -106,10 +106,10 @@
   </div>
 
   <div id="optionsview" class="row navline text-center">
-    <div><i class="navlinebutton fas fa-comment" id='details-desc'></i><p class="btntext">Show Details</p></div>
-    <div><i class="navlinebutton fas fa-store" id='details-boxes'></i><p class="btntext">Show Detect Boxes</p></div>
-    <div><i class="navlinebutton fas fa-head-side-cough" id='details-faces'></i><p class="btntext">Show Faces</p></div>
-    <div><i class="navlinebutton fas fa-video-slash" id='details-raw'></i><p class="btntext">View Raw Image</p></div>
+    <div><i class="navlinebutton fas fa-comment" id='details-desc'></i><p class="btntext">Details</p></div>
+    <div><i class="navlinebutton fas fa-store" id='details-boxes'></i><p class="btntext">Detect Boxes</p></div>
+    <div><i class="navlinebutton fas fa-head-side-cough" id='details-faces'></i><p class="btntext">Faces</p></div>
+    <div><i class="navlinebutton fas fa-video-slash" id='details-raw'></i><p class="btntext">Raw Image</p></div>
   </div>
 
   <div id="main" class="main">
