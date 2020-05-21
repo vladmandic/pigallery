@@ -82,9 +82,10 @@ async function loadModels() {
   models.nsfw = await nsfwjs.load('/models/nsfw-inception-v3/', { size: 299, type: 'layers' });
   */
 
-  log.result(`Models loaded in ${(window.performance.now() - t0).toLocaleString()}ms`);
+  const t1 = window.performance.now();
+  log.result(`TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
   const engine = await tf.engine();
-  log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+  log.result(`TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
 }
 
 function flattenObject(object) {
