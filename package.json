@@ -1,7 +1,7 @@
 {
-  "name": "photo-analysis",
+  "name": "pigallery",
   "version": "0.4.1",
-  "description": "Photo Analysis using TensorFlow/JS",
+  "description": "PiGallery: Photo Gallery and analysis using TensorFlow/JS and EXIF metadata",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vladmandic/photo-analysis.git"
+    "url": "git+https://github.com/vladmandic/pigallery.git"
   },
   "keywords": [
     "tensorflow",
@@ -41,9 +41,9 @@
   "author": "Vladimir Mandic <mandic00@live.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vladmandic/photo-analysis/issues"
+    "url": "https://github.com/vladmandic/pigallery/issues"
   },
-  "homepage": "https://github.com/vladmandic/photo-analysis#readme",
+  "homepage": "https://github.com/vladmandic/pigallery#readme",
   "dependencies": {
     "@tensorflow/tfjs": "^1.7.4",
     "@tensorflow/tfjs-backend-cpu": "^2.0.0-rc.4",
