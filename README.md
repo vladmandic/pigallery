@@ -177,7 +177,6 @@ This allows for fallback solutions - if one model does not perform well on an im
 - BUG: EXIF processing exceptions
 - BUG: Exception handling during processing
 - PKG: Test remote deployment
-- PKG: Git private files for user database
 - PKG: Git LFS for models
 - RFE: Switch to DB, implement server-side paging and filtering
 - RFE: Save user preferences
