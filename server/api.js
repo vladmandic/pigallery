@@ -113,7 +113,7 @@ function api(app) {
     const email = req.body.authEmail;
     const passwd = req.body.authPassword;
     if (!req.body.authEmail || req.body.authEmail === '') req.session.user = undefined;
-    const found = config.users.find((a) => (a.email === email && a.passwd === passwd && (a.disabled ? a.disabled === 'false' : true)));
+    const found = config.users.find((a) => ((a.email && a.email === email) && (a.passwd && a.passwd === passwd) && (a.disabled ? a.disabled === 'false' : true)));
     if (found) {
       req.session.user = found.email;
       req.session.admin = found.admin;
