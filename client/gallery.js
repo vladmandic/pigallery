@@ -609,12 +609,11 @@ function initHandlers() {
       case 188: $('#btn-desc').click(); break; // key=,; show/hide list descriptions
       case 220: loadGallery(); break; // key=\; refresh all
       case 27:
-        $('#searchbar').toggle(false);
-        $('#sortbar').toggle(false);
-        $('#sortbar').toggle(false);
-        $('#configbar').toggle(false);
         $('#popup').toggle(false);
-        // $('#search-input')[0].value = '';
+        $('#searchbar').toggle(false);
+        $('#optionslist').toggle(false);
+        $('#optionsview').toggle(false);
+        $('#popup').toggle(false);
         filterResults('');
         break; // key=esc; clear all filters
       default: // log.result('Unhandled keydown event', event.keyCode);

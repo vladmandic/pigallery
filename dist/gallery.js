@@ -945,12 +945,11 @@ function initHandlers() {
       // key=\; refresh all
 
       case 27:
+        $('#popup').toggle(false);
         $('#searchbar').toggle(false);
-        $('#sortbar').toggle(false);
-        $('#sortbar').toggle(false);
-        $('#configbar').toggle(false);
-        $('#popup').toggle(false); // $('#search-input')[0].value = '';
-
+        $('#optionslist').toggle(false);
+        $('#optionsview').toggle(false);
+        $('#popup').toggle(false);
         filterResults('');
         break;
       // key=esc; clear all filters
