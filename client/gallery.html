@@ -6,7 +6,7 @@
     <meta content="text/html">
     <meta charset="UTF-8">
     <meta name="Description" content="Photo Classification Test; Author: Vladimir Mandic <mandic00@live.com>">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=2.0, shrink-to-fit=yes, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.1, maximum-scale=2.0, shrink-to-fit=yes, user-scalable=yes">
     <meta name="theme-color" content="#555555"/>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="/favicon.ico">
@@ -17,53 +17,55 @@
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
-      ::-webkit-scrollbar { width: 20px; }
-      ::-webkit-scrollbar-track { border-radius: 0; }
-      ::-webkit-scrollbar-thumb { border-radius: 0; background: grey }
-      ::-webkit-scrollbar-button { background: transparent; }
       body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; overflow: hidden; }
-      h1 { font-size: 1.4rem; margin-top: 16px; font-weight: bold; }
-      h2 { font-size: 1.2rem; margin-top: 8px; font-weight: bold; }
+      ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0px; }
+      ::-webkit-scrollbar-thumb { background: #555555; }
+      ::-webkit-scrollbar-track { background: black; margin: 8px; }
+      ::-webkit-scrollbar-button:single-button { background: #555555; display: block; border-style: solid; height: 20px; }
+      ::-webkit-scrollbar-button:single-button:vertical:decrement { border-width: 0 10px 15px 10px; border-color: transparent transparent white transparent; }
+      ::-webkit-scrollbar-button:single-button:vertical:increment { border-width: 15px 10px 0 10px; border-color: white transparent transparent transparent; }
+      h1 { font-size: 1.4rem; margin-top: 1.2rem; font-weight: bold; }
+      h2 { font-size: 1.2rem; margin-top: 1.1rem; font-weight: bold; }
       a { color: white }
       a:hover { background: darkcyan; color: white }
       .row { width: 100vw; margin: 0 }
       .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-      .log { height: 80px; overflow-y:scroll; margin-top: 10px; overflow: hidden }
+      .log { height: 10vh; overflow-x: hidden; overflow-y:scroll; margin-top: 10px; overflow: hidden }
 
-      .navbar { background: #555555; min-height: 70px; max-height: 70px; position: fixed; top: 0; }
-      .navbarbutton { font-size: 32px; color: lightyellow; padding: 0 20px 0 20px; cursor: pointer; }
+      .navbar { background: #555555; min-height: 5rem; max-height: 5rem; position: fixed; top: 0; overflow: hidden; }
+      .navbarbutton { font-size: 2rem; color: lightyellow; padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
       .navbarbutton:hover { color: lightblue; }
-      .number { font-size: 24px; color: gray}
-      .btntext { padding: 0 0 0 50px }
+      .number { font-size: 1.6rem; color: gray}
+      .btntext { padding: 0 0 0 3rem }
 
-      .navline { background: #555555; min-height: 50px; max-height: 50px; position: fixed; top: 70px; justify-content: center;}
-      .navlinebutton { font-size: 24px; color: lightyellow; padding: 0 0 0 50px; cursor: pointer; }
+      .navline { background: #555555; min-height: 3rem; position: fixed; top: 5rem; justify-content: center; z-index: 10;}
+      .navlinebutton { font-size: 1.6rem; color: lightyellow; padding: 0 0 0 1rem; cursor: pointer; }
       .navlinebutton:hover { color: lightblue; }
-      .blank { background: #555555; min-height: 50px; max-height: 50px; position: fixed; top: 70px; }
+      .blank { background: #555555; min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
 
-      .input { font-size: 1.2rem; margin: 0 16px 4px 10px; padding: 0 16px 0 16px; outline: none; border: none; background: #555555; width: 80%; height: 44px; border-radius: 20px }
+      .input { font-size: 1.2rem; margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #555555; width: 80%; height: 2.5rem; border-radius: 1.5rem }
       .input:hover { background: lightyellow; }
       .input:focus { background: lightyellow; }
 
-      .main { height: 900px; overflow: hidden; margin-top: 120px; display: flex }
-      .folders { min-width: 200px; max-width: 200px; background: #555555; font-size: 1.2rem; line-height: 2rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0; margin: 0 }
-      .folder { background: #555555; margin: 0; padding: 4px 200px 4px 0; cursor: pointer; }
+      .main { height: 80vh; overflow: hidden; margin-top: 5rem; display: flex }
+      .folders { margin: 0; min-width: 10rem; max-width: 10rem; background: #555555; font-size: 1.2rem; line-height: 2rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 2rem 0 0 0; }
+      .folder { background: #555555; margin: 0; padding: 0.4rem 200px 0.4rem 0; cursor: pointer; }
       .folder:hover { background: lightyellow; }
-      .results { overflow-y: scroll; }
+      .results { height: 80vh; overflow-y: scroll; }
 
       .listitem { display: flex; max-height: 144px; }
-      .divider { background: #222222; padding: 4px 0 4px 8px; font-size: 1.2rem; margin: 4px; font-weight: bold; height: 38px; }
+      .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; }
       .thumbnail { padding: 0; cursor: zoom-in; }
-      .description { min-width: 331px; max-width: 331px; padding: 4px; }
-      .download { font-size: 16px; color: gray; position: absolute; top: 4px; right: 4px; cursor: grab; }
+      .description { min-width: 240px; max-width: 240px; padding: 4px; }
+      .download { font-size: 1.2rem; color: gray; position: absolute; top: 4px; right: 4px; cursor: grab; }
       .download:hover { color: lightblue; }
 
-      .thumbsize { height: 26px; width: 100%; outline: none; border: none; margin-top: -4px }
-      .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 16px; cursor: pointer; background: lightyellow; border-radius: 12px; }
+      .thumbsize { height: 1.6rem; width: 100%; outline: none; border: none; margin-top: -4px }
+      .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: lightyellow; border-radius: 1rem; }
 
-      .popup { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 70px; left: 0; width: 100%; display: flex; }
+      .popup { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 5rem; left: 0; width: 100%; display: flex; }
       .popup-image { width: auto; height: auto; max-height: 94vh; }
-      .popup-details { margin: 12px; width: 450px }
+      .popup-details { margin: 1rem; width: 32rem }
     </style>
 </head>
 <body>
@@ -78,12 +80,12 @@
     <div><i id="btn-doc" class="navbarbutton fas fa-book"></i><p>Documentation</p></div>
     <div><i class="number fas fa-images"></i><p id="number">0</p></div>
   </div>
-  <div id="blank" class="row blank"></div>
+  <!-- <div id="blank" class="row blank"></div> -->
 
   <div id="searchbar" class="row navline text-center">
     <input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
-    <i class="navlinebutton fas fa-check-circle" style="font-size: 38px; padding: 4px" id="btn-searchnow"></i>
-    <i class="navlinebutton fas fa-times-circle" style="font-size: 38px; padding: 4px" id="btn-resetsearch"></i>
+    <i class="navlinebutton fas fa-check-circle" style="font-size: 2.3rem; padding: 4px" id="btn-searchnow"></i>
+    <i class="navlinebutton fas fa-times-circle" style="font-size: 2.3rem; padding: 4px" id="btn-resetsearch"></i>
   </div>
 
   <div id="optionslist" class="row navline text-center">

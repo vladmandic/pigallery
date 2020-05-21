@@ -181,7 +181,7 @@ async function getExif(url) {
     stream
       .on('data', (chunk) => {
         const raw = parseExif(chunk, 10);
-        if (!raw || !raw.tags) log.warn('Could not get EXIF data:', url);
+        if (!raw || !raw.tags) log.warn('Metadata EXIF:', url);
         const stat = fs.statSync(url);
         json.bytes = stat.bytes;
         json.timestamp = raw && raw.tags ? (raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;

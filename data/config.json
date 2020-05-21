@@ -1,7 +1,6 @@
 {
   "users": [
-    { "email": "user@example.com", "passwd": "secret", "admin": true, "mediaRoot": "media/", "disabled": true },
-    { "email": "skip" }
+    { "email": "mandic00@live.com", "passwd": "qwe", "admin": true, "mediaRoot": "media/" }
   ],
   "locations": [
     { "folder": "Samples/", "match": "", "recursive": true },
