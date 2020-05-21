@@ -182,3 +182,4 @@ This allows for fallback solutions - if one model does not perform well on an im
 - RFE: Switch to DB, implement server-side paging and filtering
 - RFE: Save user preferences
 - RFE: Process GIF, PNG and HEIF
+- RFE: Server-side processing once WSL2 implements CUDA

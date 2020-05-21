@@ -30,6 +30,8 @@ function init() {
 function storeObject(json) {
   if (json.image === config.server.warmupImage) return;
   const index = global.results.findIndex((a) => a.image === json.image);
+  // eslint-disable-next-line no-param-reassign
+  json.processed = new Date();
   if (index > -1) global.results[index] = json;
   else global.results.push(json);
   log.data(`${index > -1 ? 'Update' : 'Create'}: "${json.image}"`, JSON.stringify(json).length, 'bytes');
@@ -259,22 +261,18 @@ function readDir(folder, match = null, recursive = false) {
   return files;
 }
 
-async function listFiles(inFolder, inMatch, inRecursive, inForce) {
-  let files = [];
-  const folder = inFolder ? decodeURI(inFolder) : '.';
-  const match = inMatch ? decodeURI(inMatch) : null;
-  const recursive = inRecursive ? inRecursive.toLowerCase() === 'true' : false;
-  const force = inForce ? inForce.toLowerCase() === 'true' : false;
-  files = readDir(`${config.server.mediaRoot}${folder}`, match, recursive);
+async function listFiles(folder, match = '', recursive = false, force = false) {
+  let files = readDir(`${config.server.mediaRoot}${folder}`, match, recursive);
   files = files.filter((a) => {
     for (const ext of config.server.allowedImageFileTypes) {
       if (a.toLowerCase().endsWith(ext)) return true;
     }
     return false;
   });
+  let process = files;
   let processed = 0;
   if (!force) {
-    files = files.filter((a) => {
+    process = files.filter((a) => {
       for (const item of global.results) {
         if (item.image === a) {
           if ((item.classify && item.classify.length > 0) || (item.detect && item.detect.length > 0)) {
@@ -288,7 +286,16 @@ async function listFiles(inFolder, inMatch, inRecursive, inForce) {
     });
   }
   log.info(`Lookup files:${folder} matching:${match || '*'} recursive:`, recursive, 'force:', force, 'processed:', processed, 'results:', files.length);
-  return { files, folder, recursive, force };
+  return { files, process };
+}
+
+function checkRecords(list) {
+  let deleted = global.results.filter((a) => !list.includes(a.image));
+  deleted = deleted.map((a) => a.image);
+  const before = global.results.length;
+  global.results = global.results.filter((a) => !deleted.includes(a.image));
+  const after = global.results.length;
+  log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before} after: ${after})`);
 }
 
 exports.init = init;
@@ -299,3 +306,4 @@ exports.hash = getHash;
 exports.tags = buildTags;
 exports.store = storeObject;
 exports.list = listFiles;
+exports.check = checkRecords;
