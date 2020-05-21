@@ -1,7 +1,7 @@
 {
   "users": [
     { "email": "user@example.com", "passwd": "secret", "admin": true, "mediaRoot": "media/", "disabled": true },
-    { "email": "mandic00@live.com", "passwd": "wer", "admin": true, "mediaRoot": "media/", "git": false }
+    { "email": "skip" }
   ],
   "locations": [
     { "folder": "Samples/", "match": "", "recursive": true },
