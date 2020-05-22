@@ -1,4 +1,4 @@
-/* global moment */
+/* global moment, marked, Popper */
 
 import config from './config.js';
 import log from './log.js';
@@ -11,7 +11,7 @@ const options = {
   listDivider: 'month',
   listSortOrder: 'numeric-down',
   listThumbSize: 130,
-  listLimit: 1000,
+  listLimit: 100,
   viewDetails: true,
   viewBoxes: true,
   viewFaces: true,
@@ -21,6 +21,21 @@ const options = {
   dateDivider: 'MMMM YYYY',
   fontSize: '14px',
 };
+
+function showTip(parent, text) {
+  const tip = document.createElement('div');
+  tip.id = 'tooltip';
+  tip.role = 'tooltip';
+  tip.className = 'popper';
+  tip.innerHTML = text;
+  parent.appendChild(tip);
+  let popper = Popper.createPopper(parent, tip, { placement: 'left', strategy: 'absolute', modifiers: [{ name: 'offset', options: { offset: [0, 20] } }] });
+  setTimeout(() => {
+    popper.destroy();
+    popper = null;
+    parent.removeChild(tip);
+  }, 3000);
+}
 
 // draw boxes for detected objects, faces and face elements
 function drawBoxes(img, object) {
@@ -442,16 +457,17 @@ function sortResults(sort) {
 }
 
 // calls main detectxion and then print results for all images matching spec
-async function loadGallery() {
+async function loadGallery(limit) {
   $('body').css('cursor', 'wait');
   const t0 = window.performance.now();
   log.result('Loading gallery ...');
-  const res = await fetch(`/api/get?limit=${options.listLimit}&find=all`);
+  const res = await fetch(`/api/get?limit=${limit}&find=all`);
   results = await res.json();
   const t1 = window.performance.now();
   const size = JSON.stringify(results).length;
   log.result(`Received ${results.length} images in ${size.toLocaleString()} bytes (${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec)`);
   for (const id in results) results[id].id = id;
+  filtered = results;
   resizeResults();
   sortResults(options.listSortOrder);
 }
@@ -476,6 +492,7 @@ async function initUser() {
 function initHandlers() {
   // hide those elements initially
   $('#popup').toggle(false);
+  $('#docs').toggle(false);
   $('#searchbar').toggle(false);
   $('#optionslist').toggle(false);
   $('#optionsview').toggle(false);
@@ -507,9 +524,20 @@ function initHandlers() {
     $('#optionsview').toggle('fast');
   });
 
-  $('#btn-doc').click(() => {
-    window.open('https://github.com/vladmandic/photo-analysis/blob/master/README.md', '_blank');
+  $('#btn-doc').click(async () => {
+    // window.open('https://github.com/vladmandic/photo-analysis/blob/master/README.md', '_blank');
+    $('#docs').toggle('fast');
+    $('#docs').click(() => $('#docs').toggle('fast'));
+    const res = await fetch('/README.md');
+    const md = await res.text();
+    if (md) $('#docs').html(marked(md));
   });
+
+  $('#btn-load').click((evt) => {
+    showTip(evt.target, 'Loading full gallery...');
+    loadGallery(10000);
+  });
+
 
   // starts image processing in a separate window
   $('#btn-update').click(() => {
@@ -636,7 +664,7 @@ async function main() {
   log.init();
   await initUser();
   initHandlers();
-  await loadGallery();
+  await loadGallery(options.listLimit);
 }
 
 window.onload = main;

@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="/assets/fontawesome/css/all.css">
     <script type="text/javascript" src="/assets/jquery.js"></script>
     <script type="text/javascript" src="/assets/moment.js"></script>
+    <script type="text/javascript" src="/assets/popper.js"></script>
+    <script type="text/javascript" src="/assets/marked.js"></script>
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
@@ -31,6 +33,7 @@
       .row { width: 100vw; margin: 0 }
       .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
       .log { height: 5vh; overflow-x: hidden; overflow-y:scroll; margin-top: 10px; overflow: hidden }
+      .popper { padding: 8px; background: #ffff69; color: #555555; font-size: 14px; font-family: Roboto; box-shadow: 5px 5px #222222; border-radius: 10px; border-color: grey; border-style: solid; }
 
       .navbar { background: #555555; min-height: 5rem; max-height: 5rem; position: fixed; top: 0; overflow: hidden; }
       .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
@@ -69,6 +72,8 @@
       .popup { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 5rem; left: 0; width: 100%; display: flex; }
       .popup-image { width: auto; height: auto; max-height: 94vh; }
       .popup-details { margin: 1rem; width: 32rem }
+
+      .docs { height: 87vh; background: #333333; color: white; overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; display: block; padding: 10px; z-index: 10; }
     </style>
 </head>
 <body>
@@ -81,7 +86,7 @@
     <div><i id="btn-video" class="navbarbutton fas fa-film"></i><p>Live Video</p></div>
     <div><i id="btn-update" class="navbarbutton fas fa-sync"></i><p>Update Database</p></div>
     <div><i id="btn-doc" class="navbarbutton fas fa-book"></i><p>Documentation</p></div>
-    <div><i class="number fas fa-images"></i><p id="number">0</p></div>
+    <div><i id="btn-load" class="number fas fa-images"></i><p id="number">0</p></div>
   </div>
   <!-- <div id="blank" class="row blank"></div> -->
 
@@ -127,6 +132,8 @@
     <canvas id="popup-canvas"></canvas>
     <div class="popup-details" id="popup-details"></div>
   </div>
+
+  <div id="docs" class="docs">baaaa</div>
 
 </body>
 </html>
