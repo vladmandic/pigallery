@@ -2,19 +2,33 @@
 
 ## Multi-user image galley with TensorFlow/JS image processing and full EXIF data extraction and analysis
 
+**Repository: <https://github.com/vladmandic/pigallery>**
+
 ## Screenshots
 
 ### Gallery view
 
+<center>
+
 ![alt text](assets/screenshot-gallery.png)
+
+</center>
 
 ### Detailed View
 
+<center>
+
 ![alt text](assets/screenshot-details.png)
+
+</center>
 
 ### Complex Search Results
 
+<center>
+
 ![alt text](assets/screenshot-search.png)
+
+</center>
 
 ## Install, Configure & Run
 
@@ -138,7 +152,7 @@ Result of all metadata processing is a very flexbile search engine - take a look
 | NasNet Mobile       |  21 MB | 574     | 78.91%   | TBD            | 119 ms      |
 
 </center>
-
+<br>
 *It's a tight race between MobileNet v2 with it's small size and low number of false positives .vs.
 Inception v3 with long warmup time, good top results but also higher number of false positives.
 Note that Inception rates it's hits very high, so if its combined with some other model, it would always end on top.
@@ -157,7 +171,7 @@ ResNet on it's own is not that great, but Inception based on ResNet does provide
 | DarkNet/Yolo v1 Full | 248 MB | 366     | 62.50%   | TBD            | 280 ms      |
 
 </center>
-
+<br>
 *With object detection accuracy is typically lower, but there are much fewer false-positives.
 This allows for fallback solutions - if one model does not perform well on an image, you can try another.*
 
@@ -170,7 +184,11 @@ This allows for fallback solutions - if one model does not perform well on an im
 - DarkNet Yolo: <https://pjreddie.com/darknet/yolo/>
 - Face/Gender/Age: <https://github.com/justadudewhohacks/face-api.js>
 
+<center>
+
 ![alt text](favicon.ico)
+
+</center>
 
 ## Todo
 
