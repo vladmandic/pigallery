@@ -5,15 +5,20 @@ import log from './log.js';
 
 let results = [];
 let filtered = [];
-const detailsConfig = {
-  showDetails: true,
-  showBoxes: true,
-  showFaces: true,
-  rawView: false,
-};
-const listConfig = {
-  showDetails: true,
-  divider: '',
+const options = {
+  listFolders: true,
+  listDetails: true,
+  listDivider: 'month',
+  listSortOrder: 'numeric-down',
+  listThumbSize: 130,
+  viewDetails: true,
+  viewBoxes: true,
+  viewFaces: true,
+  viewRaw: false,
+  dateShort: 'YYYY/MM/DD',
+  dateLong: 'dddd, MMMM Do, YYYY',
+  dateDivider: 'MMMM YYYY',
+  fontSize: '14px',
 };
 
 // draw boxes for detected objects, faces and face elements
@@ -32,7 +37,7 @@ function drawBoxes(img, object) {
   const resizeY = img.height / object.processedSize.height;
 
   // draw detected objects
-  if (detailsConfig.showBoxes && object.detect) {
+  if (options.viewBoxes && object.detect) {
     ctx.strokeStyle = 'lightyellow';
     ctx.fillStyle = 'lightyellow';
     for (const obj of object.detect) {
@@ -46,7 +51,7 @@ function drawBoxes(img, object) {
   }
 
   // draw faces
-  if (detailsConfig.showFaces && object.person) {
+  if (options.viewFaces && object.person) {
     for (const i in object.person) {
       if (object.person[i].box) {
         // draw box around face
@@ -89,7 +94,7 @@ function JSONtoStr(json) {
 // show details popup
 async function showDetails() {
   const img = document.getElementById('popup-image');
-  if (detailsConfig.rawView) {
+  if (options.viewRaw) {
     window.open(img.img, '_blank');
     return;
   }
@@ -138,7 +143,7 @@ async function showDetails() {
     const complexity = (img.naturalWidth * img.naturalHeight) / object.exif.bytes;
     if (object.exif.make) exif += `Camera: ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
     if (object.exif.bytes) exif += `Size: ${mp} MP in ${object.exif.bytes.toLocaleString()} bytes with compression factor ${complexity.toFixed(2)}<br>`;
-    if (object.exif.created) exif += `Taken: ${moment(1000 * object.exif.created).format('dddd YYYY/MM/DD')} Edited: ${moment(1000 * object.exif.modified).format('dddd YYYY/MM/DD')}<br>`;
+    if (object.exif.created) exif += `Taken: ${moment(1000 * object.exif.created).format(options.dateLong)} Edited: ${moment(1000 * object.exif.modified).format(options.dateLong)}<br>`;
     if (object.exif.software) exif += `Software: ${object.exif.software}<br>`;
     if (object.exif.exposure) exif += `Settings: ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
   }
@@ -151,7 +156,7 @@ async function showDetails() {
       <h2>Image: ${object.image}</h2>${link}
       Image size: ${img.naturalWidth} x ${img.naturalHeight}
         Total time ${object.perf.total.toFixed(0)} ms<br>
-        Processed on ${moment(object.processed).format('dddd YYYY/MM/DD')} in ${object.perf.load.toFixed(0)} ms<br>
+        Processed on ${moment(object.processed).format(options.dateLong)} in ${object.perf.load.toFixed(0)} ms<br>
         Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
         Alternative using ${config.alternative ? config.alternative.name : 'N/A'}<br>
         Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
@@ -169,7 +174,7 @@ async function showDetails() {
       <i>${JSONtoStr(object.tags)}</i>
       </div>
     `;
-  if (detailsConfig.showDetails) {
+  if (options.viewDetails) {
     $('#popup-details').toggle(true);
     $('#popup-image').css('max-width', '80vw');
     $('#popup-details').width(window.innerWidth - $('#popup-image').width());
@@ -199,17 +204,17 @@ async function showNextDetails(left) {
 // adds dividiers based on sort order
 let previous;
 function addDividers(object) {
-  if (listConfig.divider === 'month') {
-    const curr = moment(1000 * object.exif.timestamp).format('MMMM, YYYY');
-    const prev = moment(previous ? 1000 * previous.exif.timestamp : 0).format('MMMM, YYYY');
+  if (options.listDivider === 'month') {
+    const curr = moment(1000 * object.exif.timestamp).format(options.dateDivider);
+    const prev = moment(previous ? 1000 * previous.exif.timestamp : 0).format(options.dateDivider);
     if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
   }
-  if (listConfig.divider === 'size') {
+  if (options.listDivider === 'size') {
     const curr = Math.round(object.pixels / 1000 / 1000);
     const prev = Math.round((previous ? previous.pixels : 1) / 1000 / 1000);
     if (curr !== prev) $('#results').append(`<div class="row divider">Size: ${curr} MP</div>`);
   }
-  if (listConfig.divider === 'folder') {
+  if (options.listDivider === 'folder') {
     const curr = object.image.substr(0, object.image.lastIndexOf('/'));
     const prev = previous ? previous.image.substr(0, previous.image.lastIndexOf('/')) : 'none';
     if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
@@ -257,7 +262,7 @@ async function printResult(object) {
     location += ` | ${object.location.city}, ${object.location.state} ${object.location.country} (near ${object.location.near})`;
   }
 
-  const timestamp = moment(1000 * object.exif.timestamp).format('dddd YYYY/MM/DD');
+  const timestamp = moment(1000 * object.exif.timestamp).format(options.dateShort);
   const link = `<a class="download fa fa-arrow-alt-circle-down" href="${object.image}" download></a>`;
   const divItem = document.createElement('div');
   divItem.className = 'listitem';
@@ -265,7 +270,7 @@ async function printResult(object) {
   const root = window.user && window.user.root ? window.user.root : 'media/';
   divItem.innerHTML = `
     <div class="col thumbnail">
-      <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width=${config.listThumbnail}px height=${config.listThumbnail}px>
+      <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width=${options.listThumbSize}px height=${options.listThumbSize}px>
     </div>
     <div id="desc-${object.id}" class="col description">
       <b>${decodeURI(object.image).replace(root, '')}</b>${link}<br>
@@ -289,17 +294,13 @@ async function printResult(object) {
 
 function resizeResults() {
   const thumbSize = parseInt($('#thumbsize')[0].value, 10);
-  if (thumbSize !== config.listThumbnail) {
-    config.listThumbnail = parseInt($('#thumbsize')[0].value, 10);
-    $('#thumblabel').text(`Size: ${config.listThumbnail}px`);
-    $('#thumbsize')[0].value = config.listThumbnail;
-    $('.thumbnail').width(config.listThumbnail);
-    $('.thumbnail').height(config.listThumbnail);
-    // $('.thumbnail').css('min-width', `${config.listThumbnail}px`);
-    // $('.thumbnail').css('min-height', `${config.listThumbnail}px`);
-    // $('.thumbnail').css('max-width', `${config.listThumbnail}px`);
-    // $('.thumbnail').css('max-height', `${config.listThumbnail}px`);
-    $('.listitem').css('min-height', `${Math.max(144, 16 + config.listThumbnail)}px`);
+  if (thumbSize !== options.listThumbSize) {
+    options.listThumbSize = thumbSize;
+    $('#thumblabel').text(`Size: ${options.listThumbSize}px`);
+    $('#thumbsize')[0].value = options.listThumbSize;
+    $('.thumbnail').width(options.listThumbSize);
+    $('.thumbnail').height(options.listThumbSize);
+    $('.listitem').css('min-height', `${Math.max(144, 16 + options.listThumbSize)}px`);
     $('.listitem').css('max-height', '144px');
   }
 }
@@ -354,7 +355,7 @@ async function redrawResults(generateFolders = true) {
   $('#results').html('');
   if (generateFolders) enumerateFolders();
   for await (const obj of filtered) printResult(obj);
-  $('.description').toggle(listConfig.showDetails);
+  $('.description').toggle(options.listDetails);
   await resizeResults();
   $('body').css('cursor', 'pointer');
 }
@@ -432,10 +433,10 @@ function sortResults(sort) {
   if (sort.includes('amount-down')) filtered.sort((a, b) => (b.pixels - a.pixels));
   if (sort.includes('amount-up')) filtered.sort((a, b) => (a.pixels - b.pixels));
   // how to group
-  if (sort.includes('numeric-down') || sort.includes('numeric-up')) listConfig.divider = 'month';
-  else if (sort.includes('amount-down') || sort.includes('amount-up')) listConfig.divider = 'size';
-  else if (sort.includes('alpha-down') || sort.includes('alpha-up')) listConfig.divider = 'folder';
-  else listConfig.divider = '';
+  if (sort.includes('numeric-down') || sort.includes('numeric-up')) options.listDivider = 'month';
+  else if (sort.includes('amount-down') || sort.includes('amount-up')) options.listDivider = 'size';
+  else if (sort.includes('alpha-down') || sort.includes('alpha-up')) options.listDivider = 'folder';
+  else options.listDivider = '';
   redrawResults();
 }
 
@@ -450,9 +451,8 @@ async function loadGallery() {
   const size = JSON.stringify(results).length;
   log.result(`Received ${results.length} images in ${size.toLocaleString()} bytes (${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec)`);
   for (const id in results) results[id].id = id;
-  listConfig.divider = 'month';
-  filtered = results.sort((a, b) => (b.exif.timestamp - a.exif.timestamp));
-  redrawResults();
+  resizeResults();
+  sortResults(options.listSortOrder);
 }
 
 async function initUser() {
@@ -463,6 +463,12 @@ async function initUser() {
     $('#user').text(window.user.user);
     log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
   }
+  // initialize per user config
+  if (!window.user.admin) $('#btn-update').css('color', 'grey');
+  $('body').css('fontSize', config.fontSize);
+  $('#folderbar').toggle(options.listFolders);
+  $('.description').toggle(options.listDetails);
+  $('#thumbsize')[0].value = options.listThumbSize;
 }
 
 // pre-fetching DOM elements to avoid multiple runtime lookups
@@ -472,7 +478,6 @@ function initHandlers() {
   $('#searchbar').toggle(false);
   $('#optionslist').toggle(false);
   $('#optionsview').toggle(false);
-  if (!window.user.admin) $('#btn-update').css('color', 'grey');
 
   // navbar
   $('#btn-user').click(() => {
@@ -541,12 +546,13 @@ function initHandlers() {
 
   // navline-list
   $('#btn-folder').click(() => {
-    $('#folders').toggle('slow');
+    $('#folderbar').toggle('slow');
     $('#btn-folder').toggleClass('fa-folder fa-folder-open');
+    options.listFolders = !options.listFolders;
   });
 
   $('#btn-desc').click(() => {
-    listConfig.showDetails = !listConfig.showDetails;
+    options.listDetails = !options.listDetails;
     $('.description').toggle('slow');
     $('#btn-desc').toggleClass('fa-eye fa-eye-slash');
   });
@@ -556,6 +562,7 @@ function initHandlers() {
   });
 
   $('.sort').click((evt) => {
+    options.listSortOrder = evt.target.className;
     sortResults(evt.target.className);
   });
 
@@ -566,22 +573,22 @@ function initHandlers() {
   // navline-view
   $('#details-desc').click(() => {
     $('#details-desc').toggleClass('fa-comment fa-comment-slash');
-    detailsConfig.showDetails = !detailsConfig.showDetails;
+    options.viewDetails = !options.viewDetails;
   });
 
   $('#details-boxes').click(() => {
     $('#details-boxes').toggleClass('fa-store fa-store-slash');
-    detailsConfig.showBoxes = !detailsConfig.showBoxes;
+    options.viewBoxes = !options.viewBoxes;
   });
 
   $('#details-faces').click(() => {
     $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
-    detailsConfig.showFaces = !detailsConfig.showFaces;
+    options.viewFaces = !options.viewFaces;
   });
 
   $('#details-raw').click(() => {
     $('#details-raw').toggleClass('fa-video fa-video-slash');
-    detailsConfig.rawView = !detailsConfig.rawView;
+    options.viewRaw = !options.viewRaw;
   });
 
   // handle clicks inside popup
@@ -594,8 +601,8 @@ function initHandlers() {
   // handle keypresses on main
   $('html').keydown(() => {
     const current = $('#results').scrollTop();
-    const line = config.listThumbnail + 16;
-    const page = $('#results').height() - config.listThumbnail;
+    const line = options.listThumbSize + 16;
+    const page = $('#results').height() - options.listThumbSize;
     const bottom = $('#results').prop('scrollHeight');
     $('#results').stop();
     switch (event.keyCode) {

@@ -134,8 +134,6 @@ const config = {
   // maximum image width or height that will be used for processing before resizing is required
   renderThumbnail: 230,
   // resolution in which to store image thumbnail embedded in result set
-  listThumbnail: 130,
-  // initial resolution in which to render stored thumbnail in gallery list view
   batchProcessing: 1,
   // how many images to process in parallel
   squareImage: false,
