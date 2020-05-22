@@ -242,12 +242,60 @@ const log = {
 };
 var _default = log;
 exports.default = _default;
-},{}],"gallery.js":[function(require,module,exports) {
+},{}],"pwa-register.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _log = _interopRequireDefault(require("./log.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+async function register(path) {
+  if ('serviceWorker' in navigator) {
+    try {
+      let found = false;
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (const reg of regs) {
+          if (reg.active && reg.active.state === 'activated') found = true;
+        }
+
+        return found;
+      }).catch(err => {
+        _log.default.result(`PWA Error: code ${err.code} ${err.name} - ${err.message}`);
+      });
+
+      if (!found) {
+        navigator.serviceWorker.register(path, {
+          scope: '/'
+        }).then(reg => {
+          _log.default.result(`PWA Registration scope: ${reg.scope}`);
+        }).catch(err => {
+          if (err.name === 'SecurityError') _log.default.result('SSL certificate is untrusted');else _log.default.result(`PWA Error: code ${err.code} ${err.name} - ${err.message}`);
+        });
+      }
+    } catch (err) {
+      if (err.name === 'SecurityError') _log.default.result('SSL certificate is untrusted');else _log.default.result(`PWA Error: code ${err.code} ${err.name} - ${err.message}`);
+    }
+  }
+}
+
+const pwa = {
+  register
+};
+var _default = pwa;
+exports.default = _default;
+},{"./log.js":"log.js"}],"gallery.js":[function(require,module,exports) {
 "use strict";
 
 var _config = _interopRequireDefault(require("./config.js"));
 
 var _log = _interopRequireDefault(require("./log.js"));
+
+var _pwaRegister = _interopRequireDefault(require("./pwa-register.js"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -269,7 +317,11 @@ const options = {
   dateLong: 'dddd, MMMM Do, YYYY',
   dateDivider: 'MMMM YYYY',
   fontSize: '14px'
-};
+}; // eslint-disable-next-line prefer-rest-params
+
+function gtag() {
+  window.dataLayer.push(arguments);
+}
 
 function showTip(parent, text) {
   const tip = document.createElement('div');
@@ -1005,6 +1057,18 @@ function initHandlers() {
 }
 
 async function main() {
+  // google analytics
+  gtag('js', new Date());
+  gtag('config', 'UA-155273-2', {
+    page_path: `${location.pathname}`
+  });
+  gtag('set', {
+    user_id: `${window.user}`
+  }); // Set the user ID using signed-in user_id.
+  // Register PWA
+
+  _pwaRegister.default.register('/client/pwa-serviceworker.js');
+
   _log.default.init();
 
   await initUser();
@@ -1013,5 +1077,5 @@ async function main() {
 }
 
 window.onload = main;
-},{"./config.js":"config.js","./log.js":"log.js"}]},{},["gallery.js"], null)
+},{"./config.js":"config.js","./log.js":"log.js","./pwa-register.js":"pwa-register.js"}]},{},["gallery.js"], null)
 //# sourceMappingURL=/gallery.js.map
