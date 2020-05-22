@@ -68830,6 +68830,7 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 const models = {};
+let error = false;
 
 function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"/g, '').replace(/,/g, ', ');
@@ -69056,9 +69057,7 @@ async function processImage(name) {
   } catch (err) {
     _log.default.result(`Errror during primary classification for ${name}: ${err}`);
 
-    const engine = await tf.engine();
-
-    _log.default.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+    error = true;
   }
 
   try {
@@ -69066,9 +69065,7 @@ async function processImage(name) {
   } catch (err) {
     _log.default.result(`Errror during alternate classification for ${name}: ${err}`);
 
-    const engine = await tf.engine();
-
-    _log.default.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+    error = true;
   }
 
   const tc1 = window.performance.now();
@@ -69082,9 +69079,7 @@ async function processImage(name) {
   } catch (err) {
     _log.default.result(`Errror during detection for ${name}: ${err}`);
 
-    const engine = await tf.engine();
-
-    _log.default.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+    error = true;
   }
 
   const td1 = window.performance.now(); // const detect = await models.yolo.predict(image.canvas, { maxBoxes: 3, scoreThreshold: 0.3 });
@@ -69100,9 +69095,7 @@ async function processImage(name) {
     } catch (err) {
       _log.default.result(`Errror in FaceAPI for ${name}: ${err}`);
 
-      const engine = await tf.engine();
-
-      _log.default.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+      error = true;
     }
 
     _log.default.active(`NSFW Detection: ${name}`);
@@ -69115,6 +69108,8 @@ async function processImage(name) {
       obj.person.class = nsfw && nsfw[0] ? nsfw[0].className : null;
     } catch (err) {
       _log.default.result(`Errror in NSFW for ${name}: ${err}`);
+
+      error = true;
     }
   }
 
@@ -69127,6 +69122,7 @@ async function processImage(name) {
     detect: td1 - td0,
     person: tp1 - tp0
   };
+  obj.error = error;
 
   _log.default.active(`Storing: ${name}`);
 
@@ -69231,13 +69227,18 @@ async function processFiles() {
 
   _log.default.result(`Processing images: ${files.length}`);
 
-  for (const url of files) {
-    promises.push(tf.process(url).then(obj => {
-      _log.default.dot();
+  let error = false;
 
-      results[id] = obj;
-      id += 1;
-    }));
+  for (const url of files) {
+    if (!error) {
+      promises.push(tf.process(url).then(obj => {
+        _log.default.dot();
+
+        results[id] = obj;
+        error = obj.error || error;
+        id += 1;
+      }));
+    }
 
     if (promises.length >= _config.default.batchProcessing) {
       await Promise.all(promises);
@@ -69246,6 +69247,7 @@ async function processFiles() {
   }
 
   if (promises.length > 0) await Promise.all(promises);
+  if (error) _log.default.result('Aborting');
   const t1 = window.performance.now();
 
   if (files.length > 0) {

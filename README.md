@@ -83,7 +83,9 @@ Result of all metadata processing is a very flexbile search engine - take a look
 
 ### TensorFlow Processing
 
-- On Images:
+- On errors:
+  - If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory. Just restart processing and it will continue from the last known good result.
+- On images:
   - This relates to selected image size in `client/config.js`, not the original image size which can be anything (tested with over 100MP)
   - Large images can cause random WebGL processing errors, recommended limit is 1000px.
   - There is no increased accuracy in image sizes larger than 800 pixels as individual classification samples are typically 224px.
@@ -172,9 +174,8 @@ This allows for fallback solutions - if one model does not perform well on an im
 
 ## Todo
 
-- BUG: Canvas overlaps video element so controls are unavailable
+- BUG: Live video slows down over time and leaks GPU memory
 - BUG: Handle duplicate folder names
-- BUG: EXIF processing exceptions
 - BUG: Exception handling during processing
 - RFE: Switch to DB, implement server-side paging and filtering
 - RFE: Save user preferences

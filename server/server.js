@@ -5,12 +5,13 @@ const http = require('http');
 const https = require('https');
 const express = require('express');
 const session = require('express-session');
+const nedb = require('nedb-promises');
 const api = require('./api.js');
 const parcel = require('./distBundler.js');
 const nodeconfig = require('../package.json');
-const config = require('../data/config.json');
+const config = require('../config.json');
 
-global.results = [];
+global.json = [];
 
 function allowCORS(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -61,6 +62,27 @@ async function main() {
   // initialize parceljs bundler
   await parcel.init(app);
 
+  // load image cache
+  log.info('Database Engine:', config.server.dbEngine);
+  if (config.server.dbEngine === 'json') {
+    if (fs.existsSync(config.server.jsonDB)) {
+      const data = fs.readFileSync(config.server.jsonDB, 'utf8');
+      global.json = JSON.parse(data);
+      log.state('Image cache loaded:', config.server.jsonDB, 'records:', global.json.length, 'size:', data.length, 'bytes');
+    } else {
+      log.warn('Image cache not found:', config.server.jsonDB);
+    }
+  } else if (config.server.dbEngine === 'nedb') {
+    if (!fs.existsSync(config.server.nedbDB)) log.warn('Image cache not found:', config.server.jsonDB);
+    global.db = nedb.create({ filename: config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
+    await global.db.loadDatabase();
+    const records = await global.db.count({});
+    log.state('Image cache loaded:', config.server.nedbDB, 'records:', records);
+  } else {
+    log.error('Unknown Database Engine');
+    process.exit(1);
+  }
+
   // start http server
   if (config.server.httpPort && config.server.httpPort !== 0) {
     const httpOptions = {
@@ -87,15 +109,6 @@ async function main() {
     serverHttps.on('listening', () => log.state(`Server HTTPS listening on ${serverHttps.address().family} ${serverHttps.address().address}:${serverHttps.address().port}`));
     serverHttps.on('close', () => log.state('Server HTTPS closed'));
     serverHttps.listen(config.server.httpsPort);
-  }
-
-  // load image cache
-  if (fs.existsSync(config.server.cacheFile)) {
-    const data = fs.readFileSync(config.server.cacheFile, 'utf8');
-    global.results = JSON.parse(data);
-    log.state('Image cache loaded:', config.server.cacheFile, 'records:', global.results.length, 'size:', data.length, 'bytes');
-  } else {
-    log.warn('Image cache not found:', config.server.cacheFile);
   }
 }
 

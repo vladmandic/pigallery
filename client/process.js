@@ -52,18 +52,23 @@ async function processFiles() {
   const t0 = window.performance.now();
   const promises = [];
   log.result(`Processing images: ${files.length}`);
+  let error = false;
   for (const url of files) {
-    promises.push(tf.process(url).then((obj) => {
-      log.dot();
-      results[id] = obj;
-      id += 1;
-    }));
+    if (!error) {
+      promises.push(tf.process(url).then((obj) => {
+        log.dot();
+        results[id] = obj;
+        error = obj.error || error;
+        id += 1;
+      }));
+    }
     if (promises.length >= config.batchProcessing) {
       await Promise.all(promises);
       promises.length = 0;
     }
   }
   if (promises.length > 0) await Promise.all(promises);
+  if (error) log.result('Aborting');
   const t1 = window.performance.now();
   if (files.length > 0) {
     log.result('');

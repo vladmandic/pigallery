@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const log = require('pilogger');
 const metadata = require('./metadata.js');
-const config = require('../data/config.json');
+const config = require('../config.json');
 
 function api(app) {
   log.state('API ready');
@@ -10,14 +10,17 @@ function api(app) {
 
   app.get('/api/log', (req, res) => {
     const msg = decodeURI(req.query.msg || '').replace(/\s+/g, ' ');
-    log.info(`${req.session.user}@${req.client.remoteAddress}`, msg);
+    log.info(`Client ${req.session.user}@${req.client.remoteAddress}`, msg);
     res.status(200).send('true');
   });
 
   app.get('/api/save', (req, res) => {
-    const data = JSON.stringify(global.results);
-    fs.writeFileSync(config.server.cacheFile, data);
-    log.info('Image cache saved:', config.server.cacheFile, 'records:', global.results.length, 'size:', data.length, 'bytes');
+    if (config.server.dbEngine === 'json') {
+      const data = JSON.stringify(global.json);
+      fs.writeFileSync(config.server.jsonDB, data);
+      log.info('API Save:', config.server.jsonDB, 'records:', global.json.length, 'size:', data.length, 'bytes');
+    }
+    // nothing to do if using nedb
     res.status(200).send('true');
   });
 
@@ -34,17 +37,24 @@ function api(app) {
     metadata.check(filesAll);
   });
 
-  app.get('/api/get', (req, res) => {
+  app.get('/api/get', async (req, res) => {
     if (!req.query.find) {
       res.status(400).json([]);
       return;
     }
-    if (req.query.find === 'all') {
-      let data = global.results;
+    let data = [];
+    if (config.server.dbEngine === 'json') {
+      data = global.json;
       if (config.server.authForce) data = data.filter((a) => a.image.startsWith(req.session.root));
-      log.info(`Get ${req.session.user}@${req.client.remoteAddress} root: ${req.session.root} data:`, data.length, 'of', global.results.length);
-      res.json(data);
+    } else {
+      const re = new RegExp(`^${req.session.root}`);
+      const records = await global.db.find({ name: re }).sort({ time: -1 }).limit(req.query.limit || config.server.resultsLimit);
+      for (const record of records) {
+        data.push(JSON.parse(record.data));
+      }
     }
+    res.json(data);
+    log.info(`API Get ${req.session.user}@${req.client.remoteAddress} root: ${req.session.root} data:`, data.length);
   });
 
   app.post('/api/metadata', async (req, res) => {
@@ -119,7 +129,7 @@ function api(app) {
       req.session.admin = found.admin;
       req.session.root = found.mediaRoot;
     }
-    log.info(`Login request: ${email} from ${req.client.remoteAddress} ${req.session.user ? 'success' : 'fail'}`);
+    log.info(`API Login: ${email} from ${req.client.remoteAddress} ${req.session.user ? 'success' : 'fail'}`);
     res.redirect('/gallery');
   });
 }

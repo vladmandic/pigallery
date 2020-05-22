@@ -6,6 +6,7 @@ import log from './log.js';
 import config from './config.js';
 
 const models = {};
+let error = false;
 
 function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"/g, '').replace(/,/g, ', ');
@@ -185,15 +186,13 @@ async function processImage(name) {
     if (models.classify) obj.classify = await modelClassify.classify(models.classify, image.canvas);
   } catch (err) {
     log.result(`Errror during primary classification for ${name}: ${err}`);
-    const engine = await tf.engine();
-    log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+    error = true;
   }
   try {
     if (models.alternative) obj.alternative = await modelClassify.classify(models.alternative, image.canvas);
   } catch (err) {
     log.result(`Errror during alternate classification for ${name}: ${err}`);
-    const engine = await tf.engine();
-    log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+    error = true;
   }
   const tc1 = window.performance.now();
 
@@ -203,8 +202,7 @@ async function processImage(name) {
     if (models.detect) obj.detect = await modelDetect.detect(models.detect, image.canvas);
   } catch (err) {
     log.result(`Errror during detection for ${name}: ${err}`);
-    const engine = await tf.engine();
-    log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+    error = true;
   }
   const td1 = window.performance.now();
 
@@ -218,8 +216,7 @@ async function processImage(name) {
       if (models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
     } catch (err) {
       log.result(`Errror in FaceAPI for ${name}: ${err}`);
-      const engine = await tf.engine();
-      log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+      error = true;
     }
     log.active(`NSFW Detection: ${name}`);
     let nsfw;
@@ -229,12 +226,14 @@ async function processImage(name) {
       obj.person.class = (nsfw && nsfw[0]) ? nsfw[0].className : null;
     } catch (err) {
       log.result(`Errror in NSFW for ${name}: ${err}`);
+      error = true;
     }
   }
   const tp1 = window.performance.now();
 
   const t1 = window.performance.now();
   obj.perf = { total: t1 - t0, load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
+  obj.error = error;
 
   log.active(`Storing: ${name}`);
   fetch('/api/metadata', {
