@@ -5,6 +5,8 @@ const http = require('http');
 const https = require('https');
 const express = require('express');
 const session = require('express-session');
+const csp = require('helmet-csp');
+const compression = require('compression');
 const nedb = require('nedb-promises');
 const api = require('./api.js');
 const parcel = require('./distBundler.js');
@@ -19,6 +21,11 @@ function allowCORS(req, res, next) {
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') res.send(200);
   else next();
+}
+
+function allowPWA(req, res, next) {
+  if (req.url.endsWith('.js')) res.header('Service-Worker-Allowed', '/');
+  next();
 }
 
 async function main() {
@@ -36,7 +43,9 @@ async function main() {
   app.use(session(config.cookie));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-  if (config.allowCORS) app.use(allowCORS);
+  app.use(compression());
+  if (config.server.allowCORS) app.use(allowCORS);
+  if (config.server.allowPWA) app.use(allowPWA);
 
   // expressjs passthrough for all requests
   app.use((req, res, next) => {
@@ -45,7 +54,11 @@ async function main() {
         log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
       }
     });
-    if (req.url.startsWith('/assets') || req.url.startsWith('/client') || req.url.startsWith('/favicon.ico')) next();
+    if (config.server.forceHTTPS && !req.secure) {
+      res.redirect(`https://${req.hostname}:${global.config.server.HTTPSport}${req.baseUrl}${req.url}`);
+      return;
+    }
+    if (req.url.startsWith('/assets') || req.url.startsWith('/client') || req.url.startsWith('/favicon.ico') || req.url.startsWith('/manifest.json')) next();
     else if (req.session.user || !config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
   });
@@ -53,6 +66,7 @@ async function main() {
   api.init(app); // initialize api calls
   // define routes
   app.use('/', express.static(path.join(root, '.')));
+  app.get('/', (req, res) => res.redirect('/gallery'));
   app.get('/gallery', (req, res) => res.sendFile('client/gallery.html', { root }));
   app.get('/process', (req, res) => res.sendFile('client/process.html', { root }));
   app.get('/video', (req, res) => res.sendFile('client/video.html', { root }));

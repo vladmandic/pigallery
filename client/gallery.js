@@ -2,6 +2,7 @@
 
 import config from './config.js';
 import log from './log.js';
+import pwa from './pwa-register.js';
 
 let results = [];
 let filtered = [];
@@ -21,6 +22,9 @@ const options = {
   dateDivider: 'MMMM YYYY',
   fontSize: '14px',
 };
+
+// eslint-disable-next-line prefer-rest-params
+function gtag() { window.dataLayer.push(arguments); }
 
 function showTip(parent, text) {
   const tip = document.createElement('div');
@@ -661,6 +665,14 @@ function initHandlers() {
 }
 
 async function main() {
+  // google analytics
+  gtag('js', new Date());
+  gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
+  gtag('set', { user_id: `${window.user}` }); // Set the user ID using signed-in user_id.
+
+  // Register PWA
+  pwa.register('/client/pwa-serviceworker.js');
+
   log.init();
   await initUser();
   initHandlers();

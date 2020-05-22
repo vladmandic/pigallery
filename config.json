@@ -12,7 +12,9 @@
   "server": {
     "httpPort": 8000,
     "httpsPort": 8080,
+    "forceHTTPS": true,
     "allowCORS": true,
+    "allowPWA": true,
     "logFile": "pigallery.log",
     "authForce": true,
     "allowedImageFileTypes": [ ".jpeg", ".jpg" ],
