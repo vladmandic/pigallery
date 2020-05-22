@@ -1,5 +1,6 @@
 node_modules
 models/*
 media/*
-data/cache.json
-server.log
+pigallerydb.json
+pigallerydb.nedb
+pigallery.log

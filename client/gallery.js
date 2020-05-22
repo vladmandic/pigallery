@@ -11,6 +11,7 @@ const options = {
   listDivider: 'month',
   listSortOrder: 'numeric-down',
   listThumbSize: 130,
+  listLimit: 1000,
   viewDetails: true,
   viewBoxes: true,
   viewFaces: true,
@@ -445,7 +446,7 @@ async function loadGallery() {
   $('body').css('cursor', 'wait');
   const t0 = window.performance.now();
   log.result('Loading gallery ...');
-  const res = await fetch('/api/get?find=all');
+  const res = await fetch(`/api/get?limit=${options.listLimit}&find=all`);
   results = await res.json();
   const t1 = window.performance.now();
   const size = JSON.stringify(results).length;

@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const parser = require('exif-parser');
 const log = require('pilogger');
 const distance = require('./geoNearest.js');
-const config = require('../data/config.json');
+const config = require('../config.json');
 
 let wordNet = {};
 
@@ -27,14 +27,23 @@ function init() {
   data = null;
 }
 
-function storeObject(json) {
-  if (json.image === config.server.warmupImage) return;
-  const index = global.results.findIndex((a) => a.image === json.image);
+function storeObject(data) {
+  if (data.image === config.server.warmupImage) return;
+  // eslint-disable-next-line no-param-reassign
+  const json = data;
+  const analyzed = (json.classify && json.classify.length > 0) || (json.detect && json.detect.length > 0) || (json.exif && json.exif.camera);
   // eslint-disable-next-line no-param-reassign
   json.processed = new Date();
-  if (index > -1) global.results[index] = json;
-  else global.results.push(json);
-  log.data(`${index > -1 ? 'Update' : 'Create'}: "${json.image}"`, JSON.stringify(json).length, 'bytes');
+  if (config.server.dbEngine === 'json') {
+    const index = global.json.findIndex((a) => a.image === json.image);
+    if (index > -1) global.json[index] = json;
+    else global.json.push(json);
+    log.data(`${index > -1 ? 'Update' : 'Create'}: "${json.image}"`, JSON.stringify(json).length, 'bytes');
+  } else {
+    const record = { name: json.image, time: json.exif.timestamp, analyzed, data: JSON.stringify(json) };
+    global.db.update({ name: json.image }, record, { upsert: true });
+    log.data(`Insert: "${json.image}"`, JSON.stringify(json).length, 'bytes');
+  }
 }
 
 function buildTags(object) {
@@ -181,7 +190,7 @@ async function getExif(url) {
     stream
       .on('data', (chunk) => {
         const raw = parseExif(chunk, 10);
-        if (!raw || !raw.tags) log.warn('Metadata EXIF:', url);
+        if (!raw || !raw.tags && url !== config.server.warmupImage) log.warn('Metadata EXIF:', url);
         const stat = fs.statSync(url);
         json.bytes = stat.bytes;
         json.timestamp = raw && raw.tags ? (raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
@@ -269,32 +278,63 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
     }
     return false;
   });
-  let process = files;
+  let process = [];
   let processed = 0;
-  if (!force) {
-    process = files.filter((a) => {
-      for (const item of global.results) {
-        if (item.image === a) {
-          if ((item.classify && item.classify.length > 0) || (item.detect && item.detect.length > 0)) {
-            processed++;
-            return false;
+  if (force) {
+    process = files;
+  } else {
+    // eslint-disable-next-line no-lonely-if
+    if (config.server.dbEngine === 'json') {
+      process = files.filter((a) => {
+        for (const item of global.json) {
+          if (item.image === a) {
+            if (item.analyzed) {
+              processed++;
+              return false;
+            }
+            return true;
           }
-          return true;
         }
+        return true;
+      });
+      process = process.map((a) => a.image);
+    } else {
+      for (const a of files) {
+        const image = await global.db.find({ name: a });
+        if (image && image[0] && image[0].analyzed) processed++;
+        else process.push(a);
       }
-      return true;
-    });
+    }
   }
-  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:`, recursive, 'force:', force, 'processed:', processed, 'results:', files.length);
+  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:`, recursive, 'force:', force, 'results:', files.length, 'processed:', processed, 'queued:', process.length);
   return { files, process };
 }
 
-function checkRecords(list) {
-  let deleted = global.results.filter((a) => !list.includes(a.image));
-  deleted = deleted.map((a) => a.image);
-  const before = global.results.length;
-  global.results = global.results.filter((a) => !deleted.includes(a.image));
-  const after = global.results.length;
+async function checkRecords(list) {
+  let before = 0;
+  let after = 0;
+  let deleted = 0;
+  if (config.server.dbEngine === 'json') {
+    deleted = global.json.filter((a) => !list.includes(a.image));
+    deleted = deleted.map((a) => a.image);
+    before = global.json.length;
+    for (const remove of deleted) {
+      log.data('Delete:', remove);
+    }
+    global.json = global.json.filter((a) => !deleted.includes(a.image));
+    after = global.json.length;
+    log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before} after: ${after})`);
+  } else {
+    let all = await global.db.find({});
+    all = all.map((a) => a.name);
+    deleted = all.filter((a) => !list.includes(a));
+    for (const item of deleted) {
+      log.data('Delete:', item);
+      global.db.remove({ name: item });
+    }
+    before = all.length;
+    after = await global.db.count({});
+  }
   log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before} after: ${after})`);
 }
 
