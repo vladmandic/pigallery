@@ -2,7 +2,19 @@
 
 ## Multi-user image galley with TensorFlow/JS image processing and full EXIF data extraction and analysis
 
-![alt text](favicon.ico)
+## Screenshots
+
+### Gallery view
+
+![alt text](assets/screenshot-gallery.png)
+
+### Detailed View
+
+![alt text](assets/screenshot-details.png)
+
+### Complex Search Results
+
+![alt text](assets/screenshot-search.png)
 
 ## Install, Configure & Run
 
@@ -158,26 +170,13 @@ This allows for fallback solutions - if one model does not perform well on an im
 - DarkNet Yolo: <https://pjreddie.com/darknet/yolo/>
 - Face/Gender/Age: <https://github.com/justadudewhohacks/face-api.js>
 
-## Screenshots
-
-### Gallery view
-
-![alt text](assets/screenshot-gallery.png)
-
-### Detailed View
-
-![alt text](assets/screenshot-details.png)
-
-### Complex Search Results
-
-![alt text](assets/screenshot-search.png)
+![alt text](favicon.ico)
 
 ## Todo
 
 - BUG: Live video slows down over time and leaks GPU memory
 - BUG: Handle duplicate folder names
-- BUG: Exception handling during processing
-- RFE: Switch to DB, implement server-side paging and filtering
+- RFE: server-side search, paging
 - RFE: Save user preferences
 - RFE: Process GIF, PNG and HEIF
 - RFE: Server-side processing once WSL2 implements CUDA
