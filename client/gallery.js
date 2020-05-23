@@ -8,25 +8,25 @@ let results = [];
 let filtered = [];
 
 const options = {
-  get listFolders() { return localStorage.getItem('listFolders') || true; },
+  get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
   set listFolders(val) { return localStorage.setItem('listFolders', val); },
-  get listDetails() { return localStorage.getItem('listDetails') || true; },
+  get listDetails() { return localStorage.getItem('listDetails') ? localStorage.getItem('listDetails') === 'true' : true; },
   set listDetails(val) { return localStorage.setItem('listDetails', val); },
   get listDivider() { return localStorage.getItem('listDivider') || 'month'; },
   set listDivider(val) { return localStorage.setItem('listDivider', val); },
   get listSortOrder() { return localStorage.getItem('listSortOrder') || 'numeric-down'; },
   set listSortOrder(val) { return localStorage.setItem('listSortOrder', val); },
-  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 130, 10); },
+  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 165, 10); },
   set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
   get listLimit() { return parseInt(localStorage.getItem('listLimit') || 100, 10); },
   set listLimit(val) { return localStorage.setItem('listLimit', val); },
-  get viewDetails() { return localStorage.getItem('viewDetails') || true; },
+  get viewDetails() { return localStorage.getItem('viewDetails') ? localStorage.getItem('viewDetails') === 'true' : true; },
   set viewDetails(val) { return localStorage.getItem('viewDetails', val); },
-  get viewBoxes() { return localStorage.getItem('viewBoxes') || true; },
+  get viewBoxes() { return localStorage.getItem('viewBoxes') ? localStorage.getItem('viewBoxes') === 'true' : true; },
   set viewBoxes(val) { return localStorage.getItem('viewBoxes', val); },
-  get viewFaces() { return localStorage.getItem('viewFaces') || true; },
+  get viewFaces() { return localStorage.getItem('viewFaces') ? localStorage.getItem('viewFaces') === 'true' : true; },
   set viewFaces(val) { return localStorage.getItem('viewFaces', val); },
-  get viewRaw() { return localStorage.getItem('viewRaw') || false; },
+  get viewRaw() { return localStorage.getItem('viewRaw') ? localStorage.getItem('viewRaw') === 'true' : false; },
   set viewRaw(val) { return localStorage.getItem('viewRaw', val); },
   get dateShort() { return localStorage.getItem('dateShort') || 'YYYY/MM/DD'; },
   set dateShort(val) { return localStorage.getItem('dateShort', val); },
@@ -213,6 +213,7 @@ async function showDetails() {
     $('#popup-details').toggle(true);
     $('#popup-image').css('max-width', '80vw');
     $('#popup-details').width(window.innerWidth - $('#popup-image').width());
+    $('#popup-details').height($('#popup-image').height());
     $('#popup-details').html(html);
   } else {
     $('#popup-details').toggle(false);
@@ -308,7 +309,7 @@ async function printResult(object) {
       <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width=${options.listThumbSize}px height=${options.listThumbSize}px>
     </div>
     <div id="desc-${object.id}" class="col description">
-      <b>${decodeURI(object.image).replace(root, '')}</b>${link}<br>
+      <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>${link}<br>
       ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
       ${location}<br>
       ${classified}<br>
@@ -335,8 +336,10 @@ function resizeResults() {
     $('#thumbsize')[0].value = options.listThumbSize;
     $('.thumbnail').width(options.listThumbSize);
     $('.thumbnail').height(options.listThumbSize);
-    $('.listitem').css('min-height', `${Math.max(144, 16 + options.listThumbSize)}px`);
-    $('.listitem').css('max-height', '144px');
+    // $('.listitem').css('min-height', `${Math.max(144, 16 + options.listThumbSize)}px`);
+    // $('.listitem').css('max-height', '144px');
+    $('.listitem').css('min-height', `${16 + options.listThumbSize}px`);
+    $('.listitem').css('max-height', `${16 + options.listThumbSize}px`);
   }
 }
 
@@ -444,13 +447,17 @@ function shuffle(array) {
 function findDuplicates() {
   $('body').css('cursor', 'wait');
   previous = null;
-  filtered = [];
+  let duplicates = [];
   for (const obj of results) {
     const items = results.filter((a) => a.hash === obj.hash);
-    if (items.length !== 1) filtered.push(...items);
+    if (items.length !== 1) duplicates.push(...items);
   }
-  filtered = [...new Set(filtered)];
-  log.result(`Duplicates: ${filtered.length}`);
+  duplicates = [...new Set(duplicates)];
+  if (filtered.length === duplicates.length) filtered = results;
+  else {
+    filtered = [...new Set(duplicates)];
+    log.result(`Duplicates: ${filtered.length}`);
+  }
   redrawResults();
 }
 
@@ -472,6 +479,7 @@ function sortResults(sort) {
   else if (sort.includes('amount-down') || sort.includes('amount-up')) options.listDivider = 'size';
   else if (sort.includes('alpha-down') || sort.includes('alpha-up')) options.listDivider = 'folder';
   else options.listDivider = '';
+  $('#optionslist').toggle(false);
   redrawResults();
 }
 
