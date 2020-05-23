@@ -17,7 +17,7 @@
     "allowPWA": true,
     "logFile": "pigallery.log",
     "authForce": true,
-    "allowedImageFileTypes": [ ".jpeg", ".jpg" ],
+    "allowedImageFileTypes": [ ".jpeg", ".jpg", ".png", ".gif" ],
     "mediaRoot": "media/",
     "dbEngine": "nedb",
     "defaultLimit": 500,
