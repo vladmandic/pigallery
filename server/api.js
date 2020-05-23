@@ -9,9 +9,9 @@ function api(app) {
   metadata.init();
 
   app.get('/api/log', (req, res) => {
+    res.status(200).send('true');
     const msg = decodeURI(req.query.msg || '').replace(/\s+/g, ' ');
     log.info(`Client ${req.session.user}@${req.client.remoteAddress}`, msg);
-    res.status(200).send('true');
   });
 
   app.get('/api/save', (req, res) => {

@@ -7,7 +7,8 @@ const config = {
   renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 1,      // how many images to process in parallel
   squareImage: false,      // resize proportional to the original image or to a square image
-  floatPrecision: false,    // use float32 or float16 for WebGL tensors
+  floatPrecision: false,   // use float32 or float16 for WebGL tensors
+  registerPWA: false,      // register PWA service worker?
 
   // Default models
   classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },

@@ -195,7 +195,5 @@ This allows for fallback solutions - if one model does not perform well on an im
 - BUG: Live video slows down over time and leaks GPU memory
 - BUG: Handle duplicate folder names
 - RFE: server-side search, paging
-- RFE: Save user preferences
 - RFE: Process GIF, PNG and HEIF
 - RFE: Server-side processing once WSL2 implements CUDA
-- RFE: Installable PWA, cache results

@@ -9,7 +9,7 @@ async function result(...msg) {
   const div = document.getElementById('log');
   if (div) div.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
   if (div) div.scrollTop = div.scrollHeight;
-  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`).then((res) => res.text());
+  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`); // .then((res) => res.text());
   // eslint-disable-next-line no-console
   console.log(...msg);
 }
