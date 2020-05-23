@@ -191,8 +191,10 @@ This allows for fallback solutions - if one model does not perform well on an im
 
 ## Todo
 
-- BUG: Live video slows down over time and leaks GPU memory
-- BUG: Handle duplicate folder names
-- RFE: server-side search, paging
-- RFE: Process GIF, PNG and HEIF
+- RFE: Live video slows down over time and leaks GPU memory
+- RFE: Add PoseNet, Hands, etc.
+- RFE: Try canvas capture processing instead of video stream
+- BUG: Handle duplicate folder names in gallery view
+- BUG: Auth redirect when using ServiceWorker
+- RFE: Server-side search, paging for gallery
 - RFE: Server-side processing once WSL2 implements CUDA
