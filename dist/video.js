@@ -33041,6 +33041,8 @@ const config = {
   // resize proportional to the original image or to a square image
   floatPrecision: false,
   // use float32 or float16 for WebGL tensors
+  registerPWA: false,
+  // register PWA service worker?
   // Default models
   classify: {
     name: 'Inception v3',
@@ -68786,7 +68788,8 @@ async function result(...msg) {
   const div = document.getElementById('log');
   if (div) div.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
   if (div) div.scrollTop = div.scrollHeight;
-  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
+  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`); // .then((res) => res.text());
+  // eslint-disable-next-line no-console
 
   console.log(...msg);
 }

@@ -1,4 +1,4 @@
-// https://codelabs.developers.google.com/codelabs/your-first-pwapp/#0
+/* eslint-disable no-console */
 
 const cacheName = 'pigallery';
 const cacheFiles = [
@@ -10,7 +10,13 @@ const cacheFiles = [
 let listening = false;
 
 function cacheGet(request) {
-  return caches.open(cacheName).then((cache) => cache.match(request));
+  const res = caches.open(cacheName).then((cache) => cache.match(request));
+  if (res) {
+    console.log('Cache hit:', request.cache, request.mode, request.method, request.url);
+    return res;
+  }
+  console.log('Cache miss:', request.cache, request.mode, request.method, request.url);
+  return fetch(request);
 }
 
 function cacheUpdate(request) {
@@ -39,8 +45,8 @@ if (!listening) {
     if (evt.request.method !== 'GET') return; // skip anything but post
     if (uri.origin !== location.origin) return; // skip non-local requests
     if (evt.request.url.includes('/api/')) return; // skip api calls
-    const result = cacheGet(evt.request); // get cached data
-    if (result) evt.respondWith(result); // respond with cached data if found, skip if not
+    if (evt.request.url.includes('/models/')) return; // skip caching model data
+    evt.respondWith(cacheGet(evt.request)); // get cached data and respond with cached data if found, else fetch
     evt.waitUntil(cacheUpdate(evt.request)); // update cached data
   });
 

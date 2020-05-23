@@ -140,6 +140,8 @@ const config = {
   // resize proportional to the original image or to a square image
   floatPrecision: false,
   // use float32 or float16 for WebGL tensors
+  registerPWA: false,
+  // register PWA service worker?
   // Default models
   classify: {
     name: 'Inception v3',
@@ -220,7 +222,8 @@ async function result(...msg) {
   const div = document.getElementById('log');
   if (div) div.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
   if (div) div.scrollTop = div.scrollHeight;
-  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
+  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`); // .then((res) => res.text());
+  // eslint-disable-next-line no-console
 
   console.log(...msg);
 }
@@ -299,20 +302,118 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 let results = [];
 let filtered = [];
 const options = {
-  listFolders: true,
-  listDetails: true,
-  listDivider: 'month',
-  listSortOrder: 'numeric-down',
-  listThumbSize: 130,
-  listLimit: 100,
-  viewDetails: true,
-  viewBoxes: true,
-  viewFaces: true,
-  viewRaw: false,
-  dateShort: 'YYYY/MM/DD',
-  dateLong: 'dddd, MMMM Do, YYYY',
-  dateDivider: 'MMMM YYYY',
-  fontSize: '14px'
+  get listFolders() {
+    return localStorage.getItem('listFolders') || true;
+  },
+
+  set listFolders(val) {
+    return localStorage.setItem('listFolders', val);
+  },
+
+  get listDetails() {
+    return localStorage.getItem('listDetails') || true;
+  },
+
+  set listDetails(val) {
+    return localStorage.setItem('listDetails', val);
+  },
+
+  get listDivider() {
+    return localStorage.getItem('listDivider') || 'month';
+  },
+
+  set listDivider(val) {
+    return localStorage.setItem('listDivider', val);
+  },
+
+  get listSortOrder() {
+    return localStorage.getItem('listSortOrder') || 'numeric-down';
+  },
+
+  set listSortOrder(val) {
+    return localStorage.setItem('listSortOrder', val);
+  },
+
+  get listThumbSize() {
+    return parseInt(localStorage.getItem('listThumbSize') || 130, 10);
+  },
+
+  set listThumbSize(val) {
+    return localStorage.setItem('listThumbSize', val);
+  },
+
+  get listLimit() {
+    return parseInt(localStorage.getItem('listLimit') || 100, 10);
+  },
+
+  set listLimit(val) {
+    return localStorage.setItem('listLimit', val);
+  },
+
+  get viewDetails() {
+    return localStorage.getItem('viewDetails') || true;
+  },
+
+  set viewDetails(val) {
+    return localStorage.getItem('viewDetails', val);
+  },
+
+  get viewBoxes() {
+    return localStorage.getItem('viewBoxes') || true;
+  },
+
+  set viewBoxes(val) {
+    return localStorage.getItem('viewBoxes', val);
+  },
+
+  get viewFaces() {
+    return localStorage.getItem('viewFaces') || true;
+  },
+
+  set viewFaces(val) {
+    return localStorage.getItem('viewFaces', val);
+  },
+
+  get viewRaw() {
+    return localStorage.getItem('viewRaw') || false;
+  },
+
+  set viewRaw(val) {
+    return localStorage.getItem('viewRaw', val);
+  },
+
+  get dateShort() {
+    return localStorage.getItem('dateShort') || 'YYYY/MM/DD';
+  },
+
+  set dateShort(val) {
+    return localStorage.getItem('dateShort', val);
+  },
+
+  get dateLong() {
+    return localStorage.getItem('dateLong') || 'dddd, MMMM Do, YYYY';
+  },
+
+  set dateLong(val) {
+    return localStorage.getItem('dateLong', val);
+  },
+
+  get dateDivider() {
+    return localStorage.getItem('dateDivider') || 'MMMM YYYY';
+  },
+
+  set dateDivider(val) {
+    return localStorage.getItem('dateDivider', val);
+  },
+
+  get fontSize() {
+    return localStorage.getItem('fontSize') || '14px';
+  },
+
+  set fontSize(val) {
+    return localStorage.getItem('fontSize', val);
+  }
+
 }; // eslint-disable-next-line prefer-rest-params
 
 function gtag() {
@@ -830,8 +931,10 @@ async function initUser() {
 
     _log.default.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
 
-    if (!window.user.admin) $('#btn-update').css('color', 'grey');
-  } // initialize per user config
+    if (window.user.admin) $('#btn-update').css('color', 'lightyellow');
+  } // val = JSON.stringify(cookieStr)
+  // val = btoa(val)
+  // initialize per user config
 
 
   $('body').css('fontSize', options.fontSize);
@@ -1069,8 +1172,7 @@ async function main() {
   }); // Set the user ID using signed-in user_id.
   // Register PWA
 
-  _pwaRegister.default.register('/client/pwa-serviceworker.js');
-
+  if (_config.default.registerPWA) _pwaRegister.default.register('/client/pwa-serviceworker.js');
   await initUser();
   initHandlers();
   await loadGallery(options.listLimit);
