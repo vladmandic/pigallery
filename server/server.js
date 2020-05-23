@@ -5,7 +5,6 @@ const http = require('http');
 const https = require('https');
 const express = require('express');
 const session = require('express-session');
-const csp = require('helmet-csp');
 const compression = require('compression');
 const nedb = require('nedb-promises');
 const api = require('./api.js');
@@ -28,6 +27,15 @@ function allowPWA(req, res, next) {
   next();
 }
 
+function forceSSL(req, res, next) {
+  // if (config.server.forceHTTPS && req.headers['x-forwarded-proto'] !== 'https') return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  if (!req.secure) {
+    log.data(`Redirecting unsecure user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
+    return res.redirect(`https://${req.hostname}:${global.config.server.HTTPSport}${req.baseUrl}${req.url}`);
+  }
+  return next();
+}
+
 async function main() {
   log.logFile(config.server.logFile);
   log.info(nodeconfig.name, 'version', nodeconfig.version);
@@ -46,6 +54,7 @@ async function main() {
   app.use(compression());
   if (config.server.allowCORS) app.use(allowCORS);
   if (config.server.allowPWA) app.use(allowPWA);
+  if (config.server.forceHTTPS) app.use(forceSSL);
 
   // expressjs passthrough for all requests
   app.use((req, res, next) => {
@@ -54,10 +63,6 @@ async function main() {
         log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
       }
     });
-    if (config.server.forceHTTPS && !req.secure) {
-      res.redirect(`https://${req.hostname}:${global.config.server.HTTPSport}${req.baseUrl}${req.url}`);
-      return;
-    }
     if (req.url.startsWith('/assets') || req.url.startsWith('/client') || req.url.startsWith('/favicon.ico') || req.url.startsWith('/manifest.json')) next();
     else if (req.session.user || !config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
