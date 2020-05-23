@@ -194,7 +194,7 @@ async function getExif(url) {
         const stat = fs.statSync(url);
         json.bytes = stat.bytes;
         json.timestamp = raw && raw.tags ? (raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
-        if (!json.timestamp) json.timestamp = parseFloat(stat.mtimeMs / 1000);
+        if (!json.timestamp) json.timestamp = Math.min(parseFloat(stat.mtimeMs / 1000), parseFloat(stat.ctimeMs / 1000));
         if (raw && raw.tags) {
           json.make = raw.tags.Make;
           json.model = raw.tags.Model;

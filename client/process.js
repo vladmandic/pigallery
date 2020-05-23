@@ -92,7 +92,6 @@ async function processFiles() {
 
 async function main() {
   const t0 = window.performance.now();
-  log.init();
   log.active('Starting ...');
   await tf.load();
   await processFiles();

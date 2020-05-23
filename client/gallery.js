@@ -498,7 +498,7 @@ async function initUser() {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user);
     log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
-    if (window.user.admin) $('#btn-update').css('color', 'lightyellow');
+    if (!window.user.admin) $('#btn-update').css('color', 'gray');
   }
   // val = JSON.stringify(cookieStr)
   // val = btoa(val)
@@ -681,7 +681,6 @@ function hideElements() {
   $('#searchbar').toggle(false);
   $('#optionslist').toggle(false);
   $('#optionsview').toggle(false);
-  $('#btn-update').css('color', 'grey');
 }
 
 async function main() {
