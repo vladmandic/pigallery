@@ -189,8 +189,11 @@ async function getExif(url) {
     const stream = fs.createReadStream(url, { start: 0, end: 65536 });
     stream
       .on('data', (chunk) => {
-        const raw = parseExif(chunk, 10);
-        if (!raw || !raw.tags && url !== config.server.warmupImage) log.warn('Metadata EXIF:', url);
+        let raw;
+        if (url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.jpeg')) {
+          raw = parseExif(chunk, 10);
+          if (!raw || !raw.tags && url !== config.server.warmupImage) log.warn('Metadata EXIF:', url);
+        }
         const stat = fs.statSync(url);
         json.bytes = stat.bytes;
         json.timestamp = raw && raw.tags ? (raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
