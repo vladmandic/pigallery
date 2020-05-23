@@ -55,7 +55,6 @@
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
     "face-api.js": "^0.22.2",
-    "helmet-csp": "^2.10.0",
     "nedb-promises": "^4.0.3",
     "node-fetch": "^3.0.0-beta.5",
     "nsfwjs": "^2.2.0",

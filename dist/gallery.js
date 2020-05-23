@@ -208,36 +208,32 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-const div = {};
 
 async function dot() {
-  if (div.Log) div.Log.innerHTML += '.';
+  const div = document.getElementById('log');
+  if (div) div.innerHTML += '.';
 }
 
 async function result(...msg) {
   let msgs = '';
   msgs += msg.map(a => a);
-  if (div.Log) div.Log.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
-  if (div.Log) div.Log.scrollTop = div.Log.scrollHeight;
+  const div = document.getElementById('log');
+  if (div) div.innerHTML += `${msgs.replace(' ', '&nbsp')}<br>`;
+  if (div) div.scrollTop = div.scrollHeight;
   if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`).then(res => res.text()); // eslint-disable-next-line no-console
 
   console.log(...msg);
 }
 
 async function active(...msg) {
-  if (div && div.Active) div.Active.innerHTML = `${msg}<br>`; // eslint-disable-next-line no-console
+  const div = document.getElementById('active');
+  if (div) div.innerHTML = `${msg}<br>`; // eslint-disable-next-line no-console
   else console.log(...msg);
-}
-
-function init() {
-  div.Log = document.getElementById('log');
-  div.Active = document.getElementById('active');
 }
 
 const log = {
   result,
   active,
-  init,
   dot
 };
 var _default = log;
@@ -833,11 +829,12 @@ async function initUser() {
     $('#user').text(window.user.user);
 
     _log.default.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
+
+    if (!window.user.admin) $('#btn-update').css('color', 'grey');
   } // initialize per user config
 
 
-  if (!window.user.admin) $('#btn-update').css('color', 'grey');
-  $('body').css('fontSize', _config.default.fontSize);
+  $('body').css('fontSize', options.fontSize);
   $('#folderbar').toggle(options.listFolders);
   $('.description').toggle(options.listDetails);
   $('#thumbsize')[0].value = options.listThumbSize;
@@ -845,13 +842,7 @@ async function initUser() {
 
 
 function initHandlers() {
-  // hide those elements initially
-  $('#popup').toggle(false);
-  $('#docs').toggle(false);
-  $('#searchbar').toggle(false);
-  $('#optionslist').toggle(false);
-  $('#optionsview').toggle(false); // navbar
-
+  // navbar
   $('#btn-user').click(() => {
     $.post('/client/auth.html');
     if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
@@ -1056,8 +1047,19 @@ function initHandlers() {
   });
 }
 
+function hideElements() {
+  // hide those elements initially
+  $('#popup').toggle(false);
+  $('#docs').toggle(false);
+  $('#searchbar').toggle(false);
+  $('#optionslist').toggle(false);
+  $('#optionsview').toggle(false);
+  $('#btn-update').css('color', 'grey');
+}
+
 async function main() {
-  // google analytics
+  await hideElements(); // google analytics
+
   gtag('js', new Date());
   gtag('config', 'UA-155273-2', {
     page_path: `${location.pathname}`
@@ -1068,8 +1070,6 @@ async function main() {
   // Register PWA
 
   _pwaRegister.default.register('/client/pwa-serviceworker.js');
-
-  _log.default.init();
 
   await initUser();
   initHandlers();

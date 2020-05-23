@@ -483,10 +483,10 @@ async function initUser() {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user);
     log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
+    if (!window.user.admin) $('#btn-update').css('color', 'grey');
   }
   // initialize per user config
-  if (!window.user.admin) $('#btn-update').css('color', 'grey');
-  $('body').css('fontSize', config.fontSize);
+  $('body').css('fontSize', options.fontSize);
   $('#folderbar').toggle(options.listFolders);
   $('.description').toggle(options.listDetails);
   $('#thumbsize')[0].value = options.listThumbSize;
@@ -494,13 +494,6 @@ async function initUser() {
 
 // pre-fetching DOM elements to avoid multiple runtime lookups
 function initHandlers() {
-  // hide those elements initially
-  $('#popup').toggle(false);
-  $('#docs').toggle(false);
-  $('#searchbar').toggle(false);
-  $('#optionslist').toggle(false);
-  $('#optionsview').toggle(false);
-
   // navbar
   $('#btn-user').click(() => {
     $.post('/client/auth.html');
@@ -664,7 +657,19 @@ function initHandlers() {
   });
 }
 
+function hideElements() {
+  // hide those elements initially
+  $('#popup').toggle(false);
+  $('#docs').toggle(false);
+  $('#searchbar').toggle(false);
+  $('#optionslist').toggle(false);
+  $('#optionsview').toggle(false);
+  $('#btn-update').css('color', 'grey');
+}
+
 async function main() {
+  await hideElements();
+
   // google analytics
   gtag('js', new Date());
   gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
@@ -673,7 +678,6 @@ async function main() {
   // Register PWA
   pwa.register('/client/pwa-serviceworker.js');
 
-  log.init();
   await initUser();
   initHandlers();
   await loadGallery(options.listLimit);
