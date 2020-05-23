@@ -12,10 +12,10 @@ let listening = false;
 function cacheGet(request) {
   const res = caches.open(cacheName).then((cache) => cache.match(request));
   if (res) {
-    console.log('Cache hit:', request.cache, request.mode, request.method, request.url);
+    // console.log('Cache hit:', request.cache, request.mode, request.method, request.url);
     return res;
   }
-  console.log('Cache miss:', request.cache, request.mode, request.method, request.url);
+  // console.log('Cache miss:', request.cache, request.mode, request.method, request.url);
   return fetch(request);
 }
 
