@@ -60,7 +60,6 @@
 
 - Run server application using `npm start`
   - Server uses ParcelJS to build distribution in `./dist` and starts ExpressJS HTTP and HTTPS servers
-  - Note that files in `./dist` are provided only for reference as they will be rebuild on each server start from files in `./client`
 - Use your browser to connect to server
   - By default, web access requires authentication, see `data/config.json` for user configuration
   - Default view is image gallery. If there are no processed images, it's blank

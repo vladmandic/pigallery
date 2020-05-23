@@ -1,6 +1,7 @@
 node_modules
 models/*
 media/*
+dist/*
 pigallerydb.json
 pigallerydb.nedb
 pigallery.log
