@@ -5,8 +5,8 @@
   "locations": [
     { "folder": "Samples/", "match": "", "recursive": true },
     { "folder": "Temp/", "match": "", "recursive": true },
-    { "folder": "Pictures/Snapseed/", "match": "" },
-    { "folder": "Pictures/Random/", "match": "" },
+    { "folder": "People/Vlado/", "match": "" },
+    { "folder": "Pictures/Saved Pictures/", "match": "" },
     { "folder": "Photos/Objects/", "match": "" }
   ],
   "server": {

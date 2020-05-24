@@ -326,7 +326,7 @@ async function checkRecords(list) {
     }
     global.json = global.json.filter((a) => !deleted.includes(a.image));
     after = global.json.length;
-    log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before} after: ${after})`);
+    log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
   } else {
     let all = await global.db.find({});
     all = all.map((a) => a.name);
@@ -338,7 +338,7 @@ async function checkRecords(list) {
     before = all.length;
     after = await global.db.count({});
   }
-  log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before} after: ${after})`);
+  log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
 }
 
 exports.init = init;

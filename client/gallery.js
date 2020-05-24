@@ -363,7 +363,7 @@ async function enumerateFolders() {
         const html = `
           <li id="dir-${folder}">
             <span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp
-              <i tag="${path}" class="fas fa-caret-right">&nbsp</i>${name}
+              <i tag="${path}" class="fas fa-chevron-circle-right">&nbsp</i>${name}
             </span>
           </li>
         `;
@@ -504,7 +504,7 @@ async function initUser() {
   if (res.ok) window.user = await res.json();
   if (window.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
-    $('#user').text(window.user.user);
+    $('#user').text(window.user.user.split('@')[0]);
     log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
     if (!window.user.admin) $('#btn-update').css('color', 'gray');
   }
@@ -517,57 +517,76 @@ async function initUser() {
   $('#thumbsize')[0].value = options.listThumbSize;
 }
 
+function showNavbar(elem) {
+  if (elem) elem.toggle('slow');
+  // hide the rest
+  // eslint-disable-next-line no-param-reassign
+  elem = elem || $('#main');
+  if (elem && elem[0] !== $('#popup')[0]) $('#popup').toggle(false);
+  if (elem && elem[0] !== $('#docs')[0]) $('#docs').toggle(false);
+  if (elem && elem[0] !== $('#searchbar')[0]) $('#searchbar').toggle(false);
+  if (elem && elem[0] !== $('#userbar')[0]) $('#userbar').toggle(false);
+  if (elem && elem[0] !== $('#optionslist')[0]) $('#optionslist').toggle(false);
+  if (elem && elem[0] !== $('#optionsview')[0]) $('#optionsview').toggle(false);
+}
+
 // pre-fetching DOM elements to avoid multiple runtime lookups
 function initHandlers() {
   // navbar
   $('#btn-user').click(() => {
+    showNavbar($('#userbar'));
+    $('#imagenum')[0].value = options.listLimit;
+    $('#imagenum')[0].focus();
+  });
+
+  $('#btn-load').click((evt) => {
+    options.listLimit = parseInt($('#imagenum')[0].value, 10);
+    showTip(evt.target, `Loading maximum of ${options.listLimit} latest images`);
+    loadGallery(options.listLimit);
+  });
+
+  $('#imagenum').keyup(() => {
+    if (event.keyCode === 13) {
+      $('#btn-load').click();
+      showNavbar();
+    }
+  });
+
+
+  $('#btn-logout').click(() => {
+    showNavbar();
     $.post('/client/auth.html');
     if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
     $('#btn-user').toggleClass('fa-user-slash fa-user');
   });
 
   $('#btn-search').click(() => {
-    $('#optionslist').toggle(false);
-    $('#optionsview').toggle(false);
-    $('#searchbar').toggle('fast');
+    showNavbar($('#searchbar'));
     $('#btn-search').toggleClass('fa-search fa-search-location');
     $('#search-input').focus();
   });
 
   $('#btn-list').click(() => {
-    $('#searchbar').toggle(false);
-    $('#optionsview').toggle(false);
-    $('#optionslist').toggle('fast');
+    showNavbar($('#optionslist'));
   });
 
   $('#btn-view').click(() => {
-    $('#searchbar').toggle(false);
-    $('#optionslist').toggle(false);
-    $('#optionsview').toggle('fast');
+    showNavbar($('#optionsview'));
   });
 
   $('#btn-doc').click(async () => {
-    // window.open('https://github.com/vladmandic/photo-analysis/blob/master/README.md', '_blank');
-    $('#docs').toggle('fast');
+    showNavbar($('#docs'));
     $('#docs').click(() => $('#docs').toggle('fast'));
     const res = await fetch('/README.md');
     const md = await res.text();
     if (md) $('#docs').html(marked(md));
   });
 
-  $('#btn-load').click((evt) => {
-    showTip(evt.target, 'Loading full gallery...');
-    loadGallery(10000);
-  });
-
-
   // starts image processing in a separate window
   $('#btn-update').click(() => {
     if (window.user.admin) {
       log.result('Image database update requested ...');
-      $('#searchbar').toggle(false);
-      $('#optionslist').toggle(false);
-      $('#optionsview').toggle(false);
+      showNavbar();
       window.open('/process', '_blank');
     } else {
       log.result('Image database update not authorized');
@@ -682,18 +701,7 @@ function initHandlers() {
   });
 }
 
-function hideElements() {
-  // hide those elements initially
-  $('#popup').toggle(false);
-  $('#docs').toggle(false);
-  $('#searchbar').toggle(false);
-  $('#optionslist').toggle(false);
-  $('#optionsview').toggle(false);
-}
-
 async function main() {
-  await hideElements();
-
   // google analytics
   gtag('js', new Date());
   gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
@@ -703,7 +711,8 @@ async function main() {
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
 
   await initUser();
-  initHandlers();
+  await initHandlers();
+  await showNavbar();
   await loadGallery(options.listLimit);
 }
 
