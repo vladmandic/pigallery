@@ -521,11 +521,7 @@ async function initUser() {
     $('#user').text(window.user.user.split('@')[0]);
     log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
     if (!window.user.admin) $('#btn-update').css('color', 'gray');
-    if (!window.user.admin) $('#btn-video').css('color', 'gray');
   }
-  // val = JSON.stringify(cookieStr)
-  // val = btoa(val)
-  // initialize per user config
   $('body').css('fontSize', options.fontSize);
   $('#folderbar').toggle(options.listFolders);
   $('.description').toggle(options.listDetails);
@@ -552,6 +548,40 @@ function showNavbar(elem) {
   if (elem && elem[0] !== $('#optionsview')[0]) $('#optionsview').toggle(false);
 }
 
+// handle keypresses on main
+async function initHotkeys() {
+  $('html').keydown(() => {
+    const current = $('#results').scrollTop();
+    const line = options.listThumbSize + 16;
+    const page = $('#results').height() - options.listThumbSize;
+    const bottom = $('#results').prop('scrollHeight');
+    $('#results').stop();
+    switch (event.keyCode) {
+      case 38: $('#results').animate({ scrollTop: current - line }, 400); break; // key=up: scroll line up
+      case 40: $('#results').animate({ scrollTop: current + line }, 400); break; // key=down; scroll line down
+      case 33: $('#results').animate({ scrollTop: current - page }, 400); break; // key=pgup; scroll page up
+      case 34: $('#results').animate({ scrollTop: current + page }, 400); break; // key=pgdn; scroll page down
+      case 36: $('#results').animate({ scrollTop: 0 }, 1000); break; // key=home; scroll to top
+      case 35: $('#results').animate({ scrollTop: bottom }, 1000); break; // key=end; scroll to bottom
+      case 37: showNextDetails(true); break; // key=left; previous image in details view
+      case 39: showNextDetails(false); break; // key=right; next image in details view
+      case 191: $('#btn-search').click(); break; // key=/; open search input
+      case 190: $('#btn-sort').click(); break; // key=.; open sort options
+      case 188: $('#btn-desc').click(); break; // key=,; show/hide list descriptions
+      case 220: loadGallery(); break; // key=\; refresh all
+      case 27:
+        $('#popup').toggle(false);
+        $('#searchbar').toggle(false);
+        $('#optionslist').toggle(false);
+        $('#optionsview').toggle(false);
+        $('#popup').toggle(false);
+        filterResults('');
+        break; // key=esc; clear all filters
+      default: // log.result('Unhandled keydown event', event.keyCode);
+    }
+  });
+}
+
 // pre-fetching DOM elements to avoid multiple runtime lookups
 function initHandlers() {
   // navbar
@@ -574,6 +604,7 @@ function initHandlers() {
     }
   });
 
+  // navline-userbar
   $('#btn-logout').click(() => {
     showNavbar();
     $.post('/client/auth.html');
@@ -693,38 +724,6 @@ function initHandlers() {
     else if (event.screenX > window.innerWidth - 50) showNextDetails(false);
     else $('#popup').toggle('fast');
   });
-
-  // handle keypresses on main
-  $('html').keydown(() => {
-    const current = $('#results').scrollTop();
-    const line = options.listThumbSize + 16;
-    const page = $('#results').height() - options.listThumbSize;
-    const bottom = $('#results').prop('scrollHeight');
-    $('#results').stop();
-    switch (event.keyCode) {
-      case 38: $('#results').animate({ scrollTop: current - line }, 400); break; // key=up: scroll line up
-      case 40: $('#results').animate({ scrollTop: current + line }, 400); break; // key=down; scroll line down
-      case 33: $('#results').animate({ scrollTop: current - page }, 400); break; // key=pgup; scroll page up
-      case 34: $('#results').animate({ scrollTop: current + page }, 400); break; // key=pgdn; scroll page down
-      case 36: $('#results').animate({ scrollTop: 0 }, 1000); break; // key=home; scroll to top
-      case 35: $('#results').animate({ scrollTop: bottom }, 1000); break; // key=end; scroll to bottom
-      case 37: showNextDetails(true); break; // key=left; previous image in details view
-      case 39: showNextDetails(false); break; // key=right; next image in details view
-      case 191: $('#btn-search').click(); break; // key=/; open search input
-      case 190: $('#btn-sort').click(); break; // key=.; open sort options
-      case 188: $('#btn-desc').click(); break; // key=,; show/hide list descriptions
-      case 220: loadGallery(); break; // key=\; refresh all
-      case 27:
-        $('#popup').toggle(false);
-        $('#searchbar').toggle(false);
-        $('#optionslist').toggle(false);
-        $('#optionsview').toggle(false);
-        $('#popup').toggle(false);
-        filterResults('');
-        break; // key=esc; clear all filters
-      default: // log.result('Unhandled keydown event', event.keyCode);
-    }
-  });
 }
 
 async function main() {
@@ -738,6 +737,7 @@ async function main() {
 
   await initUser();
   await initHandlers();
+  await initHotkeys();
   await showNavbar();
   await loadGallery(options.listLimit);
 }

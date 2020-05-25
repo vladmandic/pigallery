@@ -85,16 +85,16 @@ async function drawFaces(object) {
 
 async function showDetails(object) {
   if (!object) return;
-  let detected = '';
+  let detected = 'Objects';
   if (object.detect) {
     for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
   }
-  let face = '';
+  let face = 'People';
   if (object.face) {
     for (const person of object.face) face += ` | ${(100 * person.genderProbability).toFixed(0)}% ${person.gender} ${person.age.toFixed(1)}y`;
   }
-  const text = `Detected ${detected}<br>Person ${face}`;
-  $('#analysis').html(text);
+  $('#detected').text(detected);
+  $('#face').text(face);
 }
 
 function time(t0) {
@@ -104,12 +104,12 @@ function time(t0) {
 
 async function loadModels() {
   let t0;
-  $('#active').text('Preparing models');
+  $('#active').text('Initializing ...');
   t0 = window.performance.now();
   await tf.load();
   t0 = window.performance.now();
   await tf.process(video);
-  $('#active').text(`Models warmed up: ${time(t0)} ms`);
+  $('#active').text(`Ready in ${time(t0)} ms ... `);
 }
 
 async function startProcessing() {
@@ -143,7 +143,6 @@ async function getCameraStream() {
     $('#active').text('Camera not supported');
     return;
   }
-  video.srcObject = null;
   const constraints = {
     audio: false,
     video: {
@@ -153,14 +152,12 @@ async function getCameraStream() {
     },
   };
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
-  video.src = null;
   video.srcObject = stream;
   await video.play();
 }
 
 async function getVideoStream(url) {
   video.addEventListener('loadeddata', startProcessing);
-  video.srcObject = null;
   video.src = url;
   await video.play();
   $('#text-resolution').text(`${video.videoWidth} x ${video.videoHeight}`);
@@ -170,7 +167,6 @@ async function main() {
   $('#active').text('Starting ...');
   video = document.getElementById('video');
   parent = document.getElementById('main');
-  $('#analysis').html('Press play when ready<br>...');
 
   const navbarHeight = $('#navbar').height();
   $('#main').css('top', `${navbarHeight}px`);
@@ -179,26 +175,20 @@ async function main() {
 
   await loadModels();
 
-  $('#btn-load').click(() => {
-    $('#active').text('Loading Video ...');
-    getVideoStream('media/Samples/Videos/video-appartment.mp4');
-    // getVideoStream('media/Samples/Videos/video-jen.mp4');
-    // getVideoStream('media/Samples/Videos/video-dash.mp4');
-    // getVideoStream('media/Samples/Videos/video-r1.mp4');
-  });
-
   $('#btn-play').click(() => {
-    $('#active').text('Live Video Starting ...');
-    getCameraStream();
-  });
-
-  $('#btn-pause').click(() => {
-    video.pause();
-  });
-
-  $('#btn-stop').click(() => {
-    video.pause();
-    stopProcessing();
+    $('#btn-play').toggleClass('fa-play-circle fa-pause-circle');
+    if ($('#btn-play').hasClass('fa-play-circle')) {
+      $('#text-play').text('Live Video');
+      video.pause();
+      stopProcessing();
+    } else {
+      $('#text-play').text('Pause Video');
+      getCameraStream();
+      // getVideoStream('media/Samples/Videos/video-appartment.mp4');
+      // getVideoStream('media/Samples/Videos/video-jen.mp4');
+      // getVideoStream('media/Samples/Videos/video-dash.mp4');
+      // getVideoStream('media/Samples/Videos/video-r1.mp4');
+    }
   });
 
   $('#btn-facing').click(() => {
@@ -208,7 +198,7 @@ async function main() {
   });
 
   // transcode rtsp from camera to m3u8
-  // ffmpeg -hide_banner -y -i rtsp://admin:Mon1900@reolink-black:554/h264Preview_01_main -vcodec copy reolink.m3u8
+  // ffmpeg -hide_banner -y -i rtsp://user:pwd@reolink-black:554/h264Preview_01_main -vcodec copy reolink.m3u8
   // video.src = 'media/reolink.m3u8'; video.width = 720; video.height = 480;
 }
 
