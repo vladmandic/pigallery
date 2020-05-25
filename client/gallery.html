@@ -45,7 +45,7 @@
       .number { font-size: 1.6rem; color: gray}
       .btntext { text-align: center; margin: 0; }
 
-      .navline { background: #555555; min-height: 3rem; position: fixed; top: 5rem; justify-content: center; z-index: 10;}
+      .navline { background: #555555; min-height: 3.2rem; max-height: 3.2rem; position: fixed; top: 5rem; justify-content: center; z-index: 10;}
       .navlinebutton { font-size: 1.6rem; color: lightyellow; padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
       .navlinebutton:hover { color: lightskyblue; }
       .blank { background: #555555; min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
@@ -90,11 +90,8 @@
     <div><i id="btn-list" class="navbarbutton fas fa-images"></i><p>List Options</p></div>
     <div><i id="btn-view" class="navbarbutton fas fa-image"></i><p>View Options</p></div>
     <div><i id="btn-video" class="navbarbutton fas fa-film"></i><p>Live Video</p></div>
-    <div><i id="btn-update" class="navbarbutton fas fa-sync"></i><p>Update Database</p></div>
-    <div><i id="btn-doc" class="navbarbutton fas fa-book"></i><p>Documentation</p></div>
     <div><i id="btn-number" class="number fas fa-images"></i><p id="number">0</p></div>
   </div>
-  <!-- <div id="blank" class="row blank"></div> -->
 
   <div id="searchbar" class="row navline text-center">
     <input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
@@ -103,9 +100,11 @@
   </div>
 
   <div id="userbar" class="row navline text-center">
-    <div><i id="btn-load" class="navbarbutton fas fa-cloud-download-alt"></i><p class="btntext">Load Images</p></div>
-    <input class="input" type="number" id="imagenum" placeholder="100" style="width: 120px; height: 3rem" />
-    <div style="padding-left: 100px"><i id="btn-logout" class="navbarbutton fas fa-sign-out-alt"></i><p class="btntext">Logout</p></div>
+    <input class="input" type="number" id="imagenum" placeholder="100" style="width: 130px; height: 2.5rem" />
+    <div><i id="btn-load" class="navlinebutton fas fa-cloud-download-alt"></i><p class="btntext">Load Images</p></div>
+    <div><i id="btn-update" class="navlinebutton fas fa-sync"></i><p>Update DB</p></div>
+    <div><i id="btn-doc" class="navlinebutton fas fa-book"></i><p>Docs</p></div>
+    <div><i id="btn-logout" class="navlinebutton fas fa-sign-out-alt"></i><p class="btntext">Logout</p></div>
   </div>
 
   <div id="optionslist" class="row navline text-center">

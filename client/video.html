@@ -6,10 +6,11 @@
     <meta content="text/html">
     <meta charset="UTF-8">
     <meta name="Description" content="Image Gallery and Classification; Author: Vladimir Mandic <mandic00@live.com>">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=2.0, shrink-to-fit=yes, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.75, minimum-scale=0.1, maximum-scale=2.0, shrink-to-fit=yes, user-scalable=yes">
     <meta name="theme-color" content="#555555"/>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="favicon.ico">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/favicon.ico">
     <link rel="stylesheet" href="/assets/bootstrap.css">
     <link rel="stylesheet" href="/assets/fontawesome/css/all.css">
     <script type="text/javascript" src="/assets/jquery.js"></script>
@@ -21,7 +22,7 @@
       canvas { pointer-events: none; position: absolute; top: 0; left: 0; }
       .row { width: 100vw; margin: 0; vertical-align: top; }
       .navbar { background: #555555; min-height: 6rem; position: fixed; top: 0; padding: 0; }
-      .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
+      .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1rem 0 1rem; cursor: pointer; }
       .navbarbutton:hover { color: lightblue; }
       .main { width: 100%; height: 100%; position: absolute; top: 6rem; left: 0 }
       video { object-fit: contain; object-position: 0 0; pointer-events: none; }
@@ -32,15 +33,13 @@
 <body>
   <div id="navbar" class="row navbar text-center">
     <div id="text" class="text">
-      <p id="active"></p>
-      <p id="analysis"></p>
+      <p id="active">&nbsp</p>
+      <p id="detected">&nbsp</p>
+      <p id="face">&nbsp</p>
     </div>
-    <div><i id="btn-load" class="navbarbutton fas fa-play-circle"></i><p id="text-load">Load Video</p></div>
     <div><i id="btn-play" class="navbarbutton fas fa-play-circle"></i><p id="text-play">Live Video</p></div>
-    <div><i id="btn-pause" class="navbarbutton fas fa-pause-circle"></i><p id="text-pause">Pause</p></div>
-    <div><i id="btn-stop" class="navbarbutton fas fa-stop-circle"></i><p id="text-stop">Stop</p></div>
     <div><i id="btn-facing" class="navbarbutton fas fa-sync-alt"></i><p id="text-facing">Front</p></div>
-    <div><i id="btn-start" class="navbarbutton fas fa-film"></i><p id="text-resolution"></p></div>
+    <div><i id="btn-resolution" class="navbarbutton fas fa-film"></i><p id="text-resolution"></p></div>
   </div>
   <div id="main" class="row main">
     <video id="video" nocontrols loop controlslist="nodownload,nofullscreen,noremoteplayback"></video>
