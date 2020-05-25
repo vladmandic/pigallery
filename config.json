@@ -1,6 +1,7 @@
 {
   "users": [
-    { "email": "mandic00@live.com", "passwd": "qwe", "admin": true, "mediaRoot": "media/" }
+    { "email": "mandic00@live.com", "passwd": "qwe", "admin": true, "mediaRoot": "media/" },
+    { "email": "igor.domancic@ri.t-com.hr", "passwd": "pEro", "admin": false, "mediaRoot": "media/" }
   ],
   "locations": [
     { "folder": "Samples/", "match": "", "recursive": true },
