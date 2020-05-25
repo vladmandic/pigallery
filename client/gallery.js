@@ -58,11 +58,12 @@ function showTip(parent, text) {
 }
 
 // draw boxes for detected objects, faces and face elements
-function drawBoxes(img, object) {
+function drawBoxes(object) {
+  const img = document.getElementsByClassName('iv-image')[0];
   const canvas = document.getElementById('popup-canvas');
   canvas.style.position = 'absolute';
-  canvas.style.left = img.offsetLeft;
-  canvas.style.top = img.offsetTop;
+  canvas.style.left = `${img.offsetLeft}px`;
+  canvas.style.top = `${img.offsetTop}px`;
   canvas.width = img.width;
   canvas.height = img.height;
   const ctx = canvas.getContext('2d');
@@ -188,9 +189,9 @@ async function showDetails() {
   if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
   if (object.exif && object.exif.lat) location += `Coordinates: Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)}<br>`;
 
-  const link = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
+  const buttons = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
   const html = `
-      <h2>Image: ${object.image}</h2>${link}
+      <h2>Image: ${object.image}</h2>${buttons}
       Image size: ${img.naturalWidth} x ${img.naturalHeight}
         Total time ${object.perf.total.toFixed(0)} ms<br>
         Processed on ${moment(object.processed).format(options.dateLong)} in ${object.perf.load.toFixed(0)} ms<br>
@@ -215,21 +216,22 @@ async function showDetails() {
     $('#popup-details').toggle(true);
     $('#popup-image').css('max-width', '80vw');
     $('#popup-details').width(window.innerWidth - $('#popup-image').width());
-    $('#popup-details').height($('#popup-image').height());
+    // $('#popup-details').height($('#popup-image').height());
     $('#popup-details').html(html);
   } else {
     $('#popup-details').toggle(false);
     $('#popup-image').css('max-width', '100vw');
   }
   $('body').css('cursor', 'pointer');
-  drawBoxes(img, object);
-  if (viewer) viewer.destroy();
   // http://ignitersworld.com/lab/imageViewer.html
+  if (viewer) viewer.destroy();
   viewer = new ImageViewer(img, { zoomValue: 100, maxZoom: 750, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
-  // await viewer.refresh();
   const topOffset = $('.iv-image').css('top');
   $('.iv-image').css('margin-top', `-${topOffset}`);
-  viewer.zoom(101.5);
+  const zoomX = $('.iv-image-view').height() / $('.iv-image').height();
+  const zoomY = $('.iv-image-view').width() / $('.iv-image').width();
+  viewer.zoom(100 * Math.min(zoomX, zoomY) + 2);
+  drawBoxes(object);
 }
 
 async function showNextDetails(left) {
@@ -519,6 +521,7 @@ async function initUser() {
     $('#user').text(window.user.user.split('@')[0]);
     log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
     if (!window.user.admin) $('#btn-update').css('color', 'gray');
+    if (!window.user.admin) $('#btn-video').css('color', 'gray');
   }
   // val = JSON.stringify(cookieStr)
   // val = btoa(val)
@@ -530,7 +533,14 @@ async function initUser() {
 }
 
 function showNavbar(elem) {
-  if (elem) elem.toggle('slow');
+  if (elem) {
+    elem.toggle('slow', () => {
+      if (elem.css('display') === 'none') $('#results').css('margin-top', 0);
+      else $('#results').css('margin-top', `${elem.height()}px`);
+    });
+  } else {
+    $('#results').css('margin-top', 0);
+  }
   // hide the rest
   // eslint-disable-next-line no-param-reassign
   elem = elem || $('#main');
@@ -606,7 +616,12 @@ function initHandlers() {
 
   // starts live video detection in a separate window
   $('#btn-video').click(() => {
-    window.open('/video', '_blank');
+    if (window.user.admin) {
+      log.result('Starting Live Video interface ...');
+      window.open('/video', '_blank');
+    } else {
+      log.result('Image database update not authorized');
+    }
   });
 
   // navline-search
