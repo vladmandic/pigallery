@@ -1,4 +1,4 @@
-/* global moment, marked, Popper */
+/* global moment, marked, Popper, ImageViewer */
 
 import config from './config.js';
 import log from './log.js';
@@ -6,6 +6,7 @@ import pwa from './pwa-register.js';
 
 let results = [];
 let filtered = [];
+let viewer;
 
 const options = {
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
@@ -21,21 +22,21 @@ const options = {
   get listLimit() { return parseInt(localStorage.getItem('listLimit') || 100, 10); },
   set listLimit(val) { return localStorage.setItem('listLimit', val); },
   get viewDetails() { return localStorage.getItem('viewDetails') ? localStorage.getItem('viewDetails') === 'true' : true; },
-  set viewDetails(val) { return localStorage.getItem('viewDetails', val); },
+  set viewDetails(val) { return localStorage.setItem('viewDetails', val); },
   get viewBoxes() { return localStorage.getItem('viewBoxes') ? localStorage.getItem('viewBoxes') === 'true' : true; },
-  set viewBoxes(val) { return localStorage.getItem('viewBoxes', val); },
+  set viewBoxes(val) { return localStorage.setItem('viewBoxes', val); },
   get viewFaces() { return localStorage.getItem('viewFaces') ? localStorage.getItem('viewFaces') === 'true' : true; },
-  set viewFaces(val) { return localStorage.getItem('viewFaces', val); },
+  set viewFaces(val) { return localStorage.setItem('viewFaces', val); },
   get viewRaw() { return localStorage.getItem('viewRaw') ? localStorage.getItem('viewRaw') === 'true' : false; },
-  set viewRaw(val) { return localStorage.getItem('viewRaw', val); },
+  set viewRaw(val) { return localStorage.setItem('viewRaw', val); },
   get dateShort() { return localStorage.getItem('dateShort') || 'YYYY/MM/DD'; },
-  set dateShort(val) { return localStorage.getItem('dateShort', val); },
+  set dateShort(val) { return localStorage.setItem('dateShort', val); },
   get dateLong() { return localStorage.getItem('dateLong') || 'dddd, MMMM Do, YYYY'; },
-  set dateLong(val) { return localStorage.getItem('dateLong', val); },
+  set dateLong(val) { return localStorage.setItem('dateLong', val); },
   get dateDivider() { return localStorage.getItem('dateDivider') || 'MMMM YYYY'; },
-  set dateDivider(val) { return localStorage.getItem('dateDivider', val); },
+  set dateDivider(val) { return localStorage.setItem('dateDivider', val); },
   get fontSize() { return localStorage.getItem('fontSize') || '14px'; },
-  set fontSize(val) { return localStorage.getItem('fontSize', val); },
+  set fontSize(val) { return localStorage.setItem('fontSize', val); },
 };
 
 // eslint-disable-next-line prefer-rest-params
@@ -129,6 +130,7 @@ function JSONtoStr(json) {
 // show details popup
 async function showDetails() {
   const img = document.getElementById('popup-image');
+
   if (options.viewRaw) {
     window.open(img.img, '_blank');
     return;
@@ -219,7 +221,15 @@ async function showDetails() {
     $('#popup-details').toggle(false);
     $('#popup-image').css('max-width', '100vw');
   }
+  $('body').css('cursor', 'pointer');
   drawBoxes(img, object);
+  if (viewer) viewer.destroy();
+  // http://ignitersworld.com/lab/imageViewer.html
+  viewer = new ImageViewer(img, { zoomValue: 100, maxZoom: 750, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
+  // await viewer.refresh();
+  const topOffset = $('.iv-image').css('top');
+  $('.iv-image').css('margin-top', `-${topOffset}`);
+  viewer.zoom(101.5);
 }
 
 async function showNextDetails(left) {
@@ -323,6 +333,8 @@ async function printResult(object) {
   const img = document.getElementById('popup-image');
   img.addEventListener('load', showDetails);
   divThumb.addEventListener('click', (evt) => {
+    $('body').css('cursor', 'wait');
+    log.result(`Loading image: ${evt.target.img}`);
     img.img = evt.target.img;
     img.src = object.image; // this triggers showDetails via onLoad event(
   });
@@ -552,7 +564,6 @@ function initHandlers() {
     }
   });
 
-
   $('#btn-logout').click(() => {
     showNavbar();
     $.post('/client/auth.html');
@@ -662,7 +673,7 @@ function initHandlers() {
   });
 
   // handle clicks inside popup
-  $('#popup').click(() => {
+  $('#popup-details').click(() => {
     if (event.screenX < 50) showNextDetails(true);
     else if (event.screenX > window.innerWidth - 50) showNextDetails(false);
     else $('#popup').toggle('fast');
