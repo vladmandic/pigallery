@@ -106,6 +106,19 @@ Result of all metadata processing is a very flexbile search engine - take a look
 
 </center>
 
+### Keyboard shortcuts
+
+      ENTER : Execute any open input
+      ESC   : Close any dialogs and reset view
+      \     : Reload data
+      /     : Open search input
+      .     : Open sort interface
+      ,     : Show/hide image descriptions in gallery view
+      Arrow Left & Right : Previous & Next image when in detailed view
+      Arrow Up & Down: Scroll up & down by one line when in gallery view
+      Page Up & Down: Scroll up & down by one page when in gallery view
+      Home & End: Scroll to start & end when in gallery view
+
 ### TensorFlow Processing
 
 - On errors:
