@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* global moment, marked, Popper, ImageViewer */
 
 import config from './config.js';
@@ -70,6 +71,8 @@ function drawBoxes(object) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.linewidth = 2;
   ctx.font = '16px Roboto';
+  if (!object) return;
+
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
 
@@ -128,18 +131,70 @@ function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
 }
 
-// show details popup
-async function showDetails() {
-  const img = document.getElementById('popup-image');
+function resizeDetailsPanels() {
+  // move details panel to side or bottom depending on screen aspect ratio
+  if ($('#main').width() > $('#main').height()) {
+    $('#popup').css('display', 'flex');
+    if (options.viewDetails) {
+      $('#popup-image').width('70vw');
+      $('#popup-details').width('30vw');
+    } else {
+      $('#popup-image').width('100vw');
+      $('#popup-details').width('0vw');
+    }
+    $('#popup-image').height('94vh'); // leave room for navbar
+    $('#popup-details').height('94vh');
+  } else {
+    $('#popup').css('display', 'block');
+    $('#popup-image').width('100vw');
+    if (options.viewDetails) $('#popup-image').height('64vh');
+    else $('#popup-image').height('100vh');
+    $('#popup-details').width('100vw');
+    $('#popup-details').height('30vh'); // leave room for navbar
+  }
+}
 
+function resizeDetailsImage(object) {
+  // wait for image to be loaded silly way as on load event doesn't trigger consistently
+  const img = document.getElementsByClassName('iv-image');
+  if (!img || !img[0] || !img[0].complete) {
+    setTimeout(() => resizeDetailsImage(object), 25);
+  } else {
+    // move image to top left corner
+    const offsetY = $('.iv-image').css('top');
+    const offsetX = $('.iv-image').css('left');
+    $('.iv-image').css('margin-top', `-${offsetY}`);
+    $('.iv-image').css('margin-left', `-${offsetX}`);
+    $('#popup-image').css('cursor', 'zoom-in');
+    drawBoxes(object);
+  }
+}
+
+// show details popup
+async function showDetails(thumb, img) {
+  $('#popup-image').css('cursor', 'wait');
   if (options.viewRaw) {
-    window.open(img.img, '_blank');
+    log.result(`Loading Raw image: ${img}`);
+    window.open(img, '_blank');
     return;
   }
+  $('body').css('cursor', 'wait');
+  log.result(`Loading image: ${img}`);
+
   $('#popup').toggle(true);
 
-  const object = filtered.find((a) => a.image === img.img);
+  if (!viewer) {
+    const div = document.getElementById('popup-image');
+    viewer = new ImageViewer(div, { zoomValue: 100, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
+  }
+  // http://ignitersworld.com/lab/imageViewer.html
+  // viewer._events.imageLoad = imageLoad();
+  viewer.load(thumb, img);
+
+  const object = filtered.find((a) => a.image === img);
   if (!object) return;
+  resizeDetailsPanels();
+  resizeDetailsImage(object);
 
   let classified = 'Classified ';
   if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
@@ -177,8 +232,8 @@ async function showDetails() {
 
   let exif = '';
   if (object.exif) {
-    const mp = (img.naturalWidth * img.naturalHeight / 1000000).toFixed(1);
-    const complexity = (img.naturalWidth * img.naturalHeight) / object.exif.bytes;
+    const mp = (object.naturalSize.width * object.naturalSize.height / 1000000).toFixed(1);
+    const complexity = mp / object.exif.bytes;
     if (object.exif.make) exif += `Camera: ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
     if (object.exif.bytes) exif += `Size: ${mp} MP in ${object.exif.bytes.toLocaleString()} bytes with compression factor ${complexity.toFixed(2)}<br>`;
     if (object.exif.created) exif += `Taken: ${moment(1000 * object.exif.created).format(options.dateLong)} Edited: ${moment(1000 * object.exif.modified).format(options.dateLong)}<br>`;
@@ -192,13 +247,7 @@ async function showDetails() {
   const buttons = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
   const html = `
       <h2>Image: ${object.image}</h2>${buttons}
-      Image size: ${img.naturalWidth} x ${img.naturalHeight}
-        Total time ${object.perf.total.toFixed(0)} ms<br>
-        Processed on ${moment(object.processed).format(options.dateLong)} in ${object.perf.load.toFixed(0)} ms<br>
-        Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
-        Alternative using ${config.alternative ? config.alternative.name : 'N/A'}<br>
-        Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
-        Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)} ms<br>
+      Image size: ${object.naturalSize.width} x ${object.naturalSize.height}
       <h2>Image Data</h2>
       ${exif}
       <h2>Location</h2>
@@ -209,29 +258,18 @@ async function showDetails() {
       <h2>${person} ${nsfw}</h2>
       ${desc}
       <h2>Tags</h2>
+      <h2>Processing Details</h2>
+        Total time ${object.perf.total.toFixed(0)} ms<br>
+        Processed on ${moment(object.processed).format(options.dateLong)} in ${object.perf.load.toFixed(0)} ms<br>
+        Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
+        Alternative using ${config.alternative ? config.alternative.name : 'N/A'}<br>
+        Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
+        Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)} ms<br>
       <i>${JSONtoStr(object.tags)}</i>
       </div>
     `;
-  if (options.viewDetails) {
-    $('#popup-details').toggle(true);
-    $('#popup-image').css('max-width', '80vw');
-    $('#popup-details').width(window.innerWidth - $('#popup-image').width());
-    // $('#popup-details').height($('#popup-image').height());
-    $('#popup-details').html(html);
-  } else {
-    $('#popup-details').toggle(false);
-    $('#popup-image').css('max-width', '100vw');
-  }
+  if (options.viewDetails) $('#popup-details').html(html);
   $('body').css('cursor', 'pointer');
-  // http://ignitersworld.com/lab/imageViewer.html
-  if (viewer) viewer.destroy();
-  viewer = new ImageViewer(img, { zoomValue: 100, maxZoom: 750, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
-  const topOffset = $('.iv-image').css('top');
-  $('.iv-image').css('margin-top', `-${topOffset}`);
-  const zoomX = $('.iv-image-view').height() / $('.iv-image').height();
-  const zoomY = $('.iv-image-view').width() / $('.iv-image').width();
-  viewer.zoom(100 * Math.min(zoomX, zoomY) + 2);
-  drawBoxes(object);
 }
 
 async function showNextDetails(left) {
@@ -332,14 +370,7 @@ async function printResult(object) {
   $('#results').append(divItem);
   const divThumb = document.getElementById(`thumb-${object.id}`);
   divThumb.img = object.image;
-  const img = document.getElementById('popup-image');
-  img.addEventListener('load', showDetails);
-  divThumb.addEventListener('click', (evt) => {
-    $('body').css('cursor', 'wait');
-    log.result(`Loading image: ${evt.target.img}`);
-    img.img = evt.target.img;
-    img.src = object.image; // this triggers showDetails via onLoad event(
-  });
+  divThumb.addEventListener('click', (evt) => showDetails(divThumb.src, evt.target.img));
 }
 
 function resizeResults() {
@@ -719,10 +750,14 @@ function initHandlers() {
   });
 
   // handle clicks inside popup
-  $('#popup-details').click(() => {
+  $('#popup').click(() => {
+    if (event.target.className.includes('iv-large-image')) return;
     if (event.screenX < 50) showNextDetails(true);
     else if (event.screenX > window.innerWidth - 50) showNextDetails(false);
-    else $('#popup').toggle('fast');
+    else {
+      drawBoxes(null);
+      $('#popup').toggle('fast');
+    }
   });
 }
 

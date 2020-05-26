@@ -175,7 +175,7 @@ async function processImage(name) {
   const ti0 = window.performance.now();
   const image = await getImage(name);
   obj.processedSize = { width: image.canvas.width, height: image.canvas.height };
-  obj.naturalSize = { width: image.naturalHeight, height: image.naturalWidth };
+  obj.naturalSize = { width: image.naturalWidth, height: image.naturalHeight };
   obj.pixels = image.naturalHeight * image.naturalWidth;
   obj.thumbnail = image.thumbnail;
   const ti1 = window.performance.now();
