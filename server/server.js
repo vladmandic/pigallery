@@ -63,7 +63,7 @@ async function main() {
         log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
       }
     });
-    if (req.url.startsWith('/assets') || req.url.startsWith('/client') || req.url.startsWith('/favicon.ico') || req.url.startsWith('/manifest.json')) next();
+    if (!req.url.startsWith('/api/')) next();
     else if (req.session.user || !config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
   });

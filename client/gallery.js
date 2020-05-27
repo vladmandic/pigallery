@@ -547,11 +547,13 @@ async function loadGallery(limit) {
 async function initUser() {
   const res = await fetch('/api/user');
   if (res.ok) window.user = await res.json();
-  if (window.user) {
+  if (window.user && window.user.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user.split('@')[0]);
     log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
     if (!window.user.admin) $('#btn-update').css('color', 'gray');
+  } else {
+    window.location = '/client/auth.html';
   }
   $('body').css('fontSize', options.fontSize);
   $('#folderbar').toggle(options.listFolders);
@@ -641,6 +643,7 @@ function initHandlers() {
     $.post('/client/auth.html');
     if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
     $('#btn-user').toggleClass('fa-user-slash fa-user');
+    window.location.reload(false);
   });
 
   $('#btn-search').click(() => {
