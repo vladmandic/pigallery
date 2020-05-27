@@ -1,6 +1,6 @@
 {
   "name": "pigallery",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "PiGallery: Photo Gallery and analysis using TensorFlow/JS and EXIF metadata",
   "main": "server/server.js",
   "scripts": {
