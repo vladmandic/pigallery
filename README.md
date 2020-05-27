@@ -6,35 +6,23 @@
 
 ## Screenshots
 
-### Gallery view
-
 <center>
+
+### Gallery view
 
 ![alt text](assets/screenshot-gallery.png)
 
-</center>
-
 ### Detailed View
-
-<center>
 
 ![alt text](assets/screenshot-details.png)
 
 ![alt text](assets/screenshot-mobile.png)
 
-</center>
-
 ### Complex Search Results
-
-<center>
 
 ![alt text](assets/screenshot-search.png)
 
-</center>
-
 ### Live Video
-
-<center>
 
 ![alt text](assets/screenshot-video.png)
 
@@ -214,10 +202,7 @@ This allows for fallback solutions - if one model does not perform well on an im
 
 ## Todo
 
-- RFE: Live video slows down over time and leaks GPU memory
-- RFE: Add PoseNet, Hands, etc.
-- RFE: Try canvas capture processing instead of video stream
+- RFE: Add body & hands analysis.
 - BUG: Handle duplicate folder names in gallery view
-- BUG: Auth redirect when using ServiceWorker
 - RFE: Server-side search, paging for gallery
 - RFE: Server-side processing once WSL2 implements CUDA
