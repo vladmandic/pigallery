@@ -20,6 +20,8 @@
 
 ![alt text](assets/screenshot-details.png)
 
+![alt text](assets/screenshot-mobile.png)
+
 </center>
 
 ### Complex Search Results
@@ -27,6 +29,14 @@
 <center>
 
 ![alt text](assets/screenshot-search.png)
+
+</center>
+
+### Live Video
+
+<center>
+
+![alt text](assets/screenshot-video.png)
 
 </center>
 
