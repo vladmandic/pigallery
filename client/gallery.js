@@ -8,6 +8,7 @@ import pwa from './pwa-register.js';
 
 const results = [];
 let filtered = [];
+let folderList = [];
 let viewer;
 
 const options = {
@@ -427,16 +428,22 @@ function resizeResults() {
   }
 }
 
-async function enumerateFolders() {
+async function enumerateFolders(input) {
   $('#folders').html('');
-  const list = [];
-  for (const item of filtered) {
-    const path = item.image.substr(0, item.image.lastIndexOf('/'));
+  if (input) {
+    const path = input.substr(0, input.lastIndexOf('/'));
     const folders = path.split('/').filter((a) => a !== '');
-    if (!list.find((a) => a.path === path)) list.push({ path, folders });
+    if (!folderList.find((a) => a.path === path)) folderList.push({ path, folders });
+  } else {
+    folderList = [];
+    for (const item of filtered) {
+      const path = item.image.substr(0, item.image.lastIndexOf('/'));
+      const folders = path.split('/').filter((a) => a !== '');
+      if (!folderList.find((a) => a.path === path)) folderList.push({ path, folders });
+    }
   }
   for (let i = 0; i < 10; i++) {
-    for (const item of list) {
+    for (const item of folderList) {
       if (item.folders[i]) {
         const folder = item.folders[i];
         const parent = item.folders[i > 0 ? i - 1 : 0];
@@ -580,6 +587,7 @@ async function loadGallery(limit) {
       results.push(image);
       $('#number').text(results.length);
       printResult(image);
+      enumerateFolders(image.image);
     })
     .done((things) => {
       const t1 = window.performance.now();
