@@ -575,6 +575,8 @@ async function loadGallery(limit) {
   results.length = 0;
   oboe(`/api/get?limit=${limit}&find=all`)
     .node('{image}', (image) => {
+      // eslint-disable-next-line no-param-reassign
+      image.id = results.length + 1;
       results.push(image);
       $('#number').text(results.length);
       printResult(image);
