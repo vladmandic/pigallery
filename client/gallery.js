@@ -1,11 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 /* global moment, marked, Popper, ImageViewer */
 
+import oboe from 'oboe';
 import config from './config.js';
 import log from './log.js';
 import pwa from './pwa-register.js';
 
-let results = [];
+const results = [];
 let filtered = [];
 let viewer;
 
@@ -160,13 +161,42 @@ function resizeDetailsImage(object) {
   if (!img || !img[0] || !img[0].complete) {
     setTimeout(() => resizeDetailsImage(object), 25);
   } else {
+    // move details panel to side or bottom depending on screen aspect ratio
+    if ($('#main').width() > $('#main').height()) {
+      $('#popup').css('display', 'flex');
+      if (options.viewDetails) {
+        $('#popup-image').width('70vw');
+        $('#popup-details').width('30vw');
+      } else {
+        $('#popup-image').width('100vw');
+        $('#popup-details').width('0vw');
+      }
+      $('#popup-image').height('94vh'); // leave room for navbar
+      $('#popup-details').height('94vh');
+    } else {
+      $('#popup').css('display', 'block');
+      $('#popup-image').width('100vw');
+      if (options.viewDetails) $('#popup-image').height('64vh');
+      else $('#popup-image').height('100vh');
+      $('#popup-details').width('100vw');
+      $('#popup-details').height('30vh'); // leave room for navbar
+    }
+    // zoom to fill usable screen area
+    const zoomX = $('.iv-image-view').width() / $('.iv-image').width();
+    const zoomY = $('.iv-image-view').height() / $('.iv-image').height();
+    viewer.zoom(100 * Math.min(zoomX, zoomY));
     // move image to top left corner
     const offsetY = $('.iv-image').css('top');
     const offsetX = $('.iv-image').css('left');
     $('.iv-image').css('margin-top', `-${offsetY}`);
     $('.iv-image').css('margin-left', `-${offsetX}`);
     $('#popup-image').css('cursor', 'zoom-in');
-    drawBoxes(object);
+
+    // move details panel to side or bottom depending on screen aspect ratio
+    if ($('#main').width() > $('#main').height()) $('#popup-details').width(options.viewDetails ? $('#main').width() - $('.iv-image').width() : 0);
+    else $('#popup-details').height(options.viewDetails ? $('#main').height() - $('.iv-image').height() : 0);
+    // draw detection boxes and faces
+    setTimeout(() => drawBoxes(object), 100);
   }
 }
 
@@ -244,9 +274,9 @@ async function showDetails(thumb, img) {
   if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
   if (object.exif && object.exif.lat) location += `Coordinates: Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)}<br>`;
 
-  const buttons = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
+  const btnDownload = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
   const html = `
-      <h2>Image: ${object.image}</h2>${buttons}
+      ${btnDownload}<h2>Image: ${object.image}</h2>
       Image size: ${object.naturalSize.width} x ${object.naturalSize.height}
       <h2>Image Data</h2>
       ${exif}
@@ -273,8 +303,16 @@ async function showDetails(thumb, img) {
 }
 
 async function showNextDetails(left) {
-  if ($('#popup').css('display') === 'none') return;
-
+  const img = $('.iv-image');
+  if (!img || img.length < 1) return;
+  const url = new URL(img[0].src);
+  const id = filtered.findIndex((a) => a.image === decodeURI(url.pathname.substr(1)));
+  if (id === -1) return;
+  let target = filtered[id].image;
+  if (left === true && id > 0 && filtered[id - 1]) target = filtered[id - 1].image;
+  else if (left === false && id <= filtered.length && filtered[id + 1]) target = filtered[id + 1].image;
+  showDetails(target, target);
+  /*
   const img = document.getElementById('popup-image');
   const id = filtered.findIndex((a) => a.image === img.img);
   if (id === -1) return;
@@ -285,6 +323,7 @@ async function showNextDetails(left) {
     img.img = filtered[id + 1].image;
     img.src = filtered[id + 1].image;
   }
+  */
 }
 
 // adds dividiers based on sort order
@@ -533,15 +572,21 @@ async function loadGallery(limit) {
   $('body').css('cursor', 'wait');
   const t0 = window.performance.now();
   log.result('Loading gallery ...');
-  const res = await fetch(`/api/get?limit=${limit}&find=all`);
-  results = await res.json();
-  const t1 = window.performance.now();
-  const size = JSON.stringify(results).length;
-  log.result(`Received ${results.length} images in ${size.toLocaleString()} bytes (${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec)`);
-  for (const id in results) results[id].id = id;
-  filtered = results;
-  resizeResults();
-  sortResults(options.listSortOrder);
+  results.length = 0;
+  oboe(`/api/get?limit=${limit}&find=all`)
+    .node('{image}', (image) => {
+      results.push(image);
+      $('#number').text(results.length);
+      printResult(image);
+    })
+    .done((things) => {
+      const t1 = window.performance.now();
+      const size = JSON.stringify(results).length;
+      log.result(`Received ${things.length} images in ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes (${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec)`);
+      filtered = results;
+      resizeResults();
+      sortResults(options.listSortOrder);
+    });
 }
 
 async function initUser() {
@@ -754,10 +799,9 @@ function initHandlers() {
 
   // handle clicks inside popup
   $('#popup').click(() => {
-    if (event.target.className.includes('iv-large-image')) return;
     if (event.screenX < 50) showNextDetails(true);
-    else if (event.screenX > window.innerWidth - 50) showNextDetails(false);
-    else {
+    else if (event.clientX > $('#popup').width() - 50) showNextDetails(false);
+    else if (!event.target.className.includes('iv-large-image')) {
       drawBoxes(null);
       $('#popup').toggle('fast');
     }
