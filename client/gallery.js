@@ -10,6 +10,7 @@ const results = [];
 let filtered = [];
 let folderList = [];
 let viewer;
+let last;
 
 const options = {
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
@@ -62,6 +63,7 @@ function showTip(parent, text) {
 
 // draw boxes for detected objects, faces and face elements
 function drawBoxes(object) {
+  if (object) last = object;
   const img = document.getElementsByClassName('iv-image')[0];
   const canvas = document.getElementById('popup-canvas');
   canvas.style.position = 'absolute';
@@ -73,7 +75,8 @@ function drawBoxes(object) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.linewidth = 2;
   ctx.font = '16px Roboto';
-  if (!object) return;
+  // eslint-disable-next-line no-param-reassign
+  if (!object) object = last;
 
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
@@ -186,6 +189,7 @@ function resizeDetailsImage(object) {
     const zoomX = $('.iv-image-view').width() / $('.iv-image').width();
     const zoomY = $('.iv-image-view').height() / $('.iv-image').height();
     viewer.zoom(100 * Math.min(zoomX, zoomY));
+
     // move image to top left corner
     const offsetY = $('.iv-image').css('top');
     const offsetX = $('.iv-image').css('left');
@@ -213,6 +217,7 @@ async function showDetails(thumb, img) {
   log.result(`Loading image: ${img}`);
 
   $('#popup').toggle(true);
+  $('#optionsview').toggle(true);
 
   if (!viewer) {
     const div = document.getElementById('popup-image');
@@ -226,6 +231,10 @@ async function showDetails(thumb, img) {
   if (!object) return;
   resizeDetailsPanels();
   resizeDetailsImage(object);
+
+  // handle pan&zoom redraws
+  $('.iv-large-image').click(() => drawBoxes());
+  $('.iv-large-image').on('wheel', () => drawBoxes());
 
   let classified = 'Classified ';
   if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
@@ -275,9 +284,11 @@ async function showDetails(thumb, img) {
   if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
   if (object.exif && object.exif.lat) location += `Coordinates: Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)}<br>`;
 
-  const btnDownload = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
+  $('#details-download').off();
+  $('#details-download').click(() => window.open(object.image, '_blank'));
+  // const btnDownload = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
   const html = `
-      ${btnDownload}<h2>Image: ${object.image}</h2>
+      <h2>Image: ${object.image}</h2>
       Image size: ${object.naturalSize.width} x ${object.naturalSize.height}
       <h2>Image Data</h2>
       ${exif}
@@ -300,6 +311,7 @@ async function showDetails(thumb, img) {
       </div>
     `;
   if (options.viewDetails) $('#popup-details').html(html);
+  $('#popup-details').toggle(options.viewDetails);
   $('body').css('cursor', 'pointer');
 }
 
@@ -491,7 +503,7 @@ async function redrawResults(generateFolders = true) {
 
 function filterWord(object, word) {
   if (!object) return null;
-  const skip = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during'];
+  const skip = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during', 'on'];
   if (skip.includes(word)) return object;
   const res = object.filter((obj) => {
     let ok = false;
@@ -663,8 +675,8 @@ async function initHotkeys() {
         $('#optionslist').toggle(false);
         $('#optionsview').toggle(false);
         $('#popup').toggle(false);
-        filterResults('');
-        break; // key=esc; clear all filters
+        // filterResults('');
+        break; // key=esc; close all
       default: // log.result('Unhandled keydown event', event.keyCode);
     }
   });
@@ -736,12 +748,8 @@ function initHandlers() {
 
   // starts live video detection in a separate window
   $('#btn-video').click(() => {
-    if (window.user.admin) {
-      log.result('Starting Live Video interface ...');
-      window.open('/video', '_blank');
-    } else {
-      log.result('Image database update not authorized');
-    }
+    log.result('Starting Live Video interface ...');
+    window.open('/video', '_blank');
   });
 
   // navline-search
@@ -770,10 +778,11 @@ function initHandlers() {
   $('#btn-desc').click(() => {
     options.listDetails = !options.listDetails;
     $('.description').toggle('slow');
-    $('#btn-desc').toggleClass('fa-eye fa-eye-slash');
+    $('#btn-desc').toggleClass('fa-comment fa-comment-slash');
   });
 
-  $('#find-duplicates').click(() => {
+  $('#btn-duplicates').click(() => {
+    $('#btn-duplicates').toggleClass('fa-eye fa-eye-slash');
     findDuplicates();
   });
 
@@ -787,19 +796,38 @@ function initHandlers() {
   });
 
   // navline-view
+  $('#details-close').click(() => {
+    drawBoxes(null);
+    $('#popup').toggle('fast');
+    $('#optionsview').toggle(false);
+  });
+
+  $('#details-previous').click(() => {
+    showNextDetails(true);
+  });
+
+  $('#details-next').click(() => {
+    showNextDetails(false);
+  });
+
   $('#details-desc').click(() => {
     $('#details-desc').toggleClass('fa-comment fa-comment-slash');
     options.viewDetails = !options.viewDetails;
+    $('#popup-details').toggle(options.viewDetails);
   });
 
   $('#details-boxes').click(() => {
     $('#details-boxes').toggleClass('fa-store fa-store-slash');
     options.viewBoxes = !options.viewBoxes;
+    // const hidden = options.viewBoxes ? 'visible' : 'hidden';
+    // $('#popup-canvas').css('visibility', hidden);
+    drawBoxes();
   });
 
   $('#details-faces').click(() => {
     $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
     options.viewFaces = !options.viewFaces;
+    drawBoxes();
   });
 
   $('#details-raw').click(() => {
@@ -814,6 +842,7 @@ function initHandlers() {
     else if (!event.target.className.includes('iv-large-image')) {
       drawBoxes(null);
       $('#popup').toggle('fast');
+      $('#optionsview').toggle(false);
     }
   });
 }
