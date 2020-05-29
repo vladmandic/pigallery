@@ -1,4 +1,4 @@
-/* global moment */
+import moment from 'moment';
 
 let dots = 0;
 

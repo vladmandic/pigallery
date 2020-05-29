@@ -1,5 +1,6 @@
 // import * as nsfwjs from 'nsfwjs';
 // import yolo from './modelYolo.js';
+import $ from 'jquery';
 import config from './config.js';
 import * as tf from './processVideo.js';
 

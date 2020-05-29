@@ -7,8 +7,11 @@
     { "folder": "Samples/", "match": "", "recursive": true },
     { "folder": "Temp/", "match": "", "recursive": true },
     { "folder": "People/Vlado/", "match": "" },
+    { "folder": "People/California/", "match": "" },
+    { "folder": "People/Miami/", "match": "" },
+    { "folder": "Pictures/Instagram Posts/", "match": "" },
     { "folder": "Pictures/Saved Pictures/", "match": "" },
-    { "folder": "Photos/Objects/", "match": "" }
+    { "folder": "Photos/Various/", "match": "" }
   ],
   "server": {
     "httpPort": 8000,

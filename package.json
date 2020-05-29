@@ -45,6 +45,7 @@
   },
   "homepage": "https://github.com/vladmandic/pigallery#readme",
   "dependencies": {
+    "@popperjs/core": "^2.4.0",
     "@tensorflow/tfjs": "^1.7.4",
     "@tensorflow/tfjs-backend-cpu": "^2.0.0",
     "@tensorflow/tfjs-backend-wasm": "^2.0.0",
@@ -55,6 +56,9 @@
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
     "face-api.js": "^0.22.2",
+    "jquery": "^3.5.1",
+    "marked": "^1.1.0",
+    "moment": "^2.26.0",
     "nedb-promises": "^4.0.3",
     "node-fetch": "^3.0.0-beta.6-exportfix",
     "nsfwjs": "^2.2.0",
