@@ -29,6 +29,7 @@
       "object-curly-newline": "off",
       "camelcase": "off",
       "no-loop-func": "off",
+      "no-continue": "off",
       "no-mixed-operators": "off",
       "prefer-destructuring": "off",
       "no-bitwise": "off",

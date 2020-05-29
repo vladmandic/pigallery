@@ -192,34 +192,6 @@ async function enumerateLocations() {
   }
 }
 
-// exctract top classe from classification & detection and builds sidebar menu
-async function enumerateClasses() {
-  $('#classes').html('');
-  const classesList = [];
-  for (const item of window.filtered) {
-    for (const tag of item.tags) {
-      const t = Object.values(tag)[0].toString().split(',')[0];
-      if (!['media', 'classified', 'alternative', 'detected', 'described', 'jpg', 'exif'].includes(t)) {
-        const found = classesList.find((a) => a.tag === t);
-        if (found) found.count += 1;
-        else classesList.push({ tag: t, count: 1 });
-      }
-    }
-  }
-  classesList.sort((a, b) => b.count - a.count);
-  classesList.length = window.options.topClasses;
-  for (const item of classesList) {
-    const html = `
-      <li id="loc-${item.tag}">
-        <span tag="${item.tag}" type="class" style="padding-left: 16px" class="folder">&nbsp
-          <i tag="${item.tag}" class="fas fa-chevron-circle-right">&nbsp</i>${item.tag}
-        </span>
-      </li>
-    `;
-    $('#classes').append(html);
-  }
-}
-
 // builds folder list from all loaded images and builds sidebar menu
 // can be used with entire image list or per-object
 let folderList = [];
@@ -262,6 +234,34 @@ async function enumerateFolders(input) {
   }
 }
 
+// exctract top classe from classification & detection and builds sidebar menu
+async function enumerateClasses() {
+  $('#classes').html('');
+  const classesList = [];
+  for (const item of window.filtered) {
+    for (const tag of item.tags) {
+      const key = Object.keys(tag)[0];
+      const val = Object.values(tag)[0].toString().split(',')[0];
+      if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near'].includes(key)) continue;
+      const found = classesList.find((a) => a.tag === val);
+      if (found) found.count += 1;
+      else classesList.push({ tag: val, count: 1 });
+    }
+  }
+  classesList.sort((a, b) => b.count - a.count);
+  classesList.length = window.options.topClasses;
+  for (const item of classesList) {
+    const html = `
+      <li id="loc-${item.tag}">
+        <span tag="${item.tag}" type="class" style="padding-left: 16px" class="folder">&nbsp
+          <i tag="${item.tag}" class="fas fa-chevron-circle-right">&nbsp</i>${item.tag} (${item.count})
+        </span>
+      </li>
+    `;
+    $('#classes').append(html);
+  }
+}
+
 // handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
   $('.folder').off();
@@ -282,8 +282,13 @@ async function folderHandlers() {
         break;
       case 'class':
         window.filtered = window.results.filter((a) => {
-          const tags = JSON.stringify(a.tags);
-          return tags.includes(path);
+          let found = false;
+          for (const tag of a.tags) {
+            if (path === Object.values(tag)[0].toString()) found = true;
+          }
+          // const tags = JSON.stringify(a.tags);
+          // return tags.includes(path);
+          return found;
         });
         log.result(`Showing class: ${path}`);
         break;
