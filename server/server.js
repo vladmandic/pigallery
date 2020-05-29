@@ -92,7 +92,7 @@ async function main() {
       log.warn('Image cache not found:', config.server.jsonDB);
     }
   } else if (config.server.dbEngine === 'nedb') {
-    if (!fs.existsSync(config.server.nedbDB)) log.warn('Image cache not found:', config.server.jsonDB);
+    if (!fs.existsSync(config.server.nedbDB)) log.warn('Image cache not found:', config.server.nedbDB);
     global.db = nedb.create({ filename: config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
     await global.db.loadDatabase();
     const records = await global.db.count({});

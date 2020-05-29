@@ -185,10 +185,10 @@ function parseExif(chunk, tries) {
 function getTime(time) {
   if (!time) return null;
   let t = time.toString().match(/[^\d]/) ? new Date(time) : new Date(parseInt(time, 10));
-  if (t.getFullYear === '1970') t = new Date(1000 * parseInt(time, 10));
-  const epoch = parseInt(t.getTime() / 1000, 10);
-  return epoch;
+  if (t.getFullYear() < 1971) t = new Date(1000 * parseInt(time, 10));
+  return t.getTime();
 }
+
 async function getExif(url) {
   // log.data('Lookup EXIF:', url);
   return new Promise((resolve) => {
@@ -219,9 +219,13 @@ async function getExif(url) {
           json.apperture = raw.tags.FNumber;
           json.iso = raw.tags.ISO;
           json.fov = raw.tags.FocalLengthIn35mmFormat;
-          json.width = raw.tags.ExifImageWidth || raw.imageSize.width;
-          json.heigh = raw.tags.ExifImageHeight || raw.imageSize.height;
         }
+        if (raw && raw.tags && raw.tags.ExifImageWidth) json.width = raw.tags.ExifImageWidth;
+        else if (raw && raw.imageSize && raw.imageSize.width) json.width = raw.imageSize.width;
+        else json.width = 0;
+        if (raw && raw.tags && raw.tags.ExifImageHeight) json.height = raw.tags.ExifImageHeight;
+        else if (raw && raw.imageSize && raw.imageSize.height) json.height = raw.imageSize.height;
+        else json.height = 0;
         stream.close();
       })
       .on('close', () => {
