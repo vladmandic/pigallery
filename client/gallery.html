@@ -36,10 +36,10 @@
       a:hover { color: darkcyan; text-decoration: none; }
       .row { width: 100vw; margin: 0; align-content: start; }
       .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-      .log { height: 5vh; overflow-x: hidden; overflow-y:scroll; margin-top: 10px; overflow: hidden }
+      .log { height: 4rem; overflow-x: hidden; overflow-y:scroll; margin-top: 10px; overflow: hidden }
       .popper { padding: 8px; background: lightblue; color: #555555; font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; }
 
-      .navbar { background: #555555; min-height: 5rem; max-height: 5rem; position: fixed; top: 0; overflow: hidden; }
+      .navbar { background: #555555; min-height: 5rem; max-height: 5rem; position: fixed; top: 0; overflow: hidden; justify-content: space-evenly; }
       .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
       .navbarbutton:hover { color: lightskyblue; }
       .number { font-size: 1.6rem; color: gray}
@@ -59,7 +59,7 @@
       .folder { background: #555555; margin: 0; padding: 0.4rem 200px 0.4rem 0; cursor: pointer; font-weight: bold; letter-spacing: 1px; }
       .folder:hover { background: lightyellow; color: #555555; letter-spacing: 2px; }
       .folder:active { background: lightskyblue; color: #555555; letter-spacing: 2px; }
-      .results { height: 87vh; overflow-y: scroll; }
+      .results { height: auto; overflow-y: scroll; }
 
       .listitem { display: flex; }
       .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; }
@@ -68,7 +68,7 @@
       .description:hover { background: #333333 }
       .description:active { background: lightskyblue }
       .download { font-size: 1.2rem; color: gray; position: relative; float: right; padding: 16px; cursor: grab; z-index: 5; }
-      .download:hover { color: lightskyblue; background: lightyellow; }
+      .download:hover { color: lightskyblue; }
       .listtitle { font-weight: bold; background: #444444; margin: -2px 0 0 -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; }
 
       .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px }
@@ -76,7 +76,7 @@
 
       .popup { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 5rem; bottom: 0; left: 0; width: 100%; display: flex; z-index: 10; }
       .popup-image { width: 100vw; height: 100vh; }
-      .popup-details { margin: 1rem; width: 30vw; height: 100ch; top: 0; }
+      .popup-details { margin: 1rem; width: 30vw; height: 100ch; top: 0; overflow-y: scroll; }
 
       .docs { height: 87vh; background: #333333; color: white; overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; display: block; padding: 10px; z-index: 10; }
     </style>
@@ -87,7 +87,7 @@
     <div><i id="btn-user" class="navbarbutton fas fa-user-slash"></i><p id="user">User</p></div>
     <div><i id="btn-search" class="navbarbutton fas fa-search"></i><p>Search</p></div>
     <div><i id="btn-list" class="navbarbutton fas fa-images"></i><p>List Options</p></div>
-    <div><i id="btn-view" class="navbarbutton fas fa-image"></i><p>View Options</p></div>
+    <!-- <div><i id="btn-view" class="navbarbutton fas fa-image"></i><p>View Options</p></div> -->
     <div><i id="btn-video" class="navbarbutton fas fa-film"></i><p>Live Video</p></div>
     <div><i id="btn-number" class="number fas fa-images"></i><p id="number">0</p></div>
   </div>
@@ -108,8 +108,8 @@
 
   <div id="optionslist" class="row navline text-center">
     <div><i class="navlinebutton fas fa-folder-open" id="btn-folder"></i><p class="btntext">Folders</p></div>
-    <div><i class="navlinebutton fas fa-eye" id="btn-desc"></i><p class="btntext">Descriptions</p></div>
-    <div><i class="navlinebutton fas fa-clone" id="find-duplicates"></i><p class="btntext">Duplicates</p></div>
+    <div><i class="navlinebutton fas fa-comment" id="btn-desc"></i><p class="btntext">Descriptions</p></div>
+    <div><i class="navlinebutton fas fa-eye" id="btn-duplicates"></i><p class="btntext">Duplicates</p></div>
     <div><i class="navlinebutton fas sort fa-random"></i><p class="btntext">Randomize</p></div>
     <div><i class="navlinebutton fas sort fa-sort-alpha-down"></i><i class="navlinebutton fas sort fa-sort-alpha-up" style="padding-left: 0"></i>
       <p class="btntext">Sort by Name</p></div>
@@ -123,11 +123,14 @@
     </div>
   </div>
 
-  <div id="optionsview" class="row navline text-center">
-    <div><i class="navlinebutton fas fa-comment" id='details-desc'></i><p class="btntext">Details</p></div>
-    <div><i class="navlinebutton fas fa-store" id='details-boxes'></i><p class="btntext">Detect Boxes</p></div>
-    <div><i class="navlinebutton fas fa-head-side-cough" id='details-faces'></i><p class="btntext">Faces</p></div>
-    <div><i class="navlinebutton fas fa-video-slash" id='details-raw'></i><p class="btntext">Raw Image</p></div>
+  <div id="optionsview" class="row navbar text-center">
+    <div><i class="navbarbutton fas fa-arrow-circle-left" id='details-previous'></i><p class="btntext">Previous</p></div>
+    <div><i class="navbarbutton fas fa-times-circle" id='details-close'></i><p class="btntext">Close</p></div>
+    <div><i class="navbarbutton fas fa-arrow-circle-right" id='details-next'></i><p class="btntext">Next</p></div>
+    <div><i class="navbarbutton fas fa-comment" id='details-desc'></i><p class="btntext">Details</p></div>
+    <div><i class="navbarbutton fas fa-store" id='details-boxes'></i><p class="btntext">Detect Boxes</p></div>
+    <div><i class="navbarbutton fas fa-head-side-cough" id='details-faces'></i><p class="btntext">Faces</p></div>
+    <div><i class="navbarbutton fas fa-download" id='details-download'></i><p class="btntext">Download</p></div>
   </div>
 
   <div id="main" class="main">

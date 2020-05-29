@@ -199,16 +199,3 @@ This allows for fallback solutions - if one model does not perform well on an im
 ![alt text](favicon.ico)
 
 </center>
-
-## Todo
-
-- BUG: Handle duplicate folder names in gallery view
-- RFE: Add body & hands analysis
-- RFE: Server-side search & paging for gallery
-- RFE: Server-side processing using TFJS-Node once WSL2 supports CUDA
-- RFE: Live video processing for Webcam feeds
-- PKG: Upgrade to TensorFlow 2.0
-
-      Upgrading from @tensorflow/tfjs@1.7.4 to  @tensorflow/tfjs@2.0.0 causes two errors:
-      processImage.js: tf.webgl.forceHalfFloat(); is unknown
-      process.js: t.batchNormalization is not a function
