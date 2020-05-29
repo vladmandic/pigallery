@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const proc = require('process');
 const crypto = require('crypto');
 const parser = require('exif-parser');
 const log = require('pilogger');
@@ -181,6 +182,13 @@ function parseExif(chunk, tries) {
   return raw;
 }
 
+function getTime(time) {
+  if (!time) return null;
+  let t = time.toString().match(/[^\d]/) ? new Date(time) : new Date(parseInt(time, 10));
+  if (t.getFullYear === '1970') t = new Date(1000 * parseInt(time, 10));
+  const epoch = parseInt(t.getTime() / 1000, 10);
+  return epoch;
+}
 async function getExif(url) {
   // log.data('Lookup EXIF:', url);
   return new Promise((resolve) => {
@@ -195,24 +203,24 @@ async function getExif(url) {
           if (!raw || !raw.tags && url !== config.server.warmupImage) log.warn('Metadata EXIF:', url);
         }
         const stat = fs.statSync(url);
-        json.bytes = stat.bytes;
-        json.timestamp = raw && raw.tags ? (raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
-        if (!json.timestamp) json.timestamp = Math.min(parseFloat(stat.mtimeMs / 1000), parseFloat(stat.ctimeMs / 1000));
+        json.bytes = stat.size;
+        json.timestamp = raw && raw.tags ? getTime(raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
+        if (!json.timestamp) json.timestamp = Math.min(getTime(stat.mtimeMs), getTime(stat.ctimeMs));
         if (raw && raw.tags) {
           json.make = raw.tags.Make;
           json.model = raw.tags.Model;
           json.lens = raw.tags.LensModel;
           json.software = raw.tags.Software;
-          json.modified = raw.tags.ModifyDate;
-          json.created = raw.tags.CreateDate || raw.tags.DateTimeOriginal;
+          json.modified = getTime(raw.tags.ModifyDate);
+          json.created = getTime(raw.tags.CreateDate || raw.tags.DateTimeOriginal);
           json.lat = raw.tags.GPSLatitude;
           json.lon = raw.tags.GPSLongitude;
           json.exposure = raw.tags.ExposureTime;
           json.apperture = raw.tags.FNumber;
           json.iso = raw.tags.ISO;
           json.fov = raw.tags.FocalLengthIn35mmFormat;
-          json.width = raw.tags.ExifImageWidth;
-          json.heigh = raw.tags.ExifImageHeight;
+          json.width = raw.tags.ExifImageWidth || raw.imageSize.width;
+          json.heigh = raw.tags.ExifImageHeight || raw.imageSize.height;
         }
         stream.close();
       })
@@ -341,6 +349,12 @@ async function checkRecords(list) {
   log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
 }
 
+async function test(url) {
+  const exif = await getExif(url);
+  // eslint-disable-next-line no-console
+  console.log(exif);
+}
+
 exports.init = init;
 exports.descriptions = getDescription;
 exports.location = getLocation;
@@ -350,3 +364,7 @@ exports.tags = buildTags;
 exports.store = storeObject;
 exports.list = listFiles;
 exports.check = checkRecords;
+
+if (!module.parent) {
+  test(proc.argv[2]);
+}

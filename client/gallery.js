@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 
-import $ from 'jquery';
 import oboe from 'oboe';
 import moment from 'moment';
 import marked from 'marked';
