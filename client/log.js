@@ -6,7 +6,7 @@ async function dot() {
   const div = document.getElementById('log');
   if (div) div.innerHTML += '.';
   dots = dots < 100 ? dots + 1 : 0;
-  if (dots > 100) div.innerHTML += '<br>';
+  if (dots >= 100) div.innerHTML += '<br>';
 }
 
 async function result(...msg) {

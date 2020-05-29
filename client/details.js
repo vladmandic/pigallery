@@ -197,13 +197,11 @@ async function showDetails(thumb, img) {
 
   let exif = '';
   if (object.exif) {
-    const mp = (object.naturalSize.width * object.naturalSize.height / 1000000).toFixed(1);
-    const complexity = mp / object.exif.bytes;
-    if (object.exif.make) exif += `Camera: ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
-    if (object.exif.bytes) exif += `Size: ${mp} MP in ${object.exif.bytes.toLocaleString()} bytes with compression factor ${complexity.toFixed(2)}<br>`;
-    if (object.exif.created) exif += `Taken: ${moment(1000 * object.exif.created).format(window.options.dateLong)} Edited: ${moment(1000 * object.exif.modified).format(window.options.dateLong)}<br>`;
-    if (object.exif.software) exif += `Software: ${object.exif.software}<br>`;
-    if (object.exif.exposure) exif += `Settings: ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
+    if (object.exif.make) exif += `<b>Camera:</b> ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
+    if (object.exif.bytes) exif += `<b>Size:</b> ${(object.pixels / 1000 / 1000).toFixed(1)} MP in ${object.exif.bytes.toLocaleString()} bytes (compression factor ${(object.pixels / object.exif.bytes).toFixed(2)})<br>`;
+    if (object.exif.created) exif += `<b>Taken:</b> ${moment(object.exif.created).format(window.options.dateLong)} <b>Edited:</b> ${moment(object.exif.modified).format(window.options.dateLong)}<br>`;
+    if (object.exif.software) exif += `<b>Software:</b> ${object.exif.software}<br>`;
+    if (object.exif.exposure) exif += `<b>Settings:</b> ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
   }
   let location = '';
   if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
@@ -214,7 +212,7 @@ async function showDetails(thumb, img) {
   // const btnDownload = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
   const html = `
       <h2>Image: ${object.image}</h2>
-      Image size: ${object.naturalSize.width} x ${object.naturalSize.height}
+      <b>Image size</b>: ${object.naturalSize.width} x ${object.naturalSize.height}
       <h2>Image Data</h2>
       ${exif}
       <h2>Location</h2>

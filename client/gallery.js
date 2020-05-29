@@ -74,8 +74,8 @@ function showTip(parent, text) {
 let previous;
 function addDividers(object) {
   if (window.options.listDivider === 'month') {
-    const curr = moment(1000 * object.exif.timestamp).format(window.options.dateDivider);
-    const prev = moment(previous ? 1000 * previous.exif.timestamp : 0).format(window.options.dateDivider);
+    const curr = moment(object.exif.timestamp).format(window.options.dateDivider);
+    const prev = moment(previous ? previous.exif.timestamp : 0).format(window.options.dateDivider);
     if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
   }
   if (window.options.listDivider === 'size') {
@@ -131,7 +131,7 @@ async function printResult(object) {
     location += ` | ${object.location.city}, ${object.location.state} ${object.location.country} (near ${object.location.near})`;
   }
 
-  const timestamp = moment(1000 * object.exif.timestamp).format(window.options.dateShort);
+  const timestamp = moment(object.exif.timestamp).format(window.options.dateShort);
   const link = `<a class="download fa fa-arrow-alt-circle-down" href="${object.image}" download></a>`;
   const divItem = document.createElement('div');
   divItem.className = 'listitem';
@@ -197,25 +197,12 @@ async function enumerateClasses() {
   $('#classes').html('');
   const classesList = [];
   for (const item of window.filtered) {
-    if (item.classify) {
-      for (const tag of item.classify) {
-        const found = classesList.find((a) => a.tag === tag.class);
+    for (const tag of item.tags) {
+      const t = Object.values(tag)[0].toString().split(',')[0];
+      if (!['media', 'classified', 'alternative', 'detected', 'described', 'jpg', 'exif'].includes(t)) {
+        const found = classesList.find((a) => a.tag === t);
         if (found) found.count += 1;
-        else classesList.push({ tag: tag.class, count: 1 });
-      }
-    }
-    if (item.alternative) {
-      for (const tag of item.alternative) {
-        const found = classesList.find((a) => a.tag === tag.class);
-        if (found) found.count += 1;
-        else classesList.push({ tag: tag.class, count: 1 });
-      }
-    }
-    if (item.detect) {
-      for (const tag of item.detect) {
-        const found = classesList.find((a) => a.tag === tag.class);
-        if (found) found.count += 1;
-        else classesList.push({ tag: tag.class, count: 1 });
+        else classesList.push({ tag: t, count: 1 });
       }
     }
   }
@@ -295,7 +282,7 @@ async function folderHandlers() {
         break;
       case 'class':
         window.filtered = window.results.filter((a) => {
-          const tags = JSON.stringify(a.classify || '') + JSON.stringify(a.alternative || '') + JSON.stringify(a.detect || '');
+          const tags = JSON.stringify(a.tags);
           return tags.includes(path);
         });
         log.result(`Showing class: ${path}`);
@@ -464,14 +451,7 @@ async function initUser() {
 
 // show/hide navigation bar elements
 function showNavbar(elem) {
-  if (elem) {
-    elem.toggle('slow', () => {
-      if (elem.css('display') === 'none') $('#results').css('margin-top', 0);
-      else $('#results').css('margin-top', `${elem.height()}px`);
-    });
-  } else {
-    $('#results').css('margin-top', 0);
-  }
+  if (elem) elem.toggle('slow');
   // hide the rest
   elem = elem || $('#main');
   if (elem && elem[0] !== $('#popup')[0]) $('#popup').toggle(false);
