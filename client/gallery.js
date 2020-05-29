@@ -1,4 +1,3 @@
-/* global ImageViewer */
 /* eslint-disable no-underscore-dangle */
 
 import $ from 'jquery';
@@ -8,18 +7,15 @@ import marked from 'marked';
 import Popper from '@popperjs/core';
 import config from './config.js';
 import log from './log.js';
+import details from './details.js';
 import pwa from './pwa-register.js';
 
 // global variables
-const results = [];
-let filtered = [];
-let folderList = [];
-let viewer;
-let last;
-let slideshowRunning = false;
+window.results = [];
+window.window.filtered = [];
 
 // user configurable options, stored in browsers local storage
-const options = {
+window.options = {
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
   set listFolders(val) { return localStorage.setItem('listFolders', val); },
   get listDetails() { return localStorage.getItem('listDetails') ? localStorage.getItem('listDetails') === 'true' : true; },
@@ -56,6 +52,7 @@ const options = {
   set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
 };
 
+// google analytics
 // eslint-disable-next-line prefer-rest-params
 function gtag() { window.dataLayer.push(arguments); }
 
@@ -74,273 +71,27 @@ function showTip(parent, text) {
   }, 3000);
 }
 
-// draw boxes for detected objects, faces and face elements
-function drawBoxes(object) {
-  if (object) last = object;
-  const img = document.getElementsByClassName('iv-image')[0];
-  const canvas = document.getElementById('popup-canvas');
-  canvas.style.position = 'absolute';
-  canvas.style.left = `${img.offsetLeft}px`;
-  canvas.style.top = `${img.offsetTop}px`;
-  canvas.width = img.width;
-  canvas.height = img.height;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.linewidth = 2;
-  ctx.font = '16px Roboto';
-  // eslint-disable-next-line no-param-reassign
-  if (!object) object = last;
-  if (!object) return;
-
-  const resizeX = img.width / object.processedSize.width;
-  const resizeY = img.height / object.processedSize.height;
-
-  // draw detected objects
-  if (options.viewBoxes && object.detect) {
-    ctx.strokeStyle = 'lightyellow';
-    ctx.fillStyle = 'lightyellow';
-    for (const obj of object.detect) {
-      const x = obj.box[0] * resizeX;
-      const y = obj.box[1] * resizeY;
-      ctx.beginPath();
-      ctx.rect(x, y, obj.box[2] * resizeX, obj.box[3] * resizeY);
-      ctx.stroke();
-      ctx.fillText(`${(100 * obj.score).toFixed(0)}% ${obj.class}`, x + 2, y + 18);
-    }
-  }
-
-  // draw faces
-  if (options.viewFaces && object.person) {
-    for (const i in object.person) {
-      if (object.person[i].box) {
-        // draw box around face
-        const x = object.person[i].box.x * resizeX;
-        const y = object.person[i].box.y * resizeY;
-        ctx.strokeStyle = 'deepskyblue';
-        ctx.fillStyle = 'deepskyblue';
-        ctx.beginPath();
-        ctx.rect(x, y, object.person[i].box.width * resizeX, object.person[i].box.height * resizeY);
-        ctx.stroke();
-        ctx.fillText(`face#${1 + parseInt(i, 10)}`, x + 2, y + 18);
-
-        // draw face points
-        ctx.fillStyle = 'lightblue';
-        const pointSize = 2;
-        for (const pt of object.person[i].points) {
-          ctx.beginPath();
-          ctx.arc(pt.x * resizeX, pt.y * resizeY, pointSize, 0, 2 * Math.PI);
-          ctx.fill();
-        }
-        /*
-        const jaw = person.boxes.landmarks.getJawOutline() || [];
-        const nose = person.boxes.landmarks.getNose() || [];
-        const mouth = person.boxes.landmarks.getMouth() || [];
-        const leftEye = person.boxes.landmarks.getLeftEye() || [];
-        const rightEye = person.boxes.landmarks.getRightEye() || [];
-        const leftEyeBrow = person.boxes.landmarks.getLeftEyeBrow() || [];
-        const rightEyeBrow = person.boxes.landmarks.getRightEyeBrow() || [];
-        faceDetails = `Points jaw:${jaw.length} mouth:${mouth.length} nose:${nose.length} left-eye:${leftEye.length} right-eye:${rightEye.length} left-eyebrow:${leftEyeBrow.length} right-eyebrow:${rightEyeBrow.length}`;
-        */
-      }
-    }
-  }
-}
-
-function JSONtoStr(json) {
-  if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
-}
-
-async function resizeDetailsImage(object) {
-  // wait for image to be loaded silly way as on load event doesn't trigger consistently
-  const img = document.getElementsByClassName('iv-image');
-  const width = $('#popup').width();
-  const height = $('#popup').height();
-  if (!img || !img[0] || !img[0].complete) {
-    setTimeout(() => resizeDetailsImage(object), 25);
-  } else {
-    // move details panel to side or bottom depending on screen aspect ratio
-    // use 70% or 100% depending if details text is enabled
-    if (width > height) {
-      $('#popup').css('display', 'flex');
-      if (options.viewDetails) {
-        $('#popup-details').width(options.listDetailsWidth * width);
-        $('#popup-image').width((1 - options.listDetailsWidth) * width);
-      } else {
-        $('#popup-details').width('0');
-        $('#popup-image').width(width);
-      }
-      $('#popup-image').height(height);
-      $('#popup-details').height(height);
-    } else {
-      $('#popup').css('display', 'block');
-      $('#popup-details').width(width);
-      $('#popup-details').height(options.listDetailsWidth * height);
-      $('#popup-image').width(width);
-      if (options.viewDetails) $('#popup-image').height((1 - options.listDetailsWidth) * height);
-      else $('#popup-image').height(height);
-    }
-
-    // zoom to fill usable screen area
-    const zoomX = $('.iv-image-view').width() / $('.iv-image').width();
-    const zoomY = $('.iv-image-view').height() / $('.iv-image').height();
-    await viewer.zoom(100 * Math.min(zoomX, zoomY));
-
-    // move image to top left corner
-    const offsetY = $('.iv-image').css('top');
-    const offsetX = $('.iv-image').css('left');
-    $('.iv-image').css('margin-top', `-${offsetY}`);
-    $('.iv-image').css('margin-left', `-${offsetX}`);
-    $('#popup-image').css('cursor', 'zoom-in');
-
-    // draw detection boxes and faces
-    drawBoxes(object);
-  }
-}
-
-// show details popup
-async function showDetails(thumb, img) {
-  $('#popup-image').css('cursor', 'wait');
-  if (options.viewRaw) {
-    log.result(`Loading Raw image: ${img}`);
-    window.open(img, '_blank');
-    return;
-  }
-  $('body').css('cursor', 'wait');
-  log.result(`Loading image: ${img}`);
-
-  $('#popup').toggle(true);
-  $('#optionsview').toggle(true);
-
-  if (!viewer) {
-    const div = document.getElementById('popup-image');
-    viewer = new ImageViewer(div, { zoomValue: 100, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
-  }
-  // http://ignitersworld.com/lab/imageViewer.html
-  // viewer._events.imageLoad = imageLoad();
-  viewer.load(thumb, img);
-
-  const object = filtered.find((a) => a.image === img);
-  if (!object) return;
-
-  resizeDetailsImage(object);
-
-  // handle pan&zoom redraws
-  $('.iv-large-image').click(() => drawBoxes());
-  $('.iv-large-image').on('wheel', () => drawBoxes());
-
-  let classified = 'Classified ';
-  if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
-  let alternative = 'Alternate ';
-  if (object.alternative) for (const obj of object.alternative) alternative += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
-
-  let detected = 'Detected ';
-  if (object.detect) for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
-
-  let person = '';
-  let nsfw = '';
-  for (const i in object.person) {
-    if (object.person[i].age) {
-      person += `Person ${1 + parseInt(i, 10)} | 
-          Gender: ${(100 * object.person[i].scoreGender).toFixed(0)}% ${object.person[i].gender} | 
-          Age: ${object.person[i].age.toFixed(1)} | 
-          Emotion: ${(100 * object.person[i].scoreEmotion).toFixed(0)}% ${object.person[i].emotion}<br>`;
-    }
-    if (object.person[i].class) {
-      nsfw += `Class: ${(100 * object.person[i].scoreClass).toFixed(0)}% ${object.person[i].class} `;
-    }
-    if (object.person.length === 1) person = person.replace('Person 1', 'Person');
-  }
-
-  let desc = '<h2>Lexicon:</h2><ul>';
-  if (object.descriptions) {
-    for (const description of object.descriptions) {
-      for (const lines of description) {
-        desc += `<li><b>${lines.name}</b>: <i>${lines.desc}</i></li>`;
-      }
-      desc += '<br>';
-    }
-  }
-  desc += '</ul>';
-
-  let exif = '';
-  if (object.exif) {
-    const mp = (object.naturalSize.width * object.naturalSize.height / 1000000).toFixed(1);
-    const complexity = mp / object.exif.bytes;
-    if (object.exif.make) exif += `Camera: ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
-    if (object.exif.bytes) exif += `Size: ${mp} MP in ${object.exif.bytes.toLocaleString()} bytes with compression factor ${complexity.toFixed(2)}<br>`;
-    if (object.exif.created) exif += `Taken: ${moment(1000 * object.exif.created).format(options.dateLong)} Edited: ${moment(1000 * object.exif.modified).format(options.dateLong)}<br>`;
-    if (object.exif.software) exif += `Software: ${object.exif.software}<br>`;
-    if (object.exif.exposure) exif += `Settings: ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
-  }
-  let location = '';
-  if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
-  if (object.exif && object.exif.lat) location += `Coordinates: Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)}<br>`;
-
-  $('#details-download').off();
-  $('#details-download').click(() => window.open(object.image, '_blank'));
-  // const btnDownload = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
-  const html = `
-      <h2>Image: ${object.image}</h2>
-      Image size: ${object.naturalSize.width} x ${object.naturalSize.height}
-      <h2>Image Data</h2>
-      ${exif}
-      <h2>Location</h2>
-      ${location}
-      <h2>${classified}</h2>
-      <h2>${alternative}</h2>
-      <h2>${detected}</h2>
-      <h2>${person} ${nsfw}</h2>
-      ${desc}
-      <h2>Tags</h2>
-      <h2>Processing Details</h2>
-        Total time ${object.perf.total.toFixed(0)} ms<br>
-        Processed on ${moment(object.processed).format(options.dateLong)} in ${object.perf.load.toFixed(0)} ms<br>
-        Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
-        Alternative using ${config.alternative ? config.alternative.name : 'N/A'}<br>
-        Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
-        Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)} ms<br>
-      <i>${JSONtoStr(object.tags)}</i>
-      </div>
-    `;
-  if (options.viewDetails) $('#popup-details').html(html);
-  $('#popup-details').toggle(options.viewDetails);
-  $('body').css('cursor', 'pointer');
-}
-
-async function showNextDetails(left) {
-  const img = $('.iv-image');
-  if (!img || img.length < 1) return;
-  const url = new URL(img[0].src);
-  let id = filtered.findIndex((a) => a.image === decodeURI(url.pathname.substr(1)));
-  if (id === -1) return;
-  id = left ? id - 1 : id + 1;
-  if (id < 0) id = filtered.length - 1;
-  if (id > filtered.length - 1) id = 0;
-  const target = filtered[id];
-  showDetails(target.thumbnail, target.image);
-}
-
 // adds dividiers based on sort order
 let previous;
 function addDividers(object) {
-  if (options.listDivider === 'month') {
-    const curr = moment(1000 * object.exif.timestamp).format(options.dateDivider);
-    const prev = moment(previous ? 1000 * previous.exif.timestamp : 0).format(options.dateDivider);
+  if (window.options.listDivider === 'month') {
+    const curr = moment(1000 * object.exif.timestamp).format(window.options.dateDivider);
+    const prev = moment(previous ? 1000 * previous.exif.timestamp : 0).format(window.options.dateDivider);
     if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
   }
-  if (options.listDivider === 'size') {
+  if (window.options.listDivider === 'size') {
     const curr = Math.round(object.pixels / 1000 / 1000);
     const prev = Math.round((previous ? previous.pixels : 1) / 1000 / 1000);
     if (curr !== prev) $('#results').append(`<div class="row divider">Size: ${curr} MP</div>`);
   }
-  if (options.listDivider === 'folder') {
+  if (window.options.listDivider === 'folder') {
     const curr = object.image.substr(0, object.image.lastIndexOf('/'));
     const prev = previous ? previous.image.substr(0, previous.image.lastIndexOf('/')) : 'none';
     if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
   }
 }
 
-// print results strip with thumbnail for a given object
+// print results element with thumbnail and description for a given object
 async function printResult(object) {
   addDividers(object);
   previous = object;
@@ -381,7 +132,7 @@ async function printResult(object) {
     location += ` | ${object.location.city}, ${object.location.state} ${object.location.country} (near ${object.location.near})`;
   }
 
-  const timestamp = moment(1000 * object.exif.timestamp).format(options.dateShort);
+  const timestamp = moment(1000 * object.exif.timestamp).format(window.options.dateShort);
   const link = `<a class="download fa fa-arrow-alt-circle-down" href="${object.image}" download></a>`;
   const divItem = document.createElement('div');
   divItem.className = 'listitem';
@@ -389,7 +140,7 @@ async function printResult(object) {
   const root = window.user && window.user.root ? window.user.root : 'media/';
   divItem.innerHTML = `
     <div class="col thumbnail">
-      <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width=${options.listThumbSize}px height=${options.listThumbSize}px>
+      <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px>
     </div>
     <div id="desc-${object.id}" class="col description">
       <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>${link}<br>
@@ -403,28 +154,28 @@ async function printResult(object) {
   $('#results').append(divItem);
   const divThumb = document.getElementById(`thumb-${object.id}`);
   divThumb.img = object.image;
-  divThumb.addEventListener('click', (evt) => showDetails(divThumb.src, evt.target.img));
+  divThumb.addEventListener('click', (evt) => details.show(divThumb.src, evt.target.img));
 }
 
+// resize gallery view depending on user configuration
 function resizeResults() {
   const thumbSize = parseInt($('#thumbsize')[0].value, 10);
-  if (thumbSize !== options.listThumbSize) {
-    options.listThumbSize = thumbSize;
-    $('#thumblabel').text(`Size: ${options.listThumbSize}px`);
-    $('#thumbsize')[0].value = options.listThumbSize;
-    $('.thumbnail').width(options.listThumbSize);
-    $('.thumbnail').height(options.listThumbSize);
-    // $('.listitem').css('min-height', `${Math.max(144, 16 + options.listThumbSize)}px`);
-    // $('.listitem').css('max-height', '144px');
-    $('.listitem').css('min-height', `${16 + options.listThumbSize}px`);
-    $('.listitem').css('max-height', `${16 + options.listThumbSize}px`);
+  if (thumbSize !== window.options.listThumbSize) {
+    window.options.listThumbSize = thumbSize;
+    $('#thumblabel').text(`Size: ${window.options.listThumbSize}px`);
+    $('#thumbsize')[0].value = window.options.listThumbSize;
+    $('.thumbnail').width(window.options.listThumbSize);
+    $('.thumbnail').height(window.options.listThumbSize);
+    $('.listitem').css('min-height', `${16 + window.options.listThumbSize}px`);
+    $('.listitem').css('max-height', `${16 + window.options.listThumbSize}px`);
   }
 }
 
+// extracts all locations from loaded images and builds sidebar menu
 async function enumerateLocations() {
   $('#locations').html('');
   const locationsList = [];
-  for (const item of filtered) {
+  for (const item of window.filtered) {
     const loc = `${item.location.near}, ${item.location.state || item.location.country}`;
     if (item.location && item.location.near && !locationsList.includes(loc)) locationsList.push(loc);
   }
@@ -442,10 +193,11 @@ async function enumerateLocations() {
   }
 }
 
+// exctract top classe from classification & detection and builds sidebar menu
 async function enumerateClasses() {
   $('#classes').html('');
   const classesList = [];
-  for (const item of filtered) {
+  for (const item of window.filtered) {
     if (item.classify) {
       for (const tag of item.classify) {
         const found = classesList.find((a) => a.tag === tag.class);
@@ -469,7 +221,7 @@ async function enumerateClasses() {
     }
   }
   classesList.sort((a, b) => b.count - a.count);
-  classesList.length = options.topClasses;
+  classesList.length = window.options.topClasses;
   for (const item of classesList) {
     const html = `
       <li id="loc-${item.tag}">
@@ -482,6 +234,9 @@ async function enumerateClasses() {
   }
 }
 
+// builds folder list from all loaded images and builds sidebar menu
+// can be used with entire image list or per-object
+let folderList = [];
 async function enumerateFolders(input) {
   $('#folders').html('');
   if (input) {
@@ -490,7 +245,7 @@ async function enumerateFolders(input) {
     if (!folderList.find((a) => a.path === path)) folderList.push({ path, folders });
   } else {
     folderList = [];
-    for (const item of filtered) {
+    for (const item of window.filtered) {
       const path = item.image.substr(0, item.image.lastIndexOf('/'));
       const folders = path.split('/').filter((a) => a !== '');
       if (!folderList.find((a) => a.path === path)) folderList.push({ path, folders });
@@ -521,6 +276,7 @@ async function enumerateFolders(input) {
   }
 }
 
+// handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
   $('.folder').off();
   $('.folder').click((evt) => {
@@ -529,18 +285,17 @@ async function folderHandlers() {
       case 'folder':
         $('body').css('cursor', 'wait');
         log.result(`Showing path: ${path}`);
-        // eslint-disable-next-line no-case-declarations
         const root = window.user && window.user.root ? window.user.root : 'media/';
-        if (path === root) filtered = results;
-        else filtered = results.filter((a) => a.image.startsWith(path));
+        if (path === root) window.filtered = window.results;
+        else window.filtered = window.results.filter((a) => a.image.startsWith(path));
         break;
       case 'location':
         log.result(`Showing location: ${path}`);
-        if (path !== 'Unknown') filtered = results.filter((a) => path.startsWith(a.location.near));
-        else filtered = results.filter((a) => (!a.location || !a.location.near));
+        if (path !== 'Unknown') window.filtered = window.results.filter((a) => path.startsWith(a.location.near));
+        else window.filtered = window.results.filter((a) => (!a.location || !a.location.near));
         break;
       case 'class':
-        filtered = results.filter((a) => {
+        window.filtered = window.results.filter((a) => {
           const tags = JSON.stringify(a.classify || '') + JSON.stringify(a.alternative || '') + JSON.stringify(a.detect || '');
           return tags.includes(path);
         });
@@ -553,16 +308,19 @@ async function folderHandlers() {
   });
 }
 
+// starts slideshow
+let slideshowRunning = false;
 async function startSlideshow() {
   if (!slideshowRunning) return;
-  showNextDetails(false);
+  details.next(false);
   setTimeout(() => {
     startSlideshow();
-  }, options.slideDelay);
+  }, window.options.slideDelay);
 }
 
+// redraws gallery view and rebuilds sidebar menu
 async function redrawResults(generateFolders = true) {
-  $('#number').html(filtered.length);
+  $('#number').html(window.filtered.length);
   $('#results').html('');
   if (generateFolders) {
     enumerateFolders();
@@ -570,12 +328,13 @@ async function redrawResults(generateFolders = true) {
     enumerateClasses();
     folderHandlers();
   }
-  for await (const obj of filtered) printResult(obj);
-  $('.description').toggle(options.listDetails);
+  for await (const obj of window.filtered) printResult(obj);
+  $('.description').toggle(window.options.listDetails);
   await resizeResults();
   $('body').css('cursor', 'pointer');
 }
 
+// used by filterresults
 function filterWord(object, word) {
   if (!object) return null;
   const skip = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during', 'on'];
@@ -591,21 +350,22 @@ function filterWord(object, word) {
   return res;
 }
 
+// filters images based on search strings
 function filterResults(words) {
   $('body').css('cursor', 'wait');
-  filtered = results;
+  window.filtered = window.results;
   previous = null;
   let foundWords = 0;
   for (const word of words.split(' ')) {
-    filtered = filterWord(filtered, word);
-    foundWords += (filtered && filtered.length > 0) ? 1 : 0;
+    window.filtered = filterWord(window.filtered, word);
+    foundWords += (window.filtered && window.filtered.length > 0) ? 1 : 0;
   }
-  if (filtered && filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${filtered.length || 0} results out of ${results.length} matches`);
+  if (window.filtered && window.filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} results out of ${window.results.length} matches`);
   else log.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
   redrawResults();
 }
 
-// Fisher-Yates (aka Knuth) Shuffle
+// randomize image order using Fisher-Yates (aka Knuth) shuffle
 function shuffle(array) {
   let currentIndex = array.length;
   let temporaryValue;
@@ -614,78 +374,78 @@ function shuffle(array) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex -= 1;
     temporaryValue = array[currentIndex];
-    // eslint-disable-next-line no-param-reassign
     array[currentIndex] = array[randomIndex];
-    // eslint-disable-next-line no-param-reassign
     array[randomIndex] = temporaryValue;
   }
   return array;
 }
 
+// find duplicate images based on pre-computed sha-256 hash
 function findDuplicates() {
   $('body').css('cursor', 'wait');
   previous = null;
   let duplicates = [];
-  for (const obj of results) {
-    const items = results.filter((a) => a.hash === obj.hash);
+  for (const obj of window.results) {
+    const items = window.results.filter((a) => a.hash === obj.hash);
     if (items.length !== 1) duplicates.push(...items);
   }
   duplicates = [...new Set(duplicates)];
-  if (filtered.length === duplicates.length) filtered = results;
+  if (window.filtered.length === duplicates.length) window.filtered = window.results;
   else {
-    filtered = [...new Set(duplicates)];
-    log.result(`Duplicates: ${filtered.length}`);
+    window.filtered = [...new Set(duplicates)];
+    log.result(`Duplicates: ${window.filtered.length}`);
   }
   redrawResults();
 }
 
+// sorts images based on given sort order
 function sortResults(sort) {
   $('body').css('cursor', 'wait');
   log.result(`Sorting: ${sort}`);
-  if (!filtered || filtered.length === 0) filtered = results;
-  if (sort.includes('random')) shuffle(filtered);
+  if (!window.filtered || window.filtered.length === 0) window.filtered = window.results;
+  if (sort.includes('random')) shuffle(window.filtered);
   previous = null;
   // sort by
-  if (sort.includes('alpha-down')) filtered.sort((a, b) => (a.image > b.image ? 1 : -1));
-  if (sort.includes('alpha-up')) filtered.sort((a, b) => (a.image < b.image ? 1 : -1));
-  if (sort.includes('numeric-down')) filtered.sort((a, b) => (b.exif.timestamp - a.exif.timestamp));
-  if (sort.includes('numeric-up')) filtered.sort((a, b) => (a.exif.timestamp - b.exif.timestamp));
-  if (sort.includes('amount-down')) filtered.sort((a, b) => (b.pixels - a.pixels));
-  if (sort.includes('amount-up')) filtered.sort((a, b) => (a.pixels - b.pixels));
-  // how to group
-  if (sort.includes('numeric-down') || sort.includes('numeric-up')) options.listDivider = 'month';
-  else if (sort.includes('amount-down') || sort.includes('amount-up')) options.listDivider = 'size';
-  else if (sort.includes('alpha-down') || sort.includes('alpha-up')) options.listDivider = 'folder';
-  else options.listDivider = '';
+  if (sort.includes('alpha-down')) window.filtered.sort((a, b) => (a.image > b.image ? 1 : -1));
+  if (sort.includes('alpha-up')) window.filtered.sort((a, b) => (a.image < b.image ? 1 : -1));
+  if (sort.includes('numeric-down')) window.filtered.sort((a, b) => (b.exif.timestamp - a.exif.timestamp));
+  if (sort.includes('numeric-up')) window.filtered.sort((a, b) => (a.exif.timestamp - b.exif.timestamp));
+  if (sort.includes('amount-down')) window.filtered.sort((a, b) => (b.pixels - a.pixels));
+  if (sort.includes('amount-up')) window.filtered.sort((a, b) => (a.pixels - b.pixels));
+  // group by
+  if (sort.includes('numeric-down') || sort.includes('numeric-up')) window.options.listDivider = 'month';
+  else if (sort.includes('amount-down') || sort.includes('amount-up')) window.options.listDivider = 'size';
+  else if (sort.includes('alpha-down') || sort.includes('alpha-up')) window.options.listDivider = 'folder';
+  else window.options.listDivider = '';
   $('#optionslist').toggle(false);
   redrawResults();
 }
 
-// calls main detectxion and then print results for all images matching spec
+// loads imagesm, displays gallery and enumerates sidebar
 async function loadGallery(limit) {
   $('body').css('cursor', 'wait');
   const t0 = window.performance.now();
   log.result('Loading gallery ...');
-  results.length = 0;
+  window.results.length = 0;
   oboe(`/api/get?limit=${limit}&find=all`)
     .node('{image}', (image) => {
-      // eslint-disable-next-line no-param-reassign
-      image.id = results.length + 1;
-      results.push(image);
-      $('#number').text(results.length);
+      image.id = window.results.length + 1;
+      window.results.push(image);
+      $('#number').text(window.results.length);
       printResult(image);
       enumerateFolders(image.image);
     })
     .done((things) => {
       const t1 = window.performance.now();
-      const size = JSON.stringify(results).length;
+      const size = JSON.stringify(window.results).length;
       log.result(`Received ${things.length} images in ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes (${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec)`);
-      filtered = results;
+      window.filtered = window.results;
       resizeResults();
-      sortResults(options.listSortOrder);
+      sortResults(window.options.listSortOrder);
     });
 }
 
+// called on startup to get logged in user details from server
 async function initUser() {
   const res = await fetch('/api/user');
   if (res.ok) window.user = await res.json();
@@ -697,12 +457,13 @@ async function initUser() {
   } else {
     window.location = '/client/auth.html';
   }
-  $('body').css('fontSize', options.fontSize);
-  $('#folderbar').toggle(options.listFolders);
-  $('.description').toggle(options.listDetails);
-  $('#thumbsize')[0].value = options.listThumbSize;
+  $('body').css('fontSize', window.options.fontSize);
+  $('#folderbar').toggle(window.options.listFolders);
+  $('.description').toggle(window.options.listDetails);
+  $('#thumbsize')[0].value = window.options.listThumbSize;
 }
 
+// show/hide navigation bar elements
 function showNavbar(elem) {
   if (elem) {
     elem.toggle('slow', () => {
@@ -713,7 +474,6 @@ function showNavbar(elem) {
     $('#results').css('margin-top', 0);
   }
   // hide the rest
-  // eslint-disable-next-line no-param-reassign
   elem = elem || $('#main');
   if (elem && elem[0] !== $('#popup')[0]) $('#popup').toggle(false);
   if (elem && elem[0] !== $('#docs')[0]) $('#docs').toggle(false);
@@ -727,8 +487,8 @@ function showNavbar(elem) {
 async function initHotkeys() {
   $('html').keydown(() => {
     const current = $('#results').scrollTop();
-    const line = options.listThumbSize + 16;
-    const page = $('#results').height() - options.listThumbSize;
+    const line = window.options.listThumbSize + 16;
+    const page = $('#results').height() - window.options.listThumbSize;
     const bottom = $('#results').prop('scrollHeight');
     $('#results').stop();
     switch (event.keyCode) {
@@ -738,40 +498,96 @@ async function initHotkeys() {
       case 34: $('#results').animate({ scrollTop: current + page }, 400); break; // key=pgdn; scroll page down
       case 36: $('#results').animate({ scrollTop: 0 }, 1000); break; // key=home; scroll to top
       case 35: $('#results').animate({ scrollTop: bottom }, 1000); break; // key=end; scroll to bottom
-      case 37: showNextDetails(true); break; // key=left; previous image in details view
-      case 39: showNextDetails(false); break; // key=right; next image in details view
+      case 37: details.next(true); break; // key=left; previous image in details view
+      case 39: details.next(false); break; // key=right; next image in details view
       case 191: $('#btn-search').click(); break; // key=/; open search input
       case 190: $('#btn-sort').click(); break; // key=.; open sort options
       case 188: $('#btn-desc').click(); break; // key=,; show/hide list descriptions
       case 220: loadGallery(); break; // key=\; refresh all
-      case 27:
+      case 27: // key=esc; close all
         $('#popup').toggle(false);
         $('#searchbar').toggle(false);
         $('#optionslist').toggle(false);
         $('#optionsview').toggle(false);
         $('#popup').toggle(false);
         slideshowRunning = false;
-        // filterResults('');
-        break; // key=esc; close all
+        break;
       default: // log.result('Unhandled keydown event', event.keyCode);
     }
   });
 }
 
-// pre-fetching DOM elements to avoid multiple runtime lookups
-function initHandlers() {
+// navbar details - used when in details view
+function initDetailsHandlers() {
+  // handle clicks inside details view
+  $('#popup').click(() => {
+    if (event.screenX < 50) details.next(true);
+    else if (event.clientX > $('#popup').width() - 50) details.next(false);
+    else if (!event.target.className.includes('iv-large-image')) {
+      details.boxes(null);
+      $('#popup').toggle('fast');
+      $('#optionsview').toggle(false);
+    }
+  });
+
+  // navbar details previous
+  $('#details-previous').click(() => details.next(true));
+
+  // navbar details close
+  $('#details-close').click(() => {
+    details.boxes(null);
+    slideshowRunning = false;
+    $('#popup').toggle('fast');
+    $('#optionsview').toggle(false);
+  });
+
+  // navbar details next
+  $('#details-next').click(() => details.next(false));
+
+  // navbar details show/hide details
+  $('#details-desc').click(() => {
+    $('#details-desc').toggleClass('fa-comment fa-comment-slash');
+    window.options.viewDetails = !window.options.viewDetails;
+    $('#popup-details').toggle(window.options.viewDetails);
+  });
+
+  // navbar details show/hide detection boxes
+  $('#details-boxes').click(() => {
+    $('#details-boxes').toggleClass('fa-store fa-store-slash');
+    window.options.viewBoxes = !window.options.viewBoxes;
+    details.boxes();
+  });
+
+  // navbar details show/hide faces
+  $('#details-faces').click(() => {
+    $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
+    window.options.viewFaces = !window.options.viewFaces;
+    details.boxes();
+  });
+
+  // navbar details download image
+  $('#details-raw').click(() => {
+    $('#details-raw').toggleClass('fa-video fa-video-slash');
+    window.options.viewRaw = !window.options.viewRaw;
+  });
+}
+
+function initSidebarHandlers() {
+  $('#folderstitle').click(() => $('#folders').toggle('slow'));
+  $('#locationstitle').click(() => $('#locations').toggle('slow'));
+  $('#classestitle').click(() => $('#classes').toggle('slow'));
+}
+
+// initializes all mouse handlers for main menu in list view
+function initListHandlers() {
+  // navbar user
   $('#btn-user').click(() => {
     showNavbar($('#userbar'));
-    $('#imagenum')[0].value = options.listLimit;
+    $('#imagenum')[0].value = window.options.listLimit;
     $('#imagenum')[0].focus();
   });
 
-  $('#btn-load').click((evt) => {
-    options.listLimit = parseInt($('#imagenum')[0].value, 10);
-    showTip(evt.target, `Loading maximum of ${options.listLimit} latest images`);
-    loadGallery(options.listLimit);
-  });
-
+  // navline user input
   $('#imagenum').keyup(() => {
     if (event.keyCode === 13) {
       $('#btn-load').click();
@@ -779,36 +595,14 @@ function initHandlers() {
     }
   });
 
-  $('#btn-logout').click(() => {
-    showNavbar();
-    $.post('/client/auth.html');
-    if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
-    $('#btn-user').toggleClass('fa-user-slash fa-user');
-    window.location.reload(false);
+  // navline user load
+  $('#btn-load').click((evt) => {
+    window.options.listLimit = parseInt($('#imagenum')[0].value, 10);
+    showTip(evt.target, `Loading maximum of ${window.options.listLimit} latest images`);
+    loadGallery(window.options.listLimit);
   });
 
-  $('#btn-search').click(() => {
-    showNavbar($('#searchbar'));
-    $('#btn-search').toggleClass('fa-search fa-search-location');
-    $('#search-input').focus();
-  });
-
-  $('#btn-list').click(() => {
-    showNavbar($('#optionslist'));
-  });
-
-  $('#btn-view').click(() => {
-    showNavbar($('#optionsview'));
-  });
-
-  $('#btn-doc').click(async () => {
-    showNavbar($('#docs'));
-    $('#docs').click(() => $('#docs').toggle('fast'));
-    const res = await fetch('/README.md');
-    const md = await res.text();
-    if (md) $('#docs').html(marked(md));
-  });
-
+  // navline user update db
   // starts image processing in a separate window
   $('#btn-update').click(() => {
     if (window.user.admin) {
@@ -820,127 +614,99 @@ function initHandlers() {
     }
   });
 
-  // starts live video detection in a separate window
-  $('#btn-video').click(() => {
-    log.result('Starting Live Video interface ...');
-    window.open('/video', '_blank');
+  // navline user docs
+  $('#btn-doc').click(async () => {
+    showNavbar($('#docs'));
+    $('#docs').click(() => $('#docs').toggle('fast'));
+    const res = await fetch('/README.md');
+    const md = await res.text();
+    if (md) $('#docs').html(marked(md));
   });
 
-  $('#btn-slide').click(() => {
-    log.result('Starting slide show ...');
-    slideshowRunning = true;
-    showDetails(filtered[0].image, filtered[0].image);
-    setTimeout(startSlideshow, options.slideDelay);
+  // navline user logout
+  $('#btn-logout').click(() => {
+    showNavbar();
+    $.post('/client/auth.html');
+    if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
+    $('#btn-user').toggleClass('fa-user-slash fa-user');
+    window.location.reload(false);
   });
 
+  // navbar search
+  $('#btn-search').click(() => {
+    showNavbar($('#searchbar'));
+    $('#btn-search').toggleClass('fa-search fa-search-location');
+    $('#search-input').focus();
+  });
+
+  // navline search input
   $('#search-input').keyup(() => {
     event.preventDefault();
     if (event.keyCode === 191) $('#search-input')[0].value = ''; // reset on key=/
     if (event.keyCode === 13) filterResults($('#search-input')[0].value);
   });
 
-  $('#btn-searchnow').click(() => {
-    filterResults($('#search-input')[0].value);
-  });
+  // navline search ok
+  $('#btn-searchnow').click(() => filterResults($('#search-input')[0].value));
 
+  // navline search cancel
   $('#btn-resetsearch').click(() => {
     $('#search-input')[0].value = '';
     filterResults('');
   });
 
+  // navbar list
+  $('#btn-list').click(() => showNavbar($('#optionslist')));
+
+  // navline list sidebar
   $('#btn-folder').click(() => {
     $('#folderbar').toggle('slow');
     $('#btn-folder').toggleClass('fa-folder fa-folder-open');
-    options.listFolders = !options.listFolders;
+    window.options.listFolders = !window.options.listFolders;
   });
 
+  // navline list descriptions
   $('#btn-desc').click(() => {
-    options.listDetails = !options.listDetails;
+    window.options.listDetails = !window.options.listDetails;
     $('.description').toggle('slow');
     $('#btn-desc').toggleClass('fa-comment fa-comment-slash');
   });
 
+  // navline list duplicates
   $('#btn-duplicates').click(() => {
     $('#btn-duplicates').toggleClass('fa-eye fa-eye-slash');
     findDuplicates();
   });
 
+  // navline list sort
   $('.sort').click((evt) => {
-    options.listSortOrder = evt.target.className;
+    window.options.listSortOrder = evt.target.className;
     sortResults(evt.target.className);
   });
 
-  $('#thumbsize').on('input', () => {
-    resizeResults();
+  // navline list thumbnail size
+  $('#thumbsize').on('input', () => resizeResults());
+
+  // navbar slideshow
+  $('#btn-slide').click(() => {
+    log.result('Starting slide show ...');
+    slideshowRunning = true;
+    details.show(window.filtered[0].image, window.filtered[0].image);
+    setTimeout(startSlideshow, window.options.slideDelay);
   });
 
-  $('#details-close').click(() => {
-    drawBoxes(null);
-    slideshowRunning = false;
-    $('#popup').toggle('fast');
-    $('#optionsview').toggle(false);
+  // navbar livevideo
+  // starts live video detection in a separate window
+  $('#btn-video').click(() => {
+    log.result('Starting Live Video interface ...');
+    window.open('/video', '_blank');
   });
 
-  $('#details-previous').click(() => {
-    showNextDetails(true);
-  });
-
-  $('#details-next').click(() => {
-    showNextDetails(false);
-  });
-
-  $('#details-desc').click(() => {
-    $('#details-desc').toggleClass('fa-comment fa-comment-slash');
-    options.viewDetails = !options.viewDetails;
-    $('#popup-details').toggle(options.viewDetails);
-  });
-
-  $('#details-boxes').click(() => {
-    $('#details-boxes').toggleClass('fa-store fa-store-slash');
-    options.viewBoxes = !options.viewBoxes;
-    // const hidden = options.viewBoxes ? 'visible' : 'hidden';
-    // $('#popup-canvas').css('visibility', hidden);
-    drawBoxes();
-  });
-
-  $('#details-faces').click(() => {
-    $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
-    options.viewFaces = !options.viewFaces;
-    drawBoxes();
-  });
-
-  $('#details-raw').click(() => {
-    $('#details-raw').toggleClass('fa-video fa-video-slash');
-    options.viewRaw = !options.viewRaw;
-  });
-
-  $('#folderstitle').click(() => {
-    $('#folders').toggle('slow');
-  });
-
-  $('#locationstitle').click(() => {
-    $('#locations').toggle('slow');
-  });
-
-  $('#classestitle').click(() => {
-    $('#classes').toggle('slow');
-  });
-
+  // navbar images number
   $('#btn-number').click(() => {
-    log.result('Reset filtered');
-    filtered = results;
+    log.result('Reset window.filtered');
+    window.filtered = window.results;
     redrawResults();
-  });
-
-  // handle clicks inside popup
-  $('#popup').click(() => {
-    if (event.screenX < 50) showNextDetails(true);
-    else if (event.clientX > $('#popup').width() - 50) showNextDetails(false);
-    else if (!event.target.className.includes('iv-large-image')) {
-      drawBoxes(null);
-      $('#popup').toggle('fast');
-      $('#optionsview').toggle(false);
-    }
   });
 }
 
@@ -954,10 +720,12 @@ async function main() {
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
 
   await initUser();
-  await initHandlers();
+  await initListHandlers();
+  await initSidebarHandlers();
+  await initDetailsHandlers();
   await initHotkeys();
   await showNavbar();
-  await loadGallery(options.listLimit);
+  await loadGallery(window.options.listLimit);
 }
 
 window.onload = main;

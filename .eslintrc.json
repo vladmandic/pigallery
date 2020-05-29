@@ -22,6 +22,8 @@
       "max-len": [1, 220, 3],
       "no-restricted-globals": "off",
       "import/extensions": "off",
+      "no-param-reassign":"off",
+      "no-case-declarations":"off",
       "no-await-in-loop": "off",
       "no-restricted-syntax": "off",
       "object-curly-newline": "off",
