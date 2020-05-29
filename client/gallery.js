@@ -11,6 +11,7 @@ let filtered = [];
 let folderList = [];
 let viewer;
 let last;
+let slideshowRunning = false;
 
 const options = {
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
@@ -41,6 +42,9 @@ const options = {
   set dateDivider(val) { return localStorage.setItem('dateDivider', val); },
   get fontSize() { return localStorage.getItem('fontSize') || '14px'; },
   set fontSize(val) { return localStorage.setItem('fontSize', val); },
+  get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || 2500, 10); },
+  set slideDelay(val) { return localStorage.setItem('slidedelay', val); },
+
 };
 
 // eslint-disable-next-line prefer-rest-params
@@ -77,6 +81,7 @@ function drawBoxes(object) {
   ctx.font = '16px Roboto';
   // eslint-disable-next-line no-param-reassign
   if (!object) object = last;
+  if (!object) return;
 
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
@@ -136,59 +141,40 @@ function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
 }
 
-function resizeDetailsPanels() {
-  // move details panel to side or bottom depending on screen aspect ratio
-  if ($('#main').width() > $('#main').height()) {
-    $('#popup').css('display', 'flex');
-    if (options.viewDetails) {
-      $('#popup-image').width('70vw');
-      $('#popup-details').width('30vw');
-    } else {
-      $('#popup-image').width('100vw');
-      $('#popup-details').width('0vw');
-    }
-    $('#popup-image').height('94vh'); // leave room for navbar
-    $('#popup-details').height('94vh');
-  } else {
-    $('#popup').css('display', 'block');
-    $('#popup-image').width('100vw');
-    if (options.viewDetails) $('#popup-image').height('64vh');
-    else $('#popup-image').height('100vh');
-    $('#popup-details').width('100vw');
-    $('#popup-details').height('30vh'); // leave room for navbar
-  }
-}
-
-function resizeDetailsImage(object) {
+async function resizeDetailsImage(object) {
   // wait for image to be loaded silly way as on load event doesn't trigger consistently
   const img = document.getElementsByClassName('iv-image');
+  const width = $('#popup').width();
+  const height = $('#popup').height();
   if (!img || !img[0] || !img[0].complete) {
     setTimeout(() => resizeDetailsImage(object), 25);
   } else {
     // move details panel to side or bottom depending on screen aspect ratio
-    if ($('#main').width() > $('#main').height()) {
+    // use 70% or 100% depending if details text is enabled
+    if (width > height) {
       $('#popup').css('display', 'flex');
       if (options.viewDetails) {
-        $('#popup-image').width('70vw');
-        $('#popup-details').width('30vw');
+        $('#popup-details').width(0.3 * width);
+        $('#popup-image').width(0.7 * width);
       } else {
-        $('#popup-image').width('100vw');
-        $('#popup-details').width('0vw');
+        $('#popup-details').width('0');
+        $('#popup-image').width(width);
       }
-      $('#popup-image').height('94vh'); // leave room for navbar
-      $('#popup-details').height('94vh');
+      $('#popup-image').height(height);
+      $('#popup-details').height(height);
     } else {
       $('#popup').css('display', 'block');
-      $('#popup-image').width('100vw');
-      if (options.viewDetails) $('#popup-image').height('64vh');
-      else $('#popup-image').height('100vh');
-      $('#popup-details').width('100vw');
-      $('#popup-details').height('30vh'); // leave room for navbar
+      $('#popup-details').width(width);
+      $('#popup-details').height(0.3 * height);
+      $('#popup-image').width(width);
+      if (options.viewDetails) $('#popup-image').height(0.7 * height);
+      else $('#popup-image').height(height);
     }
+
     // zoom to fill usable screen area
     const zoomX = $('.iv-image-view').width() / $('.iv-image').width();
     const zoomY = $('.iv-image-view').height() / $('.iv-image').height();
-    viewer.zoom(100 * Math.min(zoomX, zoomY));
+    await viewer.zoom(100 * Math.min(zoomX, zoomY));
 
     // move image to top left corner
     const offsetY = $('.iv-image').css('top');
@@ -197,11 +183,8 @@ function resizeDetailsImage(object) {
     $('.iv-image').css('margin-left', `-${offsetX}`);
     $('#popup-image').css('cursor', 'zoom-in');
 
-    // move details panel to side or bottom depending on screen aspect ratio
-    if ($('#main').width() > $('#main').height()) $('#popup-details').width(options.viewDetails ? $('#main').width() - $('.iv-image').width() : 0);
-    else $('#popup-details').height(options.viewDetails ? $('#main').height() - $('.iv-image').height() : 0);
     // draw detection boxes and faces
-    setTimeout(() => drawBoxes(object), 100);
+    drawBoxes(object);
   }
 }
 
@@ -229,7 +212,7 @@ async function showDetails(thumb, img) {
 
   const object = filtered.find((a) => a.image === img);
   if (!object) return;
-  resizeDetailsPanels();
+
   resizeDetailsImage(object);
 
   // handle pan&zoom redraws
@@ -325,18 +308,6 @@ async function showNextDetails(left) {
   if (left === true && id > 0 && filtered[id - 1]) target = filtered[id - 1].image;
   else if (left === false && id <= filtered.length && filtered[id + 1]) target = filtered[id + 1].image;
   showDetails(target, target);
-  /*
-  const img = document.getElementById('popup-image');
-  const id = filtered.findIndex((a) => a.image === img.img);
-  if (id === -1) return;
-  if (left === true && id > 0 && filtered[id - 1]) {
-    img.img = filtered[id - 1].image;
-    img.src = filtered[id - 1].image;
-  } else if (left === false && id <= filtered.length && filtered[id + 1]) {
-    img.img = filtered[id + 1].image;
-    img.src = filtered[id + 1].image;
-  }
-  */
 }
 
 // adds dividiers based on sort order
@@ -489,6 +460,14 @@ async function enumerateFolders(input) {
     // eslint-disable-next-line no-use-before-define
     redrawResults(false);
   });
+}
+
+async function startSlideshow() {
+  if (!slideshowRunning) return;
+  showNextDetails(false);
+  setTimeout(() => {
+    startSlideshow();
+  }, options.slideDelay);
 }
 
 async function redrawResults(generateFolders = true) {
@@ -675,6 +654,7 @@ async function initHotkeys() {
         $('#optionslist').toggle(false);
         $('#optionsview').toggle(false);
         $('#popup').toggle(false);
+        slideshowRunning = false;
         // filterResults('');
         break; // key=esc; close all
       default: // log.result('Unhandled keydown event', event.keyCode);
@@ -684,7 +664,6 @@ async function initHotkeys() {
 
 // pre-fetching DOM elements to avoid multiple runtime lookups
 function initHandlers() {
-  // navbar
   $('#btn-user').click(() => {
     showNavbar($('#userbar'));
     $('#imagenum')[0].value = options.listLimit;
@@ -704,7 +683,6 @@ function initHandlers() {
     }
   });
 
-  // navline-userbar
   $('#btn-logout').click(() => {
     showNavbar();
     $.post('/client/auth.html');
@@ -752,7 +730,13 @@ function initHandlers() {
     window.open('/video', '_blank');
   });
 
-  // navline-search
+  $('#btn-slide').click(() => {
+    log.result('Starting slide show ...');
+    slideshowRunning = true;
+    showDetails(filtered[0].image, filtered[0].image);
+    setTimeout(startSlideshow, options.slideDelay);
+  });
+
   $('#search-input').keyup(() => {
     event.preventDefault();
     if (event.keyCode === 191) $('#search-input')[0].value = ''; // reset on key=/
@@ -768,7 +752,6 @@ function initHandlers() {
     filterResults('');
   });
 
-  // navline-list
   $('#btn-folder').click(() => {
     $('#folderbar').toggle('slow');
     $('#btn-folder').toggleClass('fa-folder fa-folder-open');
@@ -795,9 +778,9 @@ function initHandlers() {
     resizeResults();
   });
 
-  // navline-view
   $('#details-close').click(() => {
     drawBoxes(null);
+    slideshowRunning = false;
     $('#popup').toggle('fast');
     $('#optionsview').toggle(false);
   });
