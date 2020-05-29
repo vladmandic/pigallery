@@ -1,11 +1,16 @@
+/* global ImageViewer */
 /* eslint-disable no-underscore-dangle */
-/* global moment, marked, Popper, ImageViewer */
 
+import $ from 'jquery';
 import oboe from 'oboe';
+import moment from 'moment';
+import marked from 'marked';
+import Popper from '@popperjs/core';
 import config from './config.js';
 import log from './log.js';
 import pwa from './pwa-register.js';
 
+// global variables
 const results = [];
 let filtered = [];
 let folderList = [];
@@ -13,6 +18,7 @@ let viewer;
 let last;
 let slideshowRunning = false;
 
+// user configurable options, stored in browsers local storage
 const options = {
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
   set listFolders(val) { return localStorage.setItem('listFolders', val); },
@@ -44,7 +50,10 @@ const options = {
   set fontSize(val) { return localStorage.setItem('fontSize', val); },
   get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || 2500, 10); },
   set slideDelay(val) { return localStorage.setItem('slidedelay', val); },
-
+  get topClasses() { return parseInt(localStorage.getItem('slidedelay') || 25, 10); },
+  set topClasses(val) { return localStorage.setItem('slidedelay', val); },
+  get listDetailsWidth() { return parseFloat(localStorage.getItem('listDetailsWidth') || 0.25); },
+  set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
 };
 
 // eslint-disable-next-line prefer-rest-params
@@ -154,8 +163,8 @@ async function resizeDetailsImage(object) {
     if (width > height) {
       $('#popup').css('display', 'flex');
       if (options.viewDetails) {
-        $('#popup-details').width(0.3 * width);
-        $('#popup-image').width(0.7 * width);
+        $('#popup-details').width(options.listDetailsWidth * width);
+        $('#popup-image').width((1 - options.listDetailsWidth) * width);
       } else {
         $('#popup-details').width('0');
         $('#popup-image').width(width);
@@ -165,9 +174,9 @@ async function resizeDetailsImage(object) {
     } else {
       $('#popup').css('display', 'block');
       $('#popup-details').width(width);
-      $('#popup-details').height(0.3 * height);
+      $('#popup-details').height(options.listDetailsWidth * height);
       $('#popup-image').width(width);
-      if (options.viewDetails) $('#popup-image').height(0.7 * height);
+      if (options.viewDetails) $('#popup-image').height((1 - options.listDetailsWidth) * height);
       else $('#popup-image').height(height);
     }
 
@@ -302,12 +311,13 @@ async function showNextDetails(left) {
   const img = $('.iv-image');
   if (!img || img.length < 1) return;
   const url = new URL(img[0].src);
-  const id = filtered.findIndex((a) => a.image === decodeURI(url.pathname.substr(1)));
+  let id = filtered.findIndex((a) => a.image === decodeURI(url.pathname.substr(1)));
   if (id === -1) return;
-  let target = filtered[id].image;
-  if (left === true && id > 0 && filtered[id - 1]) target = filtered[id - 1].image;
-  else if (left === false && id <= filtered.length && filtered[id + 1]) target = filtered[id + 1].image;
-  showDetails(target, target);
+  id = left ? id - 1 : id + 1;
+  if (id < 0) id = filtered.length - 1;
+  if (id > filtered.length - 1) id = 0;
+  const target = filtered[id];
+  showDetails(target.thumbnail, target.image);
 }
 
 // adds dividiers based on sort order
@@ -411,6 +421,67 @@ function resizeResults() {
   }
 }
 
+async function enumerateLocations() {
+  $('#locations').html('');
+  const locationsList = [];
+  for (const item of filtered) {
+    const loc = `${item.location.near}, ${item.location.state || item.location.country}`;
+    if (item.location && item.location.near && !locationsList.includes(loc)) locationsList.push(loc);
+  }
+  locationsList.sort((a, b) => (a > b ? 1 : -1));
+  locationsList.unshift('Unknown');
+  for (const item of locationsList) {
+    const html = `
+      <li id="loc-${item}">
+        <span tag="${item}" type="location" style="padding-left: 16px" class="folder">&nbsp
+          <i tag="${item}" class="fas fa-chevron-circle-right">&nbsp</i>${item}
+        </span>
+      </li>
+    `;
+    $('#locations').append(html);
+  }
+}
+
+async function enumerateClasses() {
+  $('#classes').html('');
+  const classesList = [];
+  for (const item of filtered) {
+    if (item.classify) {
+      for (const tag of item.classify) {
+        const found = classesList.find((a) => a.tag === tag.class);
+        if (found) found.count += 1;
+        else classesList.push({ tag: tag.class, count: 1 });
+      }
+    }
+    if (item.alternative) {
+      for (const tag of item.alternative) {
+        const found = classesList.find((a) => a.tag === tag.class);
+        if (found) found.count += 1;
+        else classesList.push({ tag: tag.class, count: 1 });
+      }
+    }
+    if (item.detect) {
+      for (const tag of item.detect) {
+        const found = classesList.find((a) => a.tag === tag.class);
+        if (found) found.count += 1;
+        else classesList.push({ tag: tag.class, count: 1 });
+      }
+    }
+  }
+  classesList.sort((a, b) => b.count - a.count);
+  classesList.length = options.topClasses;
+  for (const item of classesList) {
+    const html = `
+      <li id="loc-${item.tag}">
+        <span tag="${item.tag}" type="class" style="padding-left: 16px" class="folder">&nbsp
+          <i tag="${item.tag}" class="fas fa-chevron-circle-right">&nbsp</i>${item.tag}
+        </span>
+      </li>
+    `;
+    $('#classes').append(html);
+  }
+}
+
 async function enumerateFolders(input) {
   $('#folders').html('');
   if (input) {
@@ -436,7 +507,7 @@ async function enumerateFolders(input) {
         const name = folder === root.replace(/\//g, '') ? 'All' : folder;
         const html = `
           <li id="dir-${folder}">
-            <span tag="${path}" style="padding-left: ${i * 16}px" class="folder">&nbsp
+            <span tag="${path}" type="folder" style="padding-left: ${i * 16}px" class="folder">&nbsp
               <i tag="${path}" class="fas fa-chevron-circle-right">&nbsp</i>${name}
             </span>
           </li>
@@ -448,15 +519,35 @@ async function enumerateFolders(input) {
       }
     }
   }
+}
 
-  // $('#folders').html(html);
+async function folderHandlers() {
+  $('.folder').off();
   $('.folder').click((evt) => {
-    $('body').css('cursor', 'wait');
     const path = $(evt.target).attr('tag');
-    log.result(`Showing path: ${path}`);
-    const root = window.user && window.user.root ? window.user.root : 'media/';
-    if (path === root) filtered = results;
-    else filtered = results.filter((a) => a.image.startsWith(path));
+    switch (evt.target.getAttribute('type')) {
+      case 'folder':
+        $('body').css('cursor', 'wait');
+        log.result(`Showing path: ${path}`);
+        // eslint-disable-next-line no-case-declarations
+        const root = window.user && window.user.root ? window.user.root : 'media/';
+        if (path === root) filtered = results;
+        else filtered = results.filter((a) => a.image.startsWith(path));
+        break;
+      case 'location':
+        log.result(`Showing location: ${path}`);
+        if (path !== 'Unknown') filtered = results.filter((a) => path.startsWith(a.location.near));
+        else filtered = results.filter((a) => (!a.location || !a.location.near));
+        break;
+      case 'class':
+        filtered = results.filter((a) => {
+          const tags = JSON.stringify(a.classify || '') + JSON.stringify(a.alternative || '') + JSON.stringify(a.detect || '');
+          return tags.includes(path);
+        });
+        log.result(`Showing class: ${path}`);
+        break;
+      default:
+    }
     // eslint-disable-next-line no-use-before-define
     redrawResults(false);
   });
@@ -473,7 +564,12 @@ async function startSlideshow() {
 async function redrawResults(generateFolders = true) {
   $('#number').html(filtered.length);
   $('#results').html('');
-  if (generateFolders) enumerateFolders();
+  if (generateFolders) {
+    enumerateFolders();
+    enumerateLocations();
+    enumerateClasses();
+    folderHandlers();
+  }
   for await (const obj of filtered) printResult(obj);
   $('.description').toggle(options.listDetails);
   await resizeResults();
@@ -816,6 +912,24 @@ function initHandlers() {
   $('#details-raw').click(() => {
     $('#details-raw').toggleClass('fa-video fa-video-slash');
     options.viewRaw = !options.viewRaw;
+  });
+
+  $('#folderstitle').click(() => {
+    $('#folders').toggle('slow');
+  });
+
+  $('#locationstitle').click(() => {
+    $('#locations').toggle('slow');
+  });
+
+  $('#classestitle').click(() => {
+    $('#classes').toggle('slow');
+  });
+
+  $('#btn-number').click(() => {
+    log.result('Reset filtered');
+    filtered = results;
+    redrawResults();
   });
 
   // handle clicks inside popup

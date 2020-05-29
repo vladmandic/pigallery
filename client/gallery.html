@@ -12,14 +12,14 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="/favicon.ico">
     <link rel="stylesheet" href="/assets/bootstrap.css">
-    <link rel="stylesheet" href="/assets/iv-viewer.css">
     <link rel="stylesheet" href="/assets/fontawesome/css/all.css">
-    <script type="text/javascript" src="/assets/jquery.js"></script>
+    <link rel="stylesheet" href="/assets/iv-viewer.css"> -->
     <script type="text/javascript" src="/assets/iv-viewer.js"></script>
     <script type="text/javascript" src="/assets/gtag.js"></script>
-    <script defer type="text/javascript" src="/assets/moment.js"></script>
-    <script defer type="text/javascript" src="/assets/popper.js"></script>
-    <script defer type="text/javascript" src="/assets/marked.js"></script>
+    <!-- <script type="text/javascript" src="/assets/jquery.js"></script> -->
+    <!-- <script defer type="text/javascript" src="/assets/moment.js"></script> -->
+    <!-- <script defer type="text/javascript" src="/assets/popper.js"></script> -->
+    <!-- <script defer type="text/javascript" src="/assets/marked.js"></script> -->
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
@@ -55,10 +55,14 @@
       .input:focus { background: lightyellow; }
 
       .main { height: 87vh; overflow: hidden; margin-top: 5rem; display: flex }
-      .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: #555555; line-height: 2.2rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 1.4rem 0 0 0; }
+      .folderbar { overflow-y: scroll; }
+      .folderbar::-webkit-scrollbar { display:none; }
+      .folderlist { margin: 0; min-width: 17rem; max-width: 17rem; max-height: 45vh; background: #555555; line-height: 2.2rem; overflow-x: hidden; overflow-y:auto ; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
+      .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: #555555; line-height: 2.2rem; overflow-x: hidden; overflow-y:hidden ; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
       .folder { background: #555555; margin: 0; padding: 0.4rem 200px 0.4rem 0; cursor: pointer; font-weight: bold; letter-spacing: 1px; }
       .folder:hover { background: lightyellow; color: #555555; letter-spacing: 2px; }
       .folder:active { background: lightskyblue; color: #555555; letter-spacing: 2px; }
+      .folderstitle { background: lightyellow; color: #555555; letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
       .results { height: auto; overflow-y: scroll; }
 
       .listitem { display: flex; }
@@ -108,7 +112,7 @@
   </div>
 
   <div id="optionslist" class="row navline text-center">
-    <div><i class="navlinebutton fas fa-folder-open" id="btn-folder"></i><p class="btntext">Folders</p></div>
+    <div><i class="navlinebutton fas fa-folder-open" id="btn-folder"></i><p class="btntext">Sidebar</p></div>
     <div><i class="navlinebutton fas fa-comment" id="btn-desc"></i><p class="btntext">Descriptions</p></div>
     <div><i class="navlinebutton fas fa-eye" id="btn-duplicates"></i><p class="btntext">Duplicates</p></div>
     <div><i class="navlinebutton fas sort fa-random"></i><p class="btntext">Randomize</p></div>
@@ -135,7 +139,14 @@
   </div>
 
   <div id="main" class="main">
-    <div id="folderbar" class="folders"><ul id="folders" class="folders"></ul></div>
+    <div id="folderbar" class="folderbar">
+      <div id="folderstitle" class="folderstitle">Folders</div>
+        <ul id="folders" class="folderlist"></ul>
+      <div id="locationstitle" class="folderstitle">Locations</div>
+        <ul id="locations" class="folderlist"></ul>
+      <div id="classestitle" class="folderstitle">Top Classes</div>
+        <ul id="classes" class="folderlist"></ul>
+    </div>
     <div id="results" class="row results"></div>  
   </div>
 
