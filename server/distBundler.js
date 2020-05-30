@@ -9,7 +9,7 @@ const options = {
   watch: true,
   cache: false,
   contentHash: false,
-  minify: true,
+  minify: false,
   target: 'browser',
   bundleNodeModules: true,
   logLevel: 1,

@@ -9,7 +9,8 @@
     { "folder": "People/Miami/", "match": "" },
     { "folder": "Pictures/Instagram Posts/", "match": "" },
     { "folder": "Pictures/Saved Pictures/", "match": "" },
-    { "folder": "Photos/Various/", "match": "" }
+    { "folder": "Photos/Various/", "match": "" },
+    { "folder": "Photos/Travels/", "match": "" }
   ],
   "server": {
     "httpPort": 8000,
