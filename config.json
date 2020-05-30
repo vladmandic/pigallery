@@ -4,8 +4,6 @@
     { "email": "igor.domancic@ri.t-com.hr", "passwd": "pEro", "admin": false, "mediaRoot": "media/" }
   ],
   "locations": [
-    { "folder": "Samples/", "match": "", "recursive": true },
-    { "folder": "Temp/", "match": "", "recursive": true },
     { "folder": "People/Vlado/", "match": "" },
     { "folder": "People/California/", "match": "" },
     { "folder": "People/Miami/", "match": "" },

@@ -13,36 +13,37 @@
     <link rel="apple-touch-icon" href="/favicon.ico">
     <link rel="stylesheet" href="/assets/bootstrap.css">
     <link rel="stylesheet" href="/assets/fontawesome/css/all.css">
-    <link rel="stylesheet" href="/assets/iv-viewer.css"> -->
+    <link rel="stylesheet" href="/assets/iv-viewer.css">
     <script type="text/javascript" src="/assets/iv-viewer.js"></script>
     <script type="text/javascript" src="/assets/gtag.js"></script>
     <script type="text/javascript" src="/assets/jquery.js"></script>
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
-      body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; overflow: hidden; }
+      body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; display: block; margin: 0; padding: 0; width: 100%; height: 100%; }
       ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0px; }
       ::-webkit-scrollbar-thumb { background: #555555; }
       ::-webkit-scrollbar-track { background: black; margin: 8px; }
-      ::-webkit-scrollbar-button:single-button { background: #555555; display: block; border-style: solid; height: 20px; }
+      ::-webkit-scrollbar-button:single-button { background: #555555; display: block; border-style: solid; height: 40px; }
       ::-webkit-scrollbar-button:single-button:vertical:decrement { border-width: 0 10px 15px 10px; border-color: transparent transparent white transparent; }
       ::-webkit-scrollbar-button:single-button:vertical:increment { border-width: 15px 10px 0 10px; border-color: white transparent transparent transparent; }
       h1 { font-size: 1.4rem; margin-top: 1.2rem; font-weight: bold; }
       h2 { font-size: 1.2rem; margin-top: 1.1rem; font-weight: bold; }
       a { color: lightcyan }
       a:hover { color: darkcyan; text-decoration: none; }
+      p { margin: 0; }
       .row { width: 100vw; margin: 0; align-content: start; }
-      .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-      .log { height: 6rem; overflow-x: hidden; overflow-y:scroll; margin-top: 10px; overflow: hidden }
+      .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; white-space: nowrap; text-overflow: ellipsis; }
+      .log { width: 100vw; height: 4rem; background: black; position: fixed; bottom: 0; overflow-y: scroll; }
       .popper { padding: 8px; background: lightblue; color: #555555; font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; }
 
-      .navbar { background: #555555; min-height: 5rem; max-height: 5rem; position: fixed; top: 0; overflow: hidden; justify-content: space-evenly; }
+      .navbar { background: #555555; height: 80px; top: 0; justify-content: space-evenly; }
       .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
       .navbarbutton:hover { color: lightskyblue; }
       .number { font-size: 1.6rem; color: gray}
       .btntext { text-align: center; margin: 0; }
 
-      .navline { background: #555555; min-height: 3.2rem; position: fixed; top: 5rem; justify-content: center; z-index: 10;}
+      .navline { background: #555555; min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10;}
       .navlinebutton { font-size: 1.6rem; color: lightyellow; padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
       .navlinebutton:hover { color: lightskyblue; }
       .blank { background: #555555; min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
@@ -51,33 +52,34 @@
       .input:hover { background: lightyellow; }
       .input:focus { background: lightyellow; }
 
-      .main { height: 100%; overflow: hidden; margin-top: 5rem; display: flex }
-      .folderbar { overflow-y: scroll; }
+      .main { height: 100%; display: flex; background: #555555; }
+      .folderbar { background: #555555; overflow-x: hidden; overflow-y: auto; }
       .folderbar::-webkit-scrollbar { display:none; }
-      .folderlist { margin: 0; min-width: 17rem; max-width: 17rem; max-height: 45vh; background: #555555; line-height: 2.2rem; overflow-x: hidden; overflow-y:auto ; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
-      .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: #555555; line-height: 2.2rem; overflow-x: hidden; overflow-y:hidden ; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
+      .folderlist { margin: 0; min-width: 17rem; max-width: 17rem; background: #555555; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
+      .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: #555555; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
       .folder { background: #555555; margin: 0; padding: 0.4rem 200px 0.4rem 0; cursor: pointer; font-weight: bold; letter-spacing: 1px; }
       .folder:hover { background: lightyellow; color: #555555; letter-spacing: 2px; }
       .folder:active { background: lightskyblue; color: #555555; letter-spacing: 2px; }
       .folderstitle { background: lightyellow; color: #555555; letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
-      .results { height: auto; overflow-y: scroll; }
+      .results { background: black; overflow-x: hidden; overflow-y: auto; }
 
       .listitem { display: flex; }
       .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; }
       .thumbnail { padding: 0; cursor: zoom-in; }
-      .description { min-width: 240px; max-width: 240px; padding: 2px 0 0 4px; }
+      .description { min-width: 240px; max-width: 240px; padding: 2px 0 0 4px; overflow: hidden; }
       .description:hover { background: #333333 }
       .description:active { background: lightskyblue }
-      .download { font-size: 1.2rem; color: gray; position: relative; float: right; padding: 16px; cursor: grab; z-index: 5; }
+      .download { font-size: 1.2rem; color: gray; position: relative; float: right; padding: 4px; cursor: grab; z-index: 5; }
       .download:hover { color: lightskyblue; }
-      .listtitle { font-weight: bold; background: #444444; margin: -2px 0 0 -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; }
+      .listtitle { font-weight: bold; background: #444444; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; }
 
       .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px }
       .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: lightyellow; border-radius: 1rem; }
+      .thumbsize::-moz-range-track { width: 100%; height: 1rem; cursor: pointer; background: lightyellow; border-radius: 1rem; }
 
-      .popup { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 5rem; bottom: 0; left: 0; width: 100%; display: flex; z-index: 10; }
+      .popup { background: lightyellow; color: black; box-shadow: 5px 5px #222222; overflow: hidden; position: fixed; top: 70px; bottom: 0; left: 0; width: 100%; display: flex; z-index: 10; }
       .popup-image { width: 100vw; height: 100vh; }
-      .popup-details { margin: 1rem; width: 30vw; height: 100vh; top: 0; overflow-y: scroll; }
+      .popup-details { margin: 0; width: 30vw; height: 100vh; top: 0; overflow-x: hidden; overflow-y: scroll; word-wrap: break-word; word-break: break-all; }
 
       .docs { height: 87vh; background: #333333; color: white; overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; display: block; padding: 10px; z-index: 10; }
     </style>
@@ -88,7 +90,6 @@
     <div><i id="btn-user" class="navbarbutton fas fa-user-slash"></i><p id="user">User</p></div>
     <div><i id="btn-search" class="navbarbutton fas fa-search"></i><p>Search</p></div>
     <div><i id="btn-list" class="navbarbutton fas fa-images"></i><p>List Options</p></div>
-    <!-- <div><i id="btn-view" class="navbarbutton fas fa-image"></i><p>View Options</p></div> -->
     <div><i id="btn-slide" class="navbarbutton fas fa-film"></i><p>Slideshow</p></div>
     <div><i id="btn-video" class="navbarbutton fas fa-video"></i><p>Live Video</p></div>
     <div><i id="btn-number" class="number fas fa-images"></i><p id="number">0</p></div>
@@ -111,8 +112,8 @@
   <div id="optionslist" class="row navline text-center">
     <div><i class="navlinebutton fas fa-folder-open" id="btn-folder"></i><p class="btntext">Sidebar</p></div>
     <div><i class="navlinebutton fas fa-comment" id="btn-desc"></i><p class="btntext">Descriptions</p></div>
-    <div><i class="navlinebutton fas fa-eye" id="btn-duplicates"></i><p class="btntext">Duplicates</p></div>
     <div><i class="navlinebutton fas sort fa-random"></i><p class="btntext">Randomize</p></div>
+    <div><i class="navlinebutton fas fa-eye" id="btn-duplicates"></i><p class="btntext">Sort by Simmilarity</p></div>
     <div><i class="navlinebutton fas sort fa-sort-alpha-down"></i><i class="navlinebutton fas sort fa-sort-alpha-up" style="padding-left: 0"></i>
       <p class="btntext">Sort by Name</p></div>
     <div><i class="navlinebutton fas sort fa-sort-numeric-down"></i><i class="navlinebutton fas sort fa-sort-numeric-up" style="padding-left: 0"></i>
@@ -125,7 +126,7 @@
     </div>
   </div>
 
-  <div id="optionsview" class="row navbar text-center">
+  <div id="optionsview" class="row navbar text-center" style="position: fixed; ">
     <div><i class="navbarbutton fas fa-arrow-circle-left" id='details-previous'></i><p class="btntext">Previous</p></div>
     <div><i class="navbarbutton fas fa-times-circle" id='details-close'></i><p class="btntext">Close</p></div>
     <div><i class="navbarbutton fas fa-arrow-circle-right" id='details-next'></i><p class="btntext">Next</p></div>
@@ -147,7 +148,7 @@
     <div id="results" class="row results"></div>  
   </div>
 
-  <div id="log" class="row log"></div>
+  <div id="log" class="log"></div>
 
   <div id="popup" class="popup">
     <div class="popup-image" id="popup-image"></div>

@@ -4,7 +4,7 @@
 // Based on https://github.com/commonsmachinery/blockhash-js
 // Which is an implementation ofBlock Mean Value Based Image Perceptual Hashing by Bian Yang, Fan Gu and Xiamu Niu
 
-const fs = require('fs');
+// const fs = require('fs');
 const jpeg = require('jpeg-js');
 
 const one_bits = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
@@ -177,6 +177,7 @@ async function calculateHashURL(src, bits = 16) {
   });
 }
 
+/*
 async function calculateHashFile(src, bits = 16) {
   return new Promise((resolve, reject) => {
     try {
@@ -190,6 +191,7 @@ async function calculateHashFile(src, bits = 16) {
     }
   });
 }
+*/
 
 async function calculateHashData(data, bits = 16) {
   return new Promise((resolve, reject) => {
@@ -214,18 +216,20 @@ function distance(hash1, hash2) {
   return d;
 }
 
+/*
 async function test() {
   const h1 = await calculateHashFile('./media/test1.jpg');
   const h2 = await calculateHashFile('./media/test2.jpg');
   // eslint-disable-next-line no-console
   console.log('distance:', distance(h1, h2), 'media/test1.jpg', 'media/test2.jpg');
 }
+*/
 
 module.exports = {
   distance,
   url: calculateHashURL,
-  file: calculateHashFile,
+  // file: calculateHashFile,
   data: calculateHashData,
 };
 
-if (!module.parent) test();
+// if (!module.parent) test();
