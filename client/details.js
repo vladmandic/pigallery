@@ -5,13 +5,25 @@ import log from './log.js';
 import config from './config.js';
 
 let viewer;
-let last;
 
 function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
 }
 
+function clearBoxes() {
+  const img = document.getElementsByClassName('iv-image')[0];
+  const canvas = document.getElementById('popup-canvas');
+  canvas.style.position = 'absolute';
+  canvas.style.left = `${img.offsetLeft}px`;
+  canvas.style.top = `${img.offsetTop}px`;
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 // draw boxes for detected objects, faces and face elements
+let last;
 function drawBoxes(object) {
   if (object) last = object;
   const img = document.getElementsByClassName('iv-image')[0];
@@ -106,27 +118,28 @@ async function resizeDetailsImage(object) {
       $('#popup-details').height(height);
     } else {
       $('#popup').css('display', 'block');
-      $('#popup-details').width(width);
-      $('#popup-details').height(window.options.listDetailsWidth * height);
+      if (window.options.viewDetails) {
+        $('#popup-details').height(window.options.listDetailsWidth * height);
+        $('#popup-image').height((1 - window.options.listDetailsWidth) * height);
+      } else {
+        $('#popup-details').height('0');
+        $('#popup-image').height(height);
+      }
       $('#popup-image').width(width);
-      if (window.options.viewDetails) $('#popup-image').height((1 - window.options.listDetailsWidth) * height);
-      else $('#popup-image').height(height);
+      $('#popup-details').width(width);
     }
 
     // zoom to fill usable screen area
     const zoomX = $('.iv-image-view').width() / $('.iv-image').width();
     const zoomY = $('.iv-image-view').height() / $('.iv-image').height();
     await viewer.zoom(100 * Math.min(zoomX, zoomY));
-
     // move image to top left corner
-    const offsetY = $('.iv-image').css('top');
-    const offsetX = $('.iv-image').css('left');
-    $('.iv-image').css('margin-top', `-${offsetY}`);
-    $('.iv-image').css('margin-left', `-${offsetX}`);
+    $('.iv-image').css('position', 'static');
+    setTimeout(() => {
+      // draw detection boxes and faces
+      drawBoxes(object);
+    }, 250);
     $('#popup-image').css('cursor', 'zoom-in');
-
-    // draw detection boxes and faces
-    drawBoxes(object);
   }
 }
 
@@ -254,3 +267,4 @@ async function showNextDetails(left) {
 exports.show = showDetails;
 exports.next = showNextDetails;
 exports.boxes = drawBoxes;
+exports.clear = clearBoxes;

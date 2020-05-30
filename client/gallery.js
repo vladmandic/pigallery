@@ -3,7 +3,7 @@
 import oboe from 'oboe';
 import moment from 'moment';
 import marked from 'marked';
-import Popper from '@popperjs/core';
+import { createPopper } from '@popperjs/core';
 import config from './config.js';
 import log from './log.js';
 import details from './details.js';
@@ -62,7 +62,7 @@ function showTip(parent, text) {
   tip.className = 'popper';
   tip.innerHTML = text;
   parent.appendChild(tip);
-  let popper = Popper.createPopper(parent, tip, { placement: 'left', strategy: 'absolute', modifiers: [{ name: 'offset', options: { offset: [0, 20] } }] });
+  let popper = createPopper(parent, tip, { placement: 'left', strategy: 'absolute', modifiers: [{ name: 'offset', options: { offset: [0, 20] } }] });
   setTimeout(() => {
     popper.destroy();
     popper = null;
@@ -429,7 +429,7 @@ async function loadGallery(limit) {
     .done((things) => {
       const t1 = window.performance.now();
       const size = JSON.stringify(window.results).length;
-      log.result(`Received ${things.length} images in ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes (${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec)`);
+      log.result(`Received ${things.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
       window.filtered = window.results;
       resizeResults();
       sortResults(window.options.listSortOrder);
@@ -456,6 +456,9 @@ async function initUser() {
 
 // show/hide navigation bar elements
 function showNavbar(elem) {
+  $('#main').css('margin-top', $('#navbar').height());
+  $('#main').height('100vh');
+  $('#main').height($('#main').height() - $('#log').height() - $('#navbar').height());
   if (elem) elem.toggle('slow');
   // hide the rest
   elem = elem || $('#main');
@@ -508,7 +511,7 @@ function initDetailsHandlers() {
     if (event.screenX < 50) details.next(true);
     else if (event.clientX > $('#popup').width() - 50) details.next(false);
     else if (!event.target.className.includes('iv-large-image')) {
-      details.boxes(null);
+      details.clear();
       $('#popup').toggle('fast');
       $('#optionsview').toggle(false);
     }
@@ -519,7 +522,7 @@ function initDetailsHandlers() {
 
   // navbar details close
   $('#details-close').click(() => {
-    details.boxes(null);
+    details.clear();
     slideshowRunning = false;
     $('#popup').toggle('fast');
     $('#optionsview').toggle(false);
