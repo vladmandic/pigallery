@@ -145,6 +145,7 @@ async function resizeDetailsImage(object) {
 
 // show details popup
 async function showDetails(thumb, img) {
+  if (!img && last) img = last.image;
   $('#popup-image').css('cursor', 'wait');
   if (window.options.viewRaw) {
     log.result(`Loading Raw image: ${img}`);
@@ -163,7 +164,8 @@ async function showDetails(thumb, img) {
   }
   // http://ignitersworld.com/lab/imageViewer.html
   // viewer._events.imageLoad = imageLoad();
-  viewer.load(thumb, img);
+  if (thumb) viewer.load(thumb, img);
+  else viewer.load(img);
 
   const object = window.filtered.find((a) => a.image === img);
   if (!object) return;

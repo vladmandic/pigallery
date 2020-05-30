@@ -86,6 +86,8 @@ Processing builds tags from all available image metadata:
   - Camera make, model and lens
   - Camera settings used to take the photo
   - Software used to edit the photo
+- Perception hash for image:
+  - Used to compare image simmilarity
 
 Collected metadata is additionally analyzed to render human-readable search terms
 

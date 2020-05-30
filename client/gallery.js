@@ -4,6 +4,7 @@ import oboe from 'oboe';
 import moment from 'moment';
 import marked from 'marked';
 import { createPopper } from '@popperjs/core';
+import hash from './blockhash.js';
 import config from './config.js';
 import log from './log.js';
 import details from './details.js';
@@ -73,6 +74,11 @@ function showTip(parent, text) {
 // adds dividiers based on sort order
 let previous;
 function addDividers(object) {
+  if (window.options.listDivider === 'simmilarity' && object.simmilarity) {
+    const curr = `${100 - object.simmilarity}%`;
+    const prev = previous ? `${100 - previous.simmilarity}%` : 'none';
+    if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
+  }
   if (window.options.listDivider === 'month') {
     const curr = moment(object.exif.timestamp).format(window.options.dateDivider);
     const prev = moment(previous ? previous.exif.timestamp : 0).format(window.options.dateDivider);
@@ -142,7 +148,7 @@ async function printResult(object) {
       <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px>
     </div>
     <div id="desc-${object.id}" class="col description">
-      <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>${link}<br>
+      <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>${link}
       ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
       ${location}<br>
       ${classified}<br>
@@ -242,14 +248,14 @@ async function enumerateClasses() {
     for (const tag of item.tags) {
       const key = Object.keys(tag)[0];
       const val = Object.values(tag)[0].toString().split(',')[0];
-      if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near'].includes(key)) continue;
+      if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
       const found = classesList.find((a) => a.tag === val);
       if (found) found.count += 1;
       else classesList.push({ tag: val, count: 1 });
     }
   }
   classesList.sort((a, b) => b.count - a.count);
-  classesList.length = window.options.topClasses;
+  classesList.length = Math.min(window.options.topClasses, classesList.length);
   for (const item of classesList) {
     const html = `
       <li id="loc-${item.tag}">
@@ -371,24 +377,6 @@ function shuffle(array) {
   return array;
 }
 
-// find duplicate images based on pre-computed sha-256 hash
-function findDuplicates() {
-  $('body').css('cursor', 'wait');
-  previous = null;
-  let duplicates = [];
-  for (const obj of window.results) {
-    const items = window.results.filter((a) => a.hash === obj.hash);
-    if (items.length !== 1) duplicates.push(...items);
-  }
-  duplicates = [...new Set(duplicates)];
-  if (window.filtered.length === duplicates.length) window.filtered = window.results;
-  else {
-    window.filtered = [...new Set(duplicates)];
-    log.result(`Duplicates: ${window.filtered.length}`);
-  }
-  redrawResults();
-}
-
 // sorts images based on given sort order
 function sortResults(sort) {
   $('body').css('cursor', 'wait');
@@ -403,13 +391,48 @@ function sortResults(sort) {
   if (sort.includes('numeric-up')) window.filtered.sort((a, b) => (a.exif.timestamp - b.exif.timestamp));
   if (sort.includes('amount-down')) window.filtered.sort((a, b) => (b.pixels - a.pixels));
   if (sort.includes('amount-up')) window.filtered.sort((a, b) => (a.pixels - b.pixels));
+  if (sort.includes('simmilarity')) window.filtered.sort((a, b) => (a.simmilarity - b.simmilarity));
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) window.options.listDivider = 'month';
   else if (sort.includes('amount-down') || sort.includes('amount-up')) window.options.listDivider = 'size';
   else if (sort.includes('alpha-down') || sort.includes('alpha-up')) window.options.listDivider = 'folder';
+  else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
   $('#optionslist').toggle(false);
   redrawResults();
+}
+
+// find duplicate images based on pre-computed sha-256 hash
+function findDuplicates() {
+  $('body').css('cursor', 'wait');
+  log.result('Analyzing for simmilarity');
+  previous = null;
+  let duplicates = [];
+  for (const obj of window.results) {
+    // const items = window.results.filter((a) => a.hash === obj.hash);
+    // if (items.length !== 1) duplicates.push(...items);
+    for (const img of window.results) {
+      if (img.image === obj.image) continue;
+      if (img.hash === obj.hash) {
+        // log.result(`Duplicate images: ${img.image} ${obj.image}`);
+        img.simmilarity = 0;
+        duplicates.push(img);
+      }
+      const distance = hash.distance(img.phash, obj.phash);
+      if (distance < 40) {
+        // log.result(`Simmilar images: ${distance} ${img.image} ${obj.image}`);
+        img.simmilarity = distance + 1;
+        duplicates.push(img);
+      }
+    }
+  }
+  duplicates = [...new Set(duplicates)];
+  if (window.filtered.length === duplicates.length) window.filtered = window.results;
+  else {
+    window.filtered = [...new Set(duplicates)];
+    log.result(`Duplicates: ${window.filtered.length}`);
+  }
+  sortResults('simmilarity');
 }
 
 // loads imagesm, displays gallery and enumerates sidebar
@@ -454,11 +477,14 @@ async function initUser() {
   $('#thumbsize')[0].value = window.options.listThumbSize;
 }
 
+// resize viewport
+function resizeViewport() {
+  $('#main').height(window.innerHeight - $('#log').height() - $('#navbar').height() - 16);
+  if ($('#popup').css('display') !== 'none') details.show();
+}
+
 // show/hide navigation bar elements
 function showNavbar(elem) {
-  $('#main').css('margin-top', $('#navbar').height());
-  $('#main').height('100vh');
-  $('#main').height($('#main').height() - $('#log').height() - $('#navbar').height());
   if (elem) elem.toggle('slow');
   // hide the rest
   elem = elem || $('#main');
@@ -563,6 +589,9 @@ function initSidebarHandlers() {
   $('#folderstitle').click(() => $('#folders').toggle('slow'));
   $('#locationstitle').click(() => $('#locations').toggle('slow'));
   $('#classestitle').click(() => $('#classes').toggle('slow'));
+  $('#locations').toggle(false);
+  $('#classes').toggle(false);
+  $(window).resize(() => resizeViewport());
 }
 
 // initializes all mouse handlers for main menu in list view
@@ -691,7 +720,7 @@ function initListHandlers() {
 
   // navbar images number
   $('#btn-number').click(() => {
-    log.result('Reset window.filtered');
+    log.result('Reset filtered results');
     window.filtered = window.results;
     redrawResults();
   });
@@ -706,6 +735,7 @@ async function main() {
   // Register PWA
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
 
+  await resizeViewport();
   await initUser();
   await initListHandlers();
   await initSidebarHandlers();

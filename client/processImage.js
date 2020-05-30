@@ -4,6 +4,7 @@ import modelClassify from './modelClassify.js';
 import modelDetect from './modelDetect.js';
 import log from './log.js';
 import config from './config.js';
+import hash from './blockhash.js';
 
 const models = {};
 let error = false;
@@ -141,6 +142,7 @@ async function getImage(url) {
       offscreenCanvas.width = image.width;
       const ctx = offscreenCanvas.getContext('2d');
       ctx.drawImage(image, 0, 0, image.width, image.height);
+      const data = ctx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
       if (Math.max(image.width, image.height) > config.renderThumbnail) {
         if (config.squareImage) {
@@ -158,7 +160,7 @@ async function getImage(url) {
       thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
       const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.8);
 
-      resolve({ image, canvas: offscreenCanvas, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
+      resolve({ image, canvas: offscreenCanvas, data, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
     });
     image.src = url;
   });
@@ -208,6 +210,8 @@ async function processImage(name) {
 
   // const detect = await models.yolo.predict(image.canvas, { maxBoxes: 3, scoreThreshold: 0.3 });
   // obj.detect = detect.map((a) => ({ score: a.score, class: a.class }));
+
+  obj.phash = await hash.data(image.data);
 
   const tp0 = window.performance.now();
   if (obj.detect && obj.detect.find((a) => a.class === 'person')) {
