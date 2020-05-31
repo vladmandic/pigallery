@@ -405,33 +405,29 @@ function sortResults(sort) {
 // find duplicate images based on pre-computed sha-256 hash
 function findDuplicates() {
   $('body').css('cursor', 'wait');
-  log.result('Analyzing for simmilarity');
+  const t0 = window.performance.now();
   previous = null;
   let duplicates = [];
+  const searched = [];
   for (const obj of window.results) {
-    // const items = window.results.filter((a) => a.hash === obj.hash);
-    // if (items.length !== 1) duplicates.push(...items);
+    searched.push(obj.image);
     for (const img of window.results) {
+      if (searched.includes(img.image)) continue;
       if (img.image === obj.image) continue;
-      if (img.hash === obj.hash) {
-        // log.result(`Duplicate images: ${img.image} ${obj.image}`);
-        img.simmilarity = 0;
-        duplicates.push(img);
-      }
-      const distance = hash.distance(img.phash, obj.phash);
-      if (distance < 40) {
-        // log.result(`Simmilar images: ${distance} ${img.image} ${obj.image}`);
-        img.simmilarity = distance + 1;
-        duplicates.push(img);
+      const distance = (img.hash === obj.hash) ? 0 : (hash.distance(img.phash, obj.phash) + 1);
+      if (distance < 35) {
+        img.simmilarity = distance;
+        obj.simmilarity = distance;
+        duplicates.push(obj, img);
+        searched.push(img.image);
       }
     }
   }
   duplicates = [...new Set(duplicates)];
   if (window.filtered.length === duplicates.length) window.filtered = window.results;
-  else {
-    window.filtered = [...new Set(duplicates)];
-    log.result(`Duplicates: ${window.filtered.length}`);
-  }
+  else window.filtered = duplicates;
+  const t1 = window.performance.now();
+  log.result(`Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
   sortResults('simmilarity');
 }
 
@@ -690,7 +686,6 @@ function initListHandlers() {
 
   // navline list duplicates
   $('#btn-duplicates').click(() => {
-    $('#btn-duplicates').toggleClass('fa-eye fa-eye-slash');
     findDuplicates();
   });
 
