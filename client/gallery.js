@@ -36,6 +36,8 @@ window.options = {
   set viewFaces(val) { return localStorage.setItem('viewFaces', val); },
   get viewRaw() { return localStorage.getItem('viewRaw') ? localStorage.getItem('viewRaw') === 'true' : false; },
   set viewRaw(val) { return localStorage.setItem('viewRaw', val); },
+  get liveLoad() { return localStorage.getItem('liveLoad') ? localStorage.getItem('liveLoad') === 'true' : false; },
+  set liveLoad(val) { return localStorage.setItem('liveLoad', val); },
   get dateShort() { return localStorage.getItem('dateShort') || 'YYYY/MM/DD'; },
   set dateShort(val) { return localStorage.setItem('dateShort', val); },
   get dateLong() { return localStorage.getItem('dateLong') || 'dddd, MMMM Do, YYYY'; },
@@ -403,24 +405,26 @@ function sortResults(sort) {
 }
 
 // find duplicate images based on pre-computed sha-256 hash
-function findDuplicates() {
+async function findDuplicates() {
   $('body').css('cursor', 'wait');
   const t0 = window.performance.now();
   previous = null;
   let duplicates = [];
-  const searched = [];
-  for (const obj of window.results) {
-    searched.push(obj.image);
-    for (const img of window.results) {
-      if (searched.includes(img.image)) continue;
-      if (img.image === obj.image) continue;
-      const distance = (img.hash === obj.hash) ? 0 : (hash.distance(img.phash, obj.phash) + 1);
+  let duplicate;
+  const length = window.results.length - 1;
+  for (let i = 0; i < length + 1; i++) {
+    const a = window.results[i];
+    duplicate = false;
+    for (let j = i + 1; j < length; j++) {
+      const b = window.results[j];
+      const distance = (a.hash === b.hash) ? 0 : (hash.distance(a.phash, b.phash) + 1);
       if (distance < 35) {
-        img.simmilarity = distance;
-        obj.simmilarity = distance;
-        duplicates.push(obj, img);
-        searched.push(img.image);
+        a.simmilarity = distance;
+        b.simmilarity = distance;
+        duplicate = true;
+        duplicates.push(b);
       }
+      if (duplicate) duplicates.push(a);
     }
   }
   duplicates = [...new Set(duplicates)];
@@ -437,13 +441,17 @@ async function loadGallery(limit) {
   const t0 = window.performance.now();
   log.result('Loading gallery ...');
   window.results.length = 0;
-  oboe(`/api/get?limit=${limit}&find=all`)
+  const live = window.options.liveLoad;
+  oboe({ url: `/api/get?limit=${limit}&find=all`, cached: true, withCredentials: false })
     .node('{image}', (image) => {
       image.id = window.results.length + 1;
       window.results.push(image);
       $('#number').text(window.results.length);
-      printResult(image);
-      enumerateFolders(image.image);
+      if (live) {
+        printResult(image);
+        enumerateFolders(image.image);
+      }
+      // time: 15sec load, 10sec print, 3sec enumerate
     })
     .done((things) => {
       const t1 = window.performance.now();
