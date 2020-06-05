@@ -10,7 +10,8 @@
     { "folder": "Pictures/Instagram Posts/", "match": "" },
     { "folder": "Pictures/Saved Pictures/", "match": "" },
     { "folder": "Photos/Various/", "match": "" },
-    { "folder": "Photos/Travels/", "match": "" }
+    { "folder": "Photos/Travels/", "match": "" },
+    { "folder": "Temp/Patty & Shantel/", "match": "" }
   ],
   "server": {
     "httpPort": 8000,

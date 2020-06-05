@@ -65,10 +65,10 @@ function showTip(parent, text) {
   tip.className = 'popper';
   tip.innerHTML = text;
   parent.appendChild(tip);
-  let popper = createPopper(parent, tip, { placement: 'left', strategy: 'absolute', modifiers: [{ name: 'offset', options: { offset: [0, 20] } }] });
+  let popup = createPopper(parent, tip, { placement: 'left', strategy: 'absolute', modifiers: [{ name: 'offset', options: { offset: [0, 20] } }] });
   setTimeout(() => {
-    popper.destroy();
-    popper = null;
+    popup.destroy();
+    popup = null;
     parent.removeChild(tip);
   }, 3000);
 }
@@ -220,12 +220,12 @@ async function enumerateFolders(input) {
   for (let i = 0; i < 10; i++) {
     for (const item of folderList) {
       if (item.folders[i]) {
-        const folder = item.folders[i];
-        const parent = item.folders[i > 0 ? i - 1 : 0];
+        const folder = item.folders[i].replace(/[^a-zA-Z]/g, '');
+        const parent = item.folders[i > 0 ? i - 1 : 0].replace(/[^a-zA-Z]/g, '');
         let path = '';
         for (let j = 0; j <= i; j++) path += `${item.folders[j]}/`;
         const root = window.user && window.user.root ? window.user.root : 'media/';
-        const name = folder === root.replace(/\//g, '') ? 'All' : folder;
+        const name = folder === root.replace(/\//g, '') ? 'All' : item.folders[i];
         const html = `
           <li id="dir-${folder}">
             <span tag="${path}" type="folder" style="padding-left: ${i * 16}px" class="folder">&nbsp
@@ -463,6 +463,12 @@ async function loadGallery(limit) {
     });
 }
 
+// popup on right-click
+async function showContextPopup(evt) {
+  evt.preventDefault();
+  showTip(evt.target, `displaying ${window.filtered.length} of ${window.results.length} images`);
+}
+
 // called on startup to get logged in user details from server
 async function initUser() {
   const res = await fetch('/api/user');
@@ -479,6 +485,7 @@ async function initUser() {
   $('#folderbar').toggle(window.options.listFolders);
   $('.description').toggle(window.options.listDetails);
   $('#thumbsize')[0].value = window.options.listThumbSize;
+  $('body').contextmenu((evt) => showContextPopup(evt));
 }
 
 // resize viewport
@@ -498,6 +505,12 @@ function showNavbar(elem) {
   if (elem && elem[0] !== $('#userbar')[0]) $('#userbar').toggle(false);
   if (elem && elem[0] !== $('#optionslist')[0]) $('#optionslist').toggle(false);
   if (elem && elem[0] !== $('#optionsview')[0]) $('#optionsview').toggle(false);
+  $(document).on('pagecontainerbeforechange', (evt, data) => {
+    if (typeof data.toPage === 'string' && data.options.direction === 'back') {
+      data.toPage = window.location;
+      data.options.transition = 'flip';
+    }
+  });
 }
 
 // handle keypresses on main
