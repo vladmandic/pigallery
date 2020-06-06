@@ -158,6 +158,7 @@ async function getCameraStream() {
 }
 
 async function getVideoStream(url) {
+  if (!url) return;
   video.addEventListener('loadeddata', startProcessing);
   video.src = url;
   await video.play();
@@ -185,6 +186,7 @@ async function main() {
     } else {
       $('#text-play').text('Pause Video');
       getCameraStream();
+      getVideoStream();
       // getVideoStream('media/Samples/Videos/video-appartment.mp4');
       // getVideoStream('media/Samples/Videos/video-jen.mp4');
       // getVideoStream('media/Samples/Videos/video-dash.mp4');
