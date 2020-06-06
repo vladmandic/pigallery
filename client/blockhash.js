@@ -5,7 +5,7 @@
 // Which is an implementation ofBlock Mean Value Based Image Perceptual Hashing by Bian Yang, Fan Gu and Xiamu Niu
 
 // const fs = require('fs');
-const jpeg = require('jpeg-js');
+// const jpeg = require('jpeg-js');
 
 const one_bits = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
 
@@ -154,6 +154,7 @@ const bmvbhash = function (data, bits) {
   return bits_to_hexhash(result);
 };
 
+/*
 async function calculateHashURL(src, bits = 16) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
@@ -177,7 +178,6 @@ async function calculateHashURL(src, bits = 16) {
   });
 }
 
-/*
 async function calculateHashFile(src, bits = 16) {
   return new Promise((resolve, reject) => {
     try {
@@ -227,7 +227,7 @@ async function test() {
 
 module.exports = {
   distance,
-  url: calculateHashURL,
+  // url: calculateHashURL,
   // file: calculateHashFile,
   data: calculateHashData,
 };

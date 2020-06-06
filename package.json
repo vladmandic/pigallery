@@ -5,7 +5,8 @@
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "upgrade": "npm update; npm install; npm dedupe; npm prune"
+    "upgrade": "npm update; npm install; npm dedupe; npm prune",
+    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && depcheck --ignores='eslint-plugin-*,auditjs' --ignore-dirs='dist' && auditjs ossi --quiet"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -47,24 +48,29 @@
   "dependencies": {
     "@popperjs/core": "^2.4.0",
     "@tensorflow/tfjs": "^1.7.4",
-    "@tensorflow/tfjs-backend-cpu": "^2.0.0",
-    "@tensorflow/tfjs-backend-wasm": "^2.0.0",
-    "@tensorflow/tfjs-backend-webgl": "^2.0.0",
     "compression": "^1.7.4",
-    "eslint-config-airbnb-base": "^14.1.0",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
     "face-api.js": "^0.22.2",
-    "jpeg-js": "^0.4.0",
-    "jquery": "^3.5.1",
     "marked": "^1.1.0",
     "moment": "^2.26.0",
     "nedb-promises": "^4.0.3",
-    "node-fetch": "^3.0.0-beta.6-exportfix",
-    "nsfwjs": "^2.2.0",
     "oboe": "^2.1.5",
     "parcel-bundler": "^1.12.4",
     "pilogger": "git+https://github.com/vladmandic/pilogger.git"
+  },
+  "devDependencies": {
+    "auditjs": "^4.0.18",
+    "depcheck": "^0.9.2",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-html": "^6.0.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-json": "^2.1.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "htmlhint": "^0.14.0",
+    "npm-check-updates": "^6.0.1"
   }
 }

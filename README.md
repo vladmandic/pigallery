@@ -35,7 +35,7 @@
 #### Quick
 
       git clone --depth 1 https://github.com/vladmandic/pigallery
-      npm run upgrade
+      ./setup.js
 
 #### Manual
 
