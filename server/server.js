@@ -73,6 +73,7 @@ async function main() {
   app.use('/', express.static(path.join(root, '.')));
   app.get('/', (req, res) => res.redirect('/gallery'));
   app.get('/gallery', (req, res) => res.sendFile('client/gallery.html', { root }));
+  app.get('/compare', (req, res) => res.sendFile('client/compare.html', { root }));
   app.get('/process', (req, res) => res.sendFile('client/process.html', { root }));
   app.get('/video', (req, res) => res.sendFile('client/video.html', { root }));
   app.use('/assets', express.static(path.join(root, './assets'), { maxAge: '365d', cacheControl: true }));
