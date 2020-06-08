@@ -1,7 +1,7 @@
 const log = require('pilogger');
 const Parcel = require('parcel-bundler');
 
-const entryFiles = ['client/gallery.js', 'client/video.js', 'client/process.js'];
+const entryFiles = ['client/gallery.js', 'client/video.js', 'client/process.js', 'client/compare.js'];
 const options = {
   outDir: './dist',
   publicUrl: '/',

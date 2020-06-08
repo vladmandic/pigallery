@@ -36,6 +36,15 @@ function api(app) {
     metadata.check(filesAll);
   });
 
+  app.get('/api/dir', async (req, res) => {
+    if (!req.query.folder) {
+      res.status(400).json([]);
+      return;
+    }
+    const folder = await metadata.list(req.query.folder, '', true, true);
+    res.json(folder.process);
+  });
+
   app.get('/api/get', async (req, res) => {
     if (!req.query.find) {
       res.status(400).json([]);

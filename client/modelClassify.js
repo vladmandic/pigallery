@@ -10,8 +10,8 @@ let config = {
   alignCorners: true,
   tensorSize: 224,
   tensorShape: 3,
+  offset: 1,
   classes: 'assets/ImageNet-Labels1000.json',
-  labels: {},
 };
 
 async function load(cfg) {
@@ -21,24 +21,25 @@ async function load(cfg) {
   if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath, { fromTFHub: tfHub });
   if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath, { fromTFHub: tfHub });
   const res = await fetch(config.classes);
-  config.labels = await res.json();
   // eslint-disable-next-line no-use-before-define
+  model.labels = await res.json();
+  model.config = config;
   return model;
 }
 
-async function decodeValues(values) {
+async function decodeValues(model, values) {
   const valuesAndIndices = [];
   for (const i in values) valuesAndIndices.push({ score: values[i], index: i });
   const results = valuesAndIndices
-    .filter((a) => a.score > config.score)
+    .filter((a) => a.score > model.config.score)
     .sort((a, b) => b.score - a.score)
     .map((a) => {
-      const id = a.index - 1; // offset indexes by -1 to avoid uncessary slice
-      const wnid = config.labels[id] ? config.labels[id][0] : a.index;
-      const label = config.labels[id] ? config.labels[id][1] : `unknown id:${a.index}`;
+      const id = a.index - model.config.offset; // offset indexes for some models
+      const wnid = model.labels[id] ? model.labels[id][0] : a.index;
+      const label = model.labels[id] ? model.labels[id][1] : `unknown id:${a.index}`;
       return { wnid, id, class: label, score: a.score };
     });
-  if (results && results.length > config.topK) results.length = config.topK;
+  if (results && results.length > model.config.topK) results.length = model.config.topK;
   return results;
 }
 
@@ -46,17 +47,17 @@ async function classify(model, image) {
   const values = tf.tidy(() => {
     const imgBuf = tf.browser.fromPixels(image, 3);
     const bufFloat = imgBuf.toFloat();
-    const mul = bufFloat.mul((config.inputMax - config.inputMin) / 255.0);
-    const add = mul.add(config.inputMin);
-    const resized = tf.image.resizeBilinear(add, [config.tensorSize, config.tensorSize], config.alignCorners);
-    const reshaped = resized.reshape([-1, config.tensorSize, config.tensorSize, config.tensorShape]);
+    const mul = bufFloat.mul((model.config.inputMax - model.config.inputMin) / 255.0);
+    const add = mul.add(model.config.inputMin);
+    const resized = tf.image.resizeBilinear(add, [model.config.tensorSize, model.config.tensorSize], model.config.alignCorners);
+    const reshaped = resized.reshape([-1, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]);
     const predictions = model.predict(reshaped);
     const prediction = Array.isArray(predictions) ? predictions[0] : predictions; // some models return prediction for multiple objects in array, some return single prediction
     const softmax = prediction.softmax();
     const data = softmax.dataSync();
     return data;
   });
-  const decoded = decodeValues(values);
+  const decoded = decodeValues(model, values);
   return decoded;
 }
 
