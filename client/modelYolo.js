@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
-/* eslint-disable no-underscore-dangle */
-import * as tf from '@tensorflow/tfjs';
+
+const tf = require('@tensorflow/tfjs');
 
 export const v1_tiny_model = 'https://raw.githubusercontent.com/shaqian/tfjs-yolo-demo/master/dist/model/v1tiny/model.json';
 export const v2_tiny_model = 'https://raw.githubusercontent.com/shaqian/tfjs-yolo-demo/master/dist/model/v2tiny/model.json';

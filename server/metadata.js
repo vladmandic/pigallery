@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 const fs = require('fs');
 const path = require('path');
 const proc = require('process');
@@ -30,10 +28,8 @@ function init() {
 
 function storeObject(data) {
   if (data.image === config.server.warmupImage) return;
-  // eslint-disable-next-line no-param-reassign
   const json = data;
   const analyzed = (json.classify && json.classify.length > 0) || (json.detect && json.detect.length > 0) || (json.exif && json.exif.camera);
-  // eslint-disable-next-line no-param-reassign
   json.processed = new Date();
   if (config.server.dbEngine === 'json') {
     const index = global.json.findIndex((a) => a.image === json.image);
@@ -48,7 +44,6 @@ function storeObject(data) {
 }
 
 function buildTags(object) {
-  // log.data('Build tags:', object.image);
   const tags = [];
   const filePart = object.image.split('/');
   for (const name of filePart) tags.push({ name: name.toLowerCase() });
@@ -146,7 +141,6 @@ function searchClasses(wnid) {
 }
 
 function getDescription(json) {
-  // log.data('Lookup WordNet:', JSON.stringify(json));
   const results = [];
   if (!json || !Array.isArray(json)) return results;
   for (const guess of json) {
@@ -161,7 +155,6 @@ function getDescription(json) {
 }
 
 function getLocation(json) {
-  // log.data('Lookup Location:', json.lat, json.lon);
   if (!json.lon || !json.lat) return json;
   const loc = distance.nearest(json.lat, json.lon, 'all', 1);
   const near = distance.nearest(json.lat, json.lon, 'large', 1);
@@ -190,7 +183,6 @@ function getTime(time) {
 }
 
 async function getExif(url) {
-  // log.data('Lookup EXIF:', url);
   return new Promise((resolve) => {
     const json = {};
     if (!fs.existsSync(url)) resolve(json);

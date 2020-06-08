@@ -1,8 +1,8 @@
 // import * as nsfwjs from 'nsfwjs';
 // import yolo from './modelYolo.js';
 
-import config from './config.js';
-import * as tf from './processVideo.js';
+const config = require('./config.js').default;
+const tf = require('./processVideo.js');
 
 window.config = config;
 let video;
@@ -73,7 +73,6 @@ async function drawFaces(object) {
     const pointSize = 2;
     for (const pt of object.face[i].landmarks.positions) {
       ctx.beginPath();
-      // eslint-disable-next-line no-underscore-dangle
       ctx.arc(pt._x * resizeX, pt._y * resizeY, pointSize, 0, 2 * Math.PI);
       ctx.fill();
     }

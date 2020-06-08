@@ -25,7 +25,6 @@ function api(app) {
   });
 
   app.get('/api/list', async (req, res) => {
-    // const json = await metadata.list(req.query.folder || '', req.query.match || null, req.query.recursive || false, req.query.force || false);
     const list = [];
     let filesAll = [];
     for (const location of config.locations) {
@@ -59,7 +58,6 @@ function api(app) {
 
   app.post('/api/metadata', async (req, res) => {
     const data = req.body;
-    // log.data('Lookup meatadata:', data.image);
     const exif = await metadata.exif(data.image);
     const hash = await metadata.hash(data.image, 'sha256');
     const location = await metadata.location(exif);
@@ -76,7 +74,6 @@ function api(app) {
   });
 
   app.get(`${config.server.mediaRoot}/*`, async (req, res) => {
-    // console.log(req); res.sendStatus(404); return;
     const fileName = decodeURI(req.url);
     if (fileName.startsWith('/')) fileName.substr(1);
     if (!fileName.startsWith(req.session.root)) {

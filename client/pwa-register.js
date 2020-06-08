@@ -1,4 +1,4 @@
-import log from './log.js';
+const log = require('./log.js');
 
 async function register(path) {
   if ('serviceWorker' in navigator) {

@@ -4,7 +4,6 @@ const Parcel = require('parcel-bundler');
 const entryFiles = ['client/gallery.js', 'client/video.js', 'client/process.js'];
 const options = {
   outDir: './dist',
-  // outFile: ['gallery.js', 'video.js'],
   publicUrl: '/',
   watch: true,
   cache: false,

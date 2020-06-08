@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs';
+const tf = require('@tensorflow/tfjs');
 
 let config = {
   modelPath: null,
@@ -86,10 +86,8 @@ async function detect(model, image) {
   return results;
 }
 
-const exported = {
+module.exports = {
   config,
   load,
   detect,
 };
-
-export default exported;

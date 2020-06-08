@@ -1,10 +1,18 @@
-import * as tf from '@tensorflow/tfjs';
-import * as faceapi from 'face-api.js';
-import modelClassify from './modelClassify.js';
-import modelDetect from './modelDetect.js';
-import log from './log.js';
-import config from './config.js';
-import hash from './blockhash.js';
+const tf = require('@tensorflow/tfjs');
+/*
+const tf = require('@tensorflow/tfjs-core');
+require('@tensorflow/tfjs-data');
+require('@tensorflow/tfjs-layers');
+require('@tensorflow/tfjs-backend-cpu');
+require('@tensorflow/tfjs-backend-webgl');
+require('@tensorflow/tfjs-converter');
+*/
+const faceapi = require('face-api.js');
+const modelClassify = require('./modelClassify.js');
+const modelDetect = require('./modelDetect.js');
+const log = require('./log.js');
+const config = require('./config.js').default;
+const hash = require('./blockhash.js');
 
 const models = {};
 let error = false;
@@ -15,7 +23,8 @@ function JSONtoStr(json) {
 
 async function loadModels() {
   log.result('Starting Image Analsys');
-  log.result(`Initializing TensorFlow/JS version ${tf.version.tfjs}`);
+  log.result(`Initializing TensorFlow/JS version ${tf.version_core}`);
+  log.result(`  ${JSON.stringify(tf.version)}`);
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
@@ -100,7 +109,6 @@ function flattenObject(object) {
 }
 
 faceapi.classify = async (image) => {
-  // const result = await faceapi.detectSingleFace(image, faceapi.options)
   const results = await faceapi.detectAllFaces(image, faceapi.options)
     .withFaceLandmarks()
     // .withFaceDescriptor()
@@ -219,18 +227,20 @@ async function processImage(name) {
     try {
       if (models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
     } catch (err) {
-      log.result(`Errror in FaceAPI for ${name}: ${err}`);
+      log.result(`Error in FaceAPI for ${name}: ${err}`);
       error = true;
     }
     log.active(`NSFW Detection: ${name}`);
     let nsfw;
-    try {
-      if (models.nsfw) nsfw = await models.nsfw.classify(image.canvas, 1);
-      obj.person.scoreClass = (nsfw && nsfw[0]) ? nsfw[0].probability : null;
-      obj.person.class = (nsfw && nsfw[0]) ? nsfw[0].className : null;
-    } catch (err) {
-      log.result(`Errror in NSFW for ${name}: ${err}`);
-      error = true;
+    if (models.nsfw && obj.person) {
+      try {
+        nsfw = await models.nsfw.classify(image.canvas, 1);
+        obj.person.scoreClass = (nsfw && nsfw[0]) ? nsfw[0].probability : null;
+        obj.person.class = (nsfw && nsfw[0]) ? nsfw[0].className : null;
+      } catch (err) {
+        log.result(`Error in NSFW for ${name}: ${err}`);
+        error = true;
+      }
     }
   }
   const tp1 = window.performance.now();

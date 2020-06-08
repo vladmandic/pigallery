@@ -1,8 +1,8 @@
 // import * as nsfwjs from 'nsfwjs';
 // import yolo from './modelYolo.js';
-import config from './config.js';
-import log from './log.js';
-import * as tf from './processImage.js';
+const log = require('./log.js');
+const config = require('./config.js').default;
+const tf = require('./processImage.js');
 
 const results = [];
 let id = 0;

@@ -1,14 +1,12 @@
-/* eslint-disable no-underscore-dangle */
-
-import oboe from 'oboe';
-import moment from 'moment';
-import marked from 'marked';
-import { createPopper } from '@popperjs/core';
-import hash from './blockhash.js';
-import config from './config.js';
-import log from './log.js';
-import details from './details.js';
-import pwa from './pwa-register.js';
+const oboe = require('oboe');
+const moment = require('moment');
+const marked = require('marked');
+const { createPopper } = require('@popperjs/core');
+const log = require('./log.js');
+const config = require('./config.js').default;
+const hash = require('./blockhash.js');
+const details = require('./details.js');
+const pwa = require('./pwa-register.js');
 
 // global variables
 window.results = [];
@@ -294,8 +292,6 @@ async function folderHandlers() {
           for (const tag of a.tags) {
             if (path === Object.values(tag)[0].toString()) found = true;
           }
-          // const tags = JSON.stringify(a.tags);
-          // return tags.includes(path);
           return found;
         });
         log.result(`Showing class: ${path}`);

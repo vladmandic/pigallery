@@ -1,10 +1,8 @@
-/* eslint-disable no-underscore-dangle */
-
-import * as tf from '@tensorflow/tfjs';
-import * as faceapi from 'face-api.js';
-import modelDetect from './modelDetect.js';
-import log from './log.js';
-import config from './config.js';
+const tf = require('@tensorflow/tfjs');
+const faceapi = require('face-api.js');
+const modelDetect = require('./modelDetect.js');
+const log = require('./log.js');
+const config = require('./config.js').default;
 
 const models = {};
 let offscreenCanvas;

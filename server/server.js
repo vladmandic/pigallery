@@ -28,7 +28,6 @@ function allowPWA(req, res, next) {
 }
 
 function forceSSL(req, res, next) {
-  // if (config.server.forceHTTPS && req.headers['x-forwarded-proto'] !== 'https') return res.redirect(['https://', req.get('Host'), req.url].join(''));
   if (!req.secure) {
     log.data(`Redirecting unsecure user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
     return res.redirect(`https://${req.hostname}:${global.config.server.HTTPSport}${req.baseUrl}${req.url}`);
@@ -69,6 +68,7 @@ async function main() {
   });
 
   api.init(app); // initialize api calls
+
   // define routes
   app.use('/', express.static(path.join(root, '.')));
   app.get('/', (req, res) => res.redirect('/gallery'));

@@ -1,8 +1,8 @@
 /* global ImageViewer */
 
-import moment from 'moment';
-import log from './log.js';
-import config from './config.js';
+const moment = require('moment');
+const log = require('./log.js');
+const config = require('./config.js').default;
 
 let viewer;
 
@@ -37,7 +37,6 @@ function drawBoxes(object) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.linewidth = 2;
   ctx.font = '16px Roboto';
-  // eslint-disable-next-line no-param-reassign
   if (!object) object = last;
   if (!object) return;
 
@@ -104,7 +103,6 @@ async function resizeDetailsImage(object) {
     setTimeout(() => resizeDetailsImage(object), 25);
   } else {
     // move details panel to side or bottom depending on screen aspect ratio
-    // use 70% or 100% depending if details text is enabled
     if (width > height) {
       $('#popup').css('display', 'flex');
       if (window.options.viewDetails) {
@@ -163,7 +161,6 @@ async function showDetails(thumb, img) {
     viewer = new ImageViewer(div, { zoomValue: 100, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
   }
   // http://ignitersworld.com/lab/imageViewer.html
-  // viewer._events.imageLoad = imageLoad();
   if (thumb) viewer.load(thumb, img);
   else viewer.load(img);
 
@@ -224,7 +221,6 @@ async function showDetails(thumb, img) {
 
   $('#details-download').off();
   $('#details-download').click(() => window.open(object.image, '_blank'));
-  // const btnDownload = `<a class="download fa fa-arrow-alt-circle-down" style="font-size: 32px" href="${object.image}" download></a>`;
   const html = `
       <h2>Image: ${object.image}</h2>
       <b>Image size</b>: ${object.naturalSize.width} x ${object.naturalSize.height}
