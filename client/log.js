@@ -1,4 +1,4 @@
-import moment from 'moment';
+const moment = require('moment');
 
 let dots = 0;
 
@@ -15,7 +15,7 @@ async function result(...msg) {
   const div = document.getElementById('log');
   if (div) div.innerHTML += `${moment().format('HH:MM:ss')} ${msgs.replace(' ', '&nbsp')}<br>`;
   if (div) div.scrollTop = div.scrollHeight;
-  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`); // .then((res) => res.text());
+  if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`);
   // eslint-disable-next-line no-console
   console.log(...msg);
 }
@@ -27,10 +27,8 @@ async function active(...msg) {
   else console.log(...msg);
 }
 
-const log = {
+module.exports = {
   result,
   active,
   dot,
 };
-
-export default log;

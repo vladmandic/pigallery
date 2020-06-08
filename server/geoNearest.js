@@ -1,10 +1,6 @@
 // heavily based on https://github.com/darkskyapp/sphere-knn
 // simplified and modified to implement persistent lookup array for increased performance
 
-/* eslint-disable no-continue */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-prototype-builtins */
-
 const geo = {};
 
 function spherical2cartesian(lat, lon) {

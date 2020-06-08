@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs';
+const tf = require('@tensorflow/tfjs');
 
 let config = {
   modelPath: null,
@@ -60,10 +60,8 @@ async function classify(model, image) {
   return decoded;
 }
 
-const exported = {
+module.exports = {
   config,
   load,
   classify,
 };
-
-export default exported;
