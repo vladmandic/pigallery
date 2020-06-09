@@ -21,7 +21,6 @@ async function load(cfg) {
   if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath, { fromTFHub: tfHub });
   if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath, { fromTFHub: tfHub });
   const res = await fetch(config.classes);
-  // eslint-disable-next-line no-use-before-define
   model.labels = await res.json();
   model.config = config;
   return model;

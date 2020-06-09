@@ -9,8 +9,8 @@ let config = {
   inputMax: 1,
   overlap: 0.1,
   softNmsSigma: 0,
+  useFloat: false,
   classes: 'assets/Coco-Labels.json',
-  labels: {},
 };
 
 async function load(cfg) {
@@ -19,12 +19,12 @@ async function load(cfg) {
   if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath);
   if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath);
   const res = await fetch(config.classes);
-  config.labels = await res.json();
-  // eslint-disable-next-line no-use-before-define
+  model.labels = await res.json();
+  model.config = config;
   return model;
 }
 
-function buildDetectedObjects(batched, result, maxScores, classes, index) {
+function buildDetectedObjects(model, batched, result, maxScores, classes, index) {
   const width = batched.shape[2];
   const height = batched.shape[1];
   const boxes = result[1].dataSync();
@@ -47,7 +47,7 @@ function buildDetectedObjects(batched, result, maxScores, classes, index) {
     box[1] = minY;
     box[2] = maxX - minX;
     box[3] = maxY - minY;
-    objects.push({ box, class: config.labels[classes[indexes[i]] + 1].displayName, score: maxScores[indexes[i]] });
+    objects.push({ box, class: model.labels[classes[indexes[i]] + 1].displayName, score: maxScores[indexes[i]] });
   }
   return objects;
 }
@@ -75,12 +75,19 @@ function calculateMaxScores(result) {
 
 async function detect(model, image) {
   const imgBuf = tf.browser.fromPixels(image, 3);
-  const batched = imgBuf.expandDims(0);
+  const expanded = imgBuf.expandDims(0);
+  let batched;
+  if (!model.config.useFloat) {
+    batched = expanded;
+  } else {
+    // batched = expanded.toFloat();
+    batched = tf.cast(expanded, 'float32');
+  }
   const result = await model.executeAsync(batched);
   const [scores, classes] = calculateMaxScores(result);
   const reshaped = tf.tensor2d(result[1].dataSync(), [result[1].shape[1], result[1].shape[3]]);
-  const index = tf.image.nonMaxSuppression(reshaped, scores, config.topK, config.overlap, config.score, config.softNmsSigma); // async version leaks 2 tensors
-  const results = buildDetectedObjects(batched, result, scores, classes, index); // disposes of batched, result, index
+  const index = tf.image.nonMaxSuppression(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma); // async version leaks 2 tensors
+  const results = buildDetectedObjects(model, batched, result, scores, classes, index); // disposes of batched, result, index
   tf.dispose(imgBuf);
   tf.dispose(reshaped);
   return results;
