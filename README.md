@@ -135,57 +135,30 @@ Result of all metadata processing is a very flexbile search engine - take a look
   - Can lead to out of memory errors in your GPU
 - On pretrained models
   - Size of pretrained model is not related to performance as larger models can sometimes predict objects easier.
-  - All models are pretrained using ImageNet dataset with 1,000 classes <http://image-net.org/>
-    - Ideally, models should be trained using full ImageNet dataset that contains 14,197,087 images in 21,841 classes
   - If model is depth-based, testing is provided with depth factor 1.0. Lower depth decreases accuracy and higher depth rarely increases it.
   - Typcal resolution for selected pretrained models is 224px resolution although it can vary
-  - Model warm-up time can be from few seconds to over a minute depending on model complexity
+  - Model load time can be from few seconds to over a minute depending on model size (in MB)
+  - Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
 
 ### Model Benchmarks
 
 - Using Intel i7 with nVidia GTX-1050
-- Sample is of 1,000 random images with processing size 800px
+- Sample is of 1,000 random images with processing size normalized to 780px
 - Testing is performed using 32bit float precision configured in `client/config.js`.
 - Switching to 16bit precission can increase performance by additional 5-10%.
 
-#### Image Classification
+### Model Notes
 
-<center>
+- Best column marks hit when model has produces significantly better result than other models
+- Classification: RESNet bassed models try to guess while Inception and MobileNet based models are willing to leave result out on no match
+- Classification: As seen with EfficientNet, accuracy increases drastically with model resolution, but it also significantly increases processing time
+- Classification: RESNet based models have long load times due to size, but only have sightly higher accurancy than small MobileNet or Inception models
+- Classification: Models with high class number have low accuracy unless you go all-in with large models
 
-| Model               | Size   | Tensors | Accuracy | False Positive | Performance |
-|---------------------|--------|---------|----------|----------------|-------------|
-| MobileNet v1        |  16 MB |  72     | 82.81%   | 13.2%          |  99 ms      |
-| MobileNet v2        |  13 MB | 125     | 82.81%   |  3.5%          | 104 ms      |
-| Inception ResNet v2 | 223 MB | 500     | 89.84%   | TBD            | 135 ms      |
-| ResNet v2           | 178 MB | 283     | 81.25%   | TBD            | 150 ms      |
-| Inception v1        |  26 MB | 120     | 78.13%   | TBD            | 105 ms      |
-| Inception v2        |  44 MB | 145     | 78.13%   | TBD            | 110 ms      |
-| Inception v3        |  95 MB | 194     | 85.94%   |  9.5           | 127 ms      |
-| NasNet Mobile       |  21 MB | 574     | 78.91%   | TBD            | 119 ms      |
+### Model Recommendations
 
-</center>
-<br>
-*It's a tight race between MobileNet v2 with it's small size and low number of false positives .vs.
-Inception v3 with long warmup time, good top results but also higher number of false positives.
-Note that Inception rates it's hits very high, so if its combined with some other model, it would always end on top.
-ResNet on it's own is not that great, but Inception based on ResNet does provide results although that comes with high cost in warmup times and memory usage.*
-
-#### Image Object Detection
-
-<center>
-
-| Model                | Size   | Tensors | Accuracy | False Positive | Performance |
-|----------------------|--------|---------|----------|----------------|-------------|
-| Coco/SSD v2          |  67 MB | 202     | 60.94%   |  1.8%          | 147 ms      |
-| DarkNet/Yolo v1 Tiny |  63 MB |  42     | 34.38%   | TBD            | 139 ms      |
-| DarkNet/Yolo v2 Tiny |  44 MB |  42     | 50.00%   | TBD            | 145 ms      |
-| DarkNet/Yolo v3 Tiny |  35 MB |  59     | 29.69%   | TBD            | 136 ms      |
-| DarkNet/Yolo v1 Full | 248 MB | 366     | 62.50%   | TBD            | 280 ms      |
-
-</center>
-<br>
-*With object detection accuracy is typically lower, but there are much fewer false-positives.
-This allows for fallback solutions - if one model does not perform well on an image, you can try another.*
+- Classification: For mobile and/or high performance, go with either MobileNet v2 or EfficientNet B0. Below 20MB and 140ms/image.
+- Classification: For high accuracy go with high resolution EfficientNet model and optionally augment results with Inception v3.
 
 ## Links
 
@@ -195,6 +168,7 @@ This allows for fallback solutions - if one model does not perform well on an im
 - Inception: <https://towardsdatascience.com/review-inception-v4-evolved-from-googlenet-merged-with-resnet-idea-image-classification-5e8c339d18bc>
 - DarkNet Yolo: <https://pjreddie.com/darknet/yolo/>
 - Face/Gender/Age: <https://github.com/justadudewhohacks/face-api.js>
+- EfficientNet: <https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet>
 
 <center>
 
