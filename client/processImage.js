@@ -24,7 +24,6 @@ function JSONtoStr(json) {
 async function loadModels() {
   log.result('Starting Image Analsys');
   log.result(`Initializing TensorFlow/JS version ${tf.version_core}`);
-  log.result(`  ${JSON.stringify(tf.version)}`);
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   if (!config.floatPrecision) await tf.webgl.forceHalfFloat();

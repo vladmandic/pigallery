@@ -11,8 +11,8 @@ const config = {
   registerPWA: false,      // register PWA service worker?
 
   // Default models
-  classify: { name: 'EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 456, offset: 0 },
-  alternative: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },
+  classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3, tensorSize: 224, offset: 1 },
+  alternative: { name: 'EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.1, topK: 3, tensorSize: 456, offset: 0 },
   detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5 },
   person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 4, type: 'ssdMobilenetv1' },
 

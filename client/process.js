@@ -48,6 +48,7 @@ async function processFiles() {
     log.result(`  Queued folder: ${dir.location.folder} matching: ${dir.location.match || '*'} recursive: ${dir.location.recursive || false} force: ${dir.location.force || false} pending: ${dir.files.length}`);
     files = [...files, ...dir.files];
   }
+  await tf.load();
   await warmupModels();
   const t0 = window.performance.now();
   const promises = [];
@@ -68,7 +69,6 @@ async function processFiles() {
     }
   }
   if (promises.length > 0) await Promise.all(promises);
-  if (error) log.result('Aborting');
   const t1 = window.performance.now();
   if (files.length > 0) {
     log.result('');
@@ -87,13 +87,17 @@ async function processFiles() {
       log.active('Idle...');
     }, 1000);
   }
-  log.active('Idle...');
+  if (error) {
+    log.result('Aborting current run due to error');
+    log.result('Restarting ...');
+    processFiles();
+  }
+  log.active('Idle ...');
 }
 
 async function main() {
   const t0 = window.performance.now();
   log.active('Starting ...');
-  await tf.load();
   await processFiles();
   const t1 = window.performance.now();
   log.result(`Image Analysis done: ${Math.round(t1 - t0).toLocaleString()}ms`);
