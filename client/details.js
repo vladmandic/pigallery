@@ -174,21 +174,21 @@ async function showDetails(thumb, img) {
   $('.iv-large-image').on('wheel', () => drawBoxes());
 
   let classified = 'Classified ';
-  if (object.classify) for (const obj of object.classify) classified += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+  if (object.classify) for (const obj of object.classify) classified += ` | <font color="teal">${(100 * obj.score).toFixed(0)}% ${obj.class}</font>`;
   let alternative = 'Alternate ';
-  if (object.alternative) for (const obj of object.alternative) alternative += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+  if (object.alternative) for (const obj of object.alternative) alternative += ` | <font color="teal">${(100 * obj.score).toFixed(0)}% ${obj.class}</font>`;
 
   let detected = 'Detected ';
-  if (object.detect) for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+  if (object.detect) for (const obj of object.detect) detected += ` | <font color="teal">${(100 * obj.score).toFixed(0)}% ${obj.class}</font>`;
 
   let person = '';
   let nsfw = '';
   for (const i in object.person) {
     if (object.person[i].age) {
       person += `Person ${1 + parseInt(i, 10)} | 
-          Gender: ${(100 * object.person[i].scoreGender).toFixed(0)}% ${object.person[i].gender} | 
-          Age: ${object.person[i].age.toFixed(1)} | 
-          Emotion: ${(100 * object.person[i].scoreEmotion).toFixed(0)}% ${object.person[i].emotion}<br>`;
+          <font color="teal">gender: ${(100 * object.person[i].scoreGender).toFixed(0)}% ${object.person[i].gender}</font> | 
+          <font color="teal">age: ${object.person[i].age.toFixed(1)}</font> | 
+          <font color="teal">emotion: ${(100 * object.person[i].scoreEmotion).toFixed(0)}% ${object.person[i].emotion}<br></font>`;
     }
     if (object.person[i].class) {
       nsfw += `Class: ${(100 * object.person[i].scoreClass).toFixed(0)}% ${object.person[i].class} `;
@@ -216,13 +216,16 @@ async function showDetails(thumb, img) {
     if (object.exif.exposure) exif += `<b>Settings:</b> ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
   }
   let location = '';
-  if (object.location && object.location.city) location += `Location: ${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})<br>`;
+  if (object.location && object.location.city) {
+    location += `
+      Location: <font color="teal">${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})</font><br>`;
+  }
   if (object.exif && object.exif.lat) location += `Coordinates: Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)}<br>`;
 
   $('#details-download').off();
   $('#details-download').click(() => window.open(object.image, '_blank'));
   const html = `
-      <h2>Image: ${object.image}</h2>
+      <h2>Image: <font color="teal">${object.image}</font></h2>
       <b>Image size</b>: ${object.naturalSize.width} x ${object.naturalSize.height}
       <h2>Image Data</h2>
       ${exif}
@@ -233,7 +236,6 @@ async function showDetails(thumb, img) {
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
       ${desc}
-      <h2>Tags</h2>
       <h2>Processing Details</h2>
         Total time ${object.perf.total.toFixed(0)} ms<br>
         Processed on ${moment(object.processed).format(window.options.dateLong)} in ${object.perf.load.toFixed(0)} ms<br>
@@ -241,7 +243,8 @@ async function showDetails(thumb, img) {
         Alternative using ${config.alternative ? config.alternative.name : 'N/A'}<br>
         Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
         Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)} ms<br>
-      <i>${JSONtoStr(object.tags)}</i>
+      <h2>Tags</h2>
+        <i>${JSONtoStr(object.tags)}</i>
       </div>
     `;
   if (window.options.viewDetails) $('#popup-details').html(html);
