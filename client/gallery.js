@@ -159,7 +159,9 @@ async function printResult(object) {
   $('#results').append(divItem);
   const divThumb = document.getElementById(`thumb-${object.id}`);
   divThumb.img = object.image;
-  divThumb.addEventListener('click', (evt) => details.show(divThumb.src, evt.target.img));
+  divThumb.addEventListener('click', (evt) => {
+    details.show(divThumb.src, evt.target.img);
+  });
 }
 
 // resize gallery view depending on user configuration
@@ -180,17 +182,27 @@ function resizeResults() {
 async function enumerateLocations() {
   $('#locations').html('');
   const locationsList = [];
+  let unknown = 0;
   for (const item of window.filtered) {
     const loc = `${item.location.near}, ${item.location.state || item.location.country}`;
-    if (item.location && item.location.near && !locationsList.includes(loc)) locationsList.push(loc);
+    if (item.location && item.location.near) {
+      const here = locationsList.find((a) => (a.loc === loc));
+      if (!here) {
+        locationsList.push({ loc, count: 1 });
+      } else {
+        here.count += 1;
+      }
+    } else {
+      unknown += 1;
+    }
   }
-  locationsList.sort((a, b) => (a > b ? 1 : -1));
-  locationsList.unshift('Unknown');
+  locationsList.sort((a, b) => (a.loc > b.loc ? 1 : -1));
+  locationsList.unshift({ loc: 'Unknown', count: unknown });
   for (const item of locationsList) {
     const html = `
-      <li id="loc-${item}">
-        <span tag="${item}" type="location" style="padding-left: 16px" class="folder">&nbsp
-          <i tag="${item}" class="fas fa-chevron-circle-right">&nbsp</i>${item}
+      <li id="loc-${item.loc}">
+        <span tag="${item.loc}" type="location" style="padding-left: 16px" class="folder">&nbsp
+          <i tag="${item.loc}" class="fas fa-chevron-circle-right">&nbsp</i>${item.loc} (${item.count})
         </span>
       </li>
     `;
@@ -437,26 +449,37 @@ async function loadGallery(limit) {
   const t0 = window.performance.now();
   log.result('Loading gallery ...');
   window.results.length = 0;
-  const live = window.options.liveLoad;
-  oboe({ url: `/api/get?limit=${limit}&find=all`, cached: true, withCredentials: false })
-    .node('{image}', (image) => {
-      image.id = window.results.length + 1;
-      window.results.push(image);
-      $('#number').text(window.results.length);
-      if (live) {
+  if (window.options.liveLoad) {
+    oboe({ url: `/api/get?limit=${limit}&find=all`, cached: true, withCredentials: false })
+      .node('{image}', (image) => {
+        image.id = window.results.length + 1;
+        window.results.push(image);
+        $('#number').text(window.results.length);
         printResult(image);
         enumerateFolders(image.image);
-      }
       // time: 15sec load, 10sec print, 3sec enumerate
-    })
-    .done((things) => {
-      const t1 = window.performance.now();
-      const size = JSON.stringify(window.results).length;
-      log.result(`Received ${things.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
-      window.filtered = window.results;
-      resizeResults();
-      sortResults(window.options.listSortOrder);
-    });
+      })
+      .done((things) => {
+        const t1 = window.performance.now();
+        const size = JSON.stringify(window.results).length;
+        log.result(`Received ${things.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (live parse)`);
+        window.filtered = window.results;
+        resizeResults();
+        sortResults(window.options.listSortOrder);
+      });
+  } else {
+    const res = await fetch(`/api/get?limit=${limit}&find=all`);
+    if (res) window.results = await res.json();
+    for (let i = 0; i < window.results.length; i++) {
+      window.results[i].id = i;
+    }
+    const t1 = window.performance.now();
+    const size = JSON.stringify(window.results).length;
+    log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
+    window.filtered = window.results;
+    resizeResults();
+    sortResults(window.options.listSortOrder);
+  }
 }
 
 // popup on right-click
