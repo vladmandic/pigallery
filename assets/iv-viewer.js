@@ -1,1 +1,1256 @@
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e=e||self).ImageViewer=t()}(this,function(){"use strict";function l(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}function t(e,t,n){return t&&i(e.prototype,t),n&&i(e,n),e}function c(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function m(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{},i=Object.keys(n);"function"==typeof Object.getOwnPropertySymbols&&(i=i.concat(Object.getOwnPropertySymbols(n).filter(function(e){return Object.getOwnPropertyDescriptor(n,e).enumerable}))),i.forEach(function(e){c(t,e,n[e])})}return t}function s(e){return(s=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)})(e)}function n(e,t){return(n=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e})(e,t)}function u(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return e}function a(e,t,n){return(a="undefined"!=typeof Reflect&&Reflect.get?Reflect.get:function(e,t,n){var i=function(e,t){for(;!Object.prototype.hasOwnProperty.call(e,t)&&null!==(e=s(e)););return e}(e,t);if(i){var a=Object.getOwnPropertyDescriptor(i,t);return a.get?a.get.call(n):a.value}})(e,t,n||e)}function o(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var n=[],i=!0,a=!1,o=void 0;try{for(var r,s=e[Symbol.iterator]();!(i=(r=s.next()).done)&&(n.push(r.value),!t||n.length!==t);i=!0);}catch(e){a=!0,o=e}finally{try{i||null==s.return||s.return()}finally{if(a)throw o}}return n}(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}function h(){}function E(e,t,n,i){return e/=i,-n*((e-=1)*e*e*e-1)+t}function d(e){var t=document.createElement(e.tagName);return e.id&&(t.id=e.id),e.html&&(t.innerHTML=e.html),e.className&&(t.className=e.className),e.src&&(t.src=e.src),e.style&&(t.style.cssText=e.style),e.child&&t.appendChild(e.child),e.insertBefore?e.parent.insertBefore(t,e.insertBefore):e.parent.appendChild(t),t}function v(e){return e.complete&&(void 0===e.naturalWidth||0!==e.naturalWidth)}function r(e){return e instanceof NodeList||e instanceof HTMLCollection?Array.prototype.slice.call(e):[e]}function x(e,i){var t=r(e);if("string"==typeof i)return window.getComputedStyle(t[0])[i];t.forEach(function(n){Object.keys(i).forEach(function(e){var t=i[e];n.style[e]=t})})}function p(e,t){e.style.removeProperty(t)}function f(e){r(e).forEach(function(e){e.parentNode.removeChild(e)})}function y(e,t,n){return Math.min(Math.max(e,t),n)}function g(t,e,n){return"string"==typeof e&&(e=[e]),e.forEach(function(e){t.addEventListener(e,n)}),function(){e.forEach(function(e){t.removeEventListener(e,n)})}}function _(e){var t=e[0],n=e[1];return Math.sqrt(Math.pow(n.pageX-t.pageX,2)+Math.pow(n.pageY-t.pageY,2))}var w=function(){function r(e,t){var s=this,n=t.onStart,i=t.onMove,a=t.onEnd,o=t.isSliderEnabled;l(this,r),c(this,"startHandler",function(e){if(s.isSliderEnabled()){s.removeListeners(),e.preventDefault();var t=s.moveHandler,n=s.endHandler,i=s.onStart,a="touchstart"===e.type;s.touchMoveEvent=a?"touchmove":"mousemove",s.touchEndEvent=a?"touchend":"mouseup",s.sx=a?e.touches[0].clientX:e.clientX,s.sy=a?e.touches[0].clientY:e.clientY,i(e,{x:s.sx,y:s.sy}),document.addEventListener(s.touchMoveEvent,t),document.addEventListener(s.touchEndEvent,n),document.addEventListener("contextmenu",n)}}),c(this,"moveHandler",function(e){if(s.isSliderEnabled()){e.preventDefault();var t=s.sx,n=s.sy,i=s.onMove,a="touchmove"===s.touchMoveEvent,o=a?e.touches[0].clientX:e.clientX,r=a?e.touches[0].clientY:e.clientY;i(e,{dx:o-t,dy:r-n,mx:o,my:r})}}),c(this,"endHandler",function(){s.isSliderEnabled()&&(s.removeListeners(),s.onEnd())}),this.container=e,this.isSliderEnabled=o,this.onStart=n||h,this.onMove=i||h,this.onEnd=a||h}return t(r,[{key:"removeListeners",value:function(){this.touchMoveEvent&&(document.removeEventListener(this.touchMoveEvent,this.moveHandler),document.removeEventListener(this.touchEndEvent,this.endHandler),document.removeEventListener("contextmenu",this.endHandler))}},{key:"init",value:function(){var t=this;["touchstart","mousedown"].forEach(function(e){t.container.addEventListener(e,t.startHandler)})}},{key:"destroy",value:function(){var t=this;["touchstart","mousedown"].forEach(function(e){t.container.removeEventListener(e,t.startHandler)}),this.removeListeners()}}]),r}(),S=function(){function s(e){var b=this,t=1<arguments.length&&void 0!==arguments[1]?arguments[1]:{};l(this,s),c(this,"zoom",function(s,l){var e=b._options,t=b._elements,n=b._state,c=n.zoomValue,m=n.imageDim,i=n.containerDim,u=n.zoomSliderLength,h=t.image,d=t.zoomHandle,v=e.maxZoom;s=Math.round(Math.max(100,s)),s=Math.min(v,s),l=l||{x:i.w/2,y:i.h/2};var p=parseFloat(x(h,"left")),f=parseFloat(x(h,"top"));b._clearFrames();var g=0,_=(i.w-m.w)/2,y=(i.h-m.h)/2,w=i.w-_,S=i.h-y;!function e(){++g<16&&(b._frames.zoomFrame=requestAnimationFrame(e));var t=E(g,c,s-c,16),n=t/c,i=m.w*t/100,a=m.h*t/100,o=-((l.x-p)*n-l.x),r=-((l.y-f)*n-l.y);o=Math.min(o,_),r=Math.min(r,y),o+i<w&&(o=w-i),r+a<S&&(r=S-a),x(h,{height:"".concat(a,"px"),width:"".concat(i,"px"),left:"".concat(o,"px"),top:"".concat(r,"px")}),b._state.zoomValue=t,b._resizeSnapHandle(i,a,o,r),x(d,{left:"".concat((t-100)*u/(v-100),"px")})}()}),c(this,"_clearFrames",function(){var e=b._frames,t=e.slideMomentumCheck,n=e.sliderMomentumFrame,i=e.zoomFrame;clearInterval(t),cancelAnimationFrame(n),cancelAnimationFrame(i)}),c(this,"_resizeSnapHandle",function(e,t,n,i){var a=b._elements,o=b._state,r=a.snapHandle,s=a.image,l=o.imageDim,c=o.containerDim,m=o.zoomValue,u=o.snapImageDim,h=e||l.w*m/100,d=t||l.h*m/100,v=n||parseFloat(x(s,"left")),p=i||parseFloat(x(s,"top")),f=-v*u.w/h,g=-p*u.h/d,_=c.w*u.w/h,y=c.h*u.h/d;x(r,{top:"".concat(g,"px"),left:"".concat(f,"px"),width:"".concat(_,"px"),height:"".concat(y,"px")}),b._state.snapHandleDim={w:_,h:y}}),c(this,"showSnapView",function(e){var t=b._state,n=t.snapViewVisible,i=t.zoomValue,a=t.loaded,o=b._elements.snapView;b._options.snapView&&(n||i<=100||!a||(clearTimeout(b._frames.snapViewTimeout),b._state.snapViewVisible=!0,x(o,{opacity:1,pointerEvents:"inherit"}),e||(b._frames.snapViewTimeout=setTimeout(b.hideSnapView,1500))))}),c(this,"hideSnapView",function(){x(b._elements.snapView,{opacity:0,pointerEvents:"none"}),b._state.snapViewVisible=!1}),c(this,"refresh",function(){b._calculateDimensions(),b.resetZoom()});var n=this._findContainerAndImageSrc(e,t),i=n.container,a=n.domElement,o=n.imageSrc,r=n.hiResImageSrc;this._elements={container:i,domElement:a},this._options=m({},s.defaults,t),this._events={},this._frames={},this._sliders={},this._state={zoomValue:this._options.zoomValue},this._images={imageSrc:o,hiResImageSrc:r},this._init(),o&&this._loadImages(),a._imageViewer=this}return t(s,[{key:"_findContainerAndImageSrc",value:function(e){var t,n,i=e;if("string"==typeof e&&(i=document.querySelector(e)),i._imageViewer)throw new Error("An image viewer is already being initiated on the element.");var a,o,r,s,l,c,m,u,h=e;return"IMG"===i.tagName?(t=i.src,n=i.getAttribute("high-res-src")||i.getAttribute("data-high-res-src"),a=i,r=(o={className:"iv-container iv-image-mode",style:{display:"inline-block",overflow:"hidden"}}).tag,s=void 0===r?"div":r,l=o.className,c=o.id,m=o.style,u=document.createElement(s),l&&(u.className=l),c&&(u.id=c),m&&(u.style=m),a.parentNode.insertBefore(u,a),a.parentNode.removeChild(a),u.appendChild(a),h=u,x(i,{opacity:0,position:"relative",zIndex:-1})):(t=i.getAttribute("src")||i.getAttribute("data-src"),n=i.getAttribute("high-res-src")||i.getAttribute("data-high-res-src")),{container:h,domElement:i,imageSrc:t,hiResImageSrc:n}}},{key:"_init",value:function(){this._initDom(),this._initImageSlider(),this._initSnapSlider(),this._initZoomSlider(),this._pinchAndZoom(),this._scrollZoom(),this._doubleTapToZoom(),this._initEvents()}},{key:"_initDom",value:function(){var e=this._elements.container;d({tagName:"div",className:"iv-wrap",html:'\n  <div class="iv-loader"></div>\n  <div class="iv-snap-view">\n    <div class="iv-snap-image-wrap">\n      <div class="iv-snap-handle"></div>\n    </div>\n    <div class="iv-zoom-slider">\n      <div class="iv-zoom-handle"></div>\n    </div>\n  </div>\n  <div class="iv-image-view" >\n    <div class="iv-image-wrap" ></div>\n  </div>\n',parent:e}),function t(n,e){var i=e.split(" ");1<i.length?i.forEach(function(e){return t(n,e)}):n.classList?n.classList.add(e):n.className+=" ".concat(e)}(e,"iv-container"),"static"===x(e,"position")&&x(e,{position:"relative"}),this._elements=m({},this._elements,{snapView:e.querySelector(".iv-snap-view"),snapImageWrap:e.querySelector(".iv-snap-image-wrap"),imageWrap:e.querySelector(".iv-image-wrap"),snapHandle:e.querySelector(".iv-snap-handle"),zoomHandle:e.querySelector(".iv-zoom-handle")})}},{key:"_initImageSlider",value:function(){var c,m,u=this,e=this._elements.imageWrap,t=new w(e,{isSliderEnabled:function(){var e=u._state,t=e.loaded,n=e.zooming,i=e.zoomValue;return t&&!n&&100<i},onStart:function(e,t){var n=u._sliders.snapSlider;u._clearFrames(),n.onStart(),c=[t,t],m=void 0,u._frames.slideMomentumCheck=setInterval(function(){m&&(c.shift(),c.push({x:m.mx,y:m.my}))},50)},onMove:function(e,t){var n=u._state.snapImageDim,i=u._sliders.snapSlider,a=u._getImageCurrentDim();m=t,i.onMove(e,{dx:-t.dx*n.w/a.w,dy:-t.dy*n.h/a.h})},onEnd:function(){var t,n,i,a=u._state.snapImageDim,o=u._sliders.snapSlider,r=u._getImageCurrentDim();u._clearFrames();var s=c[1].x-c[0].x,l=c[1].y-c[0].y;(30<Math.abs(s)||30<Math.abs(l))&&(t=1,n=m.dx,i=m.dy,function e(){t<=60&&(u._frames.sliderMomentumFrame=requestAnimationFrame(e)),n+=E(t,s/3,-s/3,60),i+=E(t,l/3,-l/3,60),o.onMove(null,{dx:-n*a.w/r.w,dy:-i*a.h/r.h}),t++}())}});t.init(),this._sliders.imageSlider=t}},{key:"_initSnapSlider",value:function(){var p,f,g=this,_=this._elements.snapHandle,e=new w(_,{isSliderEnabled:function(){return g._state.loaded},onStart:function(){var e=g._frames,t=e.slideMomentumCheck,n=e.sliderMomentumFrame;p=parseFloat(x(_,"top")),f=parseFloat(x(_,"left")),clearInterval(t),cancelAnimationFrame(n)},onMove:function(e,t){var n=g._state,i=n.snapHandleDim,a=n.snapImageDim,o=g._elements.image,r=g._getImageCurrentDim(),s=Math.max(a.w-i.w,f),l=Math.max(a.h-i.h,p),c=Math.min(0,f),m=Math.min(0,p),u=y(f+t.dx,c,s),h=y(p+t.dy,m,l),d=-u*r.w/a.w,v=-h*r.h/a.h;x(_,{left:"".concat(u,"px"),top:"".concat(h,"px")}),x(o,{left:"".concat(d,"px"),top:"".concat(v,"px")})}});e.init(),this._sliders.snapSlider=e}},{key:"_initZoomSlider",value:function(){var a,o,r=this,e=this._elements,t=e.snapView,n=e.zoomHandle,i=t.querySelector(".iv-zoom-slider"),s=new w(i,{isSliderEnabled:function(){return r._state.loaded},onStart:function(e){var t=r._sliders.zoomSlider;a=i.getBoundingClientRect().left+document.body.scrollLeft,o=parseInt(x(n,"width"),10),t.onMove(e)},onMove:function(e){var t=r._options.maxZoom,n=r._state.zoomSliderLength,i=100+(t-100)*y((void 0!==e.pageX?e.pageX:e.touches[0].pageX)-a-o/2,0,n)/n;r.zoom(i)}});s.init(),this._sliders.zoomSlider=s}},{key:"_initEvents",value:function(){this._snapViewEvents(),this._options.refreshOnResize&&(this._events.onWindowResize=g(window,"resize",this.refresh))}},{key:"_snapViewEvents",value:function(){var e=this,t=this._elements,n=t.imageWrap,i=t.snapView;this._events.snapViewOnMouseMove=g(n,["touchmove","mousemove"],function(){e.showSnapView()}),this._events.mouseEnterSnapView=g(i,["mouseenter","touchstart"],function(){e._state.snapViewVisible=!1,e.showSnapView(!0)}),this._events.mouseLeaveSnapView=g(i,["mouseleave","touchend"],function(){e._state.snapViewVisible=!1,e.showSnapView()})}},{key:"_pinchAndZoom",value:function(){var m=this,e=this._elements,t=e.imageWrap,u=e.container;this._events.pinchStart=g(t,"touchstart",function(e){var t=m._state,n=t.loaded,i=t.zoomValue,a=m._events;if(n){var o=e.touches[0],r=e.touches[1];if(o&&r){m._state.zooming=!0;var s=u.getBoundingClientRect(),l=_(e.touches),c={x:(r.pageX+o.pageX)/2-(s.left+document.body.scrollLeft),y:(r.pageY+o.pageY)/2-(s.top+document.body.scrollTop)};a.pinchMove&&a.pinchMove(),a.pinchEnd&&a.pinchEnd(),a.pinchMove=g(document,"touchmove",function(e){var t=_(e.touches),n=i+(t-l)/2;m.zoom(n,c)}),a.pinchEnd=g(document,"touchend",function(){a.pinchMove(),a.pinchEnd(),m._state.zooming=!1})}}})}},{key:"_scrollZoom",value:function(){var c=this,m=this._options,e=this._elements,u=e.container,t=e.imageWrap,h=0;this._ev=g(t,"wheel",function(e){var t=c._state,n=t.loaded,i=t.zoomValue;if(m.zoomOnMouseWheel&&n){c._clearFrames();var a=Math.max(-1,Math.min(1,e.wheelDelta||-e.detail||-e.deltaY)),o=i*(100+15*a)/100;if(100<=o&&o<=m.maxZoom?h=0:h+=Math.abs(a),e.preventDefault(),!(5<h)){var r=u.getBoundingClientRect(),s=(e.pageX||e.pageX)-(r.left+document.body.scrollLeft),l=(e.pageY||e.pageY)-(r.top+document.body.scrollTop);c.zoom(o,{x:s,y:l}),c.showSnapView()}}})}},{key:"_doubleTapToZoom",value:function(){var t,n=this,e=this._elements.imageWrap,i=0;g(e,"click",function(e){0===i?(i=Date.now(),t={x:e.pageX,y:e.pageY}):(Date.now()-i<500&&Math.abs(e.pageX-t.x)<50&&Math.abs(e.pageY-t.y)<50&&(n._state.zoomValue===n._options.zoomValue?n.zoom(200):n.resetZoom()),i=0)})}},{key:"_getImageCurrentDim",value:function(){var e=this._state,t=e.zoomValue,n=e.imageDim;return{w:n.w*(t/100),h:n.h*(t/100)}}},{key:"_loadImages",value:function(){var e=this,t=this._images,n=this._elements,i=t.imageSrc,a=t.hiResImageSrc,o=n.container,r=n.snapImageWrap,s=n.imageWrap,l=o.querySelector(".iv-loader");f(o.querySelectorAll(".iv-snap-image, .iv-image"));var c=d({tagName:"img",className:"iv-snap-image",src:i,insertBefore:r.firstChild,parent:r}),m=d({tagName:"img",className:"iv-image iv-small-image",src:i,parent:s});this._state.loaded=!1,this._elements.image=m,this._elements.snapImage=c,x(l,{display:"block"}),x(m,{visibility:"hidden"}),this.hideSnapView();var u=function(){x(l,{display:"none"}),x(m,{visibility:"visible"}),a&&e._loadHighResImage(a),e._state.loaded=!0,e._calculateDimensions(),e.resetZoom()};v(m)?u():this._events.imageLoad=g(m,"load",u)}},{key:"_loadHighResImage",value:function(e){var t=this,n=this._elements,i=n.imageWrap,a=n.container,o=this._elements.image,r=d({tagName:"img",className:"iv-image iv-large-image",src:e,parent:i,style:o.style.cssText});r.style.cssText=o.style.cssText,this._elements.image=a.querySelectorAll(".iv-image");var s=function(){f(o),t._elements.image=r};v(r)?s():this._events.hiResImageLoad=g(r,"load",s)}},{key:"_calculateDimensions",value:function(){var e,t,n=this._elements,i=n.image,a=n.container,o=n.snapView,r=n.snapImage,s=n.zoomHandle,l=parseInt(x(i,"width"),10),c=parseInt(x(i,"height"),10),m=parseInt(x(a,"width"),10),u=parseInt(x(a,"height"),10),h=o.clientWidth,d=o.clientHeight;this._state.containerDim={w:m,h:u};var v=l/c;t=(e=c<l&&m<=u||m<v*u?m:v*u)/v,this._state.imageDim={w:e,h:t},x(i,{width:"".concat(e,"px"),height:"".concat(t,"px"),left:"".concat((m-e)/2,"px"),top:"".concat((u-t)/2,"px"),maxWidth:"none",maxHeight:"none"});var p=t<e?h:e*d/t,f=e<t?d:t*h/e;this._state.snapImageDim={w:p,h:f},x(r,{width:"".concat(p,"px"),height:"".concat(f,"px")}),this._state.zoomSliderLength=h-s.offsetWidth}},{key:"resetZoom",value:function(){var e=!(0<arguments.length&&void 0!==arguments[0])||arguments[0],t=this._options.zoomValue;e||(this._state.zoomValue=t),this.zoom(t)}},{key:"load",value:function(e,t){this._images={imageSrc:e,hiResImageSrc:t},this._loadImages()}},{key:"destroy",value:function(){var e,t,n=this._elements,i=n.container,a=n.domElement;Object.entries(this._sliders).forEach(function(e){var t=o(e,2);t[0];t[1].destroy()}),Object.entries(this._events).forEach(function(e){var t=o(e,2);t[0];(0,t[1])()}),this._clearFrames(),f(i.querySelector(".iv-wrap")),function t(n,e){var i=e.split(" ");1<i.length?i.forEach(function(e){return t(n,e)}):n.classList?n.classList.remove(e):n.className=n.className.replace(new RegExp("(^|\\b)".concat(e.split(" ").join("|"),"(\\b|$)"),"gi")," ")}(i,"iv-container"),p(document.querySelector("html"),"relative"),a!==i&&(t=(e=a).parentNode)!==document.body&&(t.parentNode.insertBefore(e,t),t.parentNode.removeChild(t)),a._imageViewer=null}}]),s}();S.defaults={zoomValue:100,snapView:!0,maxZoom:500,refreshOnResize:!0,zoomOnMouseWheel:!0};var e=function(e){function r(){var e,t=0<arguments.length&&void 0!==arguments[0]?arguments[0]:{};l(this,r);var n,i,a=d({tagName:"div",className:"iv-fullscreen",html:'\n  <div class="iv-fullscreen-container"></div>\n  <div class="iv-fullscreen-close"></div>\n',parent:document.body}),o=a.querySelector(".iv-fullscreen-container");return n=this,i=s(r).call(this,o,m({},t,{refreshOnResize:!1})),c(u(e=!i||"object"!=typeof i&&"function"!=typeof i?u(n):i),"hide",function(){x(e._elements.fullScreen,{display:"none"}),p(document.querySelector("html"),"overflow"),e._events.onWindowResize()}),e._elements.fullScreen=a,e._initFullScreenEvents(),e}return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function");e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),t&&n(e,t)}(r,S),t(r,[{key:"_initFullScreenEvents",value:function(){var e=this._elements.fullScreen.querySelector(".iv-fullscreen-close");this._events.onCloseBtnClick=g(e,"click",this.hide)}},{key:"show",value:function(e,t){x(this._elements.fullScreen,{display:"block"}),e&&this.load(e,t),this._events.onWindowResize=g(window,"resize",this.refresh),x(document.querySelector("html"),{overflow:"hidden"})}},{key:"destroy",value:function(){var e=this._elements.fullScreen;a(s(r.prototype),"destroy",this).call(this),f(e)}}]),r}();return S.FullScreenViewer=e,S});
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-undef */
+/* eslint-disable no-func-assign */
+/* eslint-disable no-proto */
+/* eslint-disable consistent-return */
+/* eslint-disable no-cond-assign */
+/* eslint-disable no-unsafe-finally */
+/* eslint-disable no-void */
+/* eslint-disable no-restricted-properties */
+/* eslint-disable no-shadow */
+/* eslint-disable max-len */
+/* eslint-disable func-names */
+/* eslint-disable no-use-before-define */
+/* eslint-disable prefer-rest-params */
+
+/**
+ * iv-viewer - 2.0.1
+ * Author : Sudhanshu Yadav
+ * Copyright (c)  2019 to Sudhanshu Yadav, released under the MIT license.
+ * git+https://github.com/s-yadav/iv-viewer.git
+ */
+
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory()
+    : typeof define === 'function' && define.amd ? define(factory)
+      : (global = global || self, global.ImageViewer = factory());
+}(this, () => {
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError('Cannot call a class as a function');
+    }
+  }
+
+  function _defineProperties(target, props) {
+    for (let i = 0; i < props.length; i++) {
+      const descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ('value' in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value,
+        enumerable: true,
+        configurable: true,
+        writable: true,
+      });
+    } else {
+      obj[key] = value;
+    }
+    return obj;
+  }
+
+  function _objectSpread(target) {
+    for (let i = 1; i < arguments.length; i++) {
+      const source = arguments[i] != null ? arguments[i] : {};
+      let ownKeys = Object.keys(source);
+      if (typeof Object.getOwnPropertySymbols === 'function') {
+        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter((sym) => Object.getOwnPropertyDescriptor(source, sym).enumerable));
+      }
+      ownKeys.forEach((key) => {
+        _defineProperty(target, key, source[key]);
+      });
+    }
+    return target;
+  }
+
+  function _inherits(subClass, superClass) {
+    if (typeof superClass !== 'function' && superClass !== null) {
+      throw new TypeError('Super expression must either be null or a function');
+    }
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        writable: true,
+        configurable: true,
+      },
+    });
+    if (superClass) _setPrototypeOf(subClass, superClass);
+  }
+
+  function _getPrototypeOf(o) {
+    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+      return o.__proto__ || Object.getPrototypeOf(o);
+    };
+    return _getPrototypeOf(o);
+  }
+
+  function _setPrototypeOf(o, p) {
+    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+      o.__proto__ = p;
+      return o;
+    };
+    return _setPrototypeOf(o, p);
+  }
+
+  function _assertThisInitialized(self) {
+    if (self === void 0) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+    return self;
+  }
+
+  function _possibleConstructorReturn(self, call) {
+    if (call && (typeof call === 'object' || typeof call === 'function')) {
+      return call;
+    }
+    return _assertThisInitialized(self);
+  }
+
+  function _superPropBase(object, property) {
+    while (!Object.prototype.hasOwnProperty.call(object, property)) {
+      object = _getPrototypeOf(object);
+      if (object === null) break;
+    }
+    return object;
+  }
+
+  function _get(target, property, receiver) {
+    if (typeof Reflect !== 'undefined' && Reflect.get) {
+      _get = Reflect.get;
+    } else {
+      _get = function _get(target, property, receiver) {
+        const base = _superPropBase(target, property);
+        if (!base) return;
+        const desc = Object.getOwnPropertyDescriptor(base, property);
+        if (desc.get) {
+          return desc.get.call(receiver);
+        }
+        return desc.value;
+      };
+    }
+    return _get(target, property, receiver || target);
+  }
+
+  function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  }
+
+  function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+  }
+
+  function _iterableToArrayLimit(arr, i) {
+    const _arr = [];
+    let _n = true;
+    let _d = false;
+    let _e;
+    try {
+      for (let _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i.return != null) _i.return();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+    return _arr;
+  }
+
+  function _nonIterableRest() {
+    throw new TypeError('Invalid attempt to destructure non-iterable instance');
+  }
+
+  // constants
+  const ZOOM_CONSTANT = 15; // increase or decrease value for zoom on mouse wheel
+  const MOUSE_WHEEL_COUNT = 5; // A mouse delta after which it should stop preventing default behaviour of mouse wheel
+
+  function noop() {} // ease out method
+
+  /*
+      t : current time,
+      b : intial value,
+      c : changed value,
+      d : duration
+  */
+  function easeOutQuart(t, b, c, d) {
+    t /= d;
+    t -= 1;
+    return -c * (t * t * t * t - 1) + b;
+  }
+  function createElement(options) {
+    const elem = document.createElement(options.tagName);
+    if (options.id) elem.id = options.id;
+    if (options.html) elem.innerHTML = options.html;
+    if (options.className) elem.className = options.className;
+    if (options.src) elem.src = options.src;
+    if (options.style) elem.style.cssText = options.style;
+    if (options.child) elem.appendChild(options.child); // Insert before
+    if (options.insertBefore) {
+      options.parent.insertBefore(elem, options.insertBefore); // Standard append
+    } else {
+      options.parent.appendChild(elem);
+    }
+    return elem;
+  } // method to add class
+
+  function addClass(el, className) {
+    const classNameAry = className.split(' ');
+    if (classNameAry.length > 1) {
+      classNameAry.forEach((classItem) => addClass(el, classItem));
+    } else if (el.classList) {
+      el.classList.add(className);
+    } else {
+      el.className += ' '.concat(className); // eslint-disable-line no-param-reassign
+    }
+  } // method to remove class
+
+  function removeClass(el, className) {
+    const classNameAry = className.split(' ');
+    if (classNameAry.length > 1) {
+      classNameAry.forEach((classItem) => removeClass(el, classItem));
+    } else if (el.classList) {
+      el.classList.remove(className);
+    } else {
+      el.className = el.className.replace(new RegExp('(^|\\b)'.concat(className.split(' ').join('|'), '(\\b|$)'), 'gi'), ' '); // eslint-disable-line no-param-reassign
+    }
+  } // function to check if image is loaded
+
+  function imageLoaded(img) {
+    return img.complete && (typeof img.naturalWidth === 'undefined' || img.naturalWidth !== 0);
+  }
+  function toArray(list) {
+    if (!(list instanceof NodeList || list instanceof HTMLCollection)) return [list];
+    return Array.prototype.slice.call(list);
+  }
+  function css(elements, properties) {
+    const elmArray = toArray(elements);
+
+    if (typeof properties === 'string') {
+      return window.getComputedStyle(elmArray[0])[properties];
+    }
+
+    elmArray.forEach((element) => {
+      Object.keys(properties).forEach((key) => {
+        const value = properties[key];
+        element.style[key] = value; // eslint-disable-line no-param-reassign
+      });
+    });
+    return undefined;
+  }
+  function removeCss(element, property) {
+    element.style.removeProperty(property);
+  }
+  function wrap(element, _ref) {
+    const _ref$tag = _ref.tag;
+    const tag = _ref$tag === void 0 ? 'div' : _ref$tag;
+    const className = _ref.className;
+    const id = _ref.id;
+    const style = _ref.style;
+    const wrapper = document.createElement(tag);
+    if (className) wrapper.className = className;
+    if (id) wrapper.id = id;
+    if (style) wrapper.style = style;
+    element.parentNode.insertBefore(wrapper, element);
+    element.parentNode.removeChild(element);
+    wrapper.appendChild(element);
+    return wrapper;
+  }
+  function unwrap(element) {
+    const parent = element.parentNode;
+    if (parent !== document.body) {
+      parent.parentNode.insertBefore(element, parent);
+      parent.parentNode.removeChild(parent);
+    }
+  }
+  function remove(elements) {
+    const elmArray = toArray(elements);
+    elmArray.forEach((element) => {
+      element.parentNode.removeChild(element);
+    });
+  }
+  function clamp(num, min, max) {
+    return Math.min(Math.max(num, min), max);
+  }
+  function assignEvent(element, events, handler) {
+    if (typeof events === 'string') events = [events];
+    events.forEach((event) => {
+      element.addEventListener(event, handler);
+    });
+    return function () {
+      events.forEach((event) => {
+        element.removeEventListener(event, handler);
+      });
+    };
+  }
+  function getTouchPointsDistance(touches) {
+    const touch0 = touches[0];
+    const touch1 = touches[1];
+    return Math.sqrt(Math.pow(touch1.pageX - touch0.pageX, 2) + Math.pow(touch1.pageY - touch0.pageY, 2));
+  }
+
+  const Slider = (function () {
+    function Slider(container, _ref) {
+      const _this = this;
+      const _onStart = _ref.onStart;
+      const _onMove = _ref.onMove;
+      const onEnd = _ref.onEnd;
+      const isSliderEnabled = _ref.isSliderEnabled;
+      _classCallCheck(this, Slider);
+      _defineProperty(this, 'startHandler', (eStart) => {
+        if (!_this.isSliderEnabled()) return;
+        _this.removeListeners();
+        eStart.preventDefault();
+        const moveHandler = _this.moveHandler;
+        const endHandler = _this.endHandler;
+        const onStart = _this.onStart;
+        const isTouchEvent = eStart.type === 'touchstart';
+        _this.touchMoveEvent = isTouchEvent ? 'touchmove' : 'mousemove';
+        _this.touchEndEvent = isTouchEvent ? 'touchend' : 'mouseup';
+        _this.sx = isTouchEvent ? eStart.touches[0].clientX : eStart.clientX;
+        _this.sy = isTouchEvent ? eStart.touches[0].clientY : eStart.clientY;
+        onStart(eStart, {
+          x: _this.sx,
+          y: _this.sy,
+        }); // add listeners
+
+        document.addEventListener(_this.touchMoveEvent, moveHandler);
+        document.addEventListener(_this.touchEndEvent, endHandler);
+        document.addEventListener('contextmenu', endHandler);
+      });
+
+      _defineProperty(this, 'moveHandler', (eMove) => {
+        if (!_this.isSliderEnabled()) return;
+        eMove.preventDefault();
+        const sx = _this.sx;
+        const sy = _this.sy;
+        const onMove = _this.onMove;
+        const isTouchEvent = _this.touchMoveEvent === 'touchmove'; // get the coordinates
+        const mx = isTouchEvent ? eMove.touches[0].clientX : eMove.clientX;
+        const my = isTouchEvent ? eMove.touches[0].clientY : eMove.clientY;
+        onMove(eMove, {
+          dx: mx - sx,
+          dy: my - sy,
+          mx,
+          my,
+        });
+      });
+
+      _defineProperty(this, 'endHandler', () => {
+        if (!_this.isSliderEnabled()) return;
+        _this.removeListeners();
+        _this.onEnd();
+      });
+
+      this.container = container;
+      this.isSliderEnabled = isSliderEnabled;
+      this.onStart = _onStart || noop;
+      this.onMove = _onMove || noop;
+      this.onEnd = onEnd || noop;
+    }
+
+    _createClass(Slider, [{
+      key: 'removeListeners',
+      // remove previous events if its not removed
+      // - Case when while sliding mouse moved out of document and released there
+      value: function removeListeners() {
+        if (!this.touchMoveEvent) return;
+        document.removeEventListener(this.touchMoveEvent, this.moveHandler);
+        document.removeEventListener(this.touchEndEvent, this.endHandler);
+        document.removeEventListener('contextmenu', this.endHandler);
+      },
+    }, {
+      key: 'init',
+      value: function init() {
+        const _this2 = this;
+
+        ['touchstart', 'mousedown'].forEach((evt) => {
+          _this2.container.addEventListener(evt, _this2.startHandler);
+        });
+      },
+    }, {
+      key: 'destroy',
+      value: function destroy() {
+        const _this3 = this;
+
+        ['touchstart', 'mousedown'].forEach((evt) => {
+          _this3.container.removeEventListener(evt, _this3.startHandler);
+        });
+        this.removeListeners();
+      },
+    }]);
+
+    return Slider;
+  }());
+
+  const imageViewHtml = '\n  <div class="iv-loader"></div>\n  <div class="iv-snap-view">\n    <div class="iv-snap-image-wrap">\n      <div class="iv-snap-handle"></div>\n    </div>\n    <div class="iv-zoom-slider">\n      <div class="iv-zoom-handle"></div>\n    </div>\n  </div>\n  <div class="iv-image-view" >\n    <div class="iv-image-wrap" ></div>\n  </div>\n';
+
+  const ImageViewer = (function () {
+    function ImageViewer(element) {
+      const _this = this;
+      const options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      _classCallCheck(this, ImageViewer);
+      _defineProperty(this, 'zoom', (perc, point) => {
+        const _options = _this._options;
+        const _elements = _this._elements;
+        const _state = _this._state;
+        const curPerc = _state.zoomValue;
+        const imageDim = _state.imageDim;
+        const containerDim = _state.containerDim;
+        const zoomSliderLength = _state.zoomSliderLength;
+        const image = _elements.image;
+        const zoomHandle = _elements.zoomHandle;
+        const maxZoom = _options.maxZoom;
+        perc = Math.round(Math.max(100, perc));
+        perc = Math.min(maxZoom, perc);
+        point = point || {
+          x: containerDim.w / 2,
+          y: containerDim.h / 2,
+        };
+        const curLeft = parseFloat(css(image, 'left'));
+        const curTop = parseFloat(css(image, 'top')); // clear any panning frames
+        _this._clearFrames();
+        let step = 0;
+        const baseLeft = 0; // (containerDim.w - imageDim.w) / 2;
+        const baseTop = 0; // (containerDim.h - imageDim.h) / 2;
+        const baseRight = 0; // containerDim.w - baseLeft;
+        const baseBottom = 0; // containerDim.h - baseTop;
+
+        const zoom = function zoom() {
+          step++;
+          if (step < 16) {
+            _this._frames.zoomFrame = requestAnimationFrame(zoom);
+          }
+
+          const tickZoom = easeOutQuart(step, curPerc, perc - curPerc, 16);
+          const ratio = tickZoom / curPerc;
+          const imgWidth = imageDim.w * tickZoom / 100;
+          const imgHeight = imageDim.h * tickZoom / 100;
+          let newLeft = -((point.x - curLeft) * ratio - point.x);
+          let newTop = -((point.y - curTop) * ratio - point.y); // fix for left and top
+          newLeft = Math.min(newLeft, baseLeft);
+          newTop = Math.min(newTop, baseTop); // fix for right and bottom
+          if (newLeft + imgWidth < baseRight) {
+            newLeft = baseRight - imgWidth; // newLeft - (newLeft + imgWidth - baseRight)
+          }
+
+          if (newTop + imgHeight < baseBottom) {
+            newTop = baseBottom - imgHeight; // newTop + (newTop + imgHeight - baseBottom)
+          }
+          css(image, {
+            height: ''.concat(imgHeight, 'px'),
+            width: ''.concat(imgWidth, 'px'),
+            left: 0, // ''.concat(newLeft, 'px'),
+            top: 0, // ''.concat(newTop, 'px'),
+          });
+          _this._state.zoomValue = tickZoom;
+          _this._resizeSnapHandle(imgWidth, imgHeight, newLeft, newTop); // update zoom handle position
+          css(zoomHandle, {
+            left: ''.concat((tickZoom - 100) * zoomSliderLength / (maxZoom - 100), 'px'),
+          });
+        };
+        zoom();
+      });
+
+      _defineProperty(this, '_clearFrames', () => {
+        const _this$_frames = _this._frames;
+        const slideMomentumCheck = _this$_frames.slideMomentumCheck;
+        const sliderMomentumFrame = _this$_frames.sliderMomentumFrame;
+        const zoomFrame = _this$_frames.zoomFrame;
+        clearInterval(slideMomentumCheck);
+        cancelAnimationFrame(sliderMomentumFrame);
+        cancelAnimationFrame(zoomFrame);
+      });
+
+      _defineProperty(this, '_resizeSnapHandle', (imgWidth, imgHeight, imgLeft, imgTop) => {
+        const _elements = _this._elements;
+        const _state = _this._state;
+        const snapHandle = _elements.snapHandle;
+        const image = _elements.image;
+        const imageDim = _state.imageDim;
+        const containerDim = _state.containerDim;
+        const zoomValue = _state.zoomValue;
+        const snapImageDim = _state.snapImageDim;
+        const imageWidth = imgWidth || imageDim.w * zoomValue / 100;
+        const imageHeight = imgHeight || imageDim.h * zoomValue / 100;
+        const imageLeft = imgLeft || parseFloat(css(image, 'left'));
+        const imageTop = imgTop || parseFloat(css(image, 'top'));
+        const left = -imageLeft * snapImageDim.w / imageWidth;
+        const top = -imageTop * snapImageDim.h / imageHeight;
+        const handleWidth = containerDim.w * snapImageDim.w / imageWidth;
+        const handleHeight = containerDim.h * snapImageDim.h / imageHeight;
+        css(snapHandle, {
+          top: ''.concat(top, 'px'),
+          left: ''.concat(left, 'px'),
+          width: ''.concat(handleWidth, 'px'),
+          height: ''.concat(handleHeight, 'px'),
+        });
+        _this._state.snapHandleDim = {
+          w: handleWidth,
+          h: handleHeight,
+        };
+      });
+
+      _defineProperty(this, 'showSnapView', (noTimeout) => {
+        const _this$_state = _this._state;
+        const snapViewVisible = _this$_state.snapViewVisible;
+        const zoomValue = _this$_state.zoomValue;
+        const loaded = _this$_state.loaded;
+        const snapView = _this._elements.snapView;
+        if (!_this._options.snapView) return;
+        if (snapViewVisible || zoomValue <= 100 || !loaded) return;
+        clearTimeout(_this._frames.snapViewTimeout);
+        _this._state.snapViewVisible = true;
+        css(snapView, {
+          opacity: 1,
+          pointerEvents: 'inherit',
+        });
+
+        if (!noTimeout) {
+          _this._frames.snapViewTimeout = setTimeout(_this.hideSnapView, 1500);
+        }
+      });
+
+      _defineProperty(this, 'hideSnapView', () => {
+        const snapView = _this._elements.snapView;
+        css(snapView, {
+          opacity: 0,
+          pointerEvents: 'none',
+        });
+        _this._state.snapViewVisible = false;
+      });
+
+      _defineProperty(this, 'refresh', () => {
+        _this._calculateDimensions();
+        _this.resetZoom();
+      });
+
+      const _this$_findContainerA = this._findContainerAndImageSrc(element, options);
+      const container = _this$_findContainerA.container;
+      const domElement = _this$_findContainerA.domElement;
+      const imageSrc = _this$_findContainerA.imageSrc;
+      const hiResImageSrc = _this$_findContainerA.hiResImageSrc; // containers for elements
+
+      this._elements = {
+        container,
+        domElement,
+      };
+      this._options = _objectSpread({}, ImageViewer.defaults, options); // container for all events
+      this._events = {}; // container for all timeout and frames
+      this._frames = {}; // container for all sliders
+      this._sliders = {}; // maintain current state
+      this._state = {
+        zoomValue: this._options.zoomValue,
+      };
+      this._images = {
+        imageSrc,
+        hiResImageSrc,
+      };
+      this._init();
+      if (imageSrc) {
+        this._loadImages();
+      } // store reference of imageViewer in domElement
+      domElement._imageViewer = this;
+    }
+
+    _createClass(ImageViewer, [{
+      key: '_findContainerAndImageSrc',
+      value: function _findContainerAndImageSrc(element) {
+        let domElement = element;
+        let imageSrc;
+        let hiResImageSrc;
+        if (typeof element === 'string') {
+          domElement = document.querySelector(element);
+        } // throw error if imageViewer is already assigned
+        if (domElement._imageViewer) {
+          throw new Error('An image viewer is already being initiated on the element.');
+        }
+        let container = element;
+        if (domElement.tagName === 'IMG') {
+          imageSrc = domElement.src;
+          hiResImageSrc = domElement.getAttribute('high-res-src') || domElement.getAttribute('data-high-res-src'); // wrap the image with iv-container div
+          container = wrap(domElement, {
+            className: 'iv-container iv-image-mode',
+            style: {
+              display: 'inline-block',
+              overflow: 'hidden',
+            },
+          }); // hide the image and add iv-original-img class
+          css(domElement, {
+            opacity: 0,
+            position: 'relative',
+            zIndex: -1,
+          });
+        } else {
+          imageSrc = domElement.getAttribute('src') || domElement.getAttribute('data-src');
+          hiResImageSrc = domElement.getAttribute('high-res-src') || domElement.getAttribute('data-high-res-src');
+        }
+        return {
+          container,
+          domElement,
+          imageSrc,
+          hiResImageSrc,
+        };
+      },
+    }, {
+      key: '_init',
+      value: function _init() {
+        // initialize the dom elements
+        this._initDom(); // initialize slider
+        this._initImageSlider();
+        this._initSnapSlider();
+        this._initZoomSlider(); // enable pinch and zoom feature for touch screens
+        this._pinchAndZoom(); // enable scroll zoom interaction
+        this._scrollZoom(); // enable double tap to zoom interaction
+        this._doubleTapToZoom(); // initialize events
+        this._initEvents();
+      },
+    }, {
+      key: '_initDom',
+      value: function _initDom() {
+        const container = this._elements.container; // add image-viewer layout elements
+        createElement({
+          tagName: 'div',
+          className: 'iv-wrap',
+          html: imageViewHtml,
+          parent: container,
+        }); // add container class on the container
+        addClass(container, 'iv-container'); // if the element is static position, position it relatively
+        if (css(container, 'position') === 'static') {
+          css(container, {
+            position: 'relative',
+          });
+        } // save references for later use
+        this._elements = _objectSpread({}, this._elements, {
+          snapView: container.querySelector('.iv-snap-view'),
+          snapImageWrap: container.querySelector('.iv-snap-image-wrap'),
+          imageWrap: container.querySelector('.iv-image-wrap'),
+          snapHandle: container.querySelector('.iv-snap-handle'),
+          zoomHandle: container.querySelector('.iv-zoom-handle'),
+        });
+      },
+    }, {
+      key: '_initImageSlider',
+      value: function _initImageSlider() {
+        const _this2 = this;
+
+        const _elements = this._elements;
+        const imageWrap = _elements.imageWrap;
+        let positions; let
+          currentPos;
+        /* Add slide interaction to image */
+
+        const imageSlider = new Slider(imageWrap, {
+          isSliderEnabled: function isSliderEnabled() {
+            const _this2$_state = _this2._state;
+            const loaded = _this2$_state.loaded;
+            const zooming = _this2$_state.zooming;
+            const zoomValue = _this2$_state.zoomValue;
+            return loaded && !zooming && zoomValue > 100;
+          },
+          onStart: function onStart(e, position) {
+            const snapSlider = _this2._sliders.snapSlider; // clear all animation frame and interval
+            _this2._clearFrames();
+            snapSlider.onStart(); // reset positions
+            positions = [position, position];
+            currentPos = undefined;
+            _this2._frames.slideMomentumCheck = setInterval(() => {
+              if (!currentPos) return;
+              positions.shift();
+              positions.push({
+                x: currentPos.mx,
+                y: currentPos.my,
+              });
+            }, 50);
+          },
+          onMove: function onMove(e, position) {
+            const snapImageDim = _this2._state.snapImageDim;
+            const snapSlider = _this2._sliders.snapSlider;
+            const imageCurrentDim = _this2._getImageCurrentDim();
+            currentPos = position;
+            snapSlider.onMove(e, {
+              dx: -position.dx * snapImageDim.w / imageCurrentDim.w,
+              dy: -position.dy * snapImageDim.h / imageCurrentDim.h,
+            });
+          },
+          onEnd: function onEnd() {
+            const snapImageDim = _this2._state.snapImageDim;
+            const snapSlider = _this2._sliders.snapSlider;
+            const imageCurrentDim = _this2._getImageCurrentDim(); // clear all animation frame and interval
+            _this2._clearFrames();
+            let step;
+            let positionX;
+            let positionY;
+            const xDiff = positions[1].x - positions[0].x;
+            const yDiff = positions[1].y - positions[0].y;
+
+            const momentum = function momentum() {
+              if (step <= 60) {
+                _this2._frames.sliderMomentumFrame = requestAnimationFrame(momentum);
+              }
+              positionX += easeOutQuart(step, xDiff / 3, -xDiff / 3, 60);
+              positionY += easeOutQuart(step, yDiff / 3, -yDiff / 3, 60);
+              snapSlider.onMove(null, {
+                dx: -(positionX * snapImageDim.w / imageCurrentDim.w),
+                dy: -(positionY * snapImageDim.h / imageCurrentDim.h),
+              });
+              step++;
+            };
+            if (Math.abs(xDiff) > 30 || Math.abs(yDiff) > 30) {
+              step = 1;
+              positionX = currentPos.dx;
+              positionY = currentPos.dy;
+              momentum();
+            }
+          },
+        });
+        imageSlider.init();
+        this._sliders.imageSlider = imageSlider;
+      },
+    }, {
+      key: '_initSnapSlider',
+      value: function _initSnapSlider() {
+        const _this3 = this;
+        const snapHandle = this._elements.snapHandle;
+        let startHandleTop; let
+          startHandleLeft;
+        const snapSlider = new Slider(snapHandle, {
+          isSliderEnabled: function isSliderEnabled() {
+            return _this3._state.loaded;
+          },
+          onStart: function onStart() {
+            const _this3$_frames = _this3._frames;
+            const slideMomentumCheck = _this3$_frames.slideMomentumCheck;
+            const sliderMomentumFrame = _this3$_frames.sliderMomentumFrame;
+            startHandleTop = parseFloat(css(snapHandle, 'top'));
+            startHandleLeft = parseFloat(css(snapHandle, 'left')); // stop momentum on image
+
+            clearInterval(slideMomentumCheck);
+            cancelAnimationFrame(sliderMomentumFrame);
+          },
+          onMove: function onMove(e, position) {
+            const _this3$_state = _this3._state;
+            const snapHandleDim = _this3$_state.snapHandleDim;
+            const snapImageDim = _this3$_state.snapImageDim;
+            const image = _this3._elements.image;
+            const imageCurrentDim = _this3._getImageCurrentDim(); // find handle left and top and make sure they lay between the snap image
+            const maxLeft = Math.max(snapImageDim.w - snapHandleDim.w, startHandleLeft);
+            const maxTop = Math.max(snapImageDim.h - snapHandleDim.h, startHandleTop);
+            const minLeft = Math.min(0, startHandleLeft);
+            const minTop = Math.min(0, startHandleTop);
+            const left = clamp(startHandleLeft + position.dx, minLeft, maxLeft);
+            const top = clamp(startHandleTop + position.dy, minTop, maxTop);
+            const imgLeft = -left * imageCurrentDim.w / snapImageDim.w;
+            const imgTop = -top * imageCurrentDim.h / snapImageDim.h;
+            css(snapHandle, {
+              left: ''.concat(left, 'px'),
+              top: ''.concat(top, 'px'),
+            });
+            css(image, {
+              left: ''.concat(imgLeft, 'px'),
+              top: ''.concat(imgTop, 'px'),
+            });
+          },
+        });
+        snapSlider.init();
+        this._sliders.snapSlider = snapSlider;
+      },
+    }, {
+      key: '_initZoomSlider',
+      value: function _initZoomSlider() {
+        const _this4 = this;
+        const _this$_elements = this._elements;
+        const snapView = _this$_elements.snapView;
+        const zoomHandle = _this$_elements.zoomHandle; // zoom in zoom out using zoom handle
+        const sliderElm = snapView.querySelector('.iv-zoom-slider');
+        let leftOffset; let
+          handleWidth; // on zoom slider we have to follow the mouse and set the handle to its position.
+
+        const zoomSlider = new Slider(sliderElm, {
+          isSliderEnabled: function isSliderEnabled() {
+            return _this4._state.loaded;
+          },
+          onStart: function onStart(eStart) {
+            const slider = _this4._sliders.zoomSlider;
+            leftOffset = sliderElm.getBoundingClientRect().left + document.body.scrollLeft;
+            handleWidth = parseInt(css(zoomHandle, 'width'), 10); // move the handle to current mouse position
+            slider.onMove(eStart);
+          },
+          onMove: function onMove(e) {
+            const maxZoom = _this4._options.maxZoom;
+            const zoomSliderLength = _this4._state.zoomSliderLength;
+            const pageX = e.pageX !== undefined ? e.pageX : e.touches[0].pageX;
+            const newLeft = clamp(pageX - leftOffset - handleWidth / 2, 0, zoomSliderLength);
+            const zoomValue = 100 + (maxZoom - 100) * newLeft / zoomSliderLength;
+            _this4.zoom(zoomValue);
+          },
+        });
+        zoomSlider.init();
+        this._sliders.zoomSlider = zoomSlider;
+      },
+    }, {
+      key: '_initEvents',
+      value: function _initEvents() {
+        this._snapViewEvents(); // handle window resize
+        if (this._options.refreshOnResize) {
+          this._events.onWindowResize = assignEvent(window, 'resize', this.refresh);
+        }
+      },
+    }, {
+      key: '_snapViewEvents',
+      value: function _snapViewEvents() {
+        const _this5 = this;
+        const _this$_elements2 = this._elements;
+        const imageWrap = _this$_elements2.imageWrap;
+        const snapView = _this$_elements2.snapView; // show snapView on mouse move
+        this._events.snapViewOnMouseMove = assignEvent(imageWrap, ['touchmove', 'mousemove'], () => {
+          _this5.showSnapView();
+        }); // keep showing snapView if on hover over it without any timeout
+        this._events.mouseEnterSnapView = assignEvent(snapView, ['mouseenter', 'touchstart'], () => {
+          _this5._state.snapViewVisible = false;
+          _this5.showSnapView(true);
+        }); // on mouse leave set timeout to hide snapView
+        this._events.mouseLeaveSnapView = assignEvent(snapView, ['mouseleave', 'touchend'], () => {
+          _this5._state.snapViewVisible = false;
+          _this5.showSnapView();
+        });
+      },
+    }, {
+      key: '_pinchAndZoom',
+      value: function _pinchAndZoom() {
+        const _this6 = this;
+        const _this$_elements3 = this._elements;
+        const imageWrap = _this$_elements3.imageWrap;
+        const container = _this$_elements3.container; // apply pinch and zoom feature
+        const onPinchStart = function onPinchStart(eStart) {
+          const _this6$_state = _this6._state;
+          const loaded = _this6$_state.loaded;
+          const startZoomValue = _this6$_state.zoomValue;
+          const events = _this6._events;
+          if (!loaded) return;
+          const touch0 = eStart.touches[0];
+          const touch1 = eStart.touches[1];
+          if (!(touch0 && touch1)) {
+            return;
+          }
+          _this6._state.zooming = true;
+          const contOffset = container.getBoundingClientRect(); // find distance between two touch points
+          const startDist = getTouchPointsDistance(eStart.touches); // find the center for the zoom
+          const center = {
+            x: (touch1.pageX + touch0.pageX) / 2 - (contOffset.left + document.body.scrollLeft),
+            y: (touch1.pageY + touch0.pageY) / 2 - (contOffset.top + document.body.scrollTop),
+          };
+          const moveListener = function moveListener(eMove) {
+            // eMove.preventDefault();
+            const newDist = getTouchPointsDistance(eMove.touches);
+            const zoomValue = startZoomValue + (newDist - startDist) / 2;
+            _this6.zoom(zoomValue, center);
+          };
+          const endListener = function endListener() {
+            // unbind events
+            events.pinchMove();
+            events.pinchEnd();
+            _this6._state.zooming = false;
+          }; // remove events if already assigned
+          if (events.pinchMove) events.pinchMove();
+          if (events.pinchEnd) events.pinchEnd(); // assign events
+          events.pinchMove = assignEvent(document, 'touchmove', moveListener);
+          events.pinchEnd = assignEvent(document, 'touchend', endListener);
+        };
+        this._events.pinchStart = assignEvent(imageWrap, 'touchstart', onPinchStart);
+      },
+    }, {
+      key: '_scrollZoom',
+      value: function _scrollZoom() {
+        const _this7 = this;
+        /* Add zoom interaction in mouse wheel */
+        const _options = this._options;
+        const _this$_elements4 = this._elements;
+        const container = _this$_elements4.container;
+        const imageWrap = _this$_elements4.imageWrap;
+        let changedDelta = 0;
+
+        const onMouseWheel = function onMouseWheel(e) {
+          const _this7$_state = _this7._state;
+          const loaded = _this7$_state.loaded;
+          const zoomValue = _this7$_state.zoomValue;
+          if (!_options.zoomOnMouseWheel || !loaded) return; // clear all animation frame and interval
+          _this7._clearFrames(); // cross-browser wheel delta
+          const delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail || -e.deltaY));
+          const newZoomValue = zoomValue * (100 + delta * ZOOM_CONSTANT) / 100;
+          if (!(newZoomValue >= 100 && newZoomValue <= _options.maxZoom)) {
+            changedDelta += Math.abs(delta);
+          } else {
+            changedDelta = 0;
+          }
+          e.preventDefault();
+          if (changedDelta > MOUSE_WHEEL_COUNT) return;
+          const contOffset = container.getBoundingClientRect();
+          const x = (e.pageX || e.pageX) - (contOffset.left + document.body.scrollLeft);
+          const y = (e.pageY || e.pageY) - (contOffset.top + document.body.scrollTop);
+          _this7.zoom(newZoomValue, {
+            x,
+            y,
+          }); // show the snap viewer
+          _this7.showSnapView();
+        };
+        this._ev = assignEvent(imageWrap, 'wheel', onMouseWheel);
+      },
+    }, {
+      key: '_doubleTapToZoom',
+      value: function _doubleTapToZoom() {
+        const _this8 = this;
+
+        const imageWrap = this._elements.imageWrap; // handle double tap for zoom in and zoom out
+
+        let touchTime = 0;
+        let point;
+
+        const onDoubleTap = function onDoubleTap(e) {
+          if (touchTime === 0) {
+            touchTime = Date.now();
+            point = {
+              x: e.pageX,
+              y: e.pageY,
+            };
+          } else if (Date.now() - touchTime < 500 && Math.abs(e.pageX - point.x) < 50 && Math.abs(e.pageY - point.y) < 50) {
+            if (_this8._state.zoomValue === _this8._options.zoomValue) {
+              _this8.zoom(200);
+            } else {
+              _this8.resetZoom();
+            }
+
+            touchTime = 0;
+          } else {
+            touchTime = 0;
+          }
+        };
+
+        assignEvent(imageWrap, 'click', onDoubleTap);
+      },
+    }, {
+      key: '_getImageCurrentDim',
+      value: function _getImageCurrentDim() {
+        const _this$_state2 = this._state;
+        const zoomValue = _this$_state2.zoomValue;
+        const imageDim = _this$_state2.imageDim;
+        return {
+          w: imageDim.w * (zoomValue / 100),
+          h: imageDim.h * (zoomValue / 100),
+        };
+      },
+    }, {
+      key: '_loadImages',
+      value: function _loadImages() {
+        const _this9 = this;
+
+        const _images = this._images;
+        const _elements = this._elements;
+        const imageSrc = _images.imageSrc;
+        const hiResImageSrc = _images.hiResImageSrc;
+        const container = _elements.container;
+        const snapImageWrap = _elements.snapImageWrap;
+        const imageWrap = _elements.imageWrap;
+        const ivLoader = container.querySelector('.iv-loader'); // remove old images
+
+        remove(container.querySelectorAll('.iv-snap-image, .iv-image')); // add snapView image
+
+        const snapImage = createElement({
+          tagName: 'img',
+          className: 'iv-snap-image',
+          src: imageSrc,
+          insertBefore: snapImageWrap.firstChild,
+          parent: snapImageWrap,
+        }); // add image
+
+        const image = createElement({
+          tagName: 'img',
+          className: 'iv-image iv-small-image',
+          src: imageSrc,
+          parent: imageWrap,
+        });
+        this._state.loaded = false; // store image reference in _elements
+
+        this._elements.image = image;
+        this._elements.snapImage = snapImage;
+        css(ivLoader, {
+          display: 'block',
+        }); // keep visibility hidden until image is loaded
+
+        css(image, {
+          visibility: 'hidden',
+        }); // hide snap view if open
+
+        this.hideSnapView();
+
+        const onImageLoad = function onImageLoad() {
+          // hide the iv loader
+          css(ivLoader, {
+            display: 'none',
+          }); // show the image
+
+          css(image, {
+            visibility: 'visible',
+          }); // load high resolution image if provided
+
+          if (hiResImageSrc) {
+            _this9._loadHighResImage(hiResImageSrc);
+          } // set loaded flag to true
+
+
+          _this9._state.loaded = true; // calculate the dimension
+
+          _this9._calculateDimensions(); // reset the zoom
+
+
+          _this9.resetZoom();
+        };
+
+        if (imageLoaded(image)) {
+          onImageLoad();
+        } else {
+          this._events.imageLoad = assignEvent(image, 'load', onImageLoad);
+        }
+      },
+    }, {
+      key: '_loadHighResImage',
+      value: function _loadHighResImage(hiResImageSrc) {
+        const _this10 = this;
+
+        const _this$_elements5 = this._elements;
+        const imageWrap = _this$_elements5.imageWrap;
+        const container = _this$_elements5.container;
+        const lowResImg = this._elements.image;
+        const hiResImage = createElement({
+          tagName: 'img',
+          className: 'iv-image iv-large-image',
+          src: hiResImageSrc,
+          parent: imageWrap,
+          style: lowResImg.style.cssText,
+        }); // add all the style attributes from lowResImg to highResImg
+
+        hiResImage.style.cssText = lowResImg.style.cssText;
+        this._elements.image = container.querySelectorAll('.iv-image');
+
+        const onHighResImageLoad = function onHighResImageLoad() {
+          // remove the low size image and set this image as default image
+          remove(lowResImg);
+          _this10._elements.image = hiResImage; // this._calculateDimensions();
+        };
+
+        if (imageLoaded(hiResImage)) {
+          onHighResImageLoad();
+        } else {
+          this._events.hiResImageLoad = assignEvent(hiResImage, 'load', onHighResImageLoad);
+        }
+      },
+    }, {
+      key: '_calculateDimensions',
+      value: function _calculateDimensions() {
+        const _this$_elements6 = this._elements;
+        const image = _this$_elements6.image;
+        const container = _this$_elements6.container;
+        const snapView = _this$_elements6.snapView;
+        const snapImage = _this$_elements6.snapImage;
+        const zoomHandle = _this$_elements6.zoomHandle; // calculate content width of image and snap image
+
+        const imageWidth = parseInt(css(image, 'width'), 10);
+        const imageHeight = parseInt(css(image, 'height'), 10);
+        const contWidth = parseInt(css(container, 'width'), 10);
+        const contHeight = parseInt(css(container, 'height'), 10);
+        const snapViewWidth = snapView.clientWidth;
+        const snapViewHeight = snapView.clientHeight; // set the container dimension
+
+        this._state.containerDim = {
+          w: contWidth,
+          h: contHeight,
+        }; // set the image dimension
+
+        const ratio = imageWidth / imageHeight;
+        const imgWidth = imageWidth > imageHeight && contHeight >= contWidth || ratio * contHeight > contWidth ? contWidth : ratio * contHeight;
+        const imgHeight = imgWidth / ratio;
+        this._state.imageDim = {
+          w: imgWidth,
+          h: imgHeight,
+        }; // reset image position and zoom
+
+        css(image, {
+          width: ''.concat(imgWidth, 'px'),
+          height: ''.concat(imgHeight, 'px'),
+          left: ''.concat((contWidth - imgWidth) / 2, 'px'),
+          top: ''.concat((contHeight - imgHeight) / 2, 'px'),
+          maxWidth: 'none',
+          maxHeight: 'none',
+        }); // set the snap Image dimension
+
+        const snapWidth = imgWidth > imgHeight ? snapViewWidth : imgWidth * snapViewHeight / imgHeight;
+        const snapHeight = imgHeight > imgWidth ? snapViewHeight : imgHeight * snapViewWidth / imgWidth;
+        this._state.snapImageDim = {
+          w: snapWidth,
+          h: snapHeight,
+        };
+        css(snapImage, {
+          width: ''.concat(snapWidth, 'px'),
+          height: ''.concat(snapHeight, 'px'),
+        }); // calculate zoom slider area
+
+        this._state.zoomSliderLength = snapViewWidth - zoomHandle.offsetWidth;
+      },
+    }, {
+      key: 'resetZoom',
+      value: function resetZoom() {
+        const animate = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+        const zoomValue = this._options.zoomValue;
+
+        if (!animate) {
+          this._state.zoomValue = zoomValue;
+        }
+
+        this.zoom(zoomValue);
+      },
+    }, {
+      key: 'load',
+      value: function load(imageSrc, hiResImageSrc) {
+        this._images = {
+          imageSrc,
+          hiResImageSrc,
+        };
+
+        this._loadImages();
+      },
+    }, {
+      key: 'destroy',
+      value: function destroy() {
+        const _this$_elements7 = this._elements;
+        const container = _this$_elements7.container;
+        const domElement = _this$_elements7.domElement; // destroy all the sliders
+
+        Object.entries(this._sliders).forEach((_ref) => {
+          const _ref2 = _slicedToArray(_ref, 2);
+          const slider = _ref2[1];
+
+          slider.destroy();
+        }); // unbind all events
+
+        Object.entries(this._events).forEach((_ref3) => {
+          const _ref4 = _slicedToArray(_ref3, 2);
+          const unbindEvent = _ref4[1];
+
+          unbindEvent();
+        }); // clear all the frames
+
+        this._clearFrames(); // remove html from the container
+
+        remove(container.querySelector('.iv-wrap')); // remove iv-container class from container
+        removeClass(container, 'iv-container'); // remove added style from container
+        removeCss(document.querySelector('html'), 'relative'); // if container has original image, unwrap the image and remove the class
+        // which will happen when domElement is not the container
+
+        if (domElement !== container) {
+          unwrap(domElement);
+        } // remove imageViewer reference from dom element
+
+
+        domElement._imageViewer = null;
+      },
+    }]);
+
+    return ImageViewer;
+  }());
+
+  ImageViewer.defaults = {
+    zoomValue: 100,
+    snapView: true,
+    maxZoom: 500,
+    refreshOnResize: true,
+    zoomOnMouseWheel: true,
+  };
+
+  const fullScreenHtml = '\n  <div class="iv-fullscreen-container"></div>\n  <div class="iv-fullscreen-close"></div>\n';
+
+  const FullScreenViewer = (function (_ImageViewer) {
+    _inherits(FullScreenViewer, _ImageViewer);
+
+    function FullScreenViewer() {
+      const options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      _classCallCheck(this, FullScreenViewer);
+      const fullScreenElem = createElement({
+        tagName: 'div',
+        className: 'iv-fullscreen',
+        html: fullScreenHtml,
+        parent: document.body,
+      });
+      const container = fullScreenElem.querySelector('.iv-fullscreen-container'); // call the ImageViewer constructor
+      const _this = _possibleConstructorReturn(this, _getPrototypeOf(FullScreenViewer).call(this, container, _objectSpread({}, options, {
+        refreshOnResize: false,
+      }))); // add fullScreenElem on element list
+      _defineProperty(_assertThisInitialized(_this), 'hide', () => {
+        // hide the fullscreen
+        css(_this._elements.fullScreen, {
+          display: 'none',
+        }); // enable scroll
+        removeCss(document.querySelector('html'), 'overflow'); // remove window event
+        _this._events.onWindowResize();
+      });
+      _this._elements.fullScreen = fullScreenElem;
+      _this._initFullScreenEvents();
+      return _this;
+    }
+
+    _createClass(FullScreenViewer, [{
+      key: '_initFullScreenEvents',
+      value: function _initFullScreenEvents() {
+        const fullScreen = this._elements.fullScreen;
+        const closeBtn = fullScreen.querySelector('.iv-fullscreen-close'); // add close button event
+        this._events.onCloseBtnClick = assignEvent(closeBtn, 'click', this.hide);
+      },
+    }, {
+      key: 'show',
+      value: function show(imageSrc, hiResImageSrc) {
+        // show the element
+        css(this._elements.fullScreen, {
+          display: 'block',
+        }); // if image source is provide load image source
+        if (imageSrc) {
+          this.load(imageSrc, hiResImageSrc);
+        } // handle window resize
+        this._events.onWindowResize = assignEvent(window, 'resize', this.refresh); // disable scroll on html
+        css(document.querySelector('html'), {
+          overflow: 'hidden',
+        });
+      },
+    }, {
+      key: 'destroy',
+      value: function destroy() {
+        const fullScreen = this._elements.fullScreen; // destroy image viewer
+        _get(_getPrototypeOf(FullScreenViewer.prototype), 'destroy', this).call(this); // remove the element
+        remove(fullScreen);
+      },
+    }]);
+
+    return FullScreenViewer;
+  }(ImageViewer));
+
+  ImageViewer.FullScreenViewer = FullScreenViewer;
+
+  return ImageViewer;
+}));

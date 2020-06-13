@@ -84,13 +84,14 @@ async function processFiles() {
       log.active('Saving...');
       const save = await fetch('/api/save');
       if (save.ok) await save.text();
-      log.active('Idle...');
     }, 1000);
   }
   if (error) {
     log.result('Aborting current run due to error');
-    log.result('Restarting ...');
-    processFiles();
+    setTimeout(() => {
+      log.result('Restarting ...');
+      processFiles();
+    }, 2500);
   }
   log.active('Idle ...');
 }
