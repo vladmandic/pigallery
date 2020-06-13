@@ -4,14 +4,15 @@
     { "email": "igor.domancic@ri.t-com.hr", "passwd": "pEro", "admin": false, "mediaRoot": "media/" }
   ],
   "locations": [
-    { "folder": "People/Vlado/", "match": "" },
-    { "folder": "People/California/", "match": "" },
-    { "folder": "People/Miami/", "match": "" },
+    { "folder": "Samples/", "match": "", "recursive": true },
     { "folder": "Pictures/Instagram Posts/", "match": "" },
     { "folder": "Pictures/Saved Pictures/", "match": "" },
-    { "folder": "Photos/Various/", "match": "" },
-    { "folder": "Photos/Travels/", "match": "" },
-    { "folder": "Temp/Patty & Shantel/", "match": "" }
+    { "folder": "Pictures/Screenshots/", "match": "" },
+    { "folder": "Pictures/Snapseed/", "match": "" },
+    { "folder": "Photos/", "match": "", "recursive": true },
+    { "folder": "People/Vlado/", "match": "" },
+    { "folder": "People/California/", "match": "" },
+    { "folder": "People/Miami/", "match": "" }
   ],
   "server": {
     "httpPort": 8000,

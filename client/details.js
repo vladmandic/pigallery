@@ -94,56 +94,60 @@ function drawBoxes(object) {
   }
 }
 
-async function resizeDetailsImage(object) {
+function resizeDetailsImage(object) {
+  if (object) last = object;
+  if (!last) return;
   // wait for image to be loaded silly way as on load event doesn't trigger consistently
   const img = document.getElementsByClassName('iv-image');
-  const width = $('#popup').width();
-  const height = $('#popup').height();
   if (!img || !img[0] || !img[0].complete) {
     setTimeout(() => resizeDetailsImage(object), 25);
   } else {
+    const ratioScreen = $('#popup').width() / $('#popup').height();
+    const ratioImage = last.naturalSize.width / last.naturalSize.height;
+    const vertical = ratioImage < (ratioScreen + 0.3);
     // move details panel to side or bottom depending on screen aspect ratio
-    if (width > height) {
-      $('#popup').css('display', 'flex');
-      if (window.options.viewDetails) {
-        $('#popup-details').width(window.options.listDetailsWidth * width);
-        $('#popup-image').width((1 - window.options.listDetailsWidth) * width);
-      } else {
-        $('#popup-details').width('0');
-        $('#popup-image').width(width);
-      }
-      $('#popup-image').height(height);
-      $('#popup-details').height(height);
-    } else {
-      $('#popup').css('display', 'block');
-      if (window.options.viewDetails) {
-        $('#popup-details').height(window.options.listDetailsWidth * height);
-        $('#popup-image').height((1 - window.options.listDetailsWidth) * height);
-      } else {
-        $('#popup-details').height('0');
-        $('#popup-image').height(height);
-      }
-      $('#popup-image').width(width);
-      $('#popup-details').width(width);
+    if (vertical) $('#popup').css('display', 'flex');
+    else $('#popup').css('display', 'block');
+    // zoom to fill usable screen area on initial draw
+    if (object) {
+      const zoomX = $('#popup').width() / $('.iv-image').width();
+      const zoomY = $('#popup').height() / $('.iv-image').height();
+      // if (vertical) viewer.zoom(100 * zoomY);
+      // else viewer.zoom(100 * zoomX);
+      viewer.zoom(100 * Math.min(zoomX, zoomY));
     }
-
-    // zoom to fill usable screen area
-    const zoomX = $('.iv-image-view').width() / $('.iv-image').width();
-    const zoomY = $('.iv-image-view').height() / $('.iv-image').height();
-    await viewer.zoom(100 * Math.min(zoomX, zoomY));
-    // move image to top left corner
-    $('.iv-image').css('position', 'static');
     setTimeout(() => {
-      // draw detection boxes and faces
-      drawBoxes(object);
-    }, 250);
-    $('#popup-image').css('cursor', 'zoom-in');
+      // resize container to fit image
+      $('#popup-image').width($('.iv-image').width());
+      $('#popup-image').height($('.iv-image').height());
+      // resize details pane to fill screen not taken by image
+      if (!vertical) $('#popup-details').height($('#popup').height() - $('.iv-image').height());
+      else $('#popup-details').height('100%');
+      if (vertical) $('#popup-details').width($('#popup').width() - $('.iv-image').width());
+      else $('#popup-details').width('100%');
+      // resize again if no room for details
+      if (vertical && ($('#popup-details').width() / $('#popup').width()) < window.options.listDetailsWidth) {
+        $('#popup-details').width(`${100 * window.options.listDetailsWidth}%`);
+      } else if (vertical && $('#popup-details').height() / $('#popup').height() < window.options.listDetailsWidth) {
+        $('#popup-details').height(`${100 * window.options.listDetailsWidth}%`);
+      }
+      //  draw detection boxes and faces
+      drawBoxes();
+    }, 200);
+    // $('#popup-image').css('cursor', 'zoom-in');
   }
 }
 
 // show details popup
 async function showDetails(thumb, img) {
   if (!img && last) img = last.image;
+  $('#popup-image').width($('#popup').width());
+  $('#popup-image').height($('#popup').height());
+  $('#popup-details').height('0');
+  $('#popup-details').height('0');
+  $('.iv-image').width($('#popup').width());
+  $('.iv-image').height($('#popup').height());
+
   $('#popup-image').css('cursor', 'wait');
   if (window.options.viewRaw) {
     log.result(`Loading Raw image: ${img}`);
@@ -156,11 +160,11 @@ async function showDetails(thumb, img) {
   $('#popup').toggle(true);
   $('#optionsview').toggle(true);
 
+  // http://ignitersworld.com/lab/imageViewer.html
   if (!viewer) {
     const div = document.getElementById('popup-image');
     viewer = new ImageViewer(div, { zoomValue: 100, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
   }
-  // http://ignitersworld.com/lab/imageViewer.html
   if (thumb) viewer.load(thumb, img);
   else viewer.load(img);
 
@@ -170,8 +174,8 @@ async function showDetails(thumb, img) {
   resizeDetailsImage(object);
 
   // handle pan&zoom redraws
-  $('.iv-large-image').click(() => drawBoxes());
-  $('.iv-large-image').on('wheel', () => drawBoxes());
+  $('.iv-large-image').click(() => resizeDetailsImage());
+  $('.iv-large-image').on('wheel', () => resizeDetailsImage());
 
   let classified = 'Classified ';
   if (object.classify) for (const obj of object.classify) classified += ` | <font color="teal">${(100 * obj.score).toFixed(0)}% ${obj.class}</font>`;
