@@ -124,11 +124,9 @@ Result of all metadata processing is a very flexbile search engine - take a look
 - On errors:
   - If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory. Just restart processing and it will continue from the last known good result.
 - On images:
-  - This relates to selected image size in `client/config.js`, not the original image size which can be anything (tested with over 100MP)
-  - Large images can cause random WebGL processing errors, recommended limit is 1000px.
-  - There is no increased accuracy in image sizes larger than 800 pixels as individual classification samples are typically 224px.
+  - Large images can cause random WebGL processing errors, recommended resize to max 1000px, configurable in `client/config.js`
+  - There is no increased accuracy in image sizes larger than 800 pixels as individual classification samples are even smaller
   - Increase of resolution from 800px to 1000px doubles processing time
-  - Smaller objects are easier to detect due to cleaner bounding boxes. Image with single large object that covers 100% of the image is worst-case scenario.
 - On batch processing:
   - If performing specific performance tests, limit batch size to 1 as batch processing skews performance measurements
   - Batch sizes above 10 do not further increase performance.
@@ -139,6 +137,9 @@ Result of all metadata processing is a very flexbile search engine - take a look
   - Typcal resolution for selected pretrained models is 224px resolution although it can vary
   - Model load time can be from few seconds to over a minute depending on model size (in MB)
   - Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
+
+Details on tested models (sizes, number of tensors, performance, etc.) can be seen in attached `MODELS` spreadsheet  
+<https://github.com/vladmandic/pigallery/MODELS.xlsx>
 
 ### Model Benchmarks
 

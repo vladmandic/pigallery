@@ -28,4 +28,3 @@ BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
 MicrosoftAI Species Classification: <https://www.microsoft.com/en-us/ai/ai-for-earth-tech-resources> <https://tfhub.dev/microsoft-ai-for-earth/vision/detector/megadetector_V3/1>
 MediaPipe Hand & Face: <https://www.mediapipe.dev/>
 SSD/OpenImages v4: <https://tfhub.dev/google/openimages_v4/ssd/mobilenet_v2/1>
-Other: <https://github.com/tensorflow/models/tree/master/research/slim>

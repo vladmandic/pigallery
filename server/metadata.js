@@ -29,7 +29,7 @@ function init() {
 function storeObject(data) {
   if (data.image === config.server.warmupImage) return;
   const json = data;
-  const analyzed = (json.classify && json.classify.length > 0) || (json.detect && json.detect.length > 0) || (json.exif && json.exif.camera);
+  const analyzed = ((json.classify && json.classify.length > 0) || (json.classify && json.classify.length > 0)) && (json.exif && json.exif.camera);
   json.processed = new Date();
   if (config.server.dbEngine === 'json') {
     const index = global.json.findIndex((a) => a.image === json.image);
