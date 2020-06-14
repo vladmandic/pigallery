@@ -10,17 +10,6 @@ function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
 }
 
-async function time(fn, arg) {
-  if (window.debug) {
-    const t0 = window.performance.now();
-    await fn(arg);
-    const t1 = window.performance.now();
-    log.result(`Timed ${fn.name}: ${Math.round(t1 - t0).toLocaleString()} ms`);
-  } else {
-    fn(arg);
-  }
-}
-
 function clearBoxes() {
   const img = document.getElementsByClassName('iv-image')[0];
   const canvas = document.getElementById('popup-canvas');
