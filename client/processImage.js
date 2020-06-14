@@ -26,6 +26,8 @@ async function loadModels() {
   log.result(`Initializing TensorFlow/JS version ${tf.version_core}`);
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
+  await tf.dispose();
+  // await tf.engine().startScope();
   if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
   log.result(`Configured Backend: ${tf.getBackend().toUpperCase()}`);
   log.result('Configuration:');
@@ -175,6 +177,9 @@ async function getImage(url) {
 
 async function processImage(name) {
   log.active(`Loading: ${name}`);
+  tf.engine().startScope();
+  log.state(`Engine state: ${tf.memory().numBytes.toLocaleString()} bytes ${tf.memory().numTensors.toLocaleString()} 
+    tensors ${tf.memory().numDataBuffers.toLocaleString()} buffers ${tf.memory().numBytesInGPU.toLocaleString()} GPU bytes`);
   const obj = {};
   obj.image = name;
 
@@ -247,6 +252,7 @@ async function processImage(name) {
   const t1 = window.performance.now();
   obj.perf = { total: t1 - t0, load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
   obj.error = error;
+  tf.engine().endScope();
 
   log.active(`Storing: ${name}`);
   fetch('/api/metadata', {
