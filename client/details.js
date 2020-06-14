@@ -10,6 +10,17 @@ function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
 }
 
+async function time(fn, arg) {
+  if (window.debug) {
+    const t0 = window.performance.now();
+    await fn(arg);
+    const t1 = window.performance.now();
+    log.result(`Timed ${fn.name}: ${Math.round(t1 - t0).toLocaleString()} ms`);
+  } else {
+    fn(arg);
+  }
+}
+
 function clearBoxes() {
   const img = document.getElementsByClassName('iv-image')[0];
   const canvas = document.getElementById('popup-canvas');
@@ -117,6 +128,7 @@ function resizeDetailsImage(object) {
       viewer.zoom(100 * Math.min(zoomX, zoomY));
     }
     setTimeout(() => {
+      $('.iv-image').css('cursor', 'zoom-in');
       // resize container to fit image
       $('#popup-image').width($('.iv-image').width());
       $('#popup-image').height($('.iv-image').height());
@@ -134,7 +146,6 @@ function resizeDetailsImage(object) {
       //  draw detection boxes and faces
       drawBoxes();
     }, 200);
-    // $('#popup-image').css('cursor', 'zoom-in');
   }
 }
 
@@ -148,14 +159,16 @@ async function showDetails(thumb, img) {
   $('.iv-image').width($('#popup').width());
   $('.iv-image').height($('#popup').height());
 
+  if (!img) return;
+
   $('#popup-image').css('cursor', 'wait');
   if (window.options.viewRaw) {
-    log.result(`Loading Raw image: ${img}`);
+    if (window.debug) log.result(`Loading Raw image: ${img}`);
     window.open(img, '_blank');
     return;
   }
   $('body').css('cursor', 'wait');
-  log.result(`Loading image: ${img}`);
+  if (window.debug) log.result(`Loading image: ${img}`);
 
   $('#popup').toggle(true);
   $('#optionsview').toggle(true);

@@ -1,28 +1,30 @@
 const moment = require('moment');
 
 let dots = 0;
-
+let divDot;
 async function dot() {
-  const div = document.getElementById('log');
-  if (div) div.innerHTML += '.';
+  if (!divDot) divDot = document.getElementById('log');
+  if (divDot) divDot.innerHTML += '.';
   dots = dots < 100 ? dots + 1 : 0;
-  if (dots >= 100) div.innerHTML += '<br>';
+  if (dots >= 100) divDot.innerHTML += '<br>';
 }
 
+let divResult;
 async function result(...msg) {
+  if (!divResult) divResult = document.getElementById('log');
   let msgs = '';
   msgs += msg.map((a) => a);
-  const div = document.getElementById('log');
-  if (div) div.innerHTML += `<span class="timestamp">${moment().format('HH:MM:ss')}</span> ${msgs.replace(' ', '&nbsp')}<br>`;
-  if (div) div.scrollTop = div.scrollHeight;
+  if (divResult) divResult.innerHTML += `<span class="timestamp">${moment().format('HH:MM:ss')}</span> ${msgs.replace(' ', '&nbsp')}<br>`;
+  if (divResult) divResult.scrollTop = divResult.scrollHeight;
   if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`);
   // eslint-disable-next-line no-console
   console.log(...msg);
 }
 
+let divActive;
 async function active(...msg) {
-  const div = document.getElementById('active');
-  if (div) div.innerHTML = `${msg}<br>`;
+  if (!divActive) divActive = document.getElementById('active');
+  if (divActive) divActive.innerHTML = `${msg}<br>`;
   // eslint-disable-next-line no-console
   else console.log(...msg);
 }

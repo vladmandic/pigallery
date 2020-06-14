@@ -11,6 +11,7 @@ const pwa = require('./pwa-register.js');
 // global variables
 window.results = [];
 window.window.filtered = [];
+window.debug = false;
 
 // user configurable options, stored in browsers local storage
 window.options = {
@@ -55,6 +56,17 @@ window.options = {
 // google analytics
 // eslint-disable-next-line prefer-rest-params
 function gtag() { window.dataLayer.push(arguments); }
+
+async function time(fn, arg) {
+  if (window.debug) {
+    const t0 = window.performance.now();
+    await fn(arg);
+    const t1 = window.performance.now();
+    log.result(`Timed ${fn.name}: ${Math.round(t1 - t0).toLocaleString()} ms`);
+  } else {
+    fn(arg);
+  }
+}
 
 function showTip(parent, text) {
   const tip = document.createElement('div');
@@ -112,11 +124,13 @@ async function printResult(object) {
   }
   let person = '';
   let nsfw = '';
-  if (object.person && object.person[0]) person = 'People';
-  for (const i in object.person) {
-    person += ` | ${object.person[i].gender} ${object.person[i].age.toFixed(0)}`;
-    if (object.person[i].class) {
-      nsfw += `Class: ${object.person[i].class} `;
+  if (object.person && object.person[0]) {
+    person = 'People';
+    for (const i of object.person) {
+      person += ` | ${i.gender} ${i.age.toFixed(0)}`;
+      if (i.class) {
+        nsfw += `Class: ${i.class} `;
+      }
     }
   }
   let detected = '';
@@ -147,7 +161,7 @@ async function printResult(object) {
     <div class="col thumbnail">
       <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px>
     </div>
-    <div id="desc-${object.id}" class="col description">
+    <div id="desc-${object.id}" class="col description" style="display: ${window.options.listDetails ? 'block' : 'hidden'}>
       <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>${link}
       ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
       ${location}<br>
@@ -165,7 +179,7 @@ async function printResult(object) {
 }
 
 // resize gallery view depending on user configuration
-function resizeResults() {
+async function resizeResults() {
   const thumbSize = parseInt($('#thumbsize')[0].value, 10);
   if (thumbSize !== window.options.listThumbSize) {
     window.options.listThumbSize = thumbSize;
@@ -179,13 +193,16 @@ function resizeResults() {
 }
 
 // extracts all locations from loaded images and builds sidebar menu
+let enumeratedLocations = 0;
 async function enumerateLocations() {
+  if (window.filtered.length === enumeratedLocations) return;
+  enumeratedLocations = window.filtered.length;
   $('#locations').html('');
   const locationsList = [];
   let unknown = 0;
   for (const item of window.filtered) {
-    const loc = `${item.location.near}, ${item.location.state || item.location.country}`;
     if (item.location && item.location.near) {
+      const loc = `${item.location.near}, ${item.location.state || item.location.country}`;
       const here = locationsList.find((a) => (a.loc === loc));
       if (!here) {
         locationsList.push({ loc, count: 1 });
@@ -213,7 +230,10 @@ async function enumerateLocations() {
 // builds folder list from all loaded images and builds sidebar menu
 // can be used with entire image list or per-object
 let folderList = [];
+let enumeratedFolders = 0;
 async function enumerateFolders(input) {
+  if (window.filtered.length === enumeratedFolders) return;
+  enumeratedFolders = window.filtered.length;
   $('#folders').html('');
   if (input) {
     const path = input.substr(0, input.lastIndexOf('/'));
@@ -253,14 +273,17 @@ async function enumerateFolders(input) {
 }
 
 // exctract top classe from classification & detection and builds sidebar menu
+let enumeratedClasses = 0;
 async function enumerateClasses() {
+  if (window.filtered.length === enumeratedClasses) return;
+  enumeratedClasses = window.filtered.length;
   $('#classes').html('');
   const classesList = [];
   for (const item of window.filtered) {
     for (const tag of item.tags) {
       const key = Object.keys(tag)[0];
-      const val = Object.values(tag)[0].toString().split(',')[0];
       if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
+      const val = Object.values(tag)[0].toString().split(',')[0];
       const found = classesList.find((a) => a.tag === val);
       if (found) found.count += 1;
       else classesList.push({ tag: val, count: 1 });
@@ -311,7 +334,7 @@ async function folderHandlers() {
       default:
     }
     // eslint-disable-next-line no-use-before-define
-    redrawResults(false);
+    time(redrawResults, false);
   });
 }
 
@@ -320,9 +343,7 @@ let slideshowRunning = false;
 async function startSlideshow() {
   if (!slideshowRunning) return;
   details.next(false);
-  setTimeout(() => {
-    startSlideshow();
-  }, window.options.slideDelay);
+  setTimeout(() => startSlideshow(), window.options.slideDelay);
 }
 
 // redraws gallery view and rebuilds sidebar menu
@@ -330,14 +351,19 @@ async function redrawResults(generateFolders = true) {
   $('#number').html(window.filtered.length);
   $('#results').html('');
   if (generateFolders) {
-    enumerateFolders();
-    enumerateLocations();
-    enumerateClasses();
-    folderHandlers();
+    time(enumerateFolders);
+    time(enumerateLocations);
+    time(enumerateClasses);
+    time(folderHandlers);
   }
-  for await (const obj of window.filtered) printResult(obj);
-  $('.description').toggle(window.options.listDetails);
-  await resizeResults();
+  const t0 = window.performance.now();
+  for (const obj of window.filtered) printResult(obj);
+  const t1 = window.performance.now();
+  if (window.debug) log.result(`Timed loop printResults: ${Math.round(t1 - t0).toLocaleString()}`);
+  // $('.description').toggle(window.options.listDetails);
+  // const t2 = window.performance.now();
+  // if (window.debug) log.result(`Timed CSS Toggle .description: ${Math.round(t2 - t1).toLocaleString()}`);
+  time(resizeResults);
   $('body').css('cursor', 'pointer');
 }
 
@@ -369,7 +395,7 @@ function filterResults(words) {
   }
   if (window.filtered && window.filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} results out of ${window.results.length} matches`);
   else log.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
-  redrawResults();
+  time(redrawResults);
 }
 
 // randomize image order using Fisher-Yates (aka Knuth) shuffle
@@ -389,8 +415,8 @@ function shuffle(array) {
 
 // sorts images based on given sort order
 function sortResults(sort) {
+  log.result(`Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
   $('body').css('cursor', 'wait');
-  log.result(`Sorting: ${sort}`);
   if (!window.filtered || window.filtered.length === 0) window.filtered = window.results;
   if (sort.includes('random')) shuffle(window.filtered);
   previous = null;
@@ -409,7 +435,7 @@ function sortResults(sort) {
   else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
   $('#optionslist').toggle(false);
-  redrawResults();
+  time(redrawResults);
 }
 
 // find duplicate images based on pre-computed sha-256 hash
@@ -457,15 +483,19 @@ async function loadGallery(limit) {
         $('#number').text(window.results.length);
         printResult(image);
         enumerateFolders(image.image);
-      // time: 15sec load, 10sec print, 3sec enumerate
+        // time: 15sec load, 10sec print, 3sec enumerate
       })
-      .done((things) => {
+      .done(() => {
         const t1 = window.performance.now();
-        const size = JSON.stringify(window.results).length;
-        log.result(`Received ${things.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (live parse)`);
+        if (window.debug) {
+          const size = JSON.stringify(window.results).length;
+          log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
+        } else {
+          log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms`);
+        }
         window.filtered = window.results;
-        resizeResults();
-        sortResults(window.options.listSortOrder);
+        // time(resizeResults);
+        time(sortResults, window.options.listSortOrder);
       });
   } else {
     const res = await fetch(`/api/get?limit=${limit}&find=all`);
@@ -474,11 +504,15 @@ async function loadGallery(limit) {
       window.results[i].id = i;
     }
     const t1 = window.performance.now();
-    const size = JSON.stringify(window.results).length;
-    log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
+    if (window.debug) {
+      const size = JSON.stringify(window.results).length;
+      log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
+    } else {
+      log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms`);
+    }
     window.filtered = window.results;
-    resizeResults();
-    sortResults(window.options.listSortOrder);
+    // time(resizeResults);
+    time(sortResults, window.options.listSortOrder);
   }
 }
 
@@ -770,14 +804,17 @@ async function main() {
   // Register PWA
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
 
-  await resizeViewport();
-  await initUser();
-  await initListHandlers();
-  await initSidebarHandlers();
-  await initDetailsHandlers();
-  await initHotkeys();
-  await showNavbar();
-  await loadGallery(window.options.listLimit);
+  const t0 = window.performance.now();
+  time(resizeViewport);
+  time(initUser);
+  time(initListHandlers);
+  time(initSidebarHandlers);
+  time(initDetailsHandlers);
+  time(initHotkeys);
+  time(showNavbar);
+  await time(loadGallery, window.options.listLimit);
+  const t1 = window.performance.now();
+  log.result(`Ready in ${Math.round(t1 - t0).toLocaleString()} ms`);
 }
 
 window.onload = main;
