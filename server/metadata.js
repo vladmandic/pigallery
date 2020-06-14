@@ -31,7 +31,8 @@ function init() {
 function storeObject(data) {
   if (data.image === config.server.warmupImage) return;
   const json = data;
-  const analyzed = ((json.classify && json.classify.length > 0) || (json.classify && json.classify.length > 0)) && (json.exif && json.exif.camera);
+  const analyzed = ((json.classify && json.classify.length > 0) || (json.alternative && json.alternative.length > 0)) && (json.exif && json.exif.timestamp);
+  if (!analyzed) log.warn(`Image: ${data.image} could not be analyzed: ${JSON.stringify(json.classify)} ${JSON.stringify(json.alternative)} ${JSON.stringify(json.exif)}`);
   json.processed = new Date();
   if (config.server.dbEngine === 'json') {
     const index = global.json.findIndex((a) => a.image === json.image);
@@ -223,8 +224,9 @@ async function getExif(url) {
           json.apperture = meta1.FNumber || meta2.SubExif.FNumber ? meta2.SubExif.FNumber[0] : undefined;
           json.iso = meta1.ISO || meta2.SubExif.ISO || meta2.SubExif.PhotographicSensitivity;
           json.fov = meta1.FocalLengthIn35mmFilm || meta2.SubExif.FocalLengthIn35mmFilm;
-          json.lat = meta1.GPSLatitude || meta2.GPSInfo.GPSLatitude ? (meta2.GPSInfo.GPSLatitude[0] || 0) + ((meta2.GPSInfo.GPSLatitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLatitude[2] || 0) / 3600) : undefined;
-          json.lon = meta1.GPSLongitude || meta2.GPSInfo.GPSLongitude ? (meta2.GPSInfo.GPSLongitude[0] || 0) + ((meta2.GPSInfo.GPSLongitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLongitude[2] || 0) / 3600) : undefined;
+          const west = meta2.GPSInfo.GPSLongitudeRef === 'W' ? -1 : 1;
+          json.lat = meta1.GPSLatitude || (meta2.GPSInfo.GPSLatitude ? (meta2.GPSInfo.GPSLatitude[0] || 0) + ((meta2.GPSInfo.GPSLatitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLatitude[2] || 0) / 3600) : undefined);
+          json.lon = meta1.GPSLongitude || (meta2.GPSInfo.GPSLongitude ? west * (meta2.GPSInfo.GPSLongitude[0] || 0) + ((meta2.GPSInfo.GPSLongitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLongitude[2] || 0) / 3600) : undefined);
           json.timestamp = json.created || getTime(Math.min(stat.mtimeMs, stat.ctimeMs));
           // if (json.timestamp !== json.created) console.log('null', url, json.timestamp);
           json.width = meta1.ImageWidth || meta1.ExifImageWidth || meta2.ImageWidth || meta2.SubExif.PixelXDimension || undefined;
@@ -357,17 +359,20 @@ async function checkRecords(list) {
   log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
 }
 
-async function test(dir) {
+async function testExif(dir) {
+  await init();
   if (fs.statSync(dir).isFile()) {
     const data = await getExif(dir);
+    const geo = await getLocation({ lat: data.lat, lon: data.lon });
     // eslint-disable-next-line no-console
-    console.log(dir, JSON.stringify(data));
+    console.log(dir, geo, data);
   } else {
     const list = fs.readdirSync(dir);
     for (const file of list) {
       const data = await getExif(path.join(dir, file));
+      const geo = await getLocation({ lat: data.lat, lon: data.lon });
       // eslint-disable-next-line no-console
-      console.log(path.join(dir, file), JSON.stringify(data));
+      console.log(path.join(dir, file), geo, data);
     }
   }
 }
@@ -383,5 +388,5 @@ exports.list = listFiles;
 exports.check = checkRecords;
 
 if (!module.parent) {
-  test(proc.argv[2]);
+  testExif(proc.argv[2]);
 }

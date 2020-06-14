@@ -20,7 +20,7 @@
     "airbnb-base"
   ],
   "rules": {
-    "max-len": [1, 220, 3],
+    "max-len": [1, 240, 3],
     "camelcase": "off",
     "guard-for-in": "off",
     "import/extensions": "off",
