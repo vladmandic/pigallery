@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const proc = require('process');
 const crypto = require('crypto');
+const moment = require('moment');
+const exif = require('jpeg-exif');
 const parser = require('exif-parser');
 const log = require('pilogger');
 const distance = require('./geoNearest.js');
@@ -163,6 +165,21 @@ function getLocation(json) {
   return res;
 }
 
+function getTime(time) {
+  if (!time) return null;
+  let t;
+  if (time.toString().match(/[^\d]/)) {
+    t = moment(time, 'YYYY:MM:DD HH:mm:ss');
+    if (!t.isValid()) t = new Date(time);
+    else t = t.toDate();
+  } else {
+    t = new Date(parseInt(time, 10));
+  }
+  // let t = time.toString().match(/[^\d]/) ? moment(time) || moment(time, 'YYYY:MM:DD HH:mm:ss') : new Date(parseInt(time, 10));
+  if (t.getFullYear() < 1971) t = new Date(1000 * parseInt(time, 10));
+  return t.getTime();
+}
+
 function parseExif(chunk, tries) {
   let raw;
   let error = false;
@@ -172,61 +189,51 @@ function parseExif(chunk, tries) {
     error = true;
   }
   if (error && tries > 0) raw = parseExif(chunk, tries - 1);
-  return raw;
-}
-
-function getTime(time) {
-  if (!time) return null;
-  let t = time.toString().match(/[^\d]/) ? new Date(time) : new Date(parseInt(time, 10));
-  if (t.getFullYear() < 1971) t = new Date(1000 * parseInt(time, 10));
-  return t.getTime();
+  if (!raw.tags) raw.tags = {};
+  return raw.tags;
 }
 
 async function getExif(url) {
   return new Promise((resolve) => {
     const json = {};
     if (!fs.existsSync(url)) resolve(json);
-    const stream = fs.createReadStream(url, { start: 0, end: 65536 });
-    stream
-      .on('data', (chunk) => {
-        let raw;
-        if (url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.jpeg')) {
-          raw = parseExif(chunk, 10);
-          if (!raw || !raw.tags && url !== config.server.warmupImage) log.warn('Metadata EXIF:', url);
-        }
-        const stat = fs.statSync(url);
-        json.bytes = stat.size;
-        json.timestamp = raw && raw.tags ? getTime(raw.tags.CreateDate || raw.tags.DateTimeOriginal) : null;
-        if (!json.timestamp) json.timestamp = Math.min(getTime(stat.mtimeMs), getTime(stat.ctimeMs));
-        if (raw && raw.tags) {
-          json.make = raw.tags.Make;
-          json.model = raw.tags.Model;
-          json.lens = raw.tags.LensModel;
-          json.software = raw.tags.Software;
-          json.modified = getTime(raw.tags.ModifyDate);
-          json.created = getTime(raw.tags.CreateDate || raw.tags.DateTimeOriginal);
-          json.lat = raw.tags.GPSLatitude;
-          json.lon = raw.tags.GPSLongitude;
-          json.exposure = raw.tags.ExposureTime;
-          json.apperture = raw.tags.FNumber;
-          json.iso = raw.tags.ISO;
-          json.fov = raw.tags.FocalLengthIn35mmFormat;
-        }
-        if (raw && raw.tags && raw.tags.ExifImageWidth) json.width = raw.tags.ExifImageWidth;
-        else if (raw && raw.imageSize && raw.imageSize.width) json.width = raw.imageSize.width;
-        else json.width = 0;
-        if (raw && raw.tags && raw.tags.ExifImageHeight) json.height = raw.tags.ExifImageHeight;
-        else if (raw && raw.imageSize && raw.imageSize.height) json.height = raw.imageSize.height;
-        else json.height = 0;
-        stream.close();
-      })
-      .on('close', () => {
-        resolve(json);
-      })
-      .on('error', (err) => {
-        log.warn('EXIF', JSON.stringify(err));
-        resolve(json);
-      });
+    const stat = fs.statSync(url);
+    json.bytes = stat.size;
+    if (url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.jpeg')) {
+      const stream = fs.createReadStream(url, { start: 0, end: 65536 });
+      stream
+        .on('data', (chunk) => {
+          const meta1 = parseExif(chunk, 3) || {};
+          const meta2 = exif.fromBuffer(chunk) || {};
+          if (!meta2.SubExif) meta2.SubExif = {};
+          if (!meta2.GPSInfo) meta2.GPSInfo = {};
+          // console.log(meta1, meta2);
+          json.make = meta1.Make || meta2.Make;
+          json.model = meta1.Model || meta2.Model;
+          json.lens = meta1.LensModel || meta2.SubExif.LensModel;
+          json.software = meta1.Software || meta2.Software;
+          json.created = getTime(meta1.CreateDate || meta1.DateTimeOriginal || meta2.DateTime || meta2.SubExif.DateTimeOriginal || meta2.GPSInfo.GPSDateStamp) || undefined;
+          json.modified = getTime(meta1.ModifyDate) || undefined;
+          json.exposure = meta1.ExposureTime || meta2.SubExif.ExposureTime ? meta2.SubExif.ExposureTime[0] : undefined;
+          json.apperture = meta1.FNumber || meta2.SubExif.FNumber ? meta2.SubExif.FNumber[0] : undefined;
+          json.iso = meta1.ISO || meta2.SubExif.ISO || meta2.SubExif.PhotographicSensitivity;
+          json.fov = meta1.FocalLengthIn35mmFilm || meta2.SubExif.FocalLengthIn35mmFilm;
+          json.lat = meta1.GPSLatitude || meta2.GPSInfo.GPSLatitude ? (meta2.GPSInfo.GPSLatitude[0] || 0) + ((meta2.GPSInfo.GPSLatitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLatitude[2] || 0) / 3600) : undefined;
+          json.lon = meta2.GPSLongitude || meta2.GPSInfo.GPSLongitude ? (meta2.GPSInfo.GPSLongitude[0] || 0) + ((meta2.GPSInfo.GPSLongitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLongitude[2] || 0) / 3600) : undefined;
+          json.timestamp = json.created || getTime(Math.min(stat.mtimeMs, stat.ctimeMs));
+          // if (json.timestamp !== json.created) console.log('null', url, json.timestamp);
+          json.width = meta1.ImageWidth || meta1.ExifImageWidth || meta2.ImageWidth || meta2.SubExif.PixelXDimension || undefined;
+          json.height = meta1.ImageHeight || meta1.ExifImageHeight || meta2.ImageHeight || meta2.SubExif.PixelYDimension || undefined;
+          stream.close();
+        })
+        .on('close', () => {
+          resolve(json);
+        })
+        .on('error', (err) => {
+          log.warn('EXIF', JSON.stringify(err));
+          resolve(json);
+        });
+    }
   });
 }
 
@@ -345,10 +352,19 @@ async function checkRecords(list) {
   log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
 }
 
-async function test(url) {
-  const exif = await getExif(url);
-  // eslint-disable-next-line no-console
-  console.log(exif);
+async function test(dir) {
+  if (fs.statSync(dir).isFile()) {
+    const data = await getExif(dir);
+    // eslint-disable-next-line no-console
+    console.log(dir, JSON.stringify(data));
+  } else {
+    const list = fs.readdirSync(dir);
+    for (const file of list) {
+      const data = await getExif(path.join(dir, file));
+      // eslint-disable-next-line no-console
+      console.log(path.join(dir, file), JSON.stringify(data));
+    }
+  }
 }
 
 exports.init = init;

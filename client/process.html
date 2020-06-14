@@ -26,12 +26,14 @@
       .row { width: 100%; margin: 65px 4px 0px 4px; }
       .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; }
       .active { background: #555555; padding: 8px; position: fixed; top: 10px; right: 10px; width: 1000px; font-size: 1.2rem; }
-      .log { height: 1000px; overflow-y: scroll; margin-top: 100px; display: block; }
+      .state { background: #555555; padding: 8px; position: fixed; top: 60px; right: 10px; width: 1000px; font-size: 1.2rem; }
+      .log { height: 1000px; overflow-y: scroll; margin-top: 120px; display: block; }
       .timestamp { background: #222222; margin-left: 8px; margin-right: 8px; color: lightgray; }
     </style>
 </head>
 <body>
   <div id="active" class="active"></div>
+  <div id="state" class="state"></div>
   <div id="log" class="row log"></div>
 </body>
 </html>

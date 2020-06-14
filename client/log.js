@@ -29,8 +29,19 @@ async function active(...msg) {
   else console.log(...msg);
 }
 
+let divState;
+async function state(msg, append) {
+  if (!divState) divState = document.getElementById('state');
+  if (divState) {
+    if (!append) divState.innerHTML = `${msg}`;
+    else divState.innerHTML += `&nbsp${msg}`;
+  // eslint-disable-next-line no-console
+  } else console.log(...msg);
+}
+
 module.exports = {
   result,
   active,
+  state,
   dot,
 };
