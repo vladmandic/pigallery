@@ -2,9 +2,9 @@
   "name": "pigallery",
   "version": "0.9.1",
   "description": "PiGallery: Photo Gallery and analysis using TensorFlow/JS and EXIF metadata",
-  "main": "server/server.js",
+  "main": "server/pigallery.js",
   "scripts": {
-    "start": "node server/server.js",
+    "start": "node server/pigallery.js",
     "upgrade": "npm update; npm install; npm dedupe; npm prune",
     "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && depcheck --ignores='eslint-plugin-*,auditjs' --ignore-dirs='dist' && auditjs ossi --quiet"
   },

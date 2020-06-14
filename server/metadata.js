@@ -189,8 +189,8 @@ function parseExif(chunk, tries) {
     error = true;
   }
   if (error && tries > 0) raw = parseExif(chunk, tries - 1);
-  if (!raw.tags) raw.tags = {};
-  return raw.tags;
+  const tags = raw ? raw.tags : {};
+  return tags;
 }
 
 async function getExif(url) {
@@ -204,7 +204,12 @@ async function getExif(url) {
       stream
         .on('data', (chunk) => {
           const meta1 = parseExif(chunk, 3) || {};
-          const meta2 = exif.fromBuffer(chunk) || {};
+          let meta2;
+          try {
+            meta2 = exif.fromBuffer(chunk) || {};
+          } catch {
+            meta2 = {};
+          }
           if (!meta2.SubExif) meta2.SubExif = {};
           if (!meta2.GPSInfo) meta2.GPSInfo = {};
           // console.log(meta1, meta2);
@@ -219,7 +224,7 @@ async function getExif(url) {
           json.iso = meta1.ISO || meta2.SubExif.ISO || meta2.SubExif.PhotographicSensitivity;
           json.fov = meta1.FocalLengthIn35mmFilm || meta2.SubExif.FocalLengthIn35mmFilm;
           json.lat = meta1.GPSLatitude || meta2.GPSInfo.GPSLatitude ? (meta2.GPSInfo.GPSLatitude[0] || 0) + ((meta2.GPSInfo.GPSLatitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLatitude[2] || 0) / 3600) : undefined;
-          json.lon = meta2.GPSLongitude || meta2.GPSInfo.GPSLongitude ? (meta2.GPSInfo.GPSLongitude[0] || 0) + ((meta2.GPSInfo.GPSLongitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLongitude[2] || 0) / 3600) : undefined;
+          json.lon = meta1.GPSLongitude || meta2.GPSInfo.GPSLongitude ? (meta2.GPSInfo.GPSLongitude[0] || 0) + ((meta2.GPSInfo.GPSLongitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLongitude[2] || 0) / 3600) : undefined;
           json.timestamp = json.created || getTime(Math.min(stat.mtimeMs, stat.ctimeMs));
           // if (json.timestamp !== json.created) console.log('null', url, json.timestamp);
           json.width = meta1.ImageWidth || meta1.ExifImageWidth || meta2.ImageWidth || meta2.SubExif.PixelXDimension || undefined;

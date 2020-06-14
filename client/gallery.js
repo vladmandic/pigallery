@@ -491,7 +491,7 @@ async function loadGallery(limit) {
           const size = JSON.stringify(window.results).length;
           log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
         } else {
-          log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms`);
+          log.result(`Received ${window.results.length} images in ${Math.round(t1 - t0).toLocaleString()} ms`);
         }
         window.filtered = window.results;
         // time(resizeResults);
@@ -508,7 +508,7 @@ async function loadGallery(limit) {
       const size = JSON.stringify(window.results).length;
       log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
     } else {
-      log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms`);
+      log.result(`Received ${window.results.length} images in ${Math.round(t1 - t0).toLocaleString()} ms`);
     }
     window.filtered = window.results;
     // time(resizeResults);
@@ -804,17 +804,17 @@ async function main() {
   // Register PWA
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
 
-  const t0 = window.performance.now();
-  time(resizeViewport);
-  time(initUser);
-  time(initListHandlers);
-  time(initSidebarHandlers);
-  time(initDetailsHandlers);
-  time(initHotkeys);
-  time(showNavbar);
+  // const t0 = window.performance.now();
+  resizeViewport();
+  await initUser();
+  initListHandlers();
+  initSidebarHandlers();
+  initDetailsHandlers();
+  initHotkeys();
+  showNavbar();
   await time(loadGallery, window.options.listLimit);
-  const t1 = window.performance.now();
-  log.result(`Ready in ${Math.round(t1 - t0).toLocaleString()} ms`);
+  // const t1 = window.performance.now();
+  // log.result(`Ready in ${Math.round(t1 - t0).toLocaleString()} ms`);
 }
 
 window.onload = main;
