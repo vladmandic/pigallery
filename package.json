@@ -30,6 +30,7 @@
     "tfjs",
     "mobilenet",
     "imagenet",
+    "efficientnet",
     "cocossd",
     "darknet",
     "yolo",
