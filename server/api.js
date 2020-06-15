@@ -70,7 +70,7 @@ function api(app) {
     const exif = await metadata.exif(data.image);
     const hash = await metadata.hash(data.image, 'sha256');
     const location = await metadata.location(exif);
-    const descriptions = await metadata.descriptions(data.classify);
+    const descriptions = await metadata.descriptions(data);
     const result = { ...data, exif, location, descriptions, hash };
     const tags = await metadata.tags(result);
     result.tags = tags;

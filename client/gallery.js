@@ -238,15 +238,21 @@ async function enumerateFolders(input) {
   if (input) {
     const path = input.substr(0, input.lastIndexOf('/'));
     const folders = path.split('/').filter((a) => a !== '');
-    if (!folderList.find((a) => a.path === path)) folderList.push({ path, folders });
+    if (!folderList.find((a) => a.path === path)) {
+      folderList.push({ path, folders });
+    }
   } else {
     folderList = [];
     for (const item of window.filtered) {
       const path = item.image.substr(0, item.image.lastIndexOf('/'));
       const folders = path.split('/').filter((a) => a !== '');
-      if (!folderList.find((a) => a.path === path)) folderList.push({ path, folders });
+      if (!folderList.find((a) => a.path === path)) {
+        folderList.push({ path, folders });
+      }
     }
   }
+  folderList = folderList.sort((a, b) => (a.path > b.path ? 1 : -1));
+  const root = window.user && window.user.root ? window.user.root : 'media/';
   for (let i = 0; i < 10; i++) {
     for (const item of folderList) {
       if (item.folders[i]) {
@@ -254,10 +260,9 @@ async function enumerateFolders(input) {
         const parent = item.folders[i > 0 ? i - 1 : 0].replace(/[^a-zA-Z]/g, '');
         let path = '';
         for (let j = 0; j <= i; j++) path += `${item.folders[j]}/`;
-        const root = window.user && window.user.root ? window.user.root : 'media/';
         const name = folder === root.replace(/\//g, '') ? 'All' : item.folders[i];
         const html = `
-          <li id="dir-${folder}">
+          <li id="dir-${folder}"">
             <span tag="${path}" type="folder" style="padding-left: ${i * 16}px" class="folder">&nbsp
               <i tag="${path}" class="fas fa-chevron-circle-right">&nbsp</i>${name}
             </span>
@@ -265,7 +270,7 @@ async function enumerateFolders(input) {
         `;
         let parentElem = $(`#dir-${parent}`);
         if (parentElem.length === 0) parentElem = $('#folders');
-        const currentElem = $(`#dir-${folder}`);
+        const currentElem = $(`[tag="${path}"]`);
         if (currentElem.length === 0) parentElem.append(html);
       }
     }
@@ -440,6 +445,7 @@ function sortResults(sort) {
 
 // find duplicate images based on pre-computed sha-256 hash
 async function findDuplicates() {
+  log.result('Analyzing images for simmilarity ...');
   $('body').css('cursor', 'wait');
   const t0 = window.performance.now();
   previous = null;
@@ -448,6 +454,7 @@ async function findDuplicates() {
   const length = window.results.length - 1;
   for (let i = 0; i < length + 1; i++) {
     const a = window.results[i];
+    if (a.image.includes('Pictures/Instagram Posts')) continue;
     duplicate = false;
     for (let j = i + 1; j < length; j++) {
       const b = window.results[j];
@@ -458,8 +465,8 @@ async function findDuplicates() {
         duplicate = true;
         duplicates.push(b);
       }
-      if (duplicate) duplicates.push(a);
     }
+    if (duplicate) duplicates.push(a);
   }
   duplicates = [...new Set(duplicates)];
   if (window.filtered.length === duplicates.length) window.filtered = window.results;

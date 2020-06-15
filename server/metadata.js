@@ -143,8 +143,20 @@ function searchClasses(wnid) {
   return res;
 }
 
-function getDescription(json) {
+function getDescription(image) {
   const results = [];
+  let json;
+  json = image.classify;
+  if (!json || !Array.isArray(json)) return results;
+  for (const guess of json) {
+    const descriptions = searchClasses(guess.wnid);
+    const lines = [];
+    for (const description of descriptions) {
+      lines.push({ name: description.name, desc: description.desc });
+    }
+    results.push(lines);
+  }
+  json = image.alternative;
   if (!json || !Array.isArray(json)) return results;
   for (const guess of json) {
     const descriptions = searchClasses(guess.wnid);
@@ -200,10 +212,18 @@ async function getExif(url) {
     if (!fs.existsSync(url)) resolve(json);
     const stat = fs.statSync(url);
     json.bytes = stat.size;
+    let chunk = Buffer.alloc(0);
     if (url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.jpeg')) {
-      const stream = fs.createReadStream(url, { start: 0, end: 65536 });
+      // const stream = fs.createReadStream(url, { highWaterMark: 4 * 1024 * 1024 });
+      const stream = fs.createReadStream(url, { highWaterMark: 65536, start: 0, end: 65535, flags: 'r', autoClose: true, emitClose: true });
       stream
-        .on('data', (chunk) => {
+        .on('data', (buf) => {
+          chunk = Buffer.concat([chunk, buf]);
+          if (chunk.legth >= 65536) {
+            stream.close();
+          }
+        })
+        .on('close', () => {
           const meta1 = parseExif(chunk, 10) || {};
           let meta2;
           try {
@@ -213,7 +233,6 @@ async function getExif(url) {
           }
           if (!meta2.SubExif) meta2.SubExif = {};
           if (!meta2.GPSInfo) meta2.GPSInfo = {};
-          // console.log(meta1, meta2);
           json.make = meta1.Make || meta2.Make;
           json.model = meta1.Model || meta2.Model;
           json.lens = meta1.LensModel || meta2.SubExif.LensModel;
@@ -228,12 +247,8 @@ async function getExif(url) {
           json.lat = meta1.GPSLatitude || (meta2.GPSInfo.GPSLatitude ? (meta2.GPSInfo.GPSLatitude[0] || 0) + ((meta2.GPSInfo.GPSLatitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLatitude[2] || 0) / 3600) : undefined);
           json.lon = meta1.GPSLongitude || (meta2.GPSInfo.GPSLongitude ? west * (meta2.GPSInfo.GPSLongitude[0] || 0) + ((meta2.GPSInfo.GPSLongitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLongitude[2] || 0) / 3600) : undefined);
           json.timestamp = json.created || getTime(Math.min(stat.mtimeMs, stat.ctimeMs));
-          // if (json.timestamp !== json.created) console.log('null', url, json.timestamp);
           json.width = meta1.ImageWidth || meta1.ExifImageWidth || meta2.ImageWidth || meta2.SubExif.PixelXDimension || undefined;
           json.height = meta1.ImageHeight || meta1.ExifImageHeight || meta2.ImageHeight || meta2.SubExif.PixelYDimension || undefined;
-          stream.close();
-        })
-        .on('close', () => {
           resolve(json);
         })
         .on('error', (err) => {
@@ -373,9 +388,9 @@ async function testExif(dir) {
   await init();
   if (fs.statSync(dir).isFile()) {
     const data = await getExif(dir);
-    const geo = await getLocation({ lat: data.lat, lon: data.lon });
+    const geo = await getLocation(data);
     // eslint-disable-next-line no-console
-    console.log(dir, geo, data);
+    console.log(dir, data, geo);
   } else {
     const list = fs.readdirSync(dir);
     for (const file of list) {

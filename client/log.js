@@ -14,7 +14,7 @@ async function result(...msg) {
   if (!divResult) divResult = document.getElementById('log');
   let msgs = '';
   msgs += msg.map((a) => a);
-  if (divResult) divResult.innerHTML += `<span class="timestamp">${moment().format('HH:MM:ss')}</span> ${msgs.replace(' ', '&nbsp')}<br>`;
+  if (divResult) divResult.innerHTML += `<span class="timestamp">${moment().format('HH:mm:ss')}</span> ${msgs.replace(' ', '&nbsp')}<br>`;
   if (divResult) divResult.scrollTop = divResult.scrollHeight;
   if (msgs.length > 0) fetch(`/api/log?msg=${msgs}`);
   // eslint-disable-next-line no-console
