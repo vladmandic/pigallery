@@ -131,7 +131,7 @@ async function detectSSD(model, image) {
     box[2] = maxX - minX;
     box[3] = maxY - minY;
     // const box = [boxes[i * 4 + 0], boxes[i * 4 + 1], boxes[i * 4 + 2], boxes[i * 4 + 3]];
-    const label = model.labels[classes[i]].displayName;
+    const label = model.labels[classes[i]].displayName.toLowerCase();
     objects.push({ class: label, score: scores[i], box });
   }
   objects = objects
