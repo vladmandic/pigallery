@@ -123,7 +123,8 @@ async function startProcessing() {
   while (!video.paused && !video.ended) {
     const t0 = window.performance.now();
     const object = video.readyState > 1 ? await tf.process(video) : null;
-    $('#active').text(`Detection: ${(1000 / time(t0)).toFixed(1)} FPS`);
+    const t1 = window.performance.now();
+    $('#active').text(`Detection: ${(1000 / (t1 - t0)).toFixed(1)} FPS`);
     await showDetails(object);
     await drawDetectionBoxes(object);
     await drawFaces(object);

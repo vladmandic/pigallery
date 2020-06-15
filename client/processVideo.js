@@ -79,7 +79,7 @@ async function getImage(stream) {
 async function processVideo(video) {
   const res = {};
   const screenshot = await getImage(video);
-  res.detect = await modelDetect.detect(models.detect, screenshot);
+  res.detect = await modelDetect.exec(models.detect, screenshot);
   res.face = await faceapi.detectAllFaces(screenshot).withFaceLandmarks().withAgeAndGender();
   res.canvas = screenshot;
   return res;
