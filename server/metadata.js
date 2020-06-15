@@ -204,7 +204,7 @@ async function getExif(url) {
       const stream = fs.createReadStream(url, { start: 0, end: 65536 });
       stream
         .on('data', (chunk) => {
-          const meta1 = parseExif(chunk, 3) || {};
+          const meta1 = parseExif(chunk, 10) || {};
           let meta2;
           try {
             meta2 = exif.fromBuffer(chunk) || {};
@@ -220,8 +220,8 @@ async function getExif(url) {
           json.software = meta1.Software || meta2.Software;
           json.created = getTime(meta1.CreateDate || meta1.DateTimeOriginal || meta2.DateTime || meta2.SubExif.DateTimeOriginal || meta2.GPSInfo.GPSDateStamp) || undefined;
           json.modified = getTime(meta1.ModifyDate) || undefined;
-          json.exposure = meta1.ExposureTime || meta2.SubExif.ExposureTime ? meta2.SubExif.ExposureTime[0] : undefined;
-          json.apperture = meta1.FNumber || meta2.SubExif.FNumber ? meta2.SubExif.FNumber[0] : undefined;
+          json.exposure = meta1.ExposureTime || (meta2.SubExif.ExposureTime ? meta2.SubExif.ExposureTime[0] : undefined);
+          json.apperture = meta1.FNumber || (meta2.SubExif.FNumber ? meta2.SubExif.FNumber[0] : undefined);
           json.iso = meta1.ISO || meta2.SubExif.ISO || meta2.SubExif.PhotographicSensitivity;
           json.fov = meta1.FocalLengthIn35mmFilm || meta2.SubExif.FocalLengthIn35mmFilm;
           const west = meta2.GPSInfo.GPSLongitudeRef === 'W' ? -1 : 1;
@@ -301,6 +301,7 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
   });
   let process = [];
   let processed = 0;
+  let updated = 0;
   if (force) {
     process = files;
   } else {
@@ -322,12 +323,21 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
     } else {
       for (const a of files) {
         const image = await global.db.find({ name: a });
-        if (image && image[0] && image[0].analyzed) processed++;
-        else process.push(a);
+        if (image && image[0]) {
+          const stat = fs.statSync(a);
+          if (stat.mtime > image[0].processed || stat.ctime > image[0].updatedAt) {
+            process.push(a);
+            updated++;
+          } else if (image[0].analyzed) {
+            processed++;
+          } else process.push(a);
+        } else {
+          process.push(a);
+        }
       }
     }
   }
-  log.info(`Lookup files:${folder} matching:${match || '*'} recursive:`, recursive, 'force:', force, 'results:', files.length, 'processed:', processed, 'queued:', process.length);
+  log.info(`Lookup files:${folder} matching:${match || '*'} recursive: ${recursive} force: ${force} results: ${files.length} processed: ${processed} updated: ${updated} queued: ${process.length}`);
   return { files, process };
 }
 

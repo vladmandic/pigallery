@@ -311,13 +311,13 @@ async function folderHandlers() {
     switch (evt.target.getAttribute('type')) {
       case 'folder':
         $('body').css('cursor', 'wait');
-        log.result(`Showing path: ${path}`);
+        log.result(`Selected path: ${path}`);
         const root = window.user && window.user.root ? window.user.root : 'media/';
         if (path === root) window.filtered = window.results;
         else window.filtered = window.results.filter((a) => a.image.startsWith(path));
         break;
       case 'location':
-        log.result(`Showing location: ${path}`);
+        log.result(`Selected location: ${path}`);
         if (path !== 'Unknown') window.filtered = window.results.filter((a) => path.startsWith(a.location.near));
         else window.filtered = window.results.filter((a) => (!a.location || !a.location.near));
         break;
@@ -329,7 +329,7 @@ async function folderHandlers() {
           }
           return found;
         });
-        log.result(`Showing class: ${path}`);
+        log.result(`Selected class: ${path}`);
         break;
       default:
     }
