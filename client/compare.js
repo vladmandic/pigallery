@@ -144,18 +144,19 @@ async function classify() {
 }
 
 async function detect() {
-  await loadDetect({ name: 'Coco/SSD v1', modelPath: 'models/cocossd-v1/model.json', score: 0.4, topK: 6, overlap: 0.5 });
-  await loadDetect({ name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5 });
+  await loadDetect({ name: 'Coco/SSD v1', modelPath: 'models/cocossd-v1/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
+  await loadDetect({ name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
   // await loadDetect({ name: 'DarkNet/Yolo v1 Tiny', modelPath: 'models/yolo-v1-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
   // await loadDetect({ name: 'DarkNet/Yolo v2 Tiny', modelPath: 'models/yolo-v2-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
   // await loadDetect({ name: 'DarkNet/Yolo v3 Tiny', modelPath: 'models/yolo-v3-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
   // await loadDetect({ name: 'DarkNet/Yolo v3 Full', modelPath: 'models/yolo-v3-full/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
-  // await loadDetect({ name: 'SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, useFloat: true });
+  await loadDetect({ name: 'SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD });
   // await loadDetect({ name: 'RCNN/Inception-ResNet v2', modelPath: 'models/rcnn-inception-resnet-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
 
   log.result('Warming up...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
-  await modelDetect.detect(models[0].model, warmup.canvas);
+  // await modelDetect.detect(models[0].model, warmup.canvas);
+  await modelDetect.exec(models[0].model, warmup.canvas);
 
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   const files = await api.json();
@@ -171,7 +172,7 @@ async function detect() {
     for (const m in models) {
       log.dot();
       const t0 = window.performance.now();
-      const data = await modelDetect.detect(models[m].model, image.canvas);
+      const data = await modelDetect.exec(models[m].model, image.canvas);
       const t1 = window.performance.now();
       stats[m] += (t1 - t0);
       results.push({ model: models[m], data });

@@ -454,7 +454,6 @@ async function findDuplicates() {
   const length = window.results.length - 1;
   for (let i = 0; i < length + 1; i++) {
     const a = window.results[i];
-    if (a.image.includes('Pictures/Instagram Posts')) continue;
     duplicate = false;
     for (let j = i + 1; j < length; j++) {
       const b = window.results[j];
