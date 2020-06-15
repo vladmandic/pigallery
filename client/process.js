@@ -90,7 +90,7 @@ async function processFiles() {
     log.result('Aborting current run due to error');
     setTimeout(() => {
       log.result('Restarting ...');
-      processFiles();
+      window.location.reload(true);
     }, 2500);
   }
   log.active('Idle ...');
