@@ -2,7 +2,7 @@
 
 ## Open Bugs
 
-- Better handle duplicate folder names in gallery view
+N/A
 
 ## Future Features
 
@@ -17,7 +17,7 @@
 
 TF-Hub to TFJS: `tensorflowjs_converter --input_format tf_hub --output_format tfjs_graph_model --signature_name serving_default --skip_op_check --weight_shard_size_bytes 4194304 <url> .`
 
-## Models
+## Open Models
 
 ImageNet 21k: <https://tfhub.dev/google/collections/bit/1>
 iNaturalist: <https://tfhub.dev/s?q=inaturalist>

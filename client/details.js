@@ -40,6 +40,9 @@ function drawBoxes(object) {
   if (!object) object = last;
   if (!object) return;
 
+  // eslint-disable-next-line no-console
+  if (window.debug) console.log(object);
+
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
 
@@ -232,8 +235,8 @@ async function showDetails(thumb, img) {
   $('#details-download').click(() => window.open(object.image, '_blank'));
   const html = `
       <h2>Image: <font color="teal">${object.image}</font></h2>
-      <b>Image size</b>: ${object.naturalSize.width} x ${object.naturalSize.height}
       <h2>Image Data</h2>
+      <b>Resolution</b>: ${object.naturalSize.width} x ${object.naturalSize.height}<br>
       ${exif}
       <h2>Location</h2>
       ${location}
