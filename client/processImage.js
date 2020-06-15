@@ -213,7 +213,7 @@ async function processImage(name) {
   log.active(`Detecting: ${name}`);
   const td0 = window.performance.now();
   try {
-    if (models.detect) obj.detect = await modelDetect.detect(models.detect, image.canvas);
+    if (models.detect) obj.detect = await modelDetect.exec(models.detect, image.canvas);
   } catch (err) {
     log.result(`Errror during detection for ${name}: ${err}`);
     error = true;
@@ -226,25 +226,23 @@ async function processImage(name) {
   obj.phash = await hash.data(image.data);
 
   const tp0 = window.performance.now();
-  if (obj.detect && obj.detect.find((a) => a.class === 'person')) {
-    log.active(`Face Detection: ${name}`);
+  log.active(`Face Detection: ${name}`);
+  try {
+    if (models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
+  } catch (err) {
+    log.result(`Error in FaceAPI for ${name}: ${err}`);
+    error = true;
+  }
+  log.active(`NSFW Detection: ${name}`);
+  let nsfw;
+  if (models.nsfw && obj.person) {
     try {
-      if (models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
+      nsfw = await models.nsfw.classify(image.canvas, 1);
+      obj.person.scoreClass = (nsfw && nsfw[0]) ? nsfw[0].probability : null;
+      obj.person.class = (nsfw && nsfw[0]) ? nsfw[0].className : null;
     } catch (err) {
-      log.result(`Error in FaceAPI for ${name}: ${err}`);
+      log.result(`Error in NSFW for ${name}: ${err}`);
       error = true;
-    }
-    log.active(`NSFW Detection: ${name}`);
-    let nsfw;
-    if (models.nsfw && obj.person) {
-      try {
-        nsfw = await models.nsfw.classify(image.canvas, 1);
-        obj.person.scoreClass = (nsfw && nsfw[0]) ? nsfw[0].probability : null;
-        obj.person.class = (nsfw && nsfw[0]) ? nsfw[0].className : null;
-      } catch (err) {
-        log.result(`Error in NSFW for ${name}: ${err}`);
-        error = true;
-      }
     }
   }
   const tp1 = window.performance.now();

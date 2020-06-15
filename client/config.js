@@ -1,5 +1,10 @@
 /* eslint-disable no-multi-spaces */
 
+// eslint-disable-next-line no-unused-vars
+const modelClassify = require('./modelClassify.js');
+// eslint-disable-next-line no-unused-vars
+const modelDetect = require('./modelDetect.js');
+
 const config = {
   // General configuration
   backEnd: 'webgl',        // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
@@ -13,7 +18,8 @@ const config = {
   // Default models
   classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3, tensorSize: 224, offset: 1 },
   alternative: { name: 'EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.1, topK: 3, tensorSize: 456, offset: 0 },
-  detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5 },
+  detect: { name: 'SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD },
+  // detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5 },
   person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 4, type: 'ssdMobilenetv1' },
 
   /*

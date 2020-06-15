@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+
 const tf = require('@tensorflow/tfjs');
 
 let config = {
@@ -11,6 +13,7 @@ let config = {
   softNmsSigma: 0,
   useFloat: false,
   classes: 'assets/Coco-Labels.json',
+  exec: detectCOCO,
 };
 
 async function load(cfg) {
@@ -73,15 +76,15 @@ function calculateMaxScores(result) {
   return [scores, classes];
 }
 
-async function detect(model, image) {
+async function detectCOCO(model, image) {
   const imgBuf = tf.browser.fromPixels(image, 3);
   const expanded = imgBuf.expandDims(0);
   let batched;
   if (!model.config.useFloat) {
     batched = expanded;
   } else {
-    // batched = expanded.toFloat();
-    batched = tf.cast(expanded, 'float32');
+    const cast = tf.cast(expanded, 'float32');
+    batched = tf.mul(cast, [1.0 / 255.0]);
   }
   const result = await model.executeAsync(batched);
   const [scores, classes] = calculateMaxScores(result);
@@ -93,8 +96,60 @@ async function detect(model, image) {
   return results;
 }
 
+async function detectSSD(model, image) {
+  const imgBuf = tf.browser.fromPixels(image, 3);
+  const expanded = imgBuf.expandDims(0);
+  let batched;
+  if (!model.config.useFloat) {
+    batched = expanded;
+  } else {
+    const cast = tf.cast(expanded, 'float32');
+    batched = tf.mul(cast, [1.0 / 255.0]);
+    tf.dispose(cast);
+  }
+  // console.log('execute start', model); look at model.inputs and model.outputs on how to execute a model
+  const result = await model.executeAsync({ images: batched }, ['module_apply_default/hub_input/strided_slice_1', 'module_apply_default/hub_input/strided_slice_2', 'module_apply_default/hub_input/strided_slice']); // scores, classes, boxes
+  // console.log('execute end', model, result); model.outputs map to result
+  // for (const data of result) console.log(data, data.dataSync());
+  const scores = result[0].dataSync();
+  const classes = result[1].dataSync();
+  const boxes = result[2].dataSync();
+  const width = batched.shape[2];
+  const height = batched.shape[1];
+  tf.dispose(batched);
+  tf.dispose(result);
+  tf.dispose(imgBuf);
+  let objects = [];
+  for (const i in scores) {
+    const box = [];
+    const minY = boxes[i * 4 + 0] * height;
+    const minX = boxes[i * 4 + 1] * width;
+    const maxY = boxes[i * 4 + 2] * height;
+    const maxX = boxes[i * 4 + 3] * width;
+    box[0] = minX;
+    box[1] = minY;
+    box[2] = maxX - minX;
+    box[3] = maxY - minY;
+    // const box = [boxes[i * 4 + 0], boxes[i * 4 + 1], boxes[i * 4 + 2], boxes[i * 4 + 3]];
+    const label = model.labels[classes[i]].displayName;
+    objects.push({ class: label, score: scores[i], box });
+  }
+  objects = objects
+    .filter((a) => a.score > model.config.score)
+    .sort((a, b) => b.score - a.score);
+  if (objects.length > model.config.topK) objects.length = model.config.topK;
+  return objects;
+}
+
+async function exec(model, image) {
+  const result = await model.config.exec(model, image);
+  return result;
+}
+
 module.exports = {
   config,
   load,
-  detect,
+  exec,
+  detectCOCO,
+  detectSSD,
 };
