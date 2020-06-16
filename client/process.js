@@ -72,7 +72,7 @@ async function processFiles() {
   const t1 = window.performance.now();
   if (files.length > 0) {
     log.result('');
-    log.result(`Processed ${files.length} images in ${Math.round(t1 - t0).toLocaleString()}ms ${Math.round((t1 - t0) / files.length).toLocaleString()}ms avg`);
+    log.result(`Processed ${results.length} of ${files.length} images in ${Math.round(t1 - t0).toLocaleString()}ms ${Math.round((t1 - t0) / results.length).toLocaleString()}ms avg`);
     const s = statSummary();
     log.result(`  Results: ${results.length} images in total ${JSON.stringify(results).length.toLocaleString()} bytes average ${Math.round((JSON.stringify(results).length / results.length)).toLocaleString()} bytes`);
     log.result(`  Image Preparation: ${s.loadTime.toFixed(0)} ms average ${s.loadAvg.toFixed(0)} ms`);
