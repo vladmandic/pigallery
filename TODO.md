@@ -13,9 +13,27 @@ N/A
 - Hot reload for config
 - Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0: Face-API Incompatibility
 
+## Analyze
+
+<https://docs.bazel.build/versions/3.2.0/install-ubuntu.html>
+<https://github.com/tensorflow/tensorflow/tree/master/tensorflow/tools/graph_transforms>
+
 ## Convert
 
-TF-Hub to TFJS: `tensorflowjs_converter --input_format tf_hub --output_format tfjs_graph_model --signature_name serving_default --skip_op_check --weight_shard_size_bytes 4194304 <url> .`
+TF-Hub to TFJS:
+`tensorflowjs_converter --input_format tf_hub --output_format tfjs_graph_model --signature_name serving_default --skip_op_check --weight_shard_size_bytes 4194304 <url> .`
+
+TF-Saved to TFJS:
+Requires that model has tags
+`saved_model_cli show --dir . --all`
+`tensorflowjs_converter --input_format tf_saved_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 . ./tfjs/`
+
+TF-Frozen to TFJS:
+Requires --output_node_names
+`tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 . ./tfjs/`
+
+TF-Lite to TFJS:
+Not possible.
 
 ## Open Models
 
