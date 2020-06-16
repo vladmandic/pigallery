@@ -197,15 +197,15 @@ async function processImage(name) {
   log.active(`Classifying: ${name}`);
   const tc0 = window.performance.now();
   try {
-    if (models.classify) obj.classify = await modelClassify.classify(models.classify, image.canvas);
+    if (!error && models.classify) obj.classify = await modelClassify.classify(models.classify, image.canvas);
   } catch (err) {
-    log.result(`Errror during primary classification for ${name}: ${err}`);
+    log.result(`Error during primary classification for ${name}: ${err}`);
     error = true;
   }
   try {
-    if (models.alternative) obj.alternative = await modelClassify.classify(models.alternative, image.canvas);
+    if (!error && models.alternative) obj.alternative = await modelClassify.classify(models.alternative, image.canvas);
   } catch (err) {
-    log.result(`Errror during alternate classification for ${name}: ${err}`);
+    log.result(`Error during alternate classification for ${name}: ${err}`);
     error = true;
   }
   const tc1 = window.performance.now();
@@ -213,9 +213,9 @@ async function processImage(name) {
   log.active(`Detecting: ${name}`);
   const td0 = window.performance.now();
   try {
-    if (models.detect) obj.detect = await modelDetect.exec(models.detect, image.canvas);
+    if (!error && models.detect) obj.detect = await modelDetect.exec(models.detect, image.canvas);
   } catch (err) {
-    log.result(`Errror during detection for ${name}: ${err}`);
+    log.result(`Error during detection for ${name}: ${err}`);
     error = true;
   }
   const td1 = window.performance.now();
@@ -228,14 +228,14 @@ async function processImage(name) {
   const tp0 = window.performance.now();
   log.active(`Face Detection: ${name}`);
   try {
-    if (models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
+    if (!error && models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
   } catch (err) {
     log.result(`Error in FaceAPI for ${name}: ${err}`);
     error = true;
   }
   log.active(`NSFW Detection: ${name}`);
   let nsfw;
-  if (models.nsfw && obj.person) {
+  if (!error && models.nsfw) {
     try {
       nsfw = await models.nsfw.classify(image.canvas, 1);
       obj.person.scoreClass = (nsfw && nsfw[0]) ? nsfw[0].probability : null;
@@ -252,13 +252,15 @@ async function processImage(name) {
   obj.error = error;
   tf.engine().endScope();
 
-  log.active(`Storing: ${name}`);
-  fetch('/api/metadata', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(obj),
-  }).then((post) => post.json());
-  log.active(`Done: ${name}`);
+  if (!error) {
+    log.active(`Storing: ${name}`);
+    fetch('/api/metadata', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(obj),
+    }).then((post) => post.json());
+    log.active(`Done: ${name}`);
+  }
   return obj;
 }
 
