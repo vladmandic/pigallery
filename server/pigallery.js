@@ -5,7 +5,7 @@ const http = require('http');
 const https = require('https');
 const express = require('express');
 const session = require('express-session');
-const compression = require('compression');
+const shrinkRay = require('shrink-ray-current');
 const nedb = require('nedb-promises');
 const api = require('./api.js');
 const parcel = require('./distBundler.js');
@@ -50,7 +50,7 @@ async function main() {
   app.use(session(config.cookie));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
-  app.use(compression());
+  app.use(shrinkRay({ useZopfliForGzip: false, brotli: { quality: 4 } }));
   if (config.server.allowCORS) app.use(allowCORS);
   if (config.server.allowPWA) app.use(allowPWA);
   if (config.server.forceHTTPS) app.use(forceSSL);

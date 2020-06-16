@@ -505,7 +505,8 @@ async function loadGallery(limit) {
       });
   } else {
     const res = await fetch(`/api/get?limit=${limit}&find=all`);
-    if (res) window.results = await res.json();
+    if (res && res.ok) window.results = await res.json();
+    // res.headers.forEach((val, key) => { console.log(`${key} -> ${val}`); });
     for (let i = 0; i < window.results.length; i++) {
       window.results[i].id = i;
     }
