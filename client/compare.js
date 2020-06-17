@@ -95,22 +95,21 @@ async function print(file, image, results) {
 }
 
 async function classify() {
-  await loadClassify({ name: 'MobileNet v1', modelPath: '/models/mobilenet-v1/model.json', score: 0.2, topK: 3 });
-  await loadClassify({ name: 'MobileNet v2', modelPath: '/models/mobilenet-v2/model.json', score: 0.2, topK: 3 });
-  await loadClassify({ name: 'Inception v1', modelPath: 'models/inception-v1/model.json', score: 0.2, topK: 3 });
-  await loadClassify({ name: 'Inception v2', modelPath: 'models/inception-v2/model.json', score: 0.2, topK: 3 });
-  await loadClassify({ name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 });
-  await loadClassify({ name: 'Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.2, topK: 3 });
-  await loadClassify({ name: 'ResNet v2-50', modelPath: '/models/resnet-v2-50/model.json', score: 0.2, topK: 3, tensorSize: 224 });
-  await loadClassify({ name: 'ResNet v2-101', modelPath: '/models/resnet-v2-101/model.json', score: 0.2, topK: 3 });
-  await loadClassify({ name: 'Inception-ResNet v2', modelPath: '/models/inception-resnet-v2/model.json', score: 0.2, topK: 3, tensorSize: 224 });
-  await loadClassify({ name: 'NASNet-A Mobile', modelPath: 'models/nasnet-mobile/model.json', score: 0.2, topK: 3, slice: 0 });
-  await loadClassify({ name: 'EfficientNet B0', modelPath: 'models/efficientnet-b0/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 0 });
-  await loadClassify({ name: 'EfficientNet B4', modelPath: 'models/efficientnet-b4/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 380, offset: 0 });
+  // await loadClassify({ name: 'MobileNet v1', modelPath: '/models/mobilenet-v1/model.json', score: 0.2, topK: 3 });
+  // await loadClassify({ name: 'MobileNet v2', modelPath: '/models/mobilenet-v2/model.json', score: 0.2, topK: 3 });
+  // await loadClassify({ name: 'Inception v1', modelPath: 'models/inception-v1/model.json', score: 0.2, topK: 3 });
+  // await loadClassify({ name: 'Inception v2', modelPath: 'models/inception-v2/model.json', score: 0.2, topK: 3 });
+  // await loadClassify({ name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 });
+  await loadClassify({ name: 'Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.2, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200 });
+  await loadClassify({ name: 'DeepDetect', modelPath: 'models/deepdetect-6k/model.json', score: 0.1, topK: 5, useFloat: false, tensorSize: 299, scoreScale: 1000, classes: 'assets/DeepDetect-Labels.json', offset: 0 });
+  // await loadClassify({ name: 'ResNet v2-50', modelPath: '/models/resnet-v2-50/model.json', score: 0.2, topK: 3, tensorSize: 224 });
+  // await loadClassify({ name: 'ResNet v2-101', modelPath: '/models/resnet-v2-101/model.json', score: 0.2, topK: 3 });
+  // await loadClassify({ name: 'Inception-ResNet v2', modelPath: '/models/inception-resnet-v2/model.json', score: 0.2, topK: 3, tensorSize: 224 });
+  // await loadClassify({ name: 'NASNet-A Mobile', modelPath: 'models/nasnet-mobile/model.json', score: 0.2, topK: 3, slice: 0 });
+  // await loadClassify({ name: 'EfficientNet B0', modelPath: 'models/efficientnet-b0/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 0 });
+  // await loadClassify({ name: 'EfficientNet B4', modelPath: 'models/efficientnet-b4/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 380, offset: 0 });
   await loadClassify({ name: 'EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 456, offset: 0 });
-  await loadClassify({ name: 'EfficientNet B7', modelPath: 'models/efficientnet-b7/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 600, offset: 0 });
-  // await loadClassify({ name: 'NASNet-A Large', modelPath: 'models/nasnet-large/model.json', score: 0.2, topK: 3, slice: 0 });
-  // await loadClassify({ name: 'PNASNet-5 Large', modelPath: 'models/pnasnet-large/model.json', score: 0.2, topK: 3, slice: 0 });
+  // await loadClassify({ name: 'EfficientNet B7', modelPath: 'models/efficientnet-b7/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 600, offset: 0 });
   // await loadClassify({ name: 'BiT-S R101x1', modelPath: 'models/bit-s-r101x1/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 1, classes: 'assets/ImageNet-Labels21k.json' });
   // await loadClassify({ name: 'BiT-M R101x1', modelPath: 'models/bit-m-r101x1/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 1, classes: 'assets/ImageNet-Labels21k.json' });
 

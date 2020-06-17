@@ -13,24 +13,35 @@ N/A
 - Hot reload for config
 - Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0: Face-API Incompatibility
 
-## Analyze
-
-<https://docs.bazel.build/versions/3.2.0/install-ubuntu.html>
-<https://github.com/tensorflow/tensorflow/tree/master/tensorflow/tools/graph_transforms>
-
 ## Convert
 
 TF-Hub to TFJS:
-`tensorflowjs_converter --input_format tf_hub --output_format tfjs_graph_model --signature_name serving_default --skip_op_check --weight_shard_size_bytes 4194304 <url> .`
+
+    tensorflowjs_converter --input_format tf_hub --output_format tfjs_graph_model --signature_name serving_default --skip_op_check --weight_shard_size_bytes 4194304 <url> .
 
 TF-Saved to TFJS:
 Requires that model has tags
-`saved_model_cli show --dir . --all`
-`tensorflowjs_converter --input_format tf_saved_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 . ./tfjs/`
+
+    saved_model_cli show --dir . --all
+    tensorflowjs_converter --input_format tf_saved_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 . ./tfjs/
 
 TF-Frozen to TFJS:
 Requires --output_node_names
-`tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 . ./tfjs/`
+
+    pip3 install tensorflow
+    git clone https://github.com/tensorflow/tensorflow
+    cd tensorflow
+    wget https://github.com/bazelbuild/bazel/releases/download/3.1.0/bazel-3.1.0-installer-linux-x86_64.sh
+    sudo ./bazel-3.1.0-installer-linux-x86_64.sh
+    bazel build tensorflow/tools/graph_transforms:summarize_graph
+    bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="/home/vlado/dev/tf-saved-models/inception-v4/saved-f32/inceptionv4_fp32_pretrained_model.pb"
+      Found 1 possible inputs: (name=input, type=float(1), shape=[?,299,299,3])
+      Found 1 possible outputs: (name=InceptionV4/Logits/Predictions, op=Softmax)
+    tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 --output_node_names "InceptionV4/Logits/Predictions" "/home/vlado/dev/tf-saved-models/inception-v4/saved-f32/inceptionv4_fp32_pretrained_model.pb" ./tfjs/
+
+    bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="/home/vlado/dev/tf-saved-models/deepdetect-6k/saved_model.pb"
+    Found 1 possible inputs: (name=InputImage, type=float(1), shape=[1,299,299,3])
+    Found 1 possible outputs: (name=multi_predictions, op=Sigmoid)
 
 TF-Lite to TFJS:
 Not possible.
