@@ -41,7 +41,7 @@ function drawBoxes(object) {
   if (!object) return;
 
   // eslint-disable-next-line no-console
-  if (!window.debug) console.log(object);
+  if (window.debug) console.log(object);
 
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;

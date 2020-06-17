@@ -66,7 +66,8 @@ async function classify(model, image) {
     return data;
   });
   const decoded = await decodeValues(model, values);
-  // console.log(model, values, decoded);
+  // eslint-disable-next-line no-console
+  if (window.debug) console.log(model, values, decoded);
   return decoded;
 }
 
