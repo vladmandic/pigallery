@@ -330,7 +330,12 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
         const image = await global.db.find({ image: a });
         if (image && image[0]) {
           const stat = fs.statSync(a);
-          if (stat.mtime !== image[0].exif.mtime || stat.ctime !== image[0].exif.ctime) {
+          if (stat.ctime.getTime() !== image[0].exif.ctime.getTime()) {
+            log.data(`Updated ctime: ${a} ${image[0].exif.ctime} ${stat.ctime}`);
+            process.push(a);
+            updated++;
+          } else if (stat.mtime.getTime() !== image[0].exif.mtime.getTime()) {
+            log.data(`Updated mtime: ${a} ${image[0].exif.mtime} ${stat.mtime}`);
             process.push(a);
             updated++;
           } else processed++;
