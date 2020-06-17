@@ -41,7 +41,7 @@ function drawBoxes(object) {
   if (!object) return;
 
   // eslint-disable-next-line no-console
-  if (window.debug) console.log(object);
+  if (!window.debug) console.log(object);
 
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
@@ -220,7 +220,8 @@ async function showDetails(thumb, img) {
   if (object.exif) {
     if (object.exif.make) exif += `<b>Camera:</b> ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
     if (object.exif.bytes) exif += `<b>Size:</b> ${(object.pixels / 1000 / 1000).toFixed(1)} MP in ${object.exif.bytes.toLocaleString()} bytes (compression factor ${(object.pixels / object.exif.bytes).toFixed(2)})<br>`;
-    if (object.exif.created) exif += `<b>Taken:</b> ${moment(object.exif.created).format(window.options.dateLong)} <b>Edited:</b> ${moment(object.exif.modified).format(window.options.dateLong)}<br>`;
+    if (object.exif.ctime) exif += `<b>CTime:</b> ${moment(object.exif.ctime).format(window.options.dateLong)} <b>MTime:</b> ${moment(object.exif.mtime).format(window.options.dateLong)}<br>`;
+    if (object.exif.created) exif += `<b>Created:</b> ${moment(object.exif.created).format(window.options.dateLong)} <b>Modified:</b> ${moment(object.exif.modified).format(window.options.dateLong)}<br>`;
     if (object.exif.software) exif += `<b>Software:</b> ${object.exif.software}<br>`;
     if (object.exif.exposure) exif += `<b>Settings:</b> ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
   }

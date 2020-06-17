@@ -56,9 +56,10 @@ function api(app) {
       if (config.server.authForce) data = data.filter((a) => a.image.startsWith(req.session.root));
     } else {
       const re = new RegExp(`^${req.session.root}`);
-      const records = await global.db.find({ name: re }).sort({ time: -1 }).limit(req.query.limit || config.server.resultsLimit);
+      const records = await global.db.find({ image: re }).sort({ time: -1 }).limit(req.query.limit || config.server.resultsLimit);
       for (const record of records) {
-        data.push(JSON.parse(record.data));
+        // data.push(JSON.parse(record.data));
+        data.push(record);
       }
     }
     res.json(data);

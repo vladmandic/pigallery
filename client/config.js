@@ -16,9 +16,10 @@ const config = {
   registerPWA: false,      // register PWA service worker?
 
   // Default models
-  classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3, tensorSize: 224, offset: 1 },
-  alternative: { name: 'EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.1, topK: 3, tensorSize: 456, offset: 0 },
-  detect: { name: 'SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD },
+  classify: { name: 'Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.2, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200 },
+  // classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3, tensorSize: 224, offset: 1 },
+  alternative: { name: 'EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.1, topK: 3, tensorSize: 456, offset: 0, scoreScale: 1 },
+  detect: { name: 'SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, scoreScale: 1, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD },
   // detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5 },
   person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 4, type: 'ssdMobilenetv1' },
 

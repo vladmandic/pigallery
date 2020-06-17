@@ -31,8 +31,6 @@ function init() {
 function storeObject(data) {
   if (data.image === config.server.warmupImage) return;
   const json = data;
-  const analyzed = ((json.classify && json.classify.length > 0) || (json.alternative && json.alternative.length > 0)) && (json.exif && json.exif.timestamp);
-  if (!analyzed) log.warn(`Image: ${data.image} could not be analyzed: ${JSON.stringify(json.classify)} ${JSON.stringify(json.alternative)} ${JSON.stringify(json.exif)}`);
   json.processed = new Date();
   if (config.server.dbEngine === 'json') {
     const index = global.json.findIndex((a) => a.image === json.image);
@@ -40,8 +38,9 @@ function storeObject(data) {
     else global.json.push(json);
     log.data(`${index > -1 ? 'Update' : 'Create'}: "${json.image}"`, JSON.stringify(json).length, 'bytes');
   } else {
-    const record = { name: json.image, time: json.exif.timestamp, analyzed, data: JSON.stringify(json) };
-    global.db.update({ name: json.image }, record, { upsert: true });
+    // const record = { name: json.image, data: JSON.stringify(json) };
+    // global.db.update({ name: json.image }, record, { upsert: true });
+    global.db.update({ image: json.image }, json, { upsert: true });
     log.data(`Insert: "${json.image}"`, JSON.stringify(json).length, 'bytes');
   }
 }
@@ -127,7 +126,7 @@ function buildTags(object) {
       { near: object.location.near.toLowerCase() },
     );
   }
-  return tags;
+  return [...new Set(tags)];
 }
 
 function searchClasses(wnid) {
@@ -145,19 +144,9 @@ function searchClasses(wnid) {
 
 function getDescription(image) {
   const results = [];
-  let json;
-  json = image.classify;
+  let json = [...image.classify, image.alternative];
   if (!json || !Array.isArray(json)) return results;
-  for (const guess of json) {
-    const descriptions = searchClasses(guess.wnid);
-    const lines = [];
-    for (const description of descriptions) {
-      lines.push({ name: description.name, desc: description.desc });
-    }
-    results.push(lines);
-  }
-  json = image.alternative;
-  if (!json || !Array.isArray(json)) return results;
+  json = [...new Set(json)];
   for (const guess of json) {
     const descriptions = searchClasses(guess.wnid);
     const lines = [];
@@ -170,7 +159,7 @@ function getDescription(image) {
 }
 
 function getLocation(json) {
-  if (!json.lon || !json.lat) return json;
+  if (!json.lon || !json.lat) return {};
   const loc = distance.nearest(json.lat, json.lon, 'all', 1);
   const near = distance.nearest(json.lat, json.lon, 'large', 1);
   const state = isNaN(loc[0].state) ? loc[0].state : '';
@@ -212,6 +201,8 @@ async function getExif(url) {
     if (!fs.existsSync(url)) resolve(json);
     const stat = fs.statSync(url);
     json.bytes = stat.size;
+    json.ctime = stat.ctime;
+    json.mtime = stat.mtime;
     let chunk = Buffer.alloc(0);
     if (url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.jpeg')) {
       // const stream = fs.createReadStream(url, { highWaterMark: 4 * 1024 * 1024 });
@@ -246,7 +237,6 @@ async function getExif(url) {
           const west = meta2.GPSInfo.GPSLongitudeRef === 'W' ? -1 : 1;
           json.lat = meta1.GPSLatitude || (meta2.GPSInfo.GPSLatitude ? (meta2.GPSInfo.GPSLatitude[0] || 0) + ((meta2.GPSInfo.GPSLatitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLatitude[2] || 0) / 3600) : undefined);
           json.lon = meta1.GPSLongitude || (meta2.GPSInfo.GPSLongitude ? west * (meta2.GPSInfo.GPSLongitude[0] || 0) + ((meta2.GPSInfo.GPSLongitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLongitude[2] || 0) / 3600) : undefined);
-          json.timestamp = json.created || getTime(Math.min(stat.mtimeMs, stat.ctimeMs));
           json.width = meta1.ImageWidth || meta1.ExifImageWidth || meta2.ImageWidth || meta2.SubExif.PixelXDimension || undefined;
           json.height = meta1.ImageHeight || meta1.ExifImageHeight || meta2.ImageHeight || meta2.SubExif.PixelYDimension || undefined;
           resolve(json);
@@ -337,15 +327,13 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
       process = process.map((a) => a.image);
     } else {
       for (const a of files) {
-        const image = await global.db.find({ name: a });
+        const image = await global.db.find({ image: a });
         if (image && image[0]) {
           const stat = fs.statSync(a);
-          if (stat.mtime > image[0].processed || stat.ctime > image[0].updatedAt) {
+          if (stat.mtime !== image[0].exif.mtime || stat.ctime !== image[0].exif.ctime) {
             process.push(a);
             updated++;
-          } else if (image[0].analyzed) {
-            processed++;
-          } else process.push(a);
+          } else processed++;
         } else {
           process.push(a);
         }
@@ -372,11 +360,11 @@ async function checkRecords(list) {
     log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
   } else {
     let all = await global.db.find({});
-    all = all.map((a) => a.name);
+    all = all.map((a) => a.image);
     deleted = all.filter((a) => !list.includes(a));
     for (const item of deleted) {
       log.data('Delete:', item);
-      global.db.remove({ name: item });
+      global.db.remove({ image: item });
     }
     before = all.length;
     after = await global.db.count({});
