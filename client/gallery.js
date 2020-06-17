@@ -92,8 +92,8 @@ function addDividers(object) {
     if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
   }
   if (window.options.listDivider === 'month') {
-    const curr = moment(object.exif.timestamp).format(window.options.dateDivider);
-    const prev = moment(previous ? previous.exif.timestamp : 0).format(window.options.dateDivider);
+    const curr = (object && object.exif.created) ? moment(object.exif.created).format(window.options.dateDivider) : 'Date unknown';
+    const prev = (previous && previous.exif.created) ? moment(previous.exif.created).format(window.options.dateDivider) : 'Date unknown';
     if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
   }
   if (window.options.listDivider === 'size') {
@@ -151,7 +151,7 @@ async function printResult(object) {
     location += ` | ${object.location.city}, ${object.location.state} ${object.location.country} (near ${object.location.near})`;
   }
 
-  const timestamp = moment(object.exif.timestamp).format(window.options.dateShort);
+  const timestamp = object.exif.created ? moment(object.exif.created).format(window.options.dateShort) : 'Date unknown';
   const link = `<a class="download fa fa-arrow-alt-circle-down" href="${object.image}" download></a>`;
   const divItem = document.createElement('div');
   divItem.className = 'listitem';
@@ -428,8 +428,8 @@ function sortResults(sort) {
   // sort by
   if (sort.includes('alpha-down')) window.filtered.sort((a, b) => (a.image > b.image ? 1 : -1));
   if (sort.includes('alpha-up')) window.filtered.sort((a, b) => (a.image < b.image ? 1 : -1));
-  if (sort.includes('numeric-down')) window.filtered.sort((a, b) => (b.exif.timestamp - a.exif.timestamp));
-  if (sort.includes('numeric-up')) window.filtered.sort((a, b) => (a.exif.timestamp - b.exif.timestamp));
+  if (sort.includes('numeric-down')) window.filtered.sort((a, b) => ((b.exif.created || 0) - (a.exif.created || 0)));
+  if (sort.includes('numeric-up')) window.filtered.sort((a, b) => ((a.exif.created || 0) - (b.exif.created || 0)));
   if (sort.includes('amount-down')) window.filtered.sort((a, b) => (b.pixels - a.pixels));
   if (sort.includes('amount-up')) window.filtered.sort((a, b) => (a.pixels - b.pixels));
   if (sort.includes('simmilarity')) window.filtered.sort((a, b) => (a.simmilarity - b.simmilarity));
