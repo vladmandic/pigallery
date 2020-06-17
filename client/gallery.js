@@ -692,6 +692,7 @@ function initListHandlers() {
   $('#btn-load').click((evt) => {
     window.options.listLimit = parseInt($('#imagenum')[0].value, 10);
     showTip(evt.target, `Loading maximum of ${window.options.listLimit} latest images`);
+    showNavbar();
     loadGallery(window.options.listLimit);
   });
 
