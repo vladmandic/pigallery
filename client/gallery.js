@@ -6,11 +6,12 @@ const log = require('./log.js');
 const config = require('./config.js').default;
 const hash = require('./blockhash.js');
 const details = require('./details.js');
+const map = require('./map.js');
 const pwa = require('./pwa-register.js');
 
 // global variables
 window.results = [];
-window.window.filtered = [];
+window.filtered = [];
 window.debug = false;
 
 // user configurable options, stored in browsers local storage
@@ -666,6 +667,7 @@ function initSidebarHandlers() {
   $('#folderstitle').click(() => $('#folders').toggle('slow'));
   $('#locationstitle').click(() => $('#locations').toggle('slow'));
   $('#classestitle').click(() => $('#classes').toggle('slow'));
+  $('#maptitle').click(() => map.show());
   $('#locations').toggle(false);
   $('#classes').toggle(false);
   $(window).resize(() => resizeViewport());
