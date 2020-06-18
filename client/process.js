@@ -54,6 +54,12 @@ async function processFiles() {
   const promises = [];
   log.result(`Processing images: ${files.length}`);
   let error = false;
+  let stuckTimer = new Date();
+  const checkAlive = setInterval(() => { // reload window if no progress for 60sec
+    const now = new Date();
+    if (now.getTime() > (stuckTimer.getTime()) + 60 * 1000);
+    window.location.reload(true);
+  }, 1000);
   for (const url of files) {
     if (!error) {
       promises.push(tf.process(url).then((obj) => {
@@ -61,6 +67,7 @@ async function processFiles() {
         results[id] = obj;
         error = obj.error || error;
         id += 1;
+        stuckTimer = new Date();
       }));
     }
     if (promises.length >= config.batchProcessing) {
@@ -69,6 +76,7 @@ async function processFiles() {
     }
   }
   if (promises.length > 0) await Promise.all(promises);
+  clearInterval(checkAlive);
   const t1 = window.performance.now();
   if (files.length > 0) {
     log.result('');
