@@ -57,9 +57,8 @@ async function processFiles() {
   let stuckTimer = new Date();
   const checkAlive = setInterval(() => { // reload window if no progress for 60sec
     const now = new Date();
-    if (now.getTime() > (stuckTimer.getTime()) + 60 * 1000);
-    window.location.reload(true);
-  }, 1000);
+    if (now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) window.location.reload(true);
+  }, 10000);
   for (const url of files) {
     if (!error) {
       promises.push(tf.process(url).then((obj) => {
