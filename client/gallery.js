@@ -7,10 +7,10 @@ const config = require('./config.js').default;
 const hash = require('./blockhash.js');
 const details = require('./details.js');
 const map = require('./map.js');
+const db = require('./indexdb.js');
 const pwa = require('./pwa-register.js');
 
 // global variables
-window.results = [];
 window.filtered = [];
 window.debug = false;
 
@@ -312,27 +312,25 @@ async function enumerateClasses() {
 // handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
   $('.folder').off();
-  $('.folder').click((evt) => {
+  $('.folder').click(async (evt) => {
     const path = $(evt.target).attr('tag');
+    const all = await db.all();
     switch (evt.target.getAttribute('type')) {
       case 'folder':
         $('body').css('cursor', 'wait');
         log.result(`Selected path: ${path}`);
         const root = window.user && window.user.root ? window.user.root : 'media/';
-        if (path === root) window.filtered = window.results;
-        else window.filtered = window.results.filter((a) => a.image.startsWith(path));
+        if (path === root) window.filtered = all;
+        else window.filtered = all.filter((a) => a.image.startsWith(path));
         break;
       case 'location':
         log.result(`Selected location: ${path}`);
-        if (path !== 'Unknown') window.filtered = window.results.filter((a) => path.startsWith(a.location.near));
-        else window.filtered = window.results.filter((a) => (!a.location || !a.location.near));
+        if (path !== 'Unknown') window.filtered = all.filter((a) => path.startsWith(a.location.near));
+        else window.filtered = all.filter((a) => (!a.location || !a.location.near));
         break;
       case 'class':
-        window.filtered = window.results.filter((a) => {
-          let found = false;
-          for (const tag of a.tags) {
-            if (path === Object.values(tag)[0].toString()) found = true;
-          }
+        window.filtered = all.filter((a) => {
+          const found = a.tags.find((b) => (Object.values(b)[0].toString().startsWith(path)));
           return found;
         });
         log.result(`Selected class: ${path}`);
@@ -390,16 +388,16 @@ function filterWord(object, word) {
 }
 
 // filters images based on search strings
-function filterResults(words) {
+async function filterResults(words) {
   $('body').css('cursor', 'wait');
-  window.filtered = window.results;
+  window.filtered = await db.all();
   previous = null;
   let foundWords = 0;
   for (const word of words.split(' ')) {
     window.filtered = filterWord(window.filtered, word);
     foundWords += (window.filtered && window.filtered.length > 0) ? 1 : 0;
   }
-  if (window.filtered && window.filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} results out of ${window.results.length} matches`);
+  if (window.filtered && window.filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} results out of ${await db.count()} matches`);
   else log.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
   time(redrawResults);
 }
@@ -420,10 +418,10 @@ function shuffle(array) {
 }
 
 // sorts images based on given sort order
-function sortResults(sort) {
+async function sortResults(sort) {
   log.result(`Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
   $('body').css('cursor', 'wait');
-  if (!window.filtered || window.filtered.length === 0) window.filtered = window.results;
+  if (!window.filtered || window.filtered.length === 0) window.filtered = await db.all();
   if (sort.includes('random')) shuffle(window.filtered);
   previous = null;
   // sort by
@@ -452,12 +450,13 @@ async function findDuplicates() {
   previous = null;
   let duplicates = [];
   let duplicate;
-  const length = window.results.length - 1;
+  const all = await db.all();
+  const length = all.length - 1;
   for (let i = 0; i < length + 1; i++) {
-    const a = window.results[i];
+    const a = all[i];
     duplicate = false;
     for (let j = i + 1; j < length; j++) {
-      const b = window.results[j];
+      const b = all[j];
       const distance = (a.hash === b.hash) ? 0 : (hash.distance(a.phash, b.phash) + 1);
       if (distance < 35) {
         a.simmilarity = distance;
@@ -469,7 +468,7 @@ async function findDuplicates() {
     if (duplicate) duplicates.push(a);
   }
   duplicates = [...new Set(duplicates)];
-  if (window.filtered.length === duplicates.length) window.filtered = window.results;
+  if (window.filtered.length === duplicates.length) window.filtered = await db.all();
   else window.filtered = duplicates;
   const t1 = window.performance.now();
   log.result(`Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
@@ -481,44 +480,44 @@ async function loadGallery(limit) {
   $('body').css('cursor', 'wait');
   const t0 = window.performance.now();
   log.result('Loading gallery ...');
-  window.results.length = 0;
+  await db.reset();
+  await db.open();
+  let count = 0;
   if (window.options.liveLoad) {
     oboe({ url: `/api/get?limit=${limit}&find=all`, cached: true, withCredentials: false })
       .node('{image}', (image) => {
-        image.id = window.results.length + 1;
-        window.results.push(image);
-        $('#number').text(window.results.length);
+        db.put(image);
+        $('#number').text(count++);
         printResult(image);
         enumerateFolders(image.image);
         // time: 15sec load, 10sec print, 3sec enumerate
       })
-      .done(() => {
+      .done(async () => {
         const t1 = window.performance.now();
         if (window.debug) {
-          const size = JSON.stringify(window.results).length;
-          log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
+          const size = JSON.stringify(await db.all()).length;
+          log.result(`Received ${await db.count()} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
         } else {
-          log.result(`Received ${window.results.length} images in ${Math.round(t1 - t0).toLocaleString()} ms`);
+          log.result(`Received ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms`);
         }
-        window.filtered = window.results;
+        window.filtered = await db.all();
         // time(resizeResults);
         time(sortResults, window.options.listSortOrder);
       });
   } else {
     const res = await fetch(`/api/get?limit=${limit}&find=all`);
-    if (res && res.ok) window.results = await res.json();
-    // res.headers.forEach((val, key) => { console.log(`${key} -> ${val}`); });
-    for (let i = 0; i < window.results.length; i++) {
-      window.results[i].id = i;
-    }
+    let json = [];
+    if (res && res.ok) json = await res.json();
     const t1 = window.performance.now();
+    await db.store(json);
+    const t2 = window.performance.now();
     if (window.debug) {
-      const size = JSON.stringify(window.results).length;
-      log.result(`Received ${window.results.length} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
+      const size = JSON.stringify(await db.all()).length;
+      log.result(`Received ${await db.count()} images: ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
     } else {
-      log.result(`Received ${window.results.length} images in ${Math.round(t1 - t0).toLocaleString()} ms`);
+      log.result(`Received ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
     }
-    window.filtered = window.results;
+    window.filtered = await db.all();
     // time(resizeResults);
     time(sortResults, window.options.listSortOrder);
   }
@@ -527,7 +526,7 @@ async function loadGallery(limit) {
 // popup on right-click
 async function showContextPopup(evt) {
   evt.preventDefault();
-  showTip(evt.target, `displaying ${window.filtered.length} of ${window.results.length} images`);
+  showTip(evt.target, `displaying ${window.filtered.length} of ${await db.count()} images`);
 }
 
 // called on startup to get logged in user details from server
@@ -674,7 +673,7 @@ function initSidebarHandlers() {
 }
 
 // initializes all mouse handlers for main menu in list view
-function initListHandlers() {
+async function initListHandlers() {
   // navbar user
   $('#btn-user').click(() => {
     showNavbar($('#userbar'));
@@ -798,9 +797,9 @@ function initListHandlers() {
   });
 
   // navbar images number
-  $('#btn-number').click(() => {
+  $('#btn-number').click(async () => {
     log.result('Reset filtered results');
-    window.filtered = window.results;
+    window.filtered = await db.all();
     redrawResults();
   });
 }
@@ -822,7 +821,14 @@ async function main() {
   initDetailsHandlers();
   initHotkeys();
   showNavbar();
-  await time(loadGallery, window.options.listLimit);
+  const t0 = window.performance.now();
+  await db.open();
+  window.filtered = await db.all();
+  const t1 = window.performance.now();
+  if (window.debug) log.result(`Timed dbAll: ${Math.round(t1 - t0).toLocaleString()} ms`);
+  if (window.filtered.length === 0) await time(loadGallery, window.options.listLimit);
+  time(sortResults, window.options.listSortOrder);
+  // await time(loadGallery, window.options.listLimit);
   // const t1 = window.performance.now();
   // log.result(`Ready in ${Math.round(t1 - t0).toLocaleString()} ms`);
 }
