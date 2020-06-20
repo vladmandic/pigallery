@@ -6,10 +6,8 @@ N/A
 
 ## Future Features
 
-- Move long processing to worker thread // https://stackoverflow.com/questions/10344498/best-way-to-iterate-over-an-array-without-blocking-the-ui/10344560
-- Avoid 'page isn't responding'
-- Server-side search & data paging for large galleries
-- Server-side processing using TFJS-Node once WSL2 supports CUDA
+- Move long processing to worker thread
+- Server-side processing using TFJS-Node
 - Live video processing for Webcam feeds
 - Live video quick model
 - Hot reload for config
