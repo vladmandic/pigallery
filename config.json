@@ -4,13 +4,11 @@
     { "email": "igor.domancic@ri.t-com.hr", "passwd": "pEro", "admin": false, "mediaRoot": "media/" }
   ],
   "locations": [
-    { "folder": "Pictures/Screenshots/", "match": "" },
     { "folder": "Pictures/Snapseed/", "match": "" },
     { "folder": "People/Vlado/", "match": "" },
     { "folder": "People/California/", "match": "" },
     { "folder": "People/Miami/", "match": "" },
-    { "folder": "Photos/", "match": "", "recursive": true },
-    { "folder": "Pictures/Instagram Posts/", "match": "" }
+    { "folder": "Photos/", "match": "", "recursive": true }
   ],
   "server": {
     "httpPort": 8000,
