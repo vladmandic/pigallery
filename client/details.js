@@ -153,13 +153,11 @@ async function showDetails(img) {
 
   if (!img) return;
 
-  $('#popup-image').css('cursor', 'wait');
   if (window.options.viewRaw) {
     if (window.debug) log.result(`Loading Raw image: ${img}`);
     window.open(img, '_blank');
     return;
   }
-  $('body').css('cursor', 'wait');
   if (window.debug) log.result(`Loading image: ${img}`);
 
   $('#popup').toggle(true);
@@ -258,7 +256,6 @@ async function showDetails(img) {
     `;
   if (window.options.viewDetails) $('#popup-details').html(html);
   $('#popup-details').toggle(window.options.viewDetails);
-  $('body').css('cursor', 'pointer');
 }
 
 async function showNextDetails(left) {
