@@ -24,8 +24,14 @@ async function find(lat, lon) {
   gallery.redraw();
 }
 
-async function show() {
-  if (window.debug) log.result('Map show');
+async function show(visible) {
+  if (window.debug) log.result(`Map show: ${visible}`);
+  if (!visible && mapContainer) {
+    mapContainer.off();
+    mapContainer.remove();
+    $('#map').toggle(false);
+    return;
+  }
   $('#map').toggle('slow');
   $('#map').width($('#main').width() - $('#folderbar').width());
   $('#map').height(0.4 * $('#main').height());

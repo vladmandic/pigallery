@@ -467,6 +467,12 @@ async function sortResults(sort) {
 // find duplicate images based on pre-computed sha-256 hash
 async function findDuplicates() {
   busy(true);
+  /*
+  const worker = new Worker('client/worker.js');
+  worker.postMessage('start');
+  worker.onmessage((msg) => console.log('received', msg));
+  return;
+  */
   log.result('Analyzing images for simmilarity ...');
   const t0 = window.performance.now();
   previous = null;
@@ -761,7 +767,7 @@ async function initListHandlers() {
   // navbar map
   $('#btn-map').click(() => {
     $('#btn-map').toggleClass('fa-map fa-map-marked');
-    map.show();
+    map.show($('btn-map').hasClass('fa-map-marked'));
   });
 
   // navline search input
