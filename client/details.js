@@ -142,7 +142,7 @@ function resizeDetailsImage(object) {
 }
 
 // show details popup
-async function showDetails(thumb, img) {
+async function showDetails(img) {
   if (!img && last) img = last.image;
   $('#popup-image').width($('#popup').width());
   $('#popup-image').height($('#popup').height());
@@ -165,16 +165,15 @@ async function showDetails(thumb, img) {
   $('#popup').toggle(true);
   $('#optionsview').toggle(true);
 
+  const object = window.filtered.find((a) => a.image === img);
+  if (!object) return;
+
   // http://ignitersworld.com/lab/imageViewer.html
   if (!viewer) {
     const div = document.getElementById('popup-image');
     viewer = new ImageViewer(div, { zoomValue: 100, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
   }
-  if (thumb) viewer.load(thumb, img);
-  else viewer.load(img);
-
-  const object = window.filtered.find((a) => a.image === img);
-  if (!object) return;
+  viewer.load(object.thumbnail, img);
 
   resizeDetailsImage(object);
 
@@ -272,7 +271,7 @@ async function showNextDetails(left) {
   if (id < 0) id = window.filtered.length - 1;
   if (id > window.filtered.length - 1) id = 0;
   const target = window.filtered[id];
-  showDetails(target.thumbnail, target.image);
+  showDetails(target.image);
 }
 
 exports.show = showDetails;

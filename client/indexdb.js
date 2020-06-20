@@ -14,6 +14,8 @@ async function open() {
       if (window.debug) log.result('IndexDB request create');
       const table = evt.target.result.createObjectStore('images', { keyPath: 'image' });
       table.createIndex('name', 'image', { unique: true });
+      table.createIndex('date', 'exif.created', { unique: false });
+      table.createIndex('size', 'pixels', { unique: false });
     };
     request.onsuccess = (evt) => {
       if (window.debug) log.result('IndexDB request open');
@@ -43,22 +45,39 @@ async function put(obj) {
   obj.id = id++;
   db.transaction(['images'], 'readwrite')
     .objectStore('images')
-    .put(obj, obj.image);
+    .put(obj);
 }
 
 async function get(name) {
-  db.transaction(['images'], 'readwrite')
+  db.transaction(['images'], 'readonly')
     .objectStore('images')
     .get(name)
     .onsuccess = (evt) => evt.target.result;
 }
 
-async function all() {
+async function all(index, direction = true) {
+  if (window.debug) log.result(`IndexDB all: ${index} ${direction}`);
   return new Promise((resolve) => {
-    db.transaction(['images'], 'readwrite')
-      .objectStore('images')
-      .getAll()
-      .onsuccess = (evt) => resolve(evt.target.result);
+    if (!index) {
+      db.transaction(['images'], 'readonly')
+        .objectStore('images')
+        .getAll()
+        .onsuccess = (evt) => resolve(evt.target.result);
+    } else {
+      const res = [];
+      db.transaction(['images'], 'readonly')
+        .objectStore('images')
+        .index(index)
+        .openCursor(null, direction ? 'next' : 'prev')
+        .onsuccess = (evt) => {
+          if (evt.target.result) {
+            res.push(evt.target.result.value);
+            evt.target.result.continue();
+          } else {
+            resolve(res);
+          }
+        };
+    }
   });
 }
 
