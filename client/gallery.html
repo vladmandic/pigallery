@@ -35,9 +35,9 @@
       a { color: lightcyan }
       a:hover { color: darkcyan; text-decoration: none; }
       p { margin: 0; }
-      .row { width: 100vw; margin: 0; align-content: start; }
+      .row { width: 100%; margin: 0; align-content: start; }
       .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; white-space: nowrap; text-overflow: ellipsis; }
-      .log { width: 100vw; height: 4rem; background: black; position: fixed; bottom: 0; overflow-y: scroll; display: block; }
+      .log { width: 100vw; height: 4rem; background: black; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 100; cursor: text; }
       .popper { padding: 8px; background: lightblue; color: #555555; font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; z-index: 50; }
 
       .navbar { background: #555555; height: 80px; top: 0; justify-content: space-evenly; }
@@ -56,23 +56,25 @@
       .input:focus { background: lightyellow; }
 
       .main { height: 100%; display: flex; background: #555555; }
-      .folderbar { background: #555555; overflow-x: hidden; overflow-y: auto; min-width: fit-content; }
+      .folderbar { background: #555555; overflow-x: hidden; overflow-y: auto; min-width: fit-content; cursor: pointer; }
       .folderbar::-webkit-scrollbar { display:none; }
       .folderlist { margin: 0; min-width: 17rem; max-width: 17rem; background: #555555; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
       .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: #555555; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
-      .folder { background: #555555; margin: 0; padding: 0.4rem 200px 0.4rem 0; cursor: pointer; font-weight: bold; letter-spacing: 1px; }
+      .folder { background: #555555; margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: bold; letter-spacing: 1px; }
       .folder:hover { background: lightyellow; color: #555555; letter-spacing: 2px; }
       .folder:active { background: lightskyblue; color: #555555; letter-spacing: 2px; }
       .folderstitle { background: lightyellow; color: #555555; letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
 
-      .map { background: black; overflow: hidden; width: 100%; height: 40%; display: none; }
-      .results { background: black; overflow-x: hidden; overflow-y: auto; }
+      .all { background: black; overflow-x: hidden; overflow-y: auto; width: 100%; }
+      .map { overflow: hidden; width: 100%; height: 40%; display: none; }
+      .results { overflow-x: hidden; overflow-y: auto; width: 100%; }
+
       .timestamp { background: #222222; margin-left: 8px; margin-right: 8px; color: lightgray; }
 
       .listitem { display: flex; }
       .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; }
       .thumbnail { padding: 0; cursor: zoom-in; }
-      .description { min-width: 240px; max-width: 240px; padding: 2px 0 0 4px; overflow: hidden; }
+      .description { min-width: 240px; max-width: 240px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
       .description:hover { background: #333333 }
       .description:active { background: lightskyblue }
       .download { font-size: 1.2rem; color: gray; position: relative; float: right; padding: 4px; cursor: grab; z-index: 5; }
@@ -80,8 +82,8 @@
       .listtitle { font-weight: bold; background: #444444; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; }
 
       .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px }
-      .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: lightyellow; border-radius: 1rem; }
-      .thumbsize::-moz-range-track { width: 100%; height: 1rem; cursor: pointer; background: lightyellow; border-radius: 1rem; }
+      .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; background: lightyellow; border-radius: 1rem; }
+      .thumbsize::-moz-range-track { width: 100%; height: 1rem; background: lightyellow; border-radius: 1rem; }
 
       .popup { background: lightyellow; color: black; overflow: hidden; position: fixed; top: 70px; left: 0; width: 100%; height: 100%; z-index: 10; }
       .popup-image { width: 100%; height: 100%; }
@@ -152,7 +154,7 @@
       <div id="classestitle" class="folderstitle">Top Classes</div>
         <ul id="classes" class="folderlist"></ul>
     </div>
-    <div>
+    <div class="all">
       <div id="map" class="row map"></div>  
       <div id="results" class="row results"></div>
     </div>

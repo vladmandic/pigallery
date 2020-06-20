@@ -11,6 +11,7 @@ N/A
 - Server-side search & data paging for large galleries
 - Server-side processing using TFJS-Node once WSL2 supports CUDA
 - Live video processing for Webcam feeds
+- Live video quick model
 - Hot reload for config
 - Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0: Face-API Incompatibility
 

@@ -12,7 +12,7 @@ const pwa = require('./pwa-register.js');
 
 // global variables
 window.filtered = [];
-window.debug = true;
+window.debug = false;
 
 // user configurable options, stored in browsers local storage
 window.options = {
@@ -57,6 +57,13 @@ window.options = {
 // google analytics
 // eslint-disable-next-line prefer-rest-params
 function gtag() { window.dataLayer.push(arguments); }
+
+function busy(working) {
+  $('body').css('cursor', working ? 'wait' : 'default');
+  $('main').css('cursor', working ? 'wait' : 'default');
+  $('#btn-number').css('color', working ? 'lightcoral' : 'gray');
+  $('#number').css('color', working ? 'lightcoral' : 'lightyellow');
+}
 
 async function time(fn, arg) {
   if (window.debug) {
@@ -313,19 +320,18 @@ async function enumerateFolders(input) {
 async function folderHandlers() {
   $('.folder').off();
   $('.folder').click(async (evt) => {
-    $('#btn-number').css('color', 'darkred');
+    busy(true);
     const path = $(evt.target).attr('tag');
     const all = await db.all('date', false);
     switch (evt.target.getAttribute('type')) {
       case 'folder':
-        $('body').css('cursor', 'wait');
-        log.result(`Selected path: ${path}`);
+        if (window.debug) log.result(`Selected path: ${path}`);
         const root = window.user && window.user.root ? window.user.root : 'media/';
         if (path === root) window.filtered = all;
         else window.filtered = all.filter((a) => a.image.startsWith(path));
         break;
       case 'location':
-        log.result(`Selected location: ${path}`);
+        if (window.debug) log.result(`Selected location: ${path}`);
         if (path !== 'Unknown') window.filtered = all.filter((a) => path.startsWith(a.location.near));
         else window.filtered = all.filter((a) => (!a.location || !a.location.near));
         break;
@@ -334,13 +340,13 @@ async function folderHandlers() {
           const found = a.tags.find((b) => (Object.values(b)[0].toString().startsWith(path)));
           return found;
         });
-        log.result(`Selected class: ${path}`);
+        if (window.debug) log.result(`Selected class: ${path}`);
         break;
       default:
     }
     // eslint-disable-next-line no-use-before-define
     time(redrawResults, false);
-    $('#btn-number').css('color', 'gray');
+    busy(false);
   });
 }
 
@@ -354,6 +360,7 @@ async function startSlideshow() {
 
 // redraws gallery view and rebuilds sidebar menu
 async function redrawResults(generateFolders = true) {
+  busy(true);
   $('#number').html(window.filtered.length);
   $('#results').html('');
   if (generateFolders) {
@@ -368,11 +375,8 @@ async function redrawResults(generateFolders = true) {
   }
   const t1 = window.performance.now();
   if (window.debug) log.result(`Timed loop printResults: ${Math.round(t1 - t0).toLocaleString()} ms`);
-  // $('.description').toggle(window.options.listDetails);
-  // const t2 = window.performance.now();
-  // if (window.debug) log.result(`Timed CSS Toggle .description: ${Math.round(t2 - t1).toLocaleString()}`);
   time(resizeResults);
-  $('body').css('cursor', 'pointer');
+  busy(false);
 }
 
 // used by filterresults
@@ -393,7 +397,7 @@ function filterWord(object, word) {
 
 // filters images based on search strings
 async function filterResults(words) {
-  $('body').css('cursor', 'wait');
+  busy(true);
   window.filtered = await db.all();
   previous = null;
   let foundWords = 0;
@@ -401,9 +405,12 @@ async function filterResults(words) {
     window.filtered = filterWord(window.filtered, word);
     foundWords += (window.filtered && window.filtered.length > 0) ? 1 : 0;
   }
-  if (window.filtered && window.filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} results out of ${await db.count()} matches`);
-  else log.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
+  if (window.debug) {
+    if (window.filtered && window.filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} results out of ${await db.count()} matches`);
+    else log.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
+  }
   time(redrawResults);
+  busy(false);
 }
 
 // randomize image order using Fisher-Yates (aka Knuth) shuffle
@@ -423,29 +430,23 @@ function shuffle(array) {
 
 // sorts images based on given sort order
 async function sortResults(sort) {
-  $('#btn-number').css('color', 'darkred');
-  log.result(`Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
-  $('body').css('cursor', 'wait');
-  // if (!window.filtered || window.filtered.length === 0) window.filtered = await db.all();
+  busy(true);
+  if (window.debug) log.result(`Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
+
+  const t0 = window.performance.now();
   if (sort.includes('random')) {
     window.filtered = await db.all();
     shuffle(window.filtered);
   }
   previous = null;
   // sort by
-  // if (sort.includes('alpha-down')) window.filtered.sort((a, b) => (a.image > b.image ? 1 : -1));
-  // if (sort.includes('alpha-up')) window.filtered.sort((a, b) => (a.image < b.image ? 1 : -1));
-  // if (sort.includes('numeric-down')) window.filtered.sort((a, b) => ((b.exif.created || 0) - (a.exif.created || 0)));
-  // if (sort.includes('numeric-up')) window.filtered.sort((a, b) => ((a.exif.created || 0) - (b.exif.created || 0)));
-  // if (sort.includes('amount-down')) window.filtered.sort((a, b) => (b.pixels - a.pixels));
-  // if (sort.includes('amount-up')) window.filtered.sort((a, b) => (a.pixels - b.pixels));
   if (sort.includes('alpha-down')) window.filtered = await db.all('name', true);
   if (sort.includes('alpha-up')) window.filtered = await db.all('name', false);
   if (sort.includes('numeric-down')) window.filtered = await db.all('date', false);
   if (sort.includes('numeric-up')) window.filtered = await db.all('date', true);
   if (sort.includes('amount-down')) window.filtered = await db.all('size', false);
   if (sort.includes('amount-up')) window.filtered = await db.all('size', true);
-  if (sort.includes('simmilarity')) window.filtered = (await db.all()).sort((a, b) => (a.simmilarity - b.simmilarity));
+  if (sort.includes('simmilarity')) window.filtered = await db.all('simmilarity', false);
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) window.options.listDivider = 'month';
   else if (sort.includes('amount-down') || sort.includes('amount-up')) window.options.listDivider = 'size';
@@ -453,20 +454,20 @@ async function sortResults(sort) {
   else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
   $('#optionslist').toggle(false);
+  const t1 = window.performance.now();
   if (window.filtered.length === 0) {
     log.result('No images found, try reloading database ...');
-    // eslint-disable-next-line no-use-before-define
-    // await loadGallery(window.options.listLimit, true);
   } else {
     time(redrawResults);
+    log.result(`Displaying ${window.filtered.length} cached images in ${Math.round(t1 - t0).toLocaleString()} ms`);
   }
-  $('#btn-number').css('color', 'gray');
+  busy(false);
 }
 
 // find duplicate images based on pre-computed sha-256 hash
 async function findDuplicates() {
+  busy(true);
   log.result('Analyzing images for simmilarity ...');
-  $('body').css('cursor', 'wait');
   const t0 = window.performance.now();
   previous = null;
   let duplicates = [];
@@ -494,13 +495,14 @@ async function findDuplicates() {
   const t1 = window.performance.now();
   log.result(`Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
   sortResults('simmilarity');
+  busy(false);
 }
 
 // loads imagesm, displays gallery and enumerates sidebar
 async function loadGallery(limit) {
-  $('body').css('cursor', 'wait');
+  busy(true);
   const t0 = window.performance.now();
-  log.result('Loading gallery ...');
+  log.result('Downloading image cache ...');
   await db.reset();
   await db.open();
   let count = 0;
@@ -542,6 +544,7 @@ async function loadGallery(limit) {
     // time(resizeResults);
     time(sortResults, window.options.listSortOrder);
   }
+  busy(false);
 }
 
 // popup on right-click
@@ -810,7 +813,7 @@ async function initListHandlers() {
 
   // navbar slideshow
   $('#btn-slide').click(() => {
-    log.result('Starting slide show ...');
+    if (window.debug) log.result('Starting slide show ...');
     slideshowRunning = true;
     details.show(window.filtered[0].image);
     setTimeout(startSlideshow, window.options.slideDelay);
@@ -825,7 +828,7 @@ async function initListHandlers() {
 
   // navbar images number
   $('#btn-number').click(async () => {
-    log.result('Reset filtered results');
+    if (window.debug) log.result('Reset filtered results');
     window.filtered = await db.all();
     redrawResults();
   });

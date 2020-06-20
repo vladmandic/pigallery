@@ -3,27 +3,30 @@ const log = require('./log.js');
 let db;
 let id = 0;
 
+const database = 'pigallery';
+const table = 'images';
+
 async function open() {
   return new Promise((resolve) => {
-    const request = indexedDB.open('pigallery', 1);
+    const request = indexedDB.open(database, 1);
     request.onerror = (evt) => {
       log.result(`IndexDB request error: ${evt}`);
       resolve(false);
     };
     request.onupgradeneeded = (evt) => {
       if (window.debug) log.result('IndexDB request create');
-      const table = evt.target.result.createObjectStore('images', { keyPath: 'image' });
-      table.createIndex('name', 'image', { unique: true });
-      table.createIndex('date', 'exif.created', { unique: false });
-      table.createIndex('size', 'pixels', { unique: false });
+      db = evt.target.result;
+      const tbl = db.createObjectStore(table, { keyPath: 'image' });
+      tbl.createIndex('name', 'image', { unique: true });
+      tbl.createIndex('date', 'exif.created', { unique: false });
+      tbl.createIndex('size', 'pixels', { unique: false });
+      tbl.createIndex('simmilarity', 'simmilarity', { unique: false });
     };
     request.onsuccess = (evt) => {
       if (window.debug) log.result('IndexDB request open');
       db = evt.target.result;
       db.onerror = (event) => log.result(`IndexDB DB error: ${event}`);
       db.onsuccess = (event) => log.result(`IndexDB DB open: ${event}`);
-      // transaction = db.transaction(['images'], 'readwrite');
-      // transaction.onerror = (event) => log.result(`IndexDB transaction error: ${event}`);
       resolve(true);
     };
   });
@@ -31,26 +34,30 @@ async function open() {
 
 async function reset() {
   return new Promise((resolve) => {
-    const transaction = db.transaction(['images'], 'readwrite');
-    transaction
-      .objectStore('images')
-      .clear()
-      .onsuccess = (evt) => evt.target.result;
-    if (window.debug) log.result('IndexDB clear');
-    resolve(true);
+    if (window.debug) log.result('IndexDB reset');
+    if (db) db.close();
+    const request = indexedDB.deleteDatabase('pigallery');
+    request.onsuccess = () => {
+      if (window.debug) log.result('IndexDB delete success');
+      resolve(true);
+    };
+    request.onerror = () => {
+      if (window.debug) log.result('IndexDB delete error');
+      resolve(false);
+    };
   });
 }
 
 async function put(obj) {
   obj.id = id++;
-  db.transaction(['images'], 'readwrite')
-    .objectStore('images')
+  db.transaction([table], 'readwrite')
+    .objectStore(table)
     .put(obj);
 }
 
 async function get(name) {
-  db.transaction(['images'], 'readonly')
-    .objectStore('images')
+  db.transaction([table], 'readonly')
+    .objectStore(table)
     .get(name)
     .onsuccess = (evt) => evt.target.result;
 }
@@ -59,14 +66,14 @@ async function all(index, direction = true) {
   if (window.debug) log.result(`IndexDB all: ${index} ${direction}`);
   return new Promise((resolve) => {
     if (!index) {
-      db.transaction(['images'], 'readonly')
-        .objectStore('images')
+      db.transaction([table], 'readonly')
+        .objectStore(table)
         .getAll()
         .onsuccess = (evt) => resolve(evt.target.result);
     } else {
       const res = [];
-      db.transaction(['images'], 'readonly')
-        .objectStore('images')
+      db.transaction([table], 'readonly')
+        .objectStore(table)
         .index(index)
         .openCursor(null, direction ? 'next' : 'prev')
         .onsuccess = (evt) => {
@@ -83,8 +90,8 @@ async function all(index, direction = true) {
 
 async function count() {
   return new Promise((resolve) => {
-    db.transaction(['images'], 'readwrite')
-      .objectStore('images')
+    db.transaction([table], 'readwrite')
+      .objectStore(table)
       .count()
       .onsuccess = (evt) => resolve(evt.target.result);
   });
