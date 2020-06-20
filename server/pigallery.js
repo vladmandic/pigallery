@@ -8,7 +8,7 @@ const session = require('express-session');
 const shrinkRay = require('shrink-ray-current');
 const nedb = require('nedb-promises');
 const api = require('./api.js');
-const parcel = require('./distBundler.js');
+const parcel = require('./bundler.js');
 const nodeconfig = require('../package.json');
 const config = require('../config.json');
 

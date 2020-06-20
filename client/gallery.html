@@ -64,6 +64,8 @@
       .folder:hover { background: lightyellow; color: #555555; letter-spacing: 2px; }
       .folder:active { background: lightskyblue; color: #555555; letter-spacing: 2px; }
       .folderstitle { background: lightyellow; color: #555555; letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
+
+      .map { background: black; overflow: hidden; width: 100%; height: 40%; display: none; }
       .results { background: black; overflow-x: hidden; overflow-y: auto; }
       .timestamp { background: #222222; margin-left: 8px; margin-right: 8px; color: lightgray; }
 
@@ -93,6 +95,7 @@
   <div id="navbar" class="row navbar text-center">
     <div><i id="btn-user" class="navbarbutton fas fa-user-slash"></i><p id="user">User</p></div>
     <div><i id="btn-search" class="navbarbutton fas fa-search"></i><p>Search</p></div>
+    <div><i id="btn-map" class="navbarbutton fas fa-map"></i><p>Map</p></div>
     <div><i id="btn-list" class="navbarbutton fas fa-images"></i><p>List Options</p></div>
     <div><i id="btn-slide" class="navbarbutton fas fa-film"></i><p>Slideshow</p></div>
     <div><i id="btn-video" class="navbarbutton fas fa-video"></i><p>Live Video</p></div>
@@ -148,9 +151,11 @@
         <ul id="locations" class="folderlist"></ul>
       <div id="classestitle" class="folderstitle">Top Classes</div>
         <ul id="classes" class="folderlist"></ul>
-      <div id="maptitle" class="folderstitle">Map</div>
     </div>
-    <div id="results" class="row results"></div>  
+    <div>
+      <div id="map" class="row map"></div>  
+      <div id="results" class="row results"></div>
+    </div>
   </div>
 
   <div id="log" class="log"></div>

@@ -12,7 +12,7 @@ const pwa = require('./pwa-register.js');
 
 // global variables
 window.filtered = [];
-window.debug = false;
+window.debug = true;
 
 // user configurable options, stored in browsers local storage
 window.options = {
@@ -154,29 +154,30 @@ async function printResult(object) {
 
   const timestamp = object.exif.created ? moment(object.exif.created).format(window.options.dateShort) : 'Date unknown';
   const link = `<a class="download fa fa-arrow-alt-circle-down" href="${object.image}" download></a>`;
-  const divItem = document.createElement('div');
-  divItem.className = 'listitem';
 
   const root = window.user && window.user.root ? window.user.root : 'media/';
-  divItem.innerHTML = `
-    <div class="col thumbnail">
-      <img class="thumbnail" id="thumb-${object.id}" src="${object.thumbnail}" align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px>
-    </div>
-    <div id="desc-${object.id}" class="col description" style="display: ${window.options.listDetails ? 'block' : 'hidden'}>
-      <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>${link}
-      ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
-      ${location}<br>
-      ${classified}<br>
-      ${detected}<br>
-      ${person} ${nsfw}<br>
+  const html = `
+    <div class="listitem">
+      <div class="col thumbnail">
+        <img class="thumbnail" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}"
+        align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px
+        onclick="details.show('${object.image}');">
+      </div>
+      <div id="desc-${object.id}" class="col description" style="display: ${window.options.listDetails ? 'block' : 'hidden'}>
+        <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>${link}
+        ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
+        ${location}<br>
+        ${classified}<br>
+        ${detected}<br>
+        ${person} ${nsfw}<br>
+      </div>
     </div>
   `;
-  $('#results').append(divItem);
-  const divThumb = document.getElementById(`thumb-${object.id}`);
-  divThumb.img = object.image;
-  divThumb.addEventListener('click', (evt) => {
-    details.show(divThumb.src, evt.target.img);
-  });
+  const divItem = document.createElement('div');
+  divItem.className = 'listitem';
+  divItem.innerHTML = html;
+  document.getElementById('results').appendChild(divItem);
+  return html;
 }
 
 // resize gallery view depending on user configuration
@@ -194,10 +195,10 @@ async function resizeResults() {
 }
 
 // extracts all locations from loaded images and builds sidebar menu
-let enumeratedLocations = 0;
+// let enumeratedLocations = 0;
 async function enumerateLocations() {
-  if (window.filtered.length === enumeratedLocations) return;
-  enumeratedLocations = window.filtered.length;
+  // if (window.filtered.length === enumeratedLocations) return;
+  // enumeratedLocations = window.filtered.length;
   $('#locations').html('');
   const locationsList = [];
   let unknown = 0;
@@ -205,36 +206,66 @@ async function enumerateLocations() {
     if (item.location && item.location.near) {
       const loc = `${item.location.near}, ${item.location.state || item.location.country}`;
       const here = locationsList.find((a) => (a.loc === loc));
-      if (!here) {
-        locationsList.push({ loc, count: 1 });
-      } else {
-        here.count += 1;
-      }
+      if (!here) locationsList.push({ loc, count: 1 });
+      else here.count += 1;
     } else {
       unknown += 1;
     }
   }
   locationsList.sort((a, b) => (a.loc > b.loc ? 1 : -1));
-  locationsList.unshift({ loc: 'Unknown', count: unknown });
+  if (unknown > 0) locationsList.unshift({ loc: 'Unknown', count: unknown });
+  let html = '';
   for (const item of locationsList) {
-    const html = `
+    html += `
       <li id="loc-${item.loc}">
         <span tag="${item.loc}" type="location" style="padding-left: 16px" class="folder">&nbsp
           <i tag="${item.loc}" class="fas fa-chevron-circle-right">&nbsp</i>${item.loc} (${item.count})
         </span>
       </li>
     `;
-    $('#locations').append(html);
   }
+  $('#locations').append(html);
+}
+
+// exctract top classe from classification & detection and builds sidebar menu
+// let enumeratedClasses = 0;
+async function enumerateClasses() {
+  // if (window.filtered.length === enumeratedClasses) return;
+  // enumeratedClasses = window.filtered.length;
+  $('#classes').html('');
+  const classesList = [];
+  for (const item of window.filtered) {
+    for (const tag of item.tags) {
+      const key = Object.keys(tag)[0];
+      if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
+      const val = Object.values(tag)[0].toString().split(',')[0];
+      const found = classesList.find((a) => a.tag === val);
+      if (found) found.count += 1;
+      else classesList.push({ tag: val, count: 1 });
+    }
+  }
+  classesList.sort((a, b) => b.count - a.count);
+  classesList.length = Math.min(window.options.topClasses, classesList.length);
+  let html = '';
+  for (const item of classesList) {
+    html += `
+      <li id="loc-${item.tag}">
+        <span tag="${item.tag}" type="class" style="padding-left: 16px" class="folder">&nbsp
+          <i tag="${item.tag}" class="fas fa-chevron-circle-right">&nbsp</i>${item.tag} (${item.count})
+        </span>
+      </li>
+    `;
+  }
+  $('#classes').append(html);
 }
 
 // builds folder list from all loaded images and builds sidebar menu
 // can be used with entire image list or per-object
 let folderList = [];
-let enumeratedFolders = 0;
+// let enumeratedFolders = 0;
 async function enumerateFolders(input) {
-  if (window.filtered.length === enumeratedFolders) return;
-  enumeratedFolders = window.filtered.length;
+  // if (window.filtered.length === enumeratedFolders) return;
+  // enumeratedFolders = window.filtered.length;
   $('#folders').html('');
   if (input) {
     const path = input.substr(0, input.lastIndexOf('/'));
@@ -278,43 +309,13 @@ async function enumerateFolders(input) {
   }
 }
 
-// exctract top classe from classification & detection and builds sidebar menu
-let enumeratedClasses = 0;
-async function enumerateClasses() {
-  if (window.filtered.length === enumeratedClasses) return;
-  enumeratedClasses = window.filtered.length;
-  $('#classes').html('');
-  const classesList = [];
-  for (const item of window.filtered) {
-    for (const tag of item.tags) {
-      const key = Object.keys(tag)[0];
-      if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
-      const val = Object.values(tag)[0].toString().split(',')[0];
-      const found = classesList.find((a) => a.tag === val);
-      if (found) found.count += 1;
-      else classesList.push({ tag: val, count: 1 });
-    }
-  }
-  classesList.sort((a, b) => b.count - a.count);
-  classesList.length = Math.min(window.options.topClasses, classesList.length);
-  for (const item of classesList) {
-    const html = `
-      <li id="loc-${item.tag}">
-        <span tag="${item.tag}" type="class" style="padding-left: 16px" class="folder">&nbsp
-          <i tag="${item.tag}" class="fas fa-chevron-circle-right">&nbsp</i>${item.tag} (${item.count})
-        </span>
-      </li>
-    `;
-    $('#classes').append(html);
-  }
-}
-
 // handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
   $('.folder').off();
   $('.folder').click(async (evt) => {
+    $('#btn-number').css('color', 'darkred');
     const path = $(evt.target).attr('tag');
-    const all = await db.all();
+    const all = await db.all('date', false);
     switch (evt.target.getAttribute('type')) {
       case 'folder':
         $('body').css('cursor', 'wait');
@@ -339,6 +340,7 @@ async function folderHandlers() {
     }
     // eslint-disable-next-line no-use-before-define
     time(redrawResults, false);
+    $('#btn-number').css('color', 'gray');
   });
 }
 
@@ -361,9 +363,11 @@ async function redrawResults(generateFolders = true) {
     time(folderHandlers);
   }
   const t0 = window.performance.now();
-  for (const obj of window.filtered) printResult(obj);
+  for (const obj of window.filtered) {
+    setTimeout(() => printResult(obj), 1);
+  }
   const t1 = window.performance.now();
-  if (window.debug) log.result(`Timed loop printResults: ${Math.round(t1 - t0).toLocaleString()}`);
+  if (window.debug) log.result(`Timed loop printResults: ${Math.round(t1 - t0).toLocaleString()} ms`);
   // $('.description').toggle(window.options.listDetails);
   // const t2 = window.performance.now();
   // if (window.debug) log.result(`Timed CSS Toggle .description: ${Math.round(t2 - t1).toLocaleString()}`);
@@ -419,19 +423,29 @@ function shuffle(array) {
 
 // sorts images based on given sort order
 async function sortResults(sort) {
+  $('#btn-number').css('color', 'darkred');
   log.result(`Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
   $('body').css('cursor', 'wait');
-  if (!window.filtered || window.filtered.length === 0) window.filtered = await db.all();
-  if (sort.includes('random')) shuffle(window.filtered);
+  // if (!window.filtered || window.filtered.length === 0) window.filtered = await db.all();
+  if (sort.includes('random')) {
+    window.filtered = await db.all();
+    shuffle(window.filtered);
+  }
   previous = null;
   // sort by
-  if (sort.includes('alpha-down')) window.filtered.sort((a, b) => (a.image > b.image ? 1 : -1));
-  if (sort.includes('alpha-up')) window.filtered.sort((a, b) => (a.image < b.image ? 1 : -1));
-  if (sort.includes('numeric-down')) window.filtered.sort((a, b) => ((b.exif.created || 0) - (a.exif.created || 0)));
-  if (sort.includes('numeric-up')) window.filtered.sort((a, b) => ((a.exif.created || 0) - (b.exif.created || 0)));
-  if (sort.includes('amount-down')) window.filtered.sort((a, b) => (b.pixels - a.pixels));
-  if (sort.includes('amount-up')) window.filtered.sort((a, b) => (a.pixels - b.pixels));
-  if (sort.includes('simmilarity')) window.filtered.sort((a, b) => (a.simmilarity - b.simmilarity));
+  // if (sort.includes('alpha-down')) window.filtered.sort((a, b) => (a.image > b.image ? 1 : -1));
+  // if (sort.includes('alpha-up')) window.filtered.sort((a, b) => (a.image < b.image ? 1 : -1));
+  // if (sort.includes('numeric-down')) window.filtered.sort((a, b) => ((b.exif.created || 0) - (a.exif.created || 0)));
+  // if (sort.includes('numeric-up')) window.filtered.sort((a, b) => ((a.exif.created || 0) - (b.exif.created || 0)));
+  // if (sort.includes('amount-down')) window.filtered.sort((a, b) => (b.pixels - a.pixels));
+  // if (sort.includes('amount-up')) window.filtered.sort((a, b) => (a.pixels - b.pixels));
+  if (sort.includes('alpha-down')) window.filtered = await db.all('name', true);
+  if (sort.includes('alpha-up')) window.filtered = await db.all('name', false);
+  if (sort.includes('numeric-down')) window.filtered = await db.all('date', false);
+  if (sort.includes('numeric-up')) window.filtered = await db.all('date', true);
+  if (sort.includes('amount-down')) window.filtered = await db.all('size', false);
+  if (sort.includes('amount-up')) window.filtered = await db.all('size', true);
+  if (sort.includes('simmilarity')) window.filtered = (await db.all()).sort((a, b) => (a.simmilarity - b.simmilarity));
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) window.options.listDivider = 'month';
   else if (sort.includes('amount-down') || sort.includes('amount-up')) window.options.listDivider = 'size';
@@ -439,7 +453,14 @@ async function sortResults(sort) {
   else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
   $('#optionslist').toggle(false);
-  time(redrawResults);
+  if (window.filtered.length === 0) {
+    log.result('No images found, try reloading database ...');
+    // eslint-disable-next-line no-use-before-define
+    // await loadGallery(window.options.listLimit, true);
+  } else {
+    time(redrawResults);
+  }
+  $('#btn-number').css('color', 'gray');
 }
 
 // find duplicate images based on pre-computed sha-256 hash
@@ -496,7 +517,7 @@ async function loadGallery(limit) {
         const t1 = window.performance.now();
         if (window.debug) {
           const size = JSON.stringify(await db.all()).length;
-          log.result(`Received ${await db.count()} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
+          log.result(`Received ${await db.count()} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
         } else {
           log.result(`Received ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms`);
         }
@@ -513,7 +534,7 @@ async function loadGallery(limit) {
     const t2 = window.performance.now();
     if (window.debug) {
       const size = JSON.stringify(await db.all()).length;
-      log.result(`Received ${await db.count()} images: ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec (bulk load)`);
+      log.result(`Received images: ${json.length} ${Math.round(t1 - t0).toLocaleString()} ms stored ${await db.count()} images in ${Math.round(t2 - t1).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
     } else {
       log.result(`Received ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
     }
@@ -559,6 +580,7 @@ function showNavbar(elem) {
   if (elem) elem.toggle('slow');
   // hide the rest
   elem = elem || $('#main');
+  $('#map').toggle(false);
   if (elem && elem[0] !== $('#popup')[0]) $('#popup').toggle(false);
   if (elem && elem[0] !== $('#docs')[0]) $('#docs').toggle(false);
   if (elem && elem[0] !== $('#searchbar')[0]) $('#searchbar').toggle(false);
@@ -666,7 +688,6 @@ function initSidebarHandlers() {
   $('#folderstitle').click(() => $('#folders').toggle('slow'));
   $('#locationstitle').click(() => $('#locations').toggle('slow'));
   $('#classestitle').click(() => $('#classes').toggle('slow'));
-  $('#maptitle').click(() => map.show());
   $('#locations').toggle(false);
   $('#classes').toggle(false);
   $(window).resize(() => resizeViewport());
@@ -734,6 +755,12 @@ async function initListHandlers() {
     $('#search-input').focus();
   });
 
+  // navbar map
+  $('#btn-map').click(() => {
+    $('#btn-map').toggleClass('fa-map fa-map-marked');
+    map.show();
+  });
+
   // navline search input
   $('#search-input').keyup(() => {
     event.preventDefault();
@@ -785,7 +812,7 @@ async function initListHandlers() {
   $('#btn-slide').click(() => {
     log.result('Starting slide show ...');
     slideshowRunning = true;
-    details.show(window.filtered[0].image, window.filtered[0].image);
+    details.show(window.filtered[0].image);
     setTimeout(startSlideshow, window.options.slideDelay);
   });
 
@@ -821,12 +848,15 @@ async function main() {
   initDetailsHandlers();
   initHotkeys();
   showNavbar();
-  const t0 = window.performance.now();
   await db.open();
+  /*
+  const t0 = window.performance.now();
   window.filtered = await db.all();
   const t1 = window.performance.now();
   if (window.debug) log.result(`Timed dbAll: ${Math.round(t1 - t0).toLocaleString()} ms`);
   if (window.filtered.length === 0) await time(loadGallery, window.options.listLimit);
+  */
+  window.details = details;
   time(sortResults, window.options.listSortOrder);
   // await time(loadGallery, window.options.listLimit);
   // const t1 = window.performance.now();
@@ -834,3 +864,7 @@ async function main() {
 }
 
 window.onload = main;
+
+exports.draw = sortResults;
+exports.redraw = redrawResults;
+exports.load = loadGallery;

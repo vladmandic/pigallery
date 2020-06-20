@@ -6,7 +6,7 @@ const moment = require('moment');
 const exif = require('jpeg-exif');
 const parser = require('exif-parser');
 const log = require('pilogger');
-const distance = require('./geoNearest.js');
+const distance = require('./nearest.js');
 const config = require('../config.json');
 
 let wordNet = {};
