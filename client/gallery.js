@@ -697,6 +697,7 @@ function initSidebarHandlers() {
   $('#folderstitle').click(() => $('#folders').toggle('slow'));
   $('#locationstitle').click(() => $('#locations').toggle('slow'));
   $('#classestitle').click(() => $('#classes').toggle('slow'));
+  $('#folders').toggle(false);
   $('#locations').toggle(false);
   $('#classes').toggle(false);
   $(window).resize(() => resizeViewport());
