@@ -20,7 +20,6 @@ async function open() {
       tbl.createIndex('name', 'image', { unique: true });
       tbl.createIndex('date', 'exif.created', { unique: false });
       tbl.createIndex('size', 'pixels', { unique: false });
-      tbl.createIndex('simmilarity', 'simmilarity', { unique: false });
     };
     request.onsuccess = (evt) => {
       if (window.debug) log.result('IndexDB request open');
@@ -63,13 +62,15 @@ async function get(name) {
 }
 
 async function all(index, direction = true) {
-  if (window.debug) log.result(`IndexDB all: ${index} ${direction}`);
   return new Promise((resolve) => {
     if (!index) {
       db.transaction([table], 'readonly')
         .objectStore(table)
         .getAll()
-        .onsuccess = (evt) => resolve(evt.target.result);
+        .onsuccess = (evt) => {
+          if (window.debug) log.result(`IndexDB All: all ${direction} ${evt.target.result.length}`);
+          resolve(evt.target.result);
+        };
     } else {
       const res = [];
       db.transaction([table], 'readonly')
@@ -81,6 +82,7 @@ async function all(index, direction = true) {
             res.push(evt.target.result.value);
             evt.target.result.continue();
           } else {
+            if (window.debug) log.result(`IndexDB All: ${index} ${direction} ${evt.target.result.length}`);
             resolve(res);
           }
         };
@@ -98,7 +100,11 @@ async function count() {
 }
 
 async function store(objects) {
-  for (const obj of objects) put(obj);
+  for (const obj of objects) {
+    if (!obj.exif) obj.exif = {};
+    if (!obj.exif.created) obj.exif.created = 0;
+    put(obj);
+  }
 }
 
 async function test() {

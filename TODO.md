@@ -6,9 +6,8 @@ N/A
 
 ## Future Features
 
-- Move long processing to worker thread
 - Server-side processing using TFJS-Node
-- Live video processing for Webcam feeds
+- Live video processing for Webcam feeds <https://github.com/AxisCommunications/media-stream-library-js>
 - Live video quick model
 - Hot reload for config
 - Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0: Face-API Incompatibility

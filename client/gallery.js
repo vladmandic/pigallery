@@ -4,7 +4,6 @@ const marked = require('marked');
 const { createPopper } = require('@popperjs/core');
 const log = require('./log.js');
 const config = require('./config.js').default;
-const hash = require('./blockhash.js');
 const details = require('./details.js');
 const map = require('./map.js');
 const db = require('./indexdb.js');
@@ -62,6 +61,7 @@ function busy(working) {
   $('body').css('cursor', working ? 'wait' : 'default');
   $('main').css('cursor', working ? 'wait' : 'default');
   $('#btn-number').css('color', working ? 'lightcoral' : 'gray');
+  $('#btn-number').toggleClass('fa-images fa-clock');
   $('#number').css('color', working ? 'lightcoral' : 'lightyellow');
 }
 
@@ -100,8 +100,8 @@ function addDividers(object) {
     if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
   }
   if (window.options.listDivider === 'month') {
-    const curr = (object && object.exif.created) ? moment(object.exif.created).format(window.options.dateDivider) : 'Date unknown';
-    const prev = (previous && previous.exif.created) ? moment(previous.exif.created).format(window.options.dateDivider) : 'Date unknown';
+    const curr = (object && object.exif.created && (object.exif.created !== 0)) ? moment(object.exif.created).format(window.options.dateDivider) : 'Date unknown';
+    const prev = (previous && previous.exif.created && (previous.exif.created !== 0)) ? moment(previous.exif.created).format(window.options.dateDivider) : 'Date unknown';
     if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
   }
   if (window.options.listDivider === 'size') {
@@ -446,7 +446,7 @@ async function sortResults(sort) {
   if (sort.includes('numeric-up')) window.filtered = await db.all('date', true);
   if (sort.includes('amount-down')) window.filtered = await db.all('size', false);
   if (sort.includes('amount-up')) window.filtered = await db.all('size', true);
-  if (sort.includes('simmilarity')) window.filtered = await db.all('simmilarity', false);
+  // if (sort.includes('simmilarity')) window.filtered = await db.all('simmilarity', false); // simmilarity is calculated, not stored in indexdb
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) window.options.listDivider = 'month';
   else if (sort.includes('amount-down') || sort.includes('amount-up')) window.options.listDivider = 'size';
@@ -467,41 +467,23 @@ async function sortResults(sort) {
 // find duplicate images based on pre-computed sha-256 hash
 async function findDuplicates() {
   busy(true);
-  /*
-  const worker = new Worker('client/worker.js');
-  worker.postMessage('start');
-  worker.onmessage((msg) => console.log('received', msg));
-  return;
-  */
+
   log.result('Analyzing images for simmilarity ...');
   const t0 = window.performance.now();
   previous = null;
-  let duplicates = [];
-  let duplicate;
+
+  const f = '/dist/worker.js';
+  const worker = new Worker(f);
+  worker.addEventListener('message', (msg) => {
+    // console.log('Miain received message', msg.data);
+    window.filtered = msg.data;
+    const t1 = window.performance.now();
+    log.result(`Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    sortResults('simmilarity');
+    busy(false);
+  });
   const all = await db.all();
-  const length = all.length - 1;
-  for (let i = 0; i < length + 1; i++) {
-    const a = all[i];
-    duplicate = false;
-    for (let j = i + 1; j < length; j++) {
-      const b = all[j];
-      const distance = (a.hash === b.hash) ? 0 : (hash.distance(a.phash, b.phash) + 1);
-      if (distance < 35) {
-        a.simmilarity = distance;
-        b.simmilarity = distance;
-        duplicate = true;
-        duplicates.push(b);
-      }
-    }
-    if (duplicate) duplicates.push(a);
-  }
-  duplicates = [...new Set(duplicates)];
-  if (window.filtered.length === duplicates.length) window.filtered = await db.all();
-  else window.filtered = duplicates;
-  const t1 = window.performance.now();
-  log.result(`Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
-  sortResults('simmilarity');
-  busy(false);
+  worker.postMessage(all);
 }
 
 // loads imagesm, displays gallery and enumerates sidebar

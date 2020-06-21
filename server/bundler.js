@@ -1,7 +1,7 @@
 const log = require('pilogger');
 const Parcel = require('parcel-bundler');
 
-const entryFiles = ['client/gallery.js', 'client/video.js', 'client/process.js', 'client/compare.js'];
+const entryFiles = ['client/gallery.js', 'client/video.js', 'client/process.js', 'client/compare.js', 'client/worker.js'];
 const options = {
   outDir: './dist',
   publicUrl: '/',
@@ -21,12 +21,14 @@ const options = {
   hmrHostname: '',
 };
 
-function parcel(app) {
+// eslint-disable-next-line no-unused-vars
+async function parcel(app) {
   const bundler = new Parcel(entryFiles, options);
   // bundler.on('buildStart', (f) => log.state('Build start', f));
   bundler.on('buildEnd', () => log.state('Client application rebuild ready'));
   bundler.on('buildError', (err) => log.state('Client application build error', err));
-  app.use('/client', bundler.middleware()); // use for bundle as express middle-ware
+  // app.use('/client', bundler.middleware()); // use for bundle as express middle-ware
+  await bundler.bundle();
 }
 
 exports.init = parcel;
