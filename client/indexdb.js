@@ -68,8 +68,9 @@ async function all(index, direction = true) {
         .objectStore(table)
         .getAll()
         .onsuccess = (evt) => {
-          if (window.debug) log.result(`IndexDB All: all ${direction} ${evt.target.result.length}`);
-          resolve(evt.target.result);
+          const res = evt.target.result;
+          if (window.debug) log.result(`IndexDB All: all ${direction} ${res.length}`);
+          resolve(res);
         };
     } else {
       const res = [];
@@ -82,7 +83,7 @@ async function all(index, direction = true) {
             res.push(evt.target.result.value);
             evt.target.result.continue();
           } else {
-            if (window.debug) log.result(`IndexDB All: ${index} ${direction} ${evt.target.result.length}`);
+            if (window.debug) log.result(`IndexDB All: ${index} ${direction} ${res.length}`);
             resolve(res);
           }
         };

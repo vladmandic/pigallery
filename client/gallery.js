@@ -94,31 +94,38 @@ function showTip(parent, text) {
 // adds dividiers based on sort order
 let previous;
 function addDividers(object) {
+  let divider;
   if (window.options.listDivider === 'simmilarity' && object.simmilarity) {
     const curr = `${100 - object.simmilarity}%`;
     const prev = previous ? `${100 - previous.simmilarity}%` : 'none';
-    if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
+    if (curr !== prev) divider = curr;
   }
   if (window.options.listDivider === 'month') {
     const curr = (object && object.exif.created && (object.exif.created !== 0)) ? moment(object.exif.created).format(window.options.dateDivider) : 'Date unknown';
     const prev = (previous && previous.exif.created && (previous.exif.created !== 0)) ? moment(previous.exif.created).format(window.options.dateDivider) : 'Date unknown';
-    if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
+    if (curr !== prev) divider = curr;
   }
   if (window.options.listDivider === 'size') {
     const curr = Math.round(object.pixels / 1000 / 1000);
     const prev = Math.round((previous ? previous.pixels : 1) / 1000 / 1000);
-    if (curr !== prev) $('#results').append(`<div class="row divider">Size: ${curr} MP</div>`);
+    if (curr !== prev) divider = curr;
   }
   if (window.options.listDivider === 'folder') {
     const curr = object.image.substr(0, object.image.lastIndexOf('/'));
     const prev = previous ? previous.image.substr(0, previous.image.lastIndexOf('/')) : 'none';
-    if (curr !== prev) $('#results').append(`<div class="row divider">${curr}</div>`);
+    if (curr !== prev) divider = curr;
   }
+  let div;
+  if (divider) {
+    div = document.createElement('div');
+    div.className = 'row divider';
+    div.innerText = divider;
+  }
+  return div;
 }
 
 // print results element with thumbnail and description for a given object
-async function printResult(object) {
-  addDividers(object);
+function printResult(object) {
   previous = object;
   let classified = '';
   let all = [...object.classify || [], ...object.alternative || []];
@@ -180,11 +187,10 @@ async function printResult(object) {
       </div>
     </div>
   `;
-  const divItem = document.createElement('div');
-  divItem.className = 'listitem';
-  divItem.innerHTML = html;
-  document.getElementById('results').appendChild(divItem);
-  return html;
+  const div = document.createElement('div');
+  div.className = 'listitem';
+  div.innerHTML = html;
+  return div;
 }
 
 // resize gallery view depending on user configuration
@@ -361,8 +367,6 @@ async function startSlideshow() {
 // redraws gallery view and rebuilds sidebar menu
 async function redrawResults(generateFolders = true) {
   busy(true);
-  $('#number').html(window.filtered.length);
-  $('#results').html('');
   if (generateFolders) {
     time(enumerateFolders);
     time(enumerateLocations);
@@ -370,8 +374,17 @@ async function redrawResults(generateFolders = true) {
     time(folderHandlers);
   }
   const t0 = window.performance.now();
-  for (const obj of window.filtered) {
-    setTimeout(() => printResult(obj), 1);
+  const res = document.getElementById('results');
+  res.innerHTML = '';
+  const num = document.getElementById('number');
+  for (const i in window.filtered) {
+    setTimeout(() => {
+      const divider = addDividers(window.filtered[i]);
+      const item = printResult(window.filtered[i]);
+      if (divider) res.appendChild(divider);
+      res.appendChild(item);
+      num.innerText = (parseInt(i, 10) + 1);
+    }, i);
   }
   const t1 = window.performance.now();
   if (window.debug) log.result(`Timed loop printResults: ${Math.round(t1 - t0).toLocaleString()} ms`);
@@ -432,7 +445,6 @@ function shuffle(array) {
 async function sortResults(sort) {
   busy(true);
   if (window.debug) log.result(`Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
-
   const t0 = window.performance.now();
   if (sort.includes('random')) {
     window.filtered = await db.all();
@@ -454,12 +466,14 @@ async function sortResults(sort) {
   else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
   $('#optionslist').toggle(false);
-  const t1 = window.performance.now();
   if (window.filtered.length === 0) {
     log.result('No images found, try reloading database ...');
   } else {
-    time(redrawResults);
-    log.result(`Displaying ${window.filtered.length} cached images in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    const t1 = window.performance.now();
+    await redrawResults();
+    const t2 = window.performance.now();
+    // log.result(`Displaying ${window.filtered.length} cached images in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    log.result(`Cached images: ${window.filtered.length} fetched in ${Math.round(t1 - t0).toLocaleString()} ms displayed in ${Math.round(t2 - t1).toLocaleString()} ms`);
   }
   busy(false);
 }
@@ -499,7 +513,7 @@ async function loadGallery(limit) {
       .node('{image}', (image) => {
         db.put(image);
         $('#number').text(count++);
-        printResult(image);
+        $('#results').append(printResult(image));
         enumerateFolders(image.image);
         // time: 15sec load, 10sec print, 3sec enumerate
       })
