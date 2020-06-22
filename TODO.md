@@ -7,7 +7,6 @@ N/A
 ## Future Features
 
 - Server-side processing using TFJS-Node
-- Optimize for large number of elements <https://clusterize.js.org/>
 - Live video processing for Webcam feeds <https://github.com/AxisCommunications/media-stream-library-js>
 - Live video quick model
 - Hot reload for config

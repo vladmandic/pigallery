@@ -9,6 +9,7 @@ const shrinkRay = require('shrink-ray-current');
 const nedb = require('nedb-promises');
 const api = require('./api.js');
 const parcel = require('./bundler.js');
+const changelog = require('./changelog.js');
 const nodeconfig = require('../package.json');
 const config = require('../config.json');
 
@@ -42,9 +43,12 @@ async function main() {
   log.info('Authentication required:', config.server.authForce);
   log.info('Media root:', config.server.mediaRoot);
   log.info('Allowed image file types:', config.server.allowedImageFileTypes);
+  changelog.update('CHANGELOG.md');
   const root = path.join(__dirname, '../');
   const app = express();
   app.disable('x-powered-by');
+
+  // update changelog
 
   // load expressjs middleware
   app.use(session(config.cookie));
