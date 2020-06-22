@@ -858,6 +858,17 @@ async function main() {
   time(sortResults, window.options.listSortOrder);
 }
 
+window.location = `#${moment().format('HHmmss')}`;
+
+window.onhashchange = (evt) => {
+  if (window.debug) log.result('OnHashChange', evt.newURL);
+  window.location = `#${moment().format('HHmmss')}`;
+};
+
+window.onpopstate = (evt) => {
+  if (window.debug) log.result('OnPopState', evt.target.location.href);
+};
+
 window.onload = main;
 
 exports.draw = sortResults;
