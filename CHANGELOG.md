@@ -1,6 +1,11 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/06/21 cyan00@gmail.com
+### **origin/HEAD** 2020/06/22 cyan00@gmail.com
+
+- added auto-generated changelog
+- implemented gallery infinite scroll
+
+### **v0.9.8** 2020/06/21 cyan00@gmail.com
 
 - gallery load optimizations
 - moved long processing to web worker
