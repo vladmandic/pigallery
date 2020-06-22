@@ -311,11 +311,15 @@ async function folderHandlers() {
 }
 
 // starts slideshow
-let slideshowRunning = false;
-async function startSlideshow() {
-  if (!slideshowRunning) return;
-  details.next(false);
-  setTimeout(() => startSlideshow(), window.options.slideDelay);
+let slideshowRunning;
+async function startSlideshow(start) {
+  if (start) {
+    details.next(false);
+    slideshowRunning = setTimeout(() => startSlideshow(true), window.options.slideDelay);
+  } else if (slideshowRunning) {
+    clearTimeout(slideshowRunning);
+    slideshowRunning = null;
+  }
 }
 
 // adds items to gallery view on scroll event - infinite scroll
@@ -607,7 +611,7 @@ async function initHotkeys() {
         $('#optionslist').toggle(false);
         $('#optionsview').toggle(false);
         $('#popup').toggle(false);
-        slideshowRunning = false;
+        startSlideshow(false);
         break;
       default: // log.result('Unhandled keydown event', event.keyCode);
     }
@@ -633,7 +637,7 @@ function initDetailsHandlers() {
   // navbar details close
   $('#details-close').click(() => {
     details.clear();
-    slideshowRunning = false;
+    startSlideshow(false);
     $('#popup').toggle('fast');
     $('#optionsview').toggle(false);
   });
@@ -719,11 +723,23 @@ async function initListHandlers() {
 
   // navline user docs
   $('#btn-doc').click(async () => {
-    showNavbar($('#docs'));
-    $('#docs').click(() => $('#docs').toggle('fast'));
-    const res = await fetch('/README.md');
-    const md = await res.text();
-    if (md) $('#docs').html(marked(md));
+    await showNavbar($('#docs'));
+    // $('#docs').click(() => $('#docs').toggle('fast'));
+    if ($('#docs').css('display') !== 'none') {
+      const res = await fetch('/README.md');
+      const md = await res.text();
+      if (md) $('#docs').html(marked(md));
+    }
+  });
+
+  $('#btn-changelog').click(async () => {
+    await showNavbar($('#docs'));
+    // $('#docs').click(() => $('#docs').toggle('fast'));
+    if ($('#docs').css('display') !== 'none') {
+      const res = await fetch('/CHANGELOG.md');
+      const md = await res.text();
+      if (md) $('#docs').html(marked(md));
+    }
   });
 
   // navline user logout
@@ -799,9 +815,8 @@ async function initListHandlers() {
   // navbar slideshow
   $('#btn-slide').click(() => {
     if (window.debug) log.result('Starting slide show ...');
-    slideshowRunning = true;
     details.show(window.filtered[0].image);
-    setTimeout(startSlideshow, window.options.slideDelay);
+    startSlideshow(true);
   });
 
   // navbar livevideo
@@ -815,6 +830,10 @@ async function initListHandlers() {
   $('#btn-number').click(async () => {
     if (window.debug) log.result('Reset filtered results');
     sortResults(window.options.listSortOrder);
+  });
+
+  $('#btn-number').mouseover(async (evt) => {
+    showTip(evt.target, `Currently displaying: ${(parseInt(current - 1, 10) + 1)}<br><br>Total images: ${window.filtered.length}`);
   });
 }
 
