@@ -1,5 +1,7 @@
 /* global L */
 
+// eslint-disable-next-line no-unused-vars
+const config = require('./config.js').default;
 const db = require('./indexdb.js');
 const log = require('./log.js');
 const nearest = require('./nearest.js');
@@ -8,7 +10,17 @@ const gallery = require('./gallery.js');
 let mapContainer;
 
 async function find(lat, lon) {
-  const all = await db.all();
+  // get data
+  let all;
+  const sort = window.options.listSortOrder;
+  if (sort.includes('alpha-down')) all = await db.all('name', true);
+  else if (sort.includes('alpha-up')) all = await db.all('name', false);
+  else if (sort.includes('numeric-down')) all = await db.all('date', false);
+  else if (sort.includes('numeric-up')) all = await db.all('date', true);
+  else if (sort.includes('amount-down')) all = await db.all('size', false);
+  else if (sort.includes('amount-up')) all = await db.all('size', true);
+  else all = db.all();
+  // const all = await db.all();
   const points = all
     .filter((a) => (a.exif && a.exif.lat && a.exif.lon))
     .map((a) => ({ lat: a.exif.lat, lon: a.exif.lon }));
@@ -44,7 +56,7 @@ async function show(visible) {
   L.mapquest.key = 'lYrP4vF3Uk5zgTiGGuEzQGwGIVDGuy24';
   mapContainer = L.mapquest.map('map', {
     center: [25.7632076, -80.1927073],
-    layers: L.mapquest.tileLayer('dark'),
+    layers: L.mapquest.tileLayer(window.options.mapColor),
     zoom: 3,
   });
   mapContainer.on('click', (evt) => {
