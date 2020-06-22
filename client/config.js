@@ -5,8 +5,54 @@ const modelClassify = require('./modelClassify.js');
 // eslint-disable-next-line no-unused-vars
 const modelDetect = require('./modelDetect.js');
 
+window.debug = false;
+
+// user configurable options, stored in browsers local storage
+window.options = {
+  get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || 500, 10); },
+  set listItemCount(val) { return localStorage.setItem('listItemCount', val); },
+  get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
+  set listFolders(val) { return localStorage.setItem('listFolders', val); },
+  get listDetails() { return localStorage.getItem('listDetails') ? localStorage.getItem('listDetails') === 'true' : true; },
+  set listDetails(val) { return localStorage.setItem('listDetails', val); },
+  get listDivider() { return localStorage.getItem('listDivider') || 'month'; },
+  set listDivider(val) { return localStorage.setItem('listDivider', val); },
+  get listSortOrder() { return localStorage.getItem('listSortOrder') || 'numeric-down'; },
+  set listSortOrder(val) { return localStorage.setItem('listSortOrder', val); },
+  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 165, 10); },
+  set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
+  get listLimit() { return parseInt(localStorage.getItem('listLimit') || 100, 10); },
+  set listLimit(val) { return localStorage.setItem('listLimit', val); },
+  get viewDetails() { return localStorage.getItem('viewDetails') ? localStorage.getItem('viewDetails') === 'true' : true; },
+  set viewDetails(val) { return localStorage.setItem('viewDetails', val); },
+  get viewBoxes() { return localStorage.getItem('viewBoxes') ? localStorage.getItem('viewBoxes') === 'true' : true; },
+  set viewBoxes(val) { return localStorage.setItem('viewBoxes', val); },
+  get viewFaces() { return localStorage.getItem('viewFaces') ? localStorage.getItem('viewFaces') === 'true' : true; },
+  set viewFaces(val) { return localStorage.setItem('viewFaces', val); },
+  get viewRaw() { return localStorage.getItem('viewRaw') ? localStorage.getItem('viewRaw') === 'true' : false; },
+  set viewRaw(val) { return localStorage.setItem('viewRaw', val); },
+  get liveLoad() { return localStorage.getItem('liveLoad') ? localStorage.getItem('liveLoad') === 'true' : false; },
+  set liveLoad(val) { return localStorage.setItem('liveLoad', val); },
+  get dateShort() { return localStorage.getItem('dateShort') || 'YYYY/MM/DD'; },
+  set dateShort(val) { return localStorage.setItem('dateShort', val); },
+  get dateLong() { return localStorage.getItem('dateLong') || 'dddd, MMMM Do, YYYY'; },
+  set dateLong(val) { return localStorage.setItem('dateLong', val); },
+  get dateDivider() { return localStorage.getItem('dateDivider') || 'MMMM YYYY'; },
+  set dateDivider(val) { return localStorage.setItem('dateDivider', val); },
+  get fontSize() { return localStorage.getItem('fontSize') || '14px'; },
+  set fontSize(val) { return localStorage.setItem('fontSize', val); },
+  get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || 2500, 10); },
+  set slideDelay(val) { return localStorage.setItem('slidedelay', val); },
+  get topClasses() { return parseInt(localStorage.getItem('slidedelay') || 25, 10); },
+  set topClasses(val) { return localStorage.setItem('slidedelay', val); },
+  get listDetailsWidth() { return parseFloat(localStorage.getItem('listDetailsWidth') || 0.25); },
+  set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
+  get mapColor() { return localStorage.getItem('mapColor') || 'dark'; },
+  set mapColor(val) { return localStorage.setItem('dark', val); },
+};
+
+// TFJS Configuration
 const config = {
-  // General configuration
   backEnd: 'webgl',        // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
   floatPrecision: true,    // use 32bit or 16bit float precision
   maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required

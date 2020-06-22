@@ -11,47 +11,6 @@ const pwa = require('./pwa-register.js');
 
 // global variables
 window.filtered = [];
-window.debug = false;
-
-// user configurable options, stored in browsers local storage
-window.options = {
-  get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
-  set listFolders(val) { return localStorage.setItem('listFolders', val); },
-  get listDetails() { return localStorage.getItem('listDetails') ? localStorage.getItem('listDetails') === 'true' : true; },
-  set listDetails(val) { return localStorage.setItem('listDetails', val); },
-  get listDivider() { return localStorage.getItem('listDivider') || 'month'; },
-  set listDivider(val) { return localStorage.setItem('listDivider', val); },
-  get listSortOrder() { return localStorage.getItem('listSortOrder') || 'numeric-down'; },
-  set listSortOrder(val) { return localStorage.setItem('listSortOrder', val); },
-  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 165, 10); },
-  set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
-  get listLimit() { return parseInt(localStorage.getItem('listLimit') || 100, 10); },
-  set listLimit(val) { return localStorage.setItem('listLimit', val); },
-  get viewDetails() { return localStorage.getItem('viewDetails') ? localStorage.getItem('viewDetails') === 'true' : true; },
-  set viewDetails(val) { return localStorage.setItem('viewDetails', val); },
-  get viewBoxes() { return localStorage.getItem('viewBoxes') ? localStorage.getItem('viewBoxes') === 'true' : true; },
-  set viewBoxes(val) { return localStorage.setItem('viewBoxes', val); },
-  get viewFaces() { return localStorage.getItem('viewFaces') ? localStorage.getItem('viewFaces') === 'true' : true; },
-  set viewFaces(val) { return localStorage.setItem('viewFaces', val); },
-  get viewRaw() { return localStorage.getItem('viewRaw') ? localStorage.getItem('viewRaw') === 'true' : false; },
-  set viewRaw(val) { return localStorage.setItem('viewRaw', val); },
-  get liveLoad() { return localStorage.getItem('liveLoad') ? localStorage.getItem('liveLoad') === 'true' : false; },
-  set liveLoad(val) { return localStorage.setItem('liveLoad', val); },
-  get dateShort() { return localStorage.getItem('dateShort') || 'YYYY/MM/DD'; },
-  set dateShort(val) { return localStorage.setItem('dateShort', val); },
-  get dateLong() { return localStorage.getItem('dateLong') || 'dddd, MMMM Do, YYYY'; },
-  set dateLong(val) { return localStorage.setItem('dateLong', val); },
-  get dateDivider() { return localStorage.getItem('dateDivider') || 'MMMM YYYY'; },
-  set dateDivider(val) { return localStorage.setItem('dateDivider', val); },
-  get fontSize() { return localStorage.getItem('fontSize') || '14px'; },
-  set fontSize(val) { return localStorage.setItem('fontSize', val); },
-  get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || 2500, 10); },
-  set slideDelay(val) { return localStorage.setItem('slidedelay', val); },
-  get topClasses() { return parseInt(localStorage.getItem('slidedelay') || 25, 10); },
-  set topClasses(val) { return localStorage.setItem('slidedelay', val); },
-  get listDetailsWidth() { return parseFloat(localStorage.getItem('listDetailsWidth') || 0.25); },
-  set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
-};
 
 // google analytics
 // eslint-disable-next-line prefer-rest-params
@@ -60,9 +19,9 @@ function gtag() { window.dataLayer.push(arguments); }
 function busy(working) {
   $('body').css('cursor', working ? 'wait' : 'default');
   $('main').css('cursor', working ? 'wait' : 'default');
-  $('#btn-number').css('color', working ? 'lightcoral' : 'gray');
+  $('#btn-number').css('color', working ? 'lightcoral' : 'lightyellow');
   $('#btn-number').toggleClass('fa-images fa-clock');
-  $('#number').css('color', working ? 'lightcoral' : 'lightyellow');
+  $('#number').css('color', working ? 'gray' : 'lightyellow');
 }
 
 async function time(fn, arg) {
@@ -171,7 +130,7 @@ function printResult(object) {
 
   const root = window.user && window.user.root ? window.user.root : 'media/';
   const html = `
-    <div class="listitem">
+    <div class="listitem" style="min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px">
       <div class="col thumbnail">
         <img class="thumbnail" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}"
         align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px
@@ -208,10 +167,7 @@ async function resizeResults() {
 }
 
 // extracts all locations from loaded images and builds sidebar menu
-// let enumeratedLocations = 0;
 async function enumerateLocations() {
-  // if (window.filtered.length === enumeratedLocations) return;
-  // enumeratedLocations = window.filtered.length;
   $('#locations').html('');
   const locationsList = [];
   let unknown = 0;
@@ -241,10 +197,7 @@ async function enumerateLocations() {
 }
 
 // exctract top classe from classification & detection and builds sidebar menu
-// let enumeratedClasses = 0;
 async function enumerateClasses() {
-  // if (window.filtered.length === enumeratedClasses) return;
-  // enumeratedClasses = window.filtered.length;
   $('#classes').html('');
   const classesList = [];
   for (const item of window.filtered) {
@@ -275,10 +228,7 @@ async function enumerateClasses() {
 // builds folder list from all loaded images and builds sidebar menu
 // can be used with entire image list or per-object
 let folderList = [];
-// let enumeratedFolders = 0;
 async function enumerateFolders(input) {
-  // if (window.filtered.length === enumeratedFolders) return;
-  // enumeratedFolders = window.filtered.length;
   $('#folders').html('');
   if (input) {
     const path = input.substr(0, input.lastIndexOf('/'));
@@ -326,23 +276,27 @@ async function enumerateFolders(input) {
 async function folderHandlers() {
   $('.folder').off();
   $('.folder').click(async (evt) => {
+    if (!window.filtered || (window.filtered.length < 1)) {
+      // eslint-disable-next-line no-use-before-define
+      redrawResults();
+      return;
+    }
     busy(true);
     const path = $(evt.target).attr('tag');
-    const all = await db.all('date', false);
     switch (evt.target.getAttribute('type')) {
       case 'folder':
         if (window.debug) log.result(`Selected path: ${path}`);
         const root = window.user && window.user.root ? window.user.root : 'media/';
-        if (path === root) window.filtered = all;
-        else window.filtered = all.filter((a) => a.image.startsWith(path));
+        if (path !== root) window.filtered = window.filtered.filter((a) => a.image.startsWith(path));
+        else window.filtered = db.all('date', false);
         break;
       case 'location':
         if (window.debug) log.result(`Selected location: ${path}`);
-        if (path !== 'Unknown') window.filtered = all.filter((a) => path.startsWith(a.location.near));
-        else window.filtered = all.filter((a) => (!a.location || !a.location.near));
+        if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => path.startsWith(a.location.near));
+        else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
         break;
       case 'class':
-        window.filtered = all.filter((a) => {
+        window.filtered = window.filtered.filter((a) => {
           const found = a.tags.find((b) => (Object.values(b)[0].toString().startsWith(path)));
           return found;
         });
@@ -351,7 +305,7 @@ async function folderHandlers() {
       default:
     }
     // eslint-disable-next-line no-use-before-define
-    time(redrawResults, false);
+    time(redrawResults);
     busy(false);
   });
 }
@@ -364,18 +318,42 @@ async function startSlideshow() {
   setTimeout(() => startSlideshow(), window.options.slideDelay);
 }
 
-// redraws gallery view and rebuilds sidebar menu
-async function redrawResults(generateFolders = true) {
-  busy(true);
-  if (generateFolders) {
-    time(enumerateFolders);
-    time(enumerateLocations);
-    time(enumerateClasses);
-    time(folderHandlers);
+// adds items to gallery view on scroll event - infinite scroll
+let current = 0;
+async function scrollResults() {
+  const num = document.getElementById('number');
+  const scrollHeight = $('#all').prop('scrollHeight');
+  const bottom = $('#all').scrollTop() + $('#all').height();
+  if (((bottom + 16) >= scrollHeight) && (current < window.filtered.length)) {
+    const t0 = window.performance.now();
+    const res = document.getElementById('results');
+    const count = Math.min(window.options.listItemCount, window.filtered.length - current);
+    let i = current;
+    while (i < (current + count)) {
+      const divider = addDividers(window.filtered[i]);
+      const item = printResult(window.filtered[i]);
+      if (divider) res.appendChild(divider);
+      res.appendChild(item);
+      i++;
+    }
+    current = i;
+    const t1 = window.performance.now();
+    if (window.debug) log.result(`Timed scrollResults: ${Math.round(t1 - t0).toLocaleString()} ms added: ${count} current: ${current} total: ${window.filtered.length}`);
   }
+  num.innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length}`;
+}
+
+// redraws gallery view and rebuilds sidebar menu
+async function redrawResults() {
+  busy(true);
+  time(enumerateFolders);
+  time(enumerateLocations);
+  time(enumerateClasses);
+  time(folderHandlers);
   const t0 = window.performance.now();
   const res = document.getElementById('results');
   res.innerHTML = '';
+  /*
   const num = document.getElementById('number');
   for (const i in window.filtered) {
     setTimeout(() => {
@@ -386,24 +364,27 @@ async function redrawResults(generateFolders = true) {
       num.innerText = (parseInt(i, 10) + 1);
     }, i);
   }
+  */
+  current = 0;
+  $('#all').off('scroll');
+  $('#all').scroll(() => scrollResults());
+  time(scrollResults);
   const t1 = window.performance.now();
   if (window.debug) log.result(`Timed loop printResults: ${Math.round(t1 - t0).toLocaleString()} ms`);
-  time(resizeResults);
   busy(false);
 }
 
 // used by filterresults
-function filterWord(object, word) {
-  if (!object) return null;
+function filterWord(word) {
   const skip = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during', 'on'];
-  if (skip.includes(word)) return object;
-  const res = object.filter((obj) => {
-    let ok = false;
+  if (skip.includes(word)) return window.filtered;
+  const res = window.filtered.filter((obj) => {
     for (const tag of obj.tags) {
       const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0].toString() : '';
-      ok |= str.startsWith(word.toLowerCase());
+      const found = str.startsWith(word);
+      if (found) return true;
     }
-    return ok;
+    return false;
   });
   return res;
 }
@@ -411,11 +392,11 @@ function filterWord(object, word) {
 // filters images based on search strings
 async function filterResults(words) {
   busy(true);
-  window.filtered = await db.all();
+  // window.filtered = await db.all();
   previous = null;
   let foundWords = 0;
   for (const word of words.split(' ')) {
-    window.filtered = filterWord(window.filtered, word);
+    window.filtered = filterWord(word.toLowerCase());
     foundWords += (window.filtered && window.filtered.length > 0) ? 1 : 0;
   }
   if (window.debug) {
@@ -472,9 +453,9 @@ async function sortResults(sort) {
     const t1 = window.performance.now();
     await redrawResults();
     const t2 = window.performance.now();
-    // log.result(`Displaying ${window.filtered.length} cached images in ${Math.round(t1 - t0).toLocaleString()} ms`);
     log.result(`Cached images: ${window.filtered.length} fetched in ${Math.round(t1 - t0).toLocaleString()} ms displayed in ${Math.round(t2 - t1).toLocaleString()} ms`);
   }
+  $('#all').focus();
   busy(false);
 }
 
@@ -526,7 +507,6 @@ async function loadGallery(limit) {
           log.result(`Received ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms`);
         }
         window.filtered = await db.all();
-        // time(resizeResults);
         time(sortResults, window.options.listSortOrder);
       });
   } else {
@@ -543,7 +523,6 @@ async function loadGallery(limit) {
       log.result(`Received ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
     }
     window.filtered = await db.all();
-    // time(resizeResults);
     time(sortResults, window.options.listSortOrder);
   }
   busy(false);
@@ -603,16 +582,16 @@ function showNavbar(elem) {
 // handle keypresses on main
 async function initHotkeys() {
   $('html').keydown(() => {
-    const current = $('#results').scrollTop();
+    const top = $('#results').scrollTop();
     const line = window.options.listThumbSize + 16;
     const page = $('#results').height() - window.options.listThumbSize;
     const bottom = $('#results').prop('scrollHeight');
     $('#results').stop();
     switch (event.keyCode) {
-      case 38: $('#results').animate({ scrollTop: current - line }, 400); break; // key=up: scroll line up
-      case 40: $('#results').animate({ scrollTop: current + line }, 400); break; // key=down; scroll line down
-      case 33: $('#results').animate({ scrollTop: current - page }, 400); break; // key=pgup; scroll page up
-      case 34: $('#results').animate({ scrollTop: current + page }, 400); break; // key=pgdn; scroll page down
+      case 38: $('#results').animate({ scrollTop: top - line }, 400); break; // key=up: scroll line up
+      case 40: $('#results').animate({ scrollTop: top + line }, 400); break; // key=down; scroll line down
+      case 33: $('#results').animate({ scrollTop: top - page }, 400); break; // key=pgup; scroll page up
+      case 34: $('#results').animate({ scrollTop: top + page }, 400); break; // key=pgdn; scroll page down
       case 36: $('#results').animate({ scrollTop: 0 }, 1000); break; // key=home; scroll to top
       case 35: $('#results').animate({ scrollTop: bottom }, 1000); break; // key=end; scroll to bottom
       case 37: details.next(true); break; // key=left; previous image in details view
@@ -621,6 +600,7 @@ async function initHotkeys() {
       case 190: $('#btn-sort').click(); break; // key=.; open sort options
       case 188: $('#btn-desc').click(); break; // key=,; show/hide list descriptions
       case 220: loadGallery(); break; // key=\; refresh all
+      case 222: sortResults(window.options.listSortOrder); break; // key='; remove filters
       case 27: // key=esc; close all
         $('#popup').toggle(false);
         $('#searchbar').toggle(false);
@@ -690,6 +670,7 @@ function initDetailsHandlers() {
 }
 
 function initSidebarHandlers() {
+  $('#resettitle').click(() => sortResults(window.options.listSortOrder));
   $('#folderstitle').click(() => $('#folders').toggle('slow'));
   $('#locationstitle').click(() => $('#locations').toggle('slow'));
   $('#classestitle').click(() => $('#classes').toggle('slow'));
@@ -780,7 +761,8 @@ async function initListHandlers() {
   // navline search cancel
   $('#btn-resetsearch').click(() => {
     $('#search-input')[0].value = '';
-    filterResults('');
+    // filterResults('');
+    sortResults(window.options.listSortOrder);
   });
 
   // navbar list
@@ -832,8 +814,7 @@ async function initListHandlers() {
   // navbar images number
   $('#btn-number').click(async () => {
     if (window.debug) log.result('Reset filtered results');
-    window.filtered = await db.all();
-    redrawResults();
+    sortResults(window.options.listSortOrder);
   });
 }
 
@@ -846,7 +827,6 @@ async function main() {
   // Register PWA
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
 
-  // const t0 = window.performance.now();
   resizeViewport();
   await initUser();
   initListHandlers();
@@ -855,18 +835,8 @@ async function main() {
   initHotkeys();
   showNavbar();
   await db.open();
-  /*
-  const t0 = window.performance.now();
-  window.filtered = await db.all();
-  const t1 = window.performance.now();
-  if (window.debug) log.result(`Timed dbAll: ${Math.round(t1 - t0).toLocaleString()} ms`);
-  if (window.filtered.length === 0) await time(loadGallery, window.options.listLimit);
-  */
   window.details = details;
   time(sortResults, window.options.listSortOrder);
-  // await time(loadGallery, window.options.listLimit);
-  // const t1 = window.performance.now();
-  // log.result(`Ready in ${Math.round(t1 - t0).toLocaleString()} ms`);
 }
 
 window.onload = main;
