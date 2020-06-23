@@ -5,6 +5,7 @@
   ],
   "locations": [
     { "folder": "Pictures/Snapseed/", "match": "" },
+    { "folder": "Pictures/Camera Roll/", "match": "-01.jp" },
     { "folder": "People/Vlado/", "match": "" },
     { "folder": "People/California/", "match": "" },
     { "folder": "People/Miami/", "match": "" },
