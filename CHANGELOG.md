@@ -2,6 +2,9 @@
 
 ### **origin/HEAD** 2020/06/22 cyan00@gmail.com
 
+
+### **v0.9.9** 2020/06/22 cyan00@gmail.com
+
 - added auto-generated changelog
 - implemented gallery infinite scroll
 

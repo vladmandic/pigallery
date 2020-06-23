@@ -12,6 +12,7 @@ N/A
 - Options editor
 - Hot reload for config
 - Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0: Face-API Incompatibility
+- Use DeepDetect model
 
 ## Convert
 

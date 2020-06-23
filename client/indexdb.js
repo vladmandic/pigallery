@@ -61,39 +61,36 @@ async function get(name) {
     .onsuccess = (evt) => evt.target.result;
 }
 
-async function all(index, direction = true) {
+async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER) {
   return new Promise((resolve) => {
-    if (!index) {
-      db.transaction([table], 'readonly')
-        .objectStore(table)
-        .getAll()
-        .onsuccess = (evt) => {
-          const res = evt.target.result;
-          if (window.debug) log.result(`IndexDB All: all ${direction} ${res.length}`);
-          resolve(res);
-        };
-    } else {
-      const res = [];
-      db.transaction([table], 'readonly')
-        .objectStore(table)
-        .index(index)
-        .openCursor(null, direction ? 'next' : 'prev')
-        .onsuccess = (evt) => {
-          if (evt.target.result) {
-            res.push(evt.target.result.value);
-            evt.target.result.continue();
-          } else {
-            if (window.debug) log.result(`IndexDB All: ${index} ${direction} ${res.length}`);
+    const res = [];
+    if (!window.user || !window.user.user) resolve(res);
+    let idx = 0;
+    db.transaction([table], 'readonly')
+      .objectStore(table)
+      .index(index)
+      .openCursor(null, direction ? 'next' : 'prev')
+      .onsuccess = (evt) => {
+        if (evt.target.result) {
+          idx++;
+          const obj = evt.target.result.value;
+          if ((idx >= start) && (obj.image.startsWith(window.user.root))) res.push(obj);
+          if (idx < end) evt.target.result.continue();
+          else {
+            if (window.debug) log.result(`IndexDB All: ${index} ${direction} ${res.length} ${start}-${end}`);
             resolve(res);
           }
-        };
-    }
+        } else {
+          if (window.debug) log.result(`IndexDB All: ${index} ${direction} ${res.length}`);
+          resolve(res);
+        }
+      };
   });
 }
 
 async function count() {
   return new Promise((resolve) => {
-    db.transaction([table], 'readwrite')
+    db.transaction([table], 'readonly')
       .objectStore(table)
       .count()
       .onsuccess = (evt) => resolve(evt.target.result);

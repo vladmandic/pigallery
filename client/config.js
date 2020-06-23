@@ -53,7 +53,7 @@ window.options = {
 
 // TFJS Configuration
 const config = {
-  backEnd: 'webgl',        // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
+  backEnd: 'cpu',        // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
   floatPrecision: true,    // use 32bit or 16bit float precision
   maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
   renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
