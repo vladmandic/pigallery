@@ -97,7 +97,7 @@ function drawBoxes(object) {
   }
 }
 
-function resizeDetailsImage(object) {
+async function resizeDetailsImage(object) {
   if (object) last = object;
   if (!last) return;
   // wait for image to be loaded silly way as on load event doesn't trigger consistently
@@ -115,11 +115,7 @@ function resizeDetailsImage(object) {
     if (object) {
       const zoomX = $('#popup').width() / $('.iv-image').width();
       const zoomY = $('#popup').height() / $('.iv-image').height();
-      // if (vertical) viewer.zoom(100 * zoomY);
-      // else viewer.zoom(100 * zoomX);
-      viewer.zoom(100 * Math.min(zoomX, zoomY));
-    }
-    setTimeout(() => {
+      await viewer.zoom(100 * Math.min(zoomX, zoomY));
       $('.iv-image').css('cursor', 'zoom-in');
       // resize container to fit image
       $('#popup-image').width($('.iv-image').width());
@@ -137,7 +133,7 @@ function resizeDetailsImage(object) {
       }
       //  draw detection boxes and faces
       drawBoxes();
-    }, 200);
+    }
   }
 }
 

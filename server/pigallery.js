@@ -84,6 +84,13 @@ async function main() {
   app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
   app.use('/client', express.static(path.join(root, './client'), { cacheControl: false }));
 
+  // add static map files for inspector
+  app.get('/compare.js.map', (req, res) => res.sendFile('dist/compare.js.map', { root }));
+  app.get('/gallery.js.map', (req, res) => res.sendFile('dist/gallery.js.map', { root }));
+  app.get('/process.js.map', (req, res) => res.sendFile('dist/process.js.map', { root }));
+  app.get('/video.js.map', (req, res) => res.sendFile('dist/video.js.map', { root }));
+  app.get('/worker.js.map', (req, res) => res.sendFile('dist/worker.js.map', { root }));
+
   // initialize parceljs bundler
   await parcel.init(app);
 

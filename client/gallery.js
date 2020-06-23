@@ -349,6 +349,7 @@ async function scrollResults() {
 
 // redraws gallery view and rebuilds sidebar menu
 async function redrawResults() {
+  window.location = `#${new Date().getTime()}`;
   busy(true);
   time(enumerateFolders);
   time(enumerateLocations);
@@ -375,6 +376,7 @@ async function redrawResults() {
   time(scrollResults);
   const t1 = window.performance.now();
   if (window.debug) log.result(`Timed loop printResults: ${Math.round(t1 - t0).toLocaleString()} ms`);
+  // window.location = `#${moment().format('MMDDHHmmss')}`;
   busy(false);
 }
 
@@ -396,7 +398,6 @@ function filterWord(word) {
 // filters images based on search strings
 async function filterResults(words) {
   busy(true);
-  // window.filtered = await db.all();
   previous = null;
   let foundWords = 0;
   for (const word of words.split(' ')) {
@@ -428,6 +429,7 @@ function shuffle(array) {
 
 // sorts images based on given sort order
 async function sortResults(sort) {
+  $('#optionslist').toggle(false);
   busy(true);
   if (window.debug) log.result(`Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
   const t0 = window.performance.now();
@@ -437,12 +439,12 @@ async function sortResults(sort) {
   }
   previous = null;
   // sort by
-  if (sort.includes('alpha-down')) window.filtered = await db.all('name', true);
-  if (sort.includes('alpha-up')) window.filtered = await db.all('name', false);
-  if (sort.includes('numeric-down')) window.filtered = await db.all('date', false);
-  if (sort.includes('numeric-up')) window.filtered = await db.all('date', true);
-  if (sort.includes('amount-down')) window.filtered = await db.all('size', false);
-  if (sort.includes('amount-up')) window.filtered = await db.all('size', true);
+  if (sort.includes('alpha-down')) window.filtered = await db.all('name', true, 1, window.options.listItemCount);
+  if (sort.includes('alpha-up')) window.filtered = await db.all('name', false, 1, window.options.listItemCount);
+  if (sort.includes('numeric-down')) window.filtered = await db.all('date', false, 1, window.options.listItemCount);
+  if (sort.includes('numeric-up')) window.filtered = await db.all('date', true, 1, window.options.listItemCount);
+  if (sort.includes('amount-down')) window.filtered = await db.all('size', false, 1, window.options.listItemCount);
+  if (sort.includes('amount-up')) window.filtered = await db.all('size', true, 1, window.options.listItemCount);
   // if (sort.includes('simmilarity')) window.filtered = await db.all('simmilarity', false); // simmilarity is calculated, not stored in indexdb
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) window.options.listDivider = 'month';
@@ -450,16 +452,20 @@ async function sortResults(sort) {
   else if (sort.includes('alpha-down') || sort.includes('alpha-up')) window.options.listDivider = 'folder';
   else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
-  $('#optionslist').toggle(false);
-  if (window.filtered.length === 0) {
-    log.result('No images found, try reloading database ...');
-  } else {
-    const t1 = window.performance.now();
-    await redrawResults();
-    const t2 = window.performance.now();
-    log.result(`Cached images: ${window.filtered.length} fetched in ${Math.round(t1 - t0).toLocaleString()} ms displayed in ${Math.round(t2 - t1).toLocaleString()} ms`);
-  }
+  const t1 = window.performance.now();
+  await redrawResults();
+  const t2 = window.performance.now();
+  if (window.debug) log.result(`Cached images: ${window.filtered.length} fetched initial in ${Math.round(t1 - t0).toLocaleString()} ms displayed in ${Math.round(t2 - t1).toLocaleString()} ms`);
   $('#all').focus();
+  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await db.all('name', true, window.options.listItemCount + 1));
+  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await db.all('name', false, window.options.listItemCount + 1));
+  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await db.all('date', false, window.options.listItemCount + 1));
+  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await db.all('date', true, window.options.listItemCount + 1));
+  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, window.options.listItemCount + 1));
+  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, window.options.listItemCount + 1));
+  const t3 = window.performance.now();
+  if (window.debug) log.result(`Cached images: ${window.filtered.length} fetched remaining in ${Math.round(t3 - t1).toLocaleString()} ms`);
+  log.result(`Retrieved ${window.filtered.length} images from cache`);
   busy(false);
 }
 
@@ -858,11 +864,20 @@ async function main() {
   time(sortResults, window.options.listSortOrder);
 }
 
-window.location = `#${moment().format('HHmmss')}`;
-
-window.onhashchange = (evt) => {
+window.onhashchange = async (evt) => {
   if (window.debug) log.result('OnHashChange', evt.newURL);
-  window.location = `#${moment().format('HHmmss')}`;
+  const target = parseInt(evt.newURL.substr(evt.newURL.indexOf('#') + 1), 10);
+  const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1), 10);
+  if (source > target) {
+    const top = parseInt($('#all').scrollTop(), 10) === 0;
+    const all = await db.count() - window.filtered.length;
+    if (top && all === 0) {
+      if (window.debug) log.result('Exiting ...');
+    } else {
+      if (window.debug) log.result('Reset image selection');
+      sortResults(window.options.listSortOrder);
+    }
+  }
 };
 
 window.onpopstate = (evt) => {

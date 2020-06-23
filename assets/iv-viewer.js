@@ -1,30 +1,18 @@
+/* eslint-disable func-names */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 /* eslint-disable no-func-assign */
 /* eslint-disable no-proto */
-/* eslint-disable consistent-return */
 /* eslint-disable no-cond-assign */
-/* eslint-disable no-unsafe-finally */
-/* eslint-disable no-void */
-/* eslint-disable no-restricted-properties */
 /* eslint-disable no-shadow */
-/* eslint-disable max-len */
-/* eslint-disable func-names */
 /* eslint-disable no-use-before-define */
 /* eslint-disable prefer-rest-params */
 
-/**
- * iv-viewer - 2.0.1
- * Author : Sudhanshu Yadav
- * Copyright (c)  2019 to Sudhanshu Yadav, released under the MIT license.
- * git+https://github.com/s-yadav/iv-viewer.git
- */
+// Based on iv-viewer - 2.0.1 Author : Sudhanshu Yadav git+https://github.com/s-yadav/iv-viewer.git
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory()
-    : typeof define === 'function' && define.amd ? define(factory)
-      : (global = global || self, global.ImageViewer = factory());
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : (global = global || self, global.ImageViewer = factory());
 }(this, () => {
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -106,7 +94,7 @@
   }
 
   function _assertThisInitialized(self) {
-    if (self === void 0) {
+    if (self === undefined) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
     }
     return self;
@@ -133,11 +121,9 @@
     } else {
       _get = function _get(target, property, receiver) {
         const base = _superPropBase(target, property);
-        if (!base) return;
+        if (!base) return null;
         const desc = Object.getOwnPropertyDescriptor(base, property);
-        if (desc.get) {
-          return desc.get.call(receiver);
-        }
+        if (desc.get) return desc.get.call(receiver);
         return desc.value;
       };
     }
@@ -150,28 +136,22 @@
 
   function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
+    return null;
   }
 
   function _iterableToArrayLimit(arr, i) {
     const _arr = [];
     let _n = true;
-    let _d = false;
-    let _e;
     try {
       for (let _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
         _arr.push(_s.value);
-
         if (i && _arr.length === i) break;
       }
-    } catch (err) {
-      _d = true;
-      _e = err;
+    } catch (err) { /**/
     } finally {
       try {
         if (!_n && _i.return != null) _i.return();
-      } finally {
-        if (_d) throw _e;
-      }
+      } finally { /**/ }
     }
     return _arr;
   }
@@ -197,6 +177,7 @@
     t -= 1;
     return -c * (t * t * t * t - 1) + b;
   }
+
   function createElement(options) {
     const elem = document.createElement(options.tagName);
     if (options.id) elem.id = options.id;
@@ -262,7 +243,7 @@
   }
   function wrap(element, _ref) {
     const _ref$tag = _ref.tag;
-    const tag = _ref$tag === void 0 ? 'div' : _ref$tag;
+    const tag = _ref$tag === undefined ? 'div' : _ref$tag;
     const className = _ref.className;
     const id = _ref.id;
     const style = _ref.style;
@@ -285,7 +266,7 @@
   function remove(elements) {
     const elmArray = toArray(elements);
     elmArray.forEach((element) => {
-      element.parentNode.removeChild(element);
+      if (element.parentNode) element.parentNode.removeChild(element);
     });
   }
   function clamp(num, min, max) {
@@ -296,7 +277,7 @@
     events.forEach((event) => {
       element.addEventListener(event, handler);
     });
-    return function () {
+    return () => {
       events.forEach((event) => {
         element.removeEventListener(event, handler);
       });
@@ -305,7 +286,7 @@
   function getTouchPointsDistance(touches) {
     const touch0 = touches[0];
     const touch1 = touches[1];
-    return Math.sqrt(Math.pow(touch1.pageX - touch0.pageX, 2) + Math.pow(touch1.pageY - touch0.pageY, 2));
+    return Math.sqrt(((touch1.pageX - touch0.pageX) ** 2) + ((touch1.pageY - touch0.pageY) ** 2));
   }
 
   const Slider = (function () {
@@ -402,14 +383,27 @@
     return Slider;
   }());
 
-  const imageViewHtml = '\n  <div class="iv-loader"></div>\n  <div class="iv-snap-view">\n    <div class="iv-snap-image-wrap">\n      <div class="iv-snap-handle"></div>\n    </div>\n    <div class="iv-zoom-slider">\n      <div class="iv-zoom-handle"></div>\n    </div>\n  </div>\n  <div class="iv-image-view" >\n    <div class="iv-image-wrap" ></div>\n  </div>\n';
+  const imageViewHtml = `
+    <div class="iv-loader"></div>
+    <div class="iv-snap-view">
+      <div class="iv-snap-image-wrap">
+        <div class="iv-snap-handle"></div>
+      </div>
+      <div class="iv-zoom-slider">
+        <div class="iv-zoom-handle"></div>
+      </div>
+    </div>
+    <div class="iv-image-view">
+      <div class="iv-image-wrap"></div>
+    </div>
+    `;
 
   const ImageViewer = (function () {
     function ImageViewer(element) {
       const _this = this;
       const options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       _classCallCheck(this, ImageViewer);
-      _defineProperty(this, 'zoom', (perc, point) => {
+      _defineProperty(this, 'zoom', async (perc, point) => {
         const _options = _this._options;
         const _elements = _this._elements;
         const _state = _this._state;
@@ -422,10 +416,7 @@
         const maxZoom = _options.maxZoom;
         perc = Math.round(Math.max(100, perc));
         perc = Math.min(maxZoom, perc);
-        point = point || {
-          x: containerDim.w / 2,
-          y: containerDim.h / 2,
-        };
+        point = point || { x: containerDim.w / 2, y: containerDim.h / 2 };
         const curLeft = parseFloat(css(image, 'left'));
         const curTop = parseFloat(css(image, 'top')); // clear any panning frames
         _this._clearFrames();
@@ -437,10 +428,7 @@
 
         const zoom = function zoom() {
           step++;
-          if (step < 16) {
-            _this._frames.zoomFrame = requestAnimationFrame(zoom);
-          }
-
+          if (step < 16) _this._frames.zoomFrame = requestAnimationFrame(zoom);
           const tickZoom = easeOutQuart(step, curPerc, perc - curPerc, 16);
           const ratio = tickZoom / curPerc;
           const imgWidth = imageDim.w * tickZoom / 100;
@@ -449,13 +437,8 @@
           let newTop = -((point.y - curTop) * ratio - point.y); // fix for left and top
           newLeft = Math.min(newLeft, baseLeft);
           newTop = Math.min(newTop, baseTop); // fix for right and bottom
-          if (newLeft + imgWidth < baseRight) {
-            newLeft = baseRight - imgWidth; // newLeft - (newLeft + imgWidth - baseRight)
-          }
-
-          if (newTop + imgHeight < baseBottom) {
-            newTop = baseBottom - imgHeight; // newTop + (newTop + imgHeight - baseBottom)
-          }
+          if (newLeft + imgWidth < baseRight) newLeft = baseRight - imgWidth; // newLeft - (newLeft + imgWidth - baseRight)
+          if (newTop + imgHeight < baseBottom) newTop = baseBottom - imgHeight; // newTop + (newTop + imgHeight - baseBottom)
           css(image, {
             height: ''.concat(imgHeight, 'px'),
             width: ''.concat(imgWidth, 'px'),
@@ -464,11 +447,18 @@
           });
           _this._state.zoomValue = tickZoom;
           _this._resizeSnapHandle(imgWidth, imgHeight, newLeft, newTop); // update zoom handle position
-          css(zoomHandle, {
-            left: ''.concat((tickZoom - 100) * zoomSliderLength / (maxZoom - 100), 'px'),
-          });
+          css(zoomHandle, { left: ''.concat((tickZoom - 100) * zoomSliderLength / (maxZoom - 100), 'px') });
         };
+        const initialFrame = _this._frames.zoomFrame;
         zoom();
+        return new Promise((resolve) => {
+          const wait = setInterval(() => {
+            if (_this._frames.zoomFrame - initialFrame >= 15) {
+              clearInterval(wait);
+              resolve(true);
+            }
+          }, 10);
+        });
       });
 
       _defineProperty(this, '_clearFrames', () => {
@@ -1015,13 +1005,8 @@
           if (hiResImageSrc) {
             _this9._loadHighResImage(hiResImageSrc);
           } // set loaded flag to true
-
-
           _this9._state.loaded = true; // calculate the dimension
-
           _this9._calculateDimensions(); // reset the zoom
-
-
           _this9.resetZoom();
         };
 
@@ -1168,7 +1153,6 @@
         if (domElement !== container) {
           unwrap(domElement);
         } // remove imageViewer reference from dom element
-
 
         domElement._imageViewer = null;
       },
