@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- adding hash to url to monitor hashchange
 
 ### **origin/HEAD** 2020/06/22 cyan00@gmail.com
 
