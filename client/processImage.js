@@ -179,7 +179,7 @@ async function processImage(name) {
   log.active(`Loading: ${name}`);
   tf.engine().startScope();
   log.state(`Engine state: ${tf.memory().numBytes.toLocaleString()} bytes ${tf.memory().numTensors.toLocaleString()} 
-    tensors ${tf.memory().numDataBuffers.toLocaleString()} buffers ${tf.memory().numBytesInGPU.toLocaleString()} GPU bytes`);
+    tensors ${tf.memory().numDataBuffers.toLocaleString()} buffers ${tf.memory().numBytesInGPU ? tf.memory().numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj = {};
   obj.image = name;
 

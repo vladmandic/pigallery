@@ -6,6 +6,7 @@ const moment = require('moment');
 const exif = require('jpeg-exif');
 const parser = require('exif-parser');
 const log = require('pilogger');
+// const nedb = require('nedb-promises');
 const distance = require('./nearest.js');
 const config = require('../config.json');
 
@@ -274,7 +275,7 @@ function readDir(folder, match = null, recursive = false) {
       const stat = fs.statSync(name);
       if (stat.isFile()) {
         if (match) {
-          if (path.includes(match)) files.push(name);
+          if (name.includes(match)) files.push(name);
         } else {
           files.push(name);
         }
@@ -378,7 +379,23 @@ async function checkRecords(list) {
 }
 
 async function testExif(dir) {
+  // eslint-disable-next-line no-console
+  console.log('Test', dir);
+  /*
   await init();
+  global.db = nedb.create({ filename: config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
+  await global.db.loadDatabase();
+  const list = [];
+  let filesAll = [];
+  for (const location of config.locations) {
+    const folder = await listFiles(location.folder, location.match, location.recursive, location.force);
+    list.push({ location, files: folder.process });
+    filesAll = [...filesAll, ...folder.files];
+  }
+  console.log('list', list);
+  console.log('all', filesAll);
+  */
+  /*
   if (fs.statSync(dir).isFile()) {
     const data = await getExif(dir);
     const geo = await getLocation(data);
@@ -393,6 +410,7 @@ async function testExif(dir) {
       console.log(path.join(dir, file), geo, data);
     }
   }
+  */
 }
 
 exports.init = init;

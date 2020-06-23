@@ -1,8 +1,10 @@
 # PiGallery Change Log
+
+### **origin/HEAD** 2020/06/23 cyan00@gmail.com
+
+- mobile navigation optimizations
 - adding hash to url to monitor hashchange
-
-### **origin/HEAD** 2020/06/22 cyan00@gmail.com
-
+- updated todo list
 
 ### **v0.9.9** 2020/06/22 cyan00@gmail.com
 
