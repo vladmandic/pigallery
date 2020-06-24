@@ -12,22 +12,22 @@ async function register(path) {
           return found;
         })
         .catch((err) => {
-          log.result(`PWA Error: code ${err.code} ${err.name} - ${err.message}`);
+          log.result(`PWA error: code ${err.code} ${err.name} - ${err.message}`);
         });
       if (!found) {
         navigator.serviceWorker
           .register(path, { scope: '/' })
           .then((reg) => {
-            log.result(`PWA Registration scope: ${reg.scope}`);
+            log.result(`PWA registration scope: ${reg.scope}`);
           })
           .catch((err) => {
             if (err.name === 'SecurityError') log.result('SSL certificate is untrusted');
-            else log.result(`PWA Error: code ${err.code} ${err.name} - ${err.message}`);
+            else log.result(`PWA error: code ${err.code} ${err.name} - ${err.message}`);
           });
       }
     } catch (err) {
       if (err.name === 'SecurityError') log.result('SSL certificate is untrusted');
-      else log.result(`PWA Error: code ${err.code} ${err.name} - ${err.message}`);
+      else log.result(`PWA error: code ${err.code} ${err.name} - ${err.message}`);
     }
   }
 }
