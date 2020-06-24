@@ -13,10 +13,6 @@ const pwa = require('./pwa-register.js');
 // global variables
 window.filtered = [];
 
-// google analytics
-// eslint-disable-next-line prefer-rest-params
-function gtag() { window.dataLayer.push(arguments); }
-
 function busy(working) {
   $('body').css('cursor', working ? 'wait' : 'default');
   $('main').css('cursor', working ? 'wait' : 'default');
@@ -326,9 +322,8 @@ async function startSlideshow(start) {
 // adds items to gallery view on scroll event - infinite scroll
 let current = 0;
 async function scrollResults() {
-  const num = document.getElementById('number');
-  const scrollHeight = $('#all').prop('scrollHeight');
-  const bottom = $('#all').scrollTop() + $('#all').height();
+  const scrollHeight = $('#results').prop('scrollHeight');
+  const bottom = $('#results').scrollTop() + $('#all').height();
   if (((bottom + 16) >= scrollHeight) && (current < window.filtered.length)) {
     const t0 = window.performance.now();
     const res = document.getElementById('results');
@@ -345,7 +340,7 @@ async function scrollResults() {
     const t1 = window.performance.now();
     if (window.debug) log.result(`Timed scrollResults: ${Math.round(t1 - t0).toLocaleString()} ms added: ${count} current: ${current} total: ${window.filtered.length}`);
   }
-  num.innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length}`;
+  document.getElementById('number').innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length}`;
 }
 
 // redraws gallery view and rebuilds sidebar menu
@@ -372,8 +367,8 @@ async function redrawResults() {
   }
   */
   current = 0;
-  $('#all').off('scroll');
-  $('#all').scroll(() => scrollResults());
+  $('#results').off('scroll');
+  $('#results').scroll(() => scrollResults());
   time(scrollResults);
   const t1 = window.performance.now();
   if (window.debug) log.result(`Timed loop printResults: ${Math.round(t1 - t0).toLocaleString()} ms`);
@@ -429,6 +424,7 @@ function shuffle(array) {
 }
 
 // sorts images based on given sort order
+let loadTried = false;
 async function sortResults(sort) {
   $('#optionslist').toggle(false);
   busy(true);
@@ -466,7 +462,13 @@ async function sortResults(sort) {
   if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, window.options.listItemCount + 1));
   const t3 = window.performance.now();
   if (window.debug) log.result(`Cached images: ${window.filtered.length} fetched remaining in ${Math.round(t3 - t1).toLocaleString()} ms`);
-  log.result(`Retrieved ${window.filtered.length} images from cache`);
+  if (window.filtered.length > 0) log.result(`Retrieved ${window.filtered.length} images from cache`);
+  else log.result('Image cache empty');
+  if (!loadTried && window.filtered.length === 0) {
+    loadTried = true;
+    // eslint-disable-next-line no-use-before-define
+    await loadGallery(window.options.listLimit);
+  }
   busy(false);
 }
 
@@ -531,9 +533,9 @@ async function loadGallery(limit) {
     const t2 = window.performance.now();
     if (window.debug) {
       const size = JSON.stringify(await db.all()).length;
-      log.result(`Received images: ${json.length} ${Math.round(t1 - t0).toLocaleString()} ms stored ${await db.count()} images in ${Math.round(t2 - t1).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
+      log.result(`Downloaded cache: ${json.length} ${Math.round(t1 - t0).toLocaleString()} ms stored ${await db.count()} images in ${Math.round(t2 - t1).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
     } else {
-      log.result(`Received ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
+      log.result(`Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
     }
     window.filtered = await db.all();
     time(sortResults, window.options.listSortOrder);
@@ -596,13 +598,15 @@ function showNavbar(elem) {
 async function initHotkeys() {
   $('html').keydown(() => {
     const top = $('#results').scrollTop();
-    const line = window.options.listThumbSize + 16;
+    const line = window.options.listThumbSize / 2 + 16;
     const page = $('#results').height() - window.options.listThumbSize;
     const bottom = $('#results').prop('scrollHeight');
     $('#results').stop();
     switch (event.keyCode) {
-      case 38: $('#results').animate({ scrollTop: top - line }, 400); break; // key=up: scroll line up
-      case 40: $('#results').animate({ scrollTop: top + line }, 400); break; // key=down; scroll line down
+      // case 38: $('#results').animate({ scrollTop: top - line }, 4000); break; // key=up: scroll line up
+      // case 40: $('#results').animate({ scrollTop: top + line }, 4000); break; // key=down; scroll line down
+      case 38: $('#results').scrollTop(top - line); break; // key=down; scroll line down
+      case 40: $('#results').scrollTop(top + line); break; // key=down; scroll line down
       case 33: $('#results').animate({ scrollTop: top - page }, 400); break; // key=pgup; scroll page up
       case 34: $('#results').animate({ scrollTop: top + page }, 400); break; // key=pgdn; scroll page down
       case 36: $('#results').animate({ scrollTop: 0 }, 1000); break; // key=home; scroll to top
@@ -612,7 +616,7 @@ async function initHotkeys() {
       case 191: $('#btn-search').click(); break; // key=/; open search input
       case 190: $('#btn-sort').click(); break; // key=.; open sort options
       case 188: $('#btn-desc').click(); break; // key=,; show/hide list descriptions
-      case 220: loadGallery(); break; // key=\; refresh all
+      case 220: loadGallery(window.options.listLimit); break; // key=\; refresh all
       case 222: sortResults(window.options.listSortOrder); break; // key='; remove filters
       case 27: // key=esc; close all
         $('#popup').toggle(false);
@@ -848,9 +852,11 @@ async function initListHandlers() {
 
 async function main() {
   // google analytics
-  gtag('js', new Date());
-  gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
-  gtag('set', { user_id: `${window.user}` }); // Set the user ID using signed-in user_id.
+  // eslint-disable-next-line prefer-rest-params
+  // function gtag() { window.dataLayer.push(arguments); }
+  // gtag('js', new Date());
+  // gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
+  // gtag('set', { user_id: `${window.user}` }); // Set the user ID using signed-in user_id.
 
   // Register PWA
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');

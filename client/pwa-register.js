@@ -32,8 +32,4 @@ async function register(path) {
   }
 }
 
-const pwa = {
-  register,
-};
-
-export default pwa;
+exports.register = register;
