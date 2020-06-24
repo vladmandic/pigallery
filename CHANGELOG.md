@@ -2,6 +2,8 @@
 
 ### **origin/HEAD** 2020/06/23 cyan00@gmail.com
 
+- swtiched to esbuild and implemented file watcher
+- file enum fix
 - updated config
 - mobile navigation optimizations
 - adding hash to url to monitor hashchange
