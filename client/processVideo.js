@@ -12,6 +12,16 @@ function JSONtoStr(json) {
 }
 
 async function loadModels() {
+  const detect = $('#detect')[0].value;
+  if (detect === 'OpenImages with SSD/MobileNet v2') config.detect = { name: detect, modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, scoreScale: 1, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD };
+  if (detect === 'CoCo with SSD/MobileNet v1') config.detect = { name: 'Coco/SSD v1', modelPath: 'models/cocossd-v1/model.json', score: 0.4, topK: 6, overlap: 0.1 };
+  if (detect === 'CoCo with SSD/MobileNet v2') config.detect = { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.1 };
+
+  const person = $('#person')[0].value;
+  if (person === 'FaceAPI SSD/MobileNet v1') config.person = { name: person, modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'ssdMobilenetv1' };
+  if (person === 'FaceAPI SSD/TinyYolo v3') config.person = { name: person, modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' };
+  if (person === 'FaceAPI MTCNN') config.person = { name: person, modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'mtcnn' };
+
   log.result('Starting Video Analsys');
   log.result(`Initializing TensorFlow/JS version ${tf.version.tfjs}`);
   await tf.setBackend(config.backEnd);
@@ -39,7 +49,7 @@ async function loadModels() {
         break;
       case 'tinyYolov2':
         await faceapi.nets.tinyYolov2.load(config.person.modelPath);
-        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: config.person.score, inputSize: 416 });
+        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: config.person.score, inputSize: 128 });
         break;
       case 'mtcnn':
         await faceapi.nets.mtcnn.load(config.person.modelPath);
@@ -54,7 +64,8 @@ async function loadModels() {
   }
 
   const engine = await tf.engine();
-  log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
+  return { bytes: engine.state.numBytes, tensors: engine.state.numTensors };
+  // log.result(`Engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers:${engine.state.numDataBuffers.toLocaleString()} Tensors:${engine.state.numTensors.toLocaleString()}`);
 }
 
 async function getImage(stream) {
@@ -79,11 +90,17 @@ async function getImage(stream) {
 async function processVideo(video) {
   const res = {};
   const screenshot = await getImage(video);
+  const t0 = window.performance.now();
   res.detect = await modelDetect.exec(models.detect, screenshot);
-  res.face = await faceapi.detectAllFaces(screenshot).withFaceLandmarks().withAgeAndGender();
+  const t1 = window.performance.now();
+  res.face = await faceapi.detectAllFaces(screenshot, faceapi.options).withFaceLandmarks().withAgeAndGender();
+  const t2 = window.performance.now();
   res.canvas = screenshot;
+  res.timeDetect = t1 - t0;
+  res.timeFace = t2 - t1;
   return res;
 }
 
 exports.load = loadModels;
 exports.process = processVideo;
+exports.models = models;

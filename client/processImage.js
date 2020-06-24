@@ -111,8 +111,8 @@ function flattenObject(object) {
 
 faceapi.classify = async (image) => {
   const results = await faceapi.detectAllFaces(image, faceapi.options)
-    .withFaceLandmarks()
     // .withFaceDescriptor()
+    .withFaceLandmarks()
     .withFaceExpressions()
     .withAgeAndGender();
   const faces = [];
