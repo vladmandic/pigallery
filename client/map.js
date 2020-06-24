@@ -41,18 +41,14 @@ async function show(visible) {
   if (!visible && mapContainer) {
     mapContainer.off();
     mapContainer.remove();
+    mapContainer = null;
     $('#map').toggle(false);
     return;
   }
   $('#map').toggle('slow');
-  $('#map').width($('#main').width() - $('#folderbar').width());
+  $('#map').width($('#all').width());
   $('#map').height(0.4 * $('#main').height());
   if ($('#map').css('display') === 'none') return;
-  // $('#results').html('<div id="map" style="width: 100%; height: 100%;"></div>');
-  if (mapContainer) {
-    mapContainer.off();
-    mapContainer.remove();
-  }
   L.mapquest.key = 'lYrP4vF3Uk5zgTiGGuEzQGwGIVDGuy24';
   mapContainer = L.mapquest.map('map', {
     center: [25.7632076, -80.1927073],

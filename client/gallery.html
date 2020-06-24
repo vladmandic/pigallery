@@ -66,9 +66,9 @@
       .folder:active { background: lightskyblue; color: #555555; letter-spacing: 2px; }
       .folderstitle { background: lightyellow; color: #555555; letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
 
-      .all { background: black; overflow-x: hidden; overflow-y: auto; width: 100%; display: flex; }
-      .map { overflow: hidden; width: 100%; height: 40%; display: none; }
-      .results { overflow-x: hidden; overflow-y: auto; width: 100%; display: flex; scroll-snap-type: y mandatory; }
+      .all { background: black; overflow: hidden; width: 100%; display: block; }
+      .map { overflow: hidden; width: 100%; height: 40%; display: none; z-index: 5; }
+      .results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; scroll-snap-type: y mandatory; }
 
       .timestamp { background: #222222; margin-left: 8px; margin-right: 8px; color: lightgray; }
 
