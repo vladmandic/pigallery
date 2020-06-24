@@ -273,11 +273,7 @@ async function enumerateFolders(input) {
 async function folderHandlers() {
   $('.folder').off();
   $('.folder').click(async (evt) => {
-    if (!window.filtered || (window.filtered.length < 1)) {
-      // eslint-disable-next-line no-use-before-define
-      redrawResults();
-      return;
-    }
+    if (!window.filtered || (window.filtered.length === 0)) return;
     busy(true);
     const path = $(evt.target).attr('tag');
     switch (evt.target.getAttribute('type')) {
@@ -303,6 +299,8 @@ async function folderHandlers() {
     }
     // eslint-disable-next-line no-use-before-define
     time(redrawResults);
+    // eslint-disable-next-line no-use-before-define
+    time(enumerateResults);
     busy(false);
   });
 }
@@ -343,14 +341,17 @@ async function scrollResults() {
   document.getElementById('number').innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length}`;
 }
 
-// redraws gallery view and rebuilds sidebar menu
-async function redrawResults() {
-  window.location = `#${new Date().getTime()}`;
-  busy(true);
+async function enumerateResults() {
   time(enumerateFolders);
   time(enumerateLocations);
   time(enumerateClasses);
   time(folderHandlers);
+}
+
+// redraws gallery view and rebuilds sidebar menu
+async function redrawResults() {
+  window.location = `#${new Date().getTime()}`;
+  busy(true);
   const t0 = window.performance.now();
   const res = document.getElementById('results');
   res.innerHTML = '';
@@ -404,6 +405,7 @@ async function filterResults(words) {
     if (window.filtered && window.filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} results out of ${await db.count()} matches`);
     else log.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
   }
+  time(enumerateResults);
   time(redrawResults);
   busy(false);
 }
@@ -450,7 +452,7 @@ async function sortResults(sort) {
   else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
   const t1 = window.performance.now();
-  await redrawResults();
+  time(redrawResults);
   const t2 = window.performance.now();
   if (window.debug) log.result(`Cached images: ${window.filtered.length} fetched initial in ${Math.round(t1 - t0).toLocaleString()} ms displayed in ${Math.round(t2 - t1).toLocaleString()} ms`);
   $('#all').focus();
@@ -469,6 +471,7 @@ async function sortResults(sort) {
     // eslint-disable-next-line no-use-before-define
     await loadGallery(window.options.listLimit);
   }
+  time(enumerateResults);
   busy(false);
 }
 
@@ -862,12 +865,12 @@ async function main() {
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
 
   resizeViewport();
-  await initUser();
   initListHandlers();
   initSidebarHandlers();
   initDetailsHandlers();
   initHotkeys();
   showNavbar();
+  await initUser();
   await db.open();
   window.details = details;
   time(sortResults, window.options.listSortOrder);
