@@ -1,6 +1,6 @@
 {
   "name": "pigallery",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "description": "PiGallery: Photo Gallery and analysis using TensorFlow/JS and EXIF metadata",
   "main": "server/pigallery.js",
   "scripts": {
@@ -60,7 +60,6 @@
     "moment": "^2.27.0",
     "nedb-promises": "^4.0.3",
     "oboe": "^2.1.5",
-    "parcel-bundler": "^1.12.4",
     "pilogger": "git+https://github.com/vladmandic/pilogger.git",
     "shrink-ray-current": "^4.1.2",
     "simple-git": "^2.9.0"
