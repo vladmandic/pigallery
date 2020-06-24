@@ -24,7 +24,7 @@ async function update(f) {
   // process.stdout.write(text);
   const name = path.join(__dirname, '../', f);
   fs.writeFileSync(name, text);
-  logger.state(`Change log updated: ${name}`);
+  logger.state('Change log updated:', name);
 }
 
 exports.update = update;

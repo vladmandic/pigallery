@@ -2,6 +2,7 @@
 
 ### **origin/HEAD** 2020/06/23 cyan00@gmail.com
 
+- updated config
 - mobile navigation optimizations
 - adding hash to url to monitor hashchange
 - updated todo list

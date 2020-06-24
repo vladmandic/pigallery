@@ -12,7 +12,7 @@ const config = require('../config.json');
 
 let wordNet = {};
 
-function init() {
+async function init() {
   let data;
   data = fs.readFileSync(config.server.descriptionsDB, 'utf8');
   let terms = 0;

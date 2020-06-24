@@ -49,6 +49,8 @@
   "dependencies": {
     "@popperjs/core": "^2.4.2",
     "@tensorflow/tfjs": "^1.7.4",
+    "chokidar": "^3.4.0",
+    "esbuild": "^0.5.11",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",

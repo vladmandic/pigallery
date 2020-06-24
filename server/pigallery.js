@@ -8,12 +8,14 @@ const session = require('express-session');
 const shrinkRay = require('shrink-ray-current');
 const nedb = require('nedb-promises');
 const api = require('./api.js');
-const parcel = require('./bundler.js');
+const build = require('./build.js');
+const watcher = require('./watcher.js');
 const changelog = require('./changelog.js');
-const nodeconfig = require('../package.json');
-const config = require('../config.json');
+// const nodeconfig = require('../package.json');
+// const config = require('../global.config.json');
 
 global.json = [];
+global.config = JSON.parse(fs.readFileSync('./config.json'));
 
 function allowCORS(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -31,33 +33,45 @@ function allowPWA(req, res, next) {
 function forceSSL(req, res, next) {
   if (!req.secure) {
     log.data(`Redirecting unsecure user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
-    return res.redirect(`https://${req.hostname}:${global.config.server.HTTPSport}${req.baseUrl}${req.url}`);
+    return res.redirect(`https://${req.hostname}:${global.global.config.server.HTTPSport}${req.baseUrl}${req.url}`);
   }
   return next();
 }
 
 async function main() {
-  log.logFile(config.server.logFile);
-  log.info(nodeconfig.name, 'version', nodeconfig.version);
+  global.config.node = JSON.parse(fs.readFileSync('./package.json'));
+  log.logFile(global.config.server.logFile);
+  log.info(global.config.node.name, 'version', global.config.node.version);
   log.info('Platform:', process.platform, 'Arch:', process.arch, 'Node:', process.version);
-  log.info('Authentication required:', config.server.authForce);
-  log.info('Media root:', config.server.mediaRoot);
-  log.info('Allowed image file types:', config.server.allowedImageFileTypes);
-  changelog.update('CHANGELOG.md');
+  log.info('Authentication required:', global.config.server.authForce);
+  log.info('Media root:', global.config.server.mediaRoot);
+  log.info('Allowed image file types:', global.config.server.allowedImageFileTypes);
   const root = path.join(__dirname, '../');
   const app = express();
   app.disable('x-powered-by');
 
   // update changelog
+  changelog.update('CHANGELOG.md');
+
+  // initialize parceljs bundler
+  // const parcel = require('./bundler.js');
+  // await parcel.init(app);
+
+  // initialize esbuild bundler
+  await build.init();
+  await build.compile();
+
+  // initialize file watcher
+  await watcher.watch();
 
   // load expressjs middleware
-  app.use(session(config.cookie));
+  app.use(session(global.config.cookie));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(shrinkRay({ useZopfliForGzip: false, brotli: { quality: 4 } }));
-  if (config.server.allowCORS) app.use(allowCORS);
-  if (config.server.allowPWA) app.use(allowPWA);
-  if (config.server.forceHTTPS) app.use(forceSSL);
+  if (global.config.server.allowCORS) app.use(allowCORS);
+  if (global.config.server.allowPWA) app.use(allowPWA);
+  if (global.config.server.forceHTTPS) app.use(forceSSL);
 
   // expressjs passthrough for all requests
   app.use((req, res, next) => {
@@ -67,11 +81,9 @@ async function main() {
       }
     });
     if (!req.url.startsWith('/api/')) next();
-    else if (req.session.user || !config.server.authForce) next();
+    else if (req.session.user || !global.config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
   });
-
-  api.init(app); // initialize api calls
 
   // define routes
   app.use('/', express.static(path.join(root, '.')));
@@ -91,56 +103,56 @@ async function main() {
   app.get('/video.js.map', (req, res) => res.sendFile('dist/video.js.map', { root }));
   app.get('/worker.js.map', (req, res) => res.sendFile('dist/worker.js.map', { root }));
 
-  // initialize parceljs bundler
-  await parcel.init(app);
-
-  // load image cache
-  log.info('Database Engine:', config.server.dbEngine);
-  if (config.server.dbEngine === 'json') {
-    if (fs.existsSync(config.server.jsonDB)) {
-      const data = fs.readFileSync(config.server.jsonDB, 'utf8');
-      global.json = JSON.parse(data);
-      log.state('Image cache loaded:', config.server.jsonDB, 'records:', global.json.length, 'size:', data.length, 'bytes');
-    } else {
-      log.warn('Image cache not found:', config.server.jsonDB);
-    }
-  } else if (config.server.dbEngine === 'nedb') {
-    if (!fs.existsSync(config.server.nedbDB)) log.warn('Image cache not found:', config.server.nedbDB);
-    global.db = nedb.create({ filename: config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
-    await global.db.loadDatabase();
-    const records = await global.db.count({});
-    log.state('Image cache loaded:', config.server.nedbDB, 'records:', records);
-  } else {
-    log.error('Unknown Database Engine');
-    process.exit(1);
-  }
-
   // start http server
-  if (config.server.httpPort && config.server.httpPort !== 0) {
+  if (global.config.server.httpPort && global.config.server.httpPort !== 0) {
     const httpOptions = {
       maxHeaderSize: 65536,
     };
     const serverhttp = http.createServer(httpOptions, app);
     serverhttp.on('error', (err) => log.error(err.message));
-    serverhttp.on('listening', () => log.state(`Server HTTP listening on ${serverhttp.address().family} ${serverhttp.address().address}:${serverhttp.address().port}`));
+    serverhttp.on('listening', () => log.state('Server HTTP listening on', serverhttp.address().family, serverhttp.address().address, serverhttp.address().port));
     serverhttp.on('close', () => log.state('Server http closed'));
-    serverhttp.listen(config.server.httpPort);
+    serverhttp.listen(global.config.server.httpPort);
   }
 
   // start https server
-  if (config.server.httpsPort && config.server.httpsPort !== 0) {
+  if (global.config.server.httpsPort && global.config.server.httpsPort !== 0) {
     const httpsOptions = {
       maxHeaderSize: 65536,
-      key: fs.readFileSync(config.server.SSLKey, 'utf8'),
-      cert: fs.readFileSync(config.server.SSLCrt, 'utf8'),
+      key: fs.readFileSync(global.config.server.SSLKey, 'utf8'),
+      cert: fs.readFileSync(global.config.server.SSLCrt, 'utf8'),
       requestCert: false,
       rejectUnauthorized: false,
     };
     const serverHttps = https.createServer(httpsOptions, app);
     serverHttps.on('error', (err) => log.error(err.message));
-    serverHttps.on('listening', () => log.state(`Server HTTPS listening on ${serverHttps.address().family} ${serverHttps.address().address}:${serverHttps.address().port}`));
+    serverHttps.on('listening', () => log.state('Server HTTPS listening on', serverHttps.address().family, serverHttps.address().address, serverHttps.address().port));
     serverHttps.on('close', () => log.state('Server HTTPS closed'));
-    serverHttps.listen(config.server.httpsPort);
+    serverHttps.listen(global.config.server.httpsPort);
+  }
+
+  // initialize api calls
+  api.init(app);
+
+  // load image cache
+  log.state('Database engine ready:', global.config.server.dbEngine);
+  if (global.config.server.dbEngine === 'json') {
+    if (fs.existsSync(global.config.server.jsonDB)) {
+      const data = fs.readFileSync(global.config.server.jsonDB, 'utf8');
+      global.json = JSON.parse(data);
+      log.state('Image cache loaded:', global.config.server.jsonDB, 'records:', global.json.length, 'size:', data.length, 'bytes');
+    } else {
+      log.warn('Image cache not found:', global.config.server.jsonDB);
+    }
+  } else if (global.config.server.dbEngine === 'nedb') {
+    if (!fs.existsSync(global.config.server.nedbDB)) log.warn('Image cache not found:', global.config.server.nedbDB);
+    global.db = nedb.create({ filename: global.config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
+    await global.db.loadDatabase();
+    const records = await global.db.count({});
+    log.state('Image cache loaded:', global.config.server.nedbDB, 'records:', records);
+  } else {
+    log.error('Unknown Database Engine');
+    process.exit(1);
   }
 }
 
