@@ -5,7 +5,7 @@ const metadata = require('./metadata.js');
 const config = require('../config.json');
 
 function api(app) {
-  log.state('API ready');
+  log.state('RESTful API ready');
   metadata.init();
 
   app.get('/api/log', (req, res) => {
