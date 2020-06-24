@@ -1,7 +1,8 @@
-const oboe = require('oboe');
+/* global Popper */
+
+// const oboe = require('oboe');
 const moment = require('moment');
 const marked = require('marked');
-const { createPopper } = require('@popperjs/core');
 const log = require('./log.js');
 const config = require('./config.js').default;
 const details = require('./details.js');
@@ -42,7 +43,7 @@ function showTip(parent, text) {
   tip.className = 'popper';
   tip.innerHTML = text;
   parent.appendChild(tip);
-  let popup = createPopper(parent, tip, { placement: 'left', strategy: 'absolute', modifiers: [{ name: 'offset', options: { offset: [0, 20] } }] });
+  let popup = Popper.createPopper(parent, tip, { placement: 'left', strategy: 'absolute', modifiers: [{ name: 'offset', options: { offset: [0, 20] } }] });
   setTimeout(() => {
     popup.destroy();
     popup = null;
@@ -498,8 +499,9 @@ async function loadGallery(limit) {
   log.result('Downloading image cache ...');
   await db.reset();
   await db.open();
-  let count = 0;
   if (window.options.liveLoad) {
+    /*
+    let count = 0;
     oboe({ url: `/api/get?limit=${limit}&find=all`, cached: true, withCredentials: false })
       .node('{image}', (image) => {
         db.put(image);
@@ -519,6 +521,7 @@ async function loadGallery(limit) {
         window.filtered = await db.all();
         time(sortResults, window.options.listSortOrder);
       });
+      */
   } else {
     const res = await fetch(`/api/get?limit=${limit}&find=all`);
     let json = [];

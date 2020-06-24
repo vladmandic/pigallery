@@ -16,7 +16,7 @@ async function compile() {
       minify: true,
       bundle: true,
       sourcemap: true,
-      external: ['fs', 'crypto'],
+      external: ['fs', 'crypto', 'util'],
       logLevel: 'error',
     });
     log.state('Client application rebuild ready');
