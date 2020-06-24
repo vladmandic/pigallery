@@ -15,12 +15,12 @@
     <link rel="stylesheet" href="/assets/fontawesome/css/all.css">
     <link rel="stylesheet" href="/assets/iv-viewer.css">
     <link rel="stylesheet" href="/assets/mapquest.css"/>
-    <script type="text/javascript" src="/assets/iv-viewer.js"></script>
-    <script type="text/javascript" src="/assets/gtag.js"></script>
+    <script async type="text/javascript" src="/assets/iv-viewer.js"></script>
+    <!-- <script type="text/javascript" src="/assets/gtag.js"></script> -->
     <script type="text/javascript" src="/assets/jquery.js"></script>
-    <script type="text/javascript" src="/assets/popper.js"></script>
-    <script type="text/javascript" src="/assets/mapquest.js"></script>
-    <script type="text/javascript" src="/assets/leaflet-heat.js"></script>
+    <script defer type="text/javascript" src="/assets/popper.js"></script>
+    <script defer type="text/javascript" src="/assets/mapquest.js"></script>
+    <script defer type="text/javascript" src="/assets/leaflet-heat.js"></script>
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
@@ -66,14 +66,14 @@
       .folder:active { background: lightskyblue; color: #555555; letter-spacing: 2px; }
       .folderstitle { background: lightyellow; color: #555555; letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
 
-      .all { background: black; overflow-x: hidden; overflow-y: auto; width: 100%; }
+      .all { background: black; overflow-x: hidden; overflow-y: auto; width: 100%; display: flex; }
       .map { overflow: hidden; width: 100%; height: 40%; display: none; }
-      .results { overflow-x: hidden; overflow-y: auto; width: 100%; display: flex; }
+      .results { overflow-x: hidden; overflow-y: auto; width: 100%; display: flex; scroll-snap-type: y mandatory; }
 
       .timestamp { background: #222222; margin-left: 8px; margin-right: 8px; color: lightgray; }
 
-      .listitem { display: flex; }
-      .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; }
+      .listitem { display: flex; scroll-snap-align: start; }
+      .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; }
       .thumbnail { padding: 0; cursor: zoom-in; }
       .description { min-width: 240px; max-width: 240px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
       .description:hover { background: #333333 }
@@ -94,6 +94,10 @@
     </style>
 </head>
 <body>
+
+  <noscript>
+    <h1>You really need JS enabled...</h1>
+  </noscript>
 
   <div id="navbar" class="row navbar text-center">
     <div><i id="btn-user" class="navbarbutton fas fa-user-slash"></i><p id="user">User</p></div>
@@ -172,10 +176,6 @@
   </div>
   
   <div id="docs" class="docs"></div>
-
-  <noscript>
-    <h1>You really need JS enabled...</h1>
-  </noscript>
 
 </body>
 </html>

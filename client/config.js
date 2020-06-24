@@ -21,7 +21,7 @@ window.options = {
   set listSortOrder(val) { return localStorage.setItem('listSortOrder', val); },
   get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 165, 10); },
   set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
-  get listLimit() { return parseInt(localStorage.getItem('listLimit') || 100, 10); },
+  get listLimit() { return parseInt(localStorage.getItem('listLimit') || 10000, 10); },
   set listLimit(val) { return localStorage.setItem('listLimit', val); },
   get viewDetails() { return localStorage.getItem('viewDetails') ? localStorage.getItem('viewDetails') === 'true' : true; },
   set viewDetails(val) { return localStorage.setItem('viewDetails', val); },
@@ -59,7 +59,7 @@ const config = {
   renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 1,      // how many images to process in parallel
   squareImage: false,      // resize proportional to the original image or to a square image
-  registerPWA: false,      // register PWA service worker?
+  registerPWA: true,      // register PWA service worker?
 
   // Default models
   classify: { name: 'Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.2, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200 },
