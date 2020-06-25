@@ -6,11 +6,8 @@ N/A
 
 ## Future Features
 
-- Server-side processing using TFJS-Node
-- Live video processing for Webcam feeds <https://github.com/AxisCommunications/media-stream-library-js>
-- Live video quick model
+- Server-side processing using TFJS-Node: nVidia CUDA on WSL2 requires kernel 4.19.121 current 4.19.104
 - Options editor
-- Hot reload for config
 - Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0: Face-API Incompatibility
 - Use DeepDetect model
 
@@ -55,6 +52,7 @@ PlaNet: <https://tfhub.dev/google/planet/vision/classifier/planet_v2/1>
 PoseNet: <https://github.com/tensorflow/tfjs-models/tree/master/posenet>
 BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
 Better Age/Gender: <https://github.com/dpressel/rude-carnie>
+TensorFlow zoo: <https://docs.openvinotoolkit.org/latest/_docs_MO_DG_prepare_model_convert_model_Convert_Model_From_TensorFlow.html>
 
 ## Hosted Models
 

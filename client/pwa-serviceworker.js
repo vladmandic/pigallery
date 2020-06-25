@@ -12,13 +12,19 @@ const cacheFiles = [
 ];
 
 let listening = false;
+const useCache = false;
 
 async function cached(evt) {
-  let found = await caches.match(evt.request);
-  if (!found) found = await fetch(evt.request);
-  const clone = found.clone();
-  // this executes in the background to refresh cache after result has already been returned
-  evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
+  let found;
+  if (useCache) {
+    found = await caches.match(evt.request);
+    if (!found) found = await fetch(evt.request);
+    const clone = found.clone();
+    // this executes in the background to refresh cache after result has already been returned
+    evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
+  } else {
+    found = await fetch(evt.request);
+  }
   return found;
 }
 

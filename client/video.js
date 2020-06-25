@@ -135,6 +135,29 @@ async function startProcessing() {
   $('#active').text('Idle ...');
 }
 
+async function startWebcam() {
+  video.removeEventListener('load', startProcessing);
+  // const ratio = 1.0 * video.videoWidth / video.videoHeight;
+  // video.width = ratio >= 1 ? $('#main').width() : 1.0 * $('#main').height() * ratio;
+  // video.height = video.width / ratio;
+  video.width = window.innerWidth;
+
+  // while (true) {
+  for (let i = 0; i < 1; i++) {
+    const t0 = window.performance.now();
+    // const uri = video.src;
+    // video.src = uri;
+    const object = await tf.process(video);
+    const t1 = window.performance.now();
+    const fps = 1000 / (t1 - t0);
+    $('#active').text(`Performance: ${fps.toFixed(1)} FPS detect ${object.timeDetect.toFixed(0)} ms face ${object.timeFace.toFixed(0)} ms`);
+    await showDetails(object);
+    await drawDetectionBoxes(object);
+    await drawFaces(object);
+  }
+  $('#active').text('Idle ...');
+}
+
 async function stopProcessing() {
   const stream = video.srcObject;
   const tracks = stream ? stream.getTracks() : null;
@@ -147,6 +170,9 @@ async function getCameraStream() {
     $('#active').text('Models not loaded ...');
     return;
   }
+  $('#video').toggle(true);
+  $('#image').toggle(false);
+  video = document.getElementById('video');
   video.addEventListener('loadeddata', startProcessing);
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     $('#active').text('Camera not supported');
@@ -167,10 +193,24 @@ async function getCameraStream() {
 
 async function getVideoStream(url) {
   if (!url) return;
+  $('#video').toggle(true);
+  $('#image').toggle(false);
+  video = document.getElementById('video');
   video.addEventListener('loadeddata', startProcessing);
   video.src = url;
   await video.play();
   $('#text-resolution').text(`${video.videoWidth} x ${video.videoHeight}`);
+}
+
+async function getWebcamStream(url) {
+  if (!url) return;
+  $('#video').toggle(false);
+  $('#image').toggle(true);
+  video = document.getElementById('image');
+  video.addEventListener('load', startWebcam);
+  // video.crossOrigin = 'anonymous'; // doesn't work as access to image canvas is blocked for non-cors loaded images and cors doesn't work on webcams
+  video.src = url;
+  $('#text-resolution').text(`${video.naturalWidth} x ${video.naturalHeight}`);
 }
 
 async function handlers() {
@@ -187,8 +227,20 @@ async function handlers() {
     } else {
       $('#text-play').text('Pause Video');
       $('#active').text('Warming up models ...');
+
+      // use one of: getCameraStream, getVideoStream, getWebcamStream
+
+      // using live front/back camera
       getCameraStream();
-      getVideoStream();
+
+      // using jpeg captured from webcam
+      // getWebcamStream('https://reolink-white/cgi-bin/api.cgi?cmd=Snap&channel=0&rs=wuuPhkmUCeI9WG7C&user=admin&password=xxxx');
+
+      // using webcam stream transcoded from rtsp to hls
+      // ffmpeg -hide_banner -y -i rtsp://admin:xxxx@reolink-black:554/h264Preview_01_main -fflags flush_packets -max_delay 2 -flags -global_header -hls_time 4 -hls_list_size 4 -hls_wrap 4 -vcodec copy black.m3u8
+      // getVideoStream('media/Webcam/black.m3u8');
+
+      // using mp4 video file
       // getVideoStream('media/Samples/Videos/video-appartment.mp4');
       // getVideoStream('media/Samples/Videos/video-jen.mp4');
       // getVideoStream('media/Samples/Videos/video-dash.mp4');
@@ -204,7 +256,6 @@ async function handlers() {
 }
 
 async function main() {
-  video = document.getElementById('video');
   parent = document.getElementById('main');
 
   // const navbarHeight = $('#navbar').height();
@@ -219,3 +270,7 @@ async function main() {
 }
 
 window.onload = main;
+
+exports.camera = getCameraStream;
+exports.webcam = getWebcamStream;
+exports.video = getVideoStream;
