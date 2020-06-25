@@ -12,9 +12,9 @@
     { "folder": "Photos/", "match": "", "recursive": true }
   ],
   "server": {
-    "httpPort": 8000,
-    "httpsPort": 8080,
-    "forceHTTPS": true,
+    "httpPort": 10010,
+    "httpsPort": 10011,
+    "forceHTTPS": false,
     "allowCORS": true,
     "allowPWA": true,
     "logFile": "pigallery.log",
