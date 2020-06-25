@@ -1,6 +1,18 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/06/23 cyan00@gmail.com
+### **origin/HEAD** 2020/06/24 cyan00@gmail.com
+
+
+### **v0.9.12** 2020/06/24 cyan00@gmail.com
+
+- fixed service worker
+
+### **v0.9.11** 2020/06/24 cyan00@gmail.com
+
+- video detect with selectable options
+- updated packages to work with esbuild
+
+### **v0.9.10** 2020/06/23 cyan00@gmail.com
 
 - swtiched to esbuild and implemented file watcher
 - file enum fix
