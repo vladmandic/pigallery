@@ -2,6 +2,9 @@
 
 ### **origin/HEAD** 2020/06/24 cyan00@gmail.com
 
+- optimized for piproxy
+- updated pwa
+- fixed map layout
 
 ### **v0.9.12** 2020/06/24 cyan00@gmail.com
 
