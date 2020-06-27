@@ -499,6 +499,7 @@ async function findDuplicates() {
 
 // loads imagesm, displays gallery and enumerates sidebar
 async function loadGallery(limit) {
+  if (!window.user.user) return;
   busy(true);
   const t0 = window.performance.now();
   log.result('Downloading image cache ...');

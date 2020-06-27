@@ -1,24 +1,16 @@
 /* eslint-disable no-console */
 
 const cacheName = 'pigallery';
-const cacheFiles = [
-  '/favicon.ico',
-  '/manifest.json',
-  '/gallery',
-  '/assets/roboto.ttf',
-  '/assets/dash-256.png',
-  '/assets/dash-512.png',
-  '/assets/dash-1024.png',
-];
+const cacheFiles = ['/favicon.ico', '/manifest.json'];
 
 let listening = false;
-const useCache = false;
 
 async function cached(evt) {
   let found;
-  if (useCache) {
-    found = await caches.match(evt.request);
-    if (!found) found = await fetch(evt.request);
+  found = await caches.match(evt.request);
+  if (!found) found = await fetch(evt.request);
+  // cache only /assets folder
+  if (evt.request.url.includes('/assets/')) {
     const clone = found.clone();
     // this executes in the background to refresh cache after result has already been returned
     evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));

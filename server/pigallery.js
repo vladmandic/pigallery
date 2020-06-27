@@ -49,6 +49,7 @@ async function main() {
   const root = path.join(__dirname, '../');
   const app = express();
   app.disable('x-powered-by');
+  app.set('trust proxy', true);
 
   // update changelog
   changelog.update('CHANGELOG.md');
@@ -76,7 +77,7 @@ async function main() {
   // expressjs passthrough for all requests
   app.use((req, res, next) => {
     res.on('finish', () => {
-      if (res.statusCode !== 200 && res.statusCode !== 202 && res.statusCode !== 304 && !req.url.endsWith('.map')) {
+      if (res.statusCode !== 200 && res.statusCode !== 302 && res.statusCode !== 304 && !req.url.endsWith('.map')) {
         log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
       }
     });
@@ -85,23 +86,28 @@ async function main() {
     else res.status(401).sendFile('client/auth.html', { root });
   });
 
-  // define routes
-  app.use('/', express.static(path.join(root, '.')));
+  // define routes for static html files
+  const html = fs.readdirSync('./client/');
+  for (const f of html) {
+    if (f.endsWith('.html')) {
+      const mount = f.substr(0, f.indexOf('.html'));
+      const name = path.join('./client', f);
+      log.state(`Mounted: ${mount} from ${name}`);
+      app.get(`/${mount}`, (req, res) => res.sendFile(name, { root }));
+    }
+  }
+  // define routes for static files
+  for (const f of ['/favicon.ico', '/manifest.json', '/README.md', '/CHANGELOG.md', '/LICENSE']) {
+    app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
+  }
+  // define route for root
   app.get('/', (req, res) => res.redirect('/gallery'));
-  app.get('/gallery', (req, res) => res.sendFile('client/gallery.html', { root }));
-  app.get('/compare', (req, res) => res.sendFile('client/compare.html', { root }));
-  app.get('/process', (req, res) => res.sendFile('client/process.html', { root }));
-  app.get('/video', (req, res) => res.sendFile('client/video.html', { root }));
+  // define routes for folders
   app.use('/assets', express.static(path.join(root, './assets'), { maxAge: '365d', cacheControl: true }));
   app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
+  app.use('/media', express.static(path.join(root, './media'), { maxAge: '365d', cacheControl: true }));
   app.use('/client', express.static(path.join(root, './client'), { cacheControl: false }));
-
-  // add static map files for inspector
-  app.get('/compare.js.map', (req, res) => res.sendFile('dist/compare.js.map', { root }));
-  app.get('/gallery.js.map', (req, res) => res.sendFile('dist/gallery.js.map', { root }));
-  app.get('/process.js.map', (req, res) => res.sendFile('dist/process.js.map', { root }));
-  app.get('/video.js.map', (req, res) => res.sendFile('dist/video.js.map', { root }));
-  app.get('/worker.js.map', (req, res) => res.sendFile('dist/worker.js.map', { root }));
+  app.use('/dist', express.static(path.join(root, './dist'), { cacheControl: false }));
 
   // start http server
   if (global.config.server.httpPort && global.config.server.httpPort !== 0) {
