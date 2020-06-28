@@ -1,6 +1,11 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/06/24 cyan00@gmail.com
+### **origin/HEAD** 2020/06/27 cyan00@gmail.com
+
+- remapped http serve
+- expanding video use cases
+
+### **v0.9.13** 2020/06/24 cyan00@gmail.com
 
 - optimized for piproxy
 - updated pwa
