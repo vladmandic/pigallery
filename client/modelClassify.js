@@ -29,9 +29,9 @@ async function load(cfg) {
 }
 
 async function decodeValues(model, values) {
-  const valuesAndIndices = [];
-  for (const i in values) valuesAndIndices.push({ score: values[i], index: i });
-  const results = valuesAndIndices
+  const pairs = [];
+  for (const i in values) pairs.push({ score: values[i], index: i });
+  const results = pairs
     .filter((a) => (a.score * model.config.scoreScale > model.config.score) && (parseInt(a.index, 10) !== model.config.background))
     .sort((a, b) => b.score - a.score)
     // .filter((a) => a.index !== model.config.background)
