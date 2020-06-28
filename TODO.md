@@ -50,7 +50,7 @@ PlaNet: <https://tfhub.dev/google/planet/vision/classifier/planet_v2/1>
 PoseNet: <https://github.com/tensorflow/tfjs-models/tree/master/posenet>
 BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
 TensorFlow zoo: <https://docs.openvinotoolkit.org/latest/_docs_MO_DG_prepare_model_convert_model_Convert_Model_From_TensorFlow.html>
-ImageNet 21k: <https://tfhub.dev/google/collections/bit/1>
+OpenImages challenge: 500 classes from 9M images in 534GB <https://www.tensorflow.org/datasets/catalog/open_images_v4> <https://storage.googleapis.com/openimages/web/index.html>
 
 ## Hosted Models
 
@@ -58,24 +58,25 @@ ImageNet 21k: <https://tfhub.dev/google/collections/bit/1>
 <https://www.mediapipe.dev/> project by Google, models are TFLite
 <https://www.microsoft.com/en-us/ai/ai-for-earth-tech-resources>
 
-## Data sets
+iNaturalist
 
-iNaturalist: 5089 classs from 0.6M images in 237GB <https://www.tensorflow.org/datasets/catalog/i_naturalist2017>
-OpenImages challenge: 500 classes from 9M images in 534GB <https://www.tensorflow.org/datasets/catalog/open_images_v4> <https://storage.googleapis.com/openimages/web/index.html>
-Cars <https://www.tensorflow.org/datasets/catalog/cars196>
+  iNaturalist: 2017 dataset 5089 classs from 0.6M images in 237GB
+  Note: competition uses obfucated taxonomy since 2018, so categories must be downloaded separately after the competition
+  iNaturalist: <https://tfhub.dev/s?q=inaturalist> <https://github.com/richardaecn/cvpr18-inaturalist-transfer>
+  Competitions: <https://github.com/visipedia/inat_comp>
+  Dataset: <https://www.kaggle.com/c/inaturalist-2019-fgvc6/data> <https://github.com/visipedia/inat_comp/tree/master/2017>
+  Model Small: <https://www.kaggle.com/sujoykg/xception-keras/>
+  Model Large: <https://www.kaggle.com/cedriclacrambe/inaturalist-xception-512/>
+  Lexicon Latin: <https://www.gbif.org/dataset/search>
+  Lexicon Government: <https://www.itis.gov/>
+  Lookup: <http://www.gbif.org/species/{gbid}> <https://api.gbif.org/v1/species?name={name}>
+  Hierarchy: categogy -> kingdom -> phylum -> class -> order -> family -> genus -> name
 
-    tensorflowjs_converter --input_format tf_hub --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 ../models/inaturalist/q/ .
-    Creating a model with inputs ['images'] and outputs ['module_apply_default/embed_norm'].
+## Google BiT
 
-## iNaturalist
-
-iNaturalist: <https://tfhub.dev/s?q=inaturalist> <https://github.com/richardaecn/cvpr18-inaturalist-transfer>
-iNaturalist competition is uses obfucated taxonomy since 2018
-Competitions: <https://github.com/visipedia/inat_comp>
-Dataset: <https://www.kaggle.com/c/inaturalist-2019-fgvc6/data> <https://github.com/visipedia/inat_comp/tree/master/2017>
-Model Small: <https://www.kaggle.com/sujoykg/xception-keras/>
-Model Large: <https://www.kaggle.com/cedriclacrambe/inaturalist-xception-512/>
-Lexicon Latin: <https://www.gbif.org/dataset/search>
-Lexicon Government: <https://www.itis.gov/>
-Lookup: <http://www.gbif.org/species/{gbid}> <https://api.gbif.org/v1/species?name={name}>
-Hierarchy: categogy -> kingdom -> phylum -> class -> order -> family -> genus -> name
+ImageNet 21k: <https://tfhub.dev/google/collections/bit/1>
+  0091MB r050x1 1k 0240MB 21k
+  0770MB r050x3 1k 1190MB 21k
+  0159MB r101x1 1k 0308MB 21k
+  1340MB r101x3 1k 1780MB 21k
+  2733MB r152x4 1k 4179MB 21k
