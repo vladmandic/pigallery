@@ -12,6 +12,7 @@ let config = {
   tensorShape: 3,
   offset: 1,
   scoreScale: 1,
+  background: -1,
   classes: 'assets/ImageNet-Labels1000.json',
 };
 
@@ -31,12 +32,14 @@ async function decodeValues(model, values) {
   const valuesAndIndices = [];
   for (const i in values) valuesAndIndices.push({ score: values[i], index: i });
   const results = valuesAndIndices
-    .filter((a) => a.score * model.config.scoreScale > model.config.score)
+    .filter((a) => (a.score * model.config.scoreScale > model.config.score) && (parseInt(a.index, 10) !== model.config.background))
     .sort((a, b) => b.score - a.score)
+    // .filter((a) => a.index !== model.config.background)
     .map((a) => {
       const id = a.index - model.config.offset; // offset indexes for some models
       const wnid = model.labels[id] ? model.labels[id][0] : a.index;
       const label = model.labels[id] ? model.labels[id][1] : `unknown id:${a.index}`;
+      // console.log(id, wnid, label);
       return { wnid, id, class: label, score: a.score * model.config.scoreScale };
     });
   if (results && results.length > model.config.topK) results.length = model.config.topK;
@@ -59,6 +62,7 @@ async function classify(model, image) {
       batched = tf.mul(cast, [1.0 / 255.0]);
       tf.dispose(cast);
     }
+    // console.log(model.config.name);
     const predictions = model.predict(batched);
     const prediction = Array.isArray(predictions) ? predictions[0] : predictions; // some models return prediction for multiple objects in array, some return single prediction
     const softmax = prediction.softmax();
