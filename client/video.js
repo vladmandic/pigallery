@@ -1,6 +1,3 @@
-// import * as nsfwjs from 'nsfwjs';
-// import yolo from './modelYolo.js';
-
 const config = require('./config.js').default;
 const tf = require('./processVideo.js');
 

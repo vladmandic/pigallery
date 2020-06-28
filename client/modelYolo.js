@@ -332,8 +332,12 @@ async function v3(
   };
 }
 
-const yolo = { v1tiny, v2tiny, v3tiny, v3 };
-export default yolo;
+// const yolo = { v1tiny, v2tiny, v3tiny, v3 };
+exports.v1tiny = v1tiny;
+exports.v2tiny = v2tiny;
+exports.v3tiny = v3tiny;
+exports.v3 = v3;
+// default yolo;
 
 const voc_classes = [
   'aeroplane',
