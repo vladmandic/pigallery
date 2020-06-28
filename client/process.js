@@ -1,5 +1,3 @@
-// import * as nsfwjs from 'nsfwjs';
-// import yolo from './modelYolo.js';
 const log = require('./log.js');
 const config = require('./config.js').default;
 const tf = require('./processImage.js');

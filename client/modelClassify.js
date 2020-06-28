@@ -40,7 +40,7 @@ async function decodeValues(model, values) {
       const wnid = model.labels[id] ? model.labels[id][0] : a.index;
       const label = model.labels[id] ? model.labels[id][1] : `unknown id:${a.index}`;
       // console.log(id, wnid, label);
-      return { wnid, id, class: label, score: a.score * model.config.scoreScale };
+      return { wnid, id, class: label.toLowerCase(), score: a.score * model.config.scoreScale };
     });
   if (results && results.length > model.config.topK) results.length = model.config.topK;
   return results;
