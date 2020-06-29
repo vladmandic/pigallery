@@ -83,39 +83,29 @@ function addDividers(object) {
 // print results element with thumbnail and description for a given object
 function printResult(object) {
   previous = object;
-  let classified = '';
-  let all = [...object.classify || [], ...object.alternative || []];
-  if (all.length > 0) {
-    classified = 'Classified';
-    all = all.sort((a, b) => b.score - a.score).map((a) => a.class);
-    all = [...new Set(all)];
-    for (const item of all) {
-      classified += ` | ${item}`;
-    }
+  let classified = 'Classified';
+  for (const item of details.combine(object.classify)) {
+    classified += ` | ${item.score}% ${item.name}`;
   }
+
+  let detected = 'Detected';
+  let personCount = 0;
+  for (const item of details.combine(object.detect)) {
+    if (item.name !== 'person') detected += ` | ${item.score}% ${item.name}`;
+    else personCount++;
+  }
+  personCount = Math.max(personCount, object.person ? object.person.length : 0);
+  if (personCount === 1) detected += ' | person';
+  else if (personCount > 1) detected += ` | ${personCount} persons`;
+
   let person = '';
-  let nsfw = '';
   if (object.person && object.person[0]) {
     person = 'People';
     for (const i of object.person) {
       person += ` | ${i.gender} ${i.age.toFixed(0)}`;
-      if (i.class) {
-        nsfw += `Class: ${i.class} `;
-      }
     }
   }
-  let detected = '';
-  let personCount = 0;
-  if (object.detect && object.detect[0]) {
-    detected = 'Detected';
-    for (const obj of object.detect) {
-      if (obj.class !== 'person') detected += ` | ${obj.class}`;
-      else personCount++;
-    }
-    personCount = Math.max(personCount, object.person ? object.person.length : 0);
-    if (personCount === 1) detected += ' | person';
-    else if (personCount > 1) detected += ` | ${personCount} persons`;
-  }
+
   let location = '';
   if (object.location && object.location.city) {
     location = 'Location';
@@ -139,7 +129,7 @@ function printResult(object) {
         ${location}<br>
         ${classified}<br>
         ${detected}<br>
-        ${person} ${nsfw}<br>
+        ${person}<br>
       </div>
     </div>
   `;
@@ -199,6 +189,7 @@ async function enumerateClasses() {
   const classesList = [];
   for (const item of window.filtered) {
     for (const tag of item.tags) {
+      if (Object.keys(tag).length === 0) continue;
       const key = Object.keys(tag)[0];
       if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
       const val = Object.values(tag)[0].toString().split(',')[0];

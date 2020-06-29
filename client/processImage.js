@@ -18,10 +18,21 @@ const models = {};
 let error = false;
 
 function JSONtoStr(json) {
-  if (json) return JSON.stringify(json).replace(/{|}|"/g, '').replace(/,/g, ', ');
+  if (!json) return '';
+  let res = '';
+  if (Array.isArray(json)) {
+    // eslint-disable-next-line prefer-template
+    for (const item of json) res += JSON.stringify(item).replace(/{|}|"/g, '').replace(/,/g, ', ');
+  } else {
+    res = JSON.stringify(json).replace(/{|}|"/g, '').replace(/,/g, ', ');
+  }
+  return res;
 }
 
 async function loadModels() {
+  tf.ENV.set('WEBGL_PACK', false);
+  tf.ENV.set('WEBGL_CONV_IM2COL', false);
+
   log.result('Starting Image Analsys');
   log.result(`Initializing TensorFlow/JS version ${tf.version_core}`);
   await tf.setBackend(config.backEnd);
@@ -34,30 +45,39 @@ async function loadModels() {
   log.result(`  Parallel processing: ${config.batchProcessing} parallel images`);
   log.result(`  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
   log.result(`  Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);
-  log.result(`  Classify: ${JSONtoStr(config.classify)}`);
-  log.result(`  Alternate: ${JSONtoStr(config.alternative)}`);
-  log.result(`  Detect: ${JSONtoStr(config.detect)}`);
-  log.result(`  Person: ${JSONtoStr(config.person)}`);
-
+  log.result('Image Classification models:');
+  for (const model of config.classify) {
+    log.result(`  ${JSONtoStr(model)}`);
+  }
+  log.result('Object Detection models:');
+  for (const model of config.detect) {
+    log.result(`  ${JSONtoStr(model)}`);
+  }
+  log.result('Face Detection model:');
+  log.result(`  ${JSONtoStr(config.person)}`);
   const t0 = window.performance.now();
 
-  if (config.classify) {
-    models.classify = await modelClassify.load(config.classify);
+  models.classify = [];
+  if (config.classify && config.classify.length > 0) {
+    for (const cfg of config.classify) {
+      const res = await modelClassify.load(cfg);
+      models.classify.push(res);
+    }
   }
 
-  if (config.alternative) {
-    models.alternative = await modelClassify.load(config.alternative);
-  }
-
-  if (config.detect) {
-    models.detect = await modelDetect.load(config.detect);
+  models.detect = [];
+  if (config.detect && config.detect.length > 0) {
+    for (const cfg of config.detect) {
+      const res = await modelDetect.load(cfg);
+      models.detect.push(res);
+    }
   }
 
   if (config.person) {
     switch (config.person.type) {
       case 'tinyFaceDetector':
         await faceapi.nets.tinyFaceDetector.load(config.person.modelPath);
-        faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: config.person.score, inputSize: 416 });
+        faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: config.person.score, inputSize: config.person.size });
         break;
       case 'ssdMobilenetv1':
         await faceapi.nets.ssdMobilenetv1.load(config.person.modelPath);
@@ -65,7 +85,7 @@ async function loadModels() {
         break;
       case 'tinyYolov2':
         await faceapi.nets.tinyYolov2.load(config.person.modelPath);
-        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: config.person.score, inputSize: 416 });
+        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: config.person.score, inputSize: config.person.size });
         break;
       case 'mtcnn':
         await faceapi.nets.mtcnn.load(config.person.modelPath);
@@ -195,33 +215,36 @@ async function processImage(name) {
   const ti1 = window.performance.now();
 
   log.active(`Classifying: ${name}`);
+  obj.classify = [];
   const tc0 = window.performance.now();
   try {
-    if (!error && models.classify) obj.classify = await modelClassify.classify(models.classify, image.canvas);
+    if (!error) {
+      for (const model of models.classify) {
+        const res = await modelClassify.classify(model, image.canvas);
+        if (res) obj.classify.push(...res);
+      }
+    }
   } catch (err) {
-    log.result(`Error during primary classification for ${name}: ${err}`);
-    error = true;
-  }
-  try {
-    if (!error && models.alternative) obj.alternative = await modelClassify.classify(models.alternative, image.canvas);
-  } catch (err) {
-    log.result(`Error during alternate classification for ${name}: ${err}`);
+    log.result(`Error during classification for ${name}: ${err}`);
     error = true;
   }
   const tc1 = window.performance.now();
 
   log.active(`Detecting: ${name}`);
+  obj.detect = [];
   const td0 = window.performance.now();
   try {
-    if (!error && models.detect) obj.detect = await modelDetect.exec(models.detect, image.canvas);
+    if (!error) {
+      for (const model of models.detect) {
+        const res = await modelDetect.exec(model, image.canvas);
+        if (res) obj.detect.push(...res);
+      }
+    }
   } catch (err) {
     log.result(`Error during detection for ${name}: ${err}`);
     error = true;
   }
   const td1 = window.performance.now();
-
-  // const detect = await models.yolo.predict(image.canvas, { maxBoxes: 3, scoreThreshold: 0.3 });
-  // obj.detect = detect.map((a) => ({ score: a.score, class: a.class }));
 
   obj.phash = await hash.data(image.data);
 
@@ -233,23 +256,11 @@ async function processImage(name) {
     log.result(`Error in FaceAPI for ${name}: ${err}`);
     error = true;
   }
-  log.active(`NSFW Detection: ${name}`);
-  let nsfw;
-  if (!error && models.nsfw) {
-    try {
-      nsfw = await models.nsfw.classify(image.canvas, 1);
-      obj.person.scoreClass = (nsfw && nsfw[0]) ? nsfw[0].probability : null;
-      obj.person.class = (nsfw && nsfw[0]) ? nsfw[0].className : null;
-    } catch (err) {
-      log.result(`Error in NSFW for ${name}: ${err}`);
-      error = true;
-    }
-  }
   const tp1 = window.performance.now();
 
   const t1 = window.performance.now();
   obj.perf = { total: t1 - t0, load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
-  obj.error = error;
+  if (error) obj.error = error;
   tf.engine().endScope();
 
   if (!error) {

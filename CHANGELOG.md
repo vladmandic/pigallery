@@ -1,6 +1,11 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/06/27 cyan00@gmail.com
+### **origin/HEAD** 2020/06/28 cyan00@gmail.com
+
+- model tuning
+- started on inaturalist models
+
+### **v0.9.14** 2020/06/27 cyan00@gmail.com
 
 - remapped http serve
 - expanding video use cases

@@ -62,25 +62,32 @@ const config = {
   registerPWA: true,      // register PWA service worker?
 
   // Default models
-  classify: { name: 'Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.2, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200 },
-  // classify: { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3, tensorSize: 224, offset: 1 },
-  alternative: { name: 'EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.1, topK: 3, tensorSize: 456, offset: 0, scoreScale: 1 },
-  detect: { name: 'SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, scoreScale: 1, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD },
-  // detect: { name: 'Coco/SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5 },
-  person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.4, topK: 4, type: 'ssdMobilenetv1' },
+  classify: [
+    { name: 'ImageNet Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.22, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200 },
+    { name: 'ImageNet EfficientNet B4', modelPath: 'models/efficientnet-b4/model.json', score: 0.1, topK: 3, slice: 0, tensorSize: 380, offset: 0, scoreScale: 1 },
+    { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-6k/model.json', score: 0.1, topK: 5, useFloat: false, tensorSize: 299, scoreScale: 1000, classes: 'assets/DeepDetect-Labels.json', offset: 0 },
+  ],
+  detect: [
+    { name: 'CoCo SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO },
+    { name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD },
+  ],
+  person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', type: 'tinyFaceDetector', score: 0.3, size: 416 },
 
   /*
-  models that can be used for "classify" and "alternative" can be found at
+  models that can be used for "classify" can be found at
     https://tfhub.dev/s?deployment-format=tfjs&module-type=image-classification&tf-version=tf2
   or just pick one from below
-    classify: { name: 'MobileNet v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v1_100_224/classification/3/default/1' },
-    classify: { name: 'MobileNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/classification/3/default/1' },
-    classify: { name: 'Inception v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1' },
-    classify: { name: 'Inception v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v2/classification/3/default/1' },
-    classify: { name: 'Inception v3', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v3/classification/3/default/1' },
-    classify: { name: 'Inception ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_resnet_v2/classification/3/default/1' },
-    classify: { name: 'ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/resnet_v2_101/classification/3/default/1' },
-    classify: { name: 'NasNet Mobile', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/nasnet_mobile/classification/3/default/1' },
+    { name: 'Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3, tensorSize: 224, offset: 1 },
+    { name: 'Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.2, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200 },
+    { name: 'EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.1, topK: 3, tensorSize: 456, offset: 0, scoreScale: 1 },
+    { name: 'MobileNet v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v1_100_224/classification/3/default/1' },
+    { name: 'MobileNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/classification/3/default/1' },
+    { name: 'Inception v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1' },
+    { name: 'Inception v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v2/classification/3/default/1' },
+    { name: 'Inception v3', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v3/classification/3/default/1' },
+    { name: 'Inception ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_resnet_v2/classification/3/default/1' },
+    { name: 'ResNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/resnet_v2_101/classification/3/default/1' },
+    { name: 'NasNet Mobile', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/nasnet_mobile/classification/3/default/1' },
   */
 
   /*
