@@ -62,7 +62,7 @@ async function processFiles() {
       promises.push(tf.process(url).then((obj) => {
         log.dot();
         results[id] = obj;
-        error = obj.error || error;
+        error = (obj.error === true) || error;
         id += 1;
         stuckTimer = new Date();
       }));
@@ -94,7 +94,6 @@ async function processFiles() {
   if (error) {
     log.result('Aborting current run due to error');
     // eslint-disable-next-line no-console
-    console.table('Finished', tf.memory());
     setTimeout(() => {
       log.result('Restarting ...');
       window.location.reload(true);
