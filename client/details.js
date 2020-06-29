@@ -158,9 +158,11 @@ async function resizeDetailsImage(object) {
 // show details popup
 async function showDetails(img) {
   if (!img && last) img = last.image;
+  console.log($('.navbar').css('height'));
+  $('#popup').css('top', $('.navbar').css('height'));
+  $('#popup').height($('#results').height() + $('#log').height());
   $('#popup-image').width($('#popup').width());
   $('#popup-image').height($('#popup').height());
-  $('#popup-details').height('0');
   $('#popup-details').height('0');
   $('.iv-image').width($('#popup').width());
   $('.iv-image').height($('#popup').height());
