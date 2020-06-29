@@ -60,22 +60,28 @@ function buildTags(object) {
     else size = 'small';
     tags.push({ size });
   }
-  if (object.classify) {
-    tags.push({ property: 'classified' });
-    for (const obj of object.classify) tags.push({ classified: obj.class });
+  let found;
+  found = [];
+  for (const obj of object.classify) {
+    if (!found.includes(obj.class)) {
+      found.push(obj.class);
+      tags.push({ classified: obj.class });
+    }
   }
-  if (object.alternative) {
-    tags.push({ property: 'alternative' });
-    for (const obj of object.alternative) tags.push({ classified: obj.class });
+  found = [];
+  for (const obj of object.detect) {
+    if (!found.includes(obj.class)) {
+      found.push(obj.class);
+      tags.push({ detected: obj.class });
+    }
   }
-  if (object.detect) {
-    tags.push({ property: 'detected' });
-    for (const obj of object.detect) tags.push({ detected: obj.class });
-  }
-  if (object.descriptions) {
-    tags.push({ property: 'described' });
-    for (const description of object.descriptions) {
-      for (const lines of description) tags.push({ description: lines.name });
+  found = [];
+  for (const obj of object.descriptions) {
+    for (const line of obj) {
+      if (!found.includes(line.name)) {
+        found.push(line.name);
+        tags.push({ desc: line.name });
+      }
     }
   }
   if (object.person && object.person.length > 0) {
@@ -127,11 +133,12 @@ function buildTags(object) {
       { near: object.location.near.toLowerCase() },
     );
   }
-  return [...new Set(tags)];
+  return tags;
 }
 
 function searchClasses(wnid) {
   const res = [];
+  if (wnid === '') return res;
   // eslint-disable-next-line consistent-return
   function recursive(obj) {
     for (const item of obj) {
@@ -145,16 +152,24 @@ function searchClasses(wnid) {
 
 function getDescription(image) {
   const results = [];
-  let json = [...image.classify, image.alternative];
-  if (!json || !Array.isArray(json)) return results;
-  json = [...new Set(json)];
-  for (const guess of json) {
-    const descriptions = searchClasses(guess.wnid);
+  const found = [];
+  const ids = [];
+  for (const item of image.classify) {
+    if (!found.includes(item.class)) {
+      found.push(item.class);
+      ids.push(item.wnid);
+    }
+  }
+  for (const id of ids) {
+    const descriptions = searchClasses(id);
     const lines = [];
     for (const description of descriptions) {
-      lines.push({ name: description.name, desc: description.desc });
+      if (description.name) lines.push({ name: description.name, desc: description.desc });
     }
-    results.push(lines);
+    if (lines.length > 0) {
+      if (lines.length > 3) lines.length = 3;
+      results.push(lines);
+    }
   }
   return results;
 }
@@ -238,8 +253,11 @@ async function getExif(url) {
           const west = meta2.GPSInfo.GPSLongitudeRef === 'W' ? -1 : 1;
           json.lat = meta1.GPSLatitude || (meta2.GPSInfo.GPSLatitude ? (meta2.GPSInfo.GPSLatitude[0] || 0) + ((meta2.GPSInfo.GPSLatitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLatitude[2] || 0) / 3600) : undefined);
           json.lon = meta1.GPSLongitude || (meta2.GPSInfo.GPSLongitude ? west * (meta2.GPSInfo.GPSLongitude[0] || 0) + ((meta2.GPSInfo.GPSLongitude[1] || 0) / 60) + ((meta2.GPSInfo.GPSLongitude[2] || 0) / 3600) : undefined);
-          json.width = meta1.ImageWidth || meta1.ExifImageWidth || meta2.ImageWidth || meta2.SubExif.PixelXDimension || undefined;
-          json.height = meta1.ImageHeight || meta1.ExifImageHeight || meta2.ImageHeight || meta2.SubExif.PixelYDimension || undefined;
+          json.width = meta1.ImageWidth || meta1.ExifImageWidth || meta2.ImageWidth || meta2.SubExif.PixelXDimension || null;
+          json.height = meta1.ImageHeight || meta1.ExifImageHeight || meta2.ImageHeight || meta2.SubExif.PixelYDimension || null;
+          if (!json.width) json.width = meta1.XResolution || meta2.XResolution || undefined;
+          if (!json.height) json.height = meta1.YResolution || meta2.YResolution || undefined;
+          json.unit = (meta1.ResolutionUnit || meta2.ResolutionUnit) === 2 ? 'inch' : 'cm';
           resolve(json);
         })
         .on('error', (err) => {
@@ -381,8 +399,8 @@ async function checkRecords(list) {
 async function testExif(dir) {
   // eslint-disable-next-line no-console
   console.log('Test', dir);
-  /*
   await init();
+  /*
   global.db = nedb.create({ filename: config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
   await global.db.loadDatabase();
   const list = [];
@@ -395,7 +413,6 @@ async function testExif(dir) {
   console.log('list', list);
   console.log('all', filesAll);
   */
-  /*
   if (fs.statSync(dir).isFile()) {
     const data = await getExif(dir);
     const geo = await getLocation(data);
@@ -410,7 +427,6 @@ async function testExif(dir) {
       console.log(path.join(dir, file), geo, data);
     }
   }
-  */
 }
 
 exports.init = init;

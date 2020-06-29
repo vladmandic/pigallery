@@ -10,6 +10,24 @@ function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
 }
 
+// combine results from multiple model results
+function combineResults(object) {
+  const res = [];
+  if (!object || !(object.length > 0)) return res;
+  const found = [];
+  const all = object
+    .sort((a, b) => b.score - a.score)
+    .filter((a) => {
+      if (found.includes(a.class)) return false;
+      found.push(a.class);
+      return true;
+    });
+  for (const item of all) {
+    res.push({ score: Math.round(item.score * 100), name: item.class });
+  }
+  return res;
+}
+
 function clearBoxes() {
   const img = document.getElementsByClassName('iv-image')[0];
   const canvas = document.getElementById('popup-canvas');
@@ -176,12 +194,10 @@ async function showDetails(img) {
   $('.iv-large-image').on('wheel', () => resizeDetailsImage());
 
   let classified = 'Classified ';
-  if (object.classify) for (const obj of object.classify) classified += ` | <font color="teal">${(100 * obj.score).toFixed(0)}% ${obj.class}</font>`;
-  let alternative = 'Alternate ';
-  if (object.alternative) for (const obj of object.alternative) alternative += ` | <font color="teal">${(100 * obj.score).toFixed(0)}% ${obj.class}</font>`;
+  for (const obj of combineResults(object.classify)) classified += ` | <font color="teal">${obj.score}% ${obj.name}</font>`;
 
   let detected = 'Detected ';
-  if (object.detect) for (const obj of object.detect) detected += ` | <font color="teal">${(100 * obj.score).toFixed(0)}% ${obj.class}</font>`;
+  for (const obj of combineResults(object.detect)) detected += ` | <font color="teal">${obj.score}% ${obj.name}</font>`;
 
   let person = '';
   let nsfw = '';
@@ -235,7 +251,6 @@ async function showDetails(img) {
       <h2>Location</h2>
       ${location}
       <h2>${classified}</h2>
-      <h2>${alternative}</h2>
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
       ${desc}
@@ -243,7 +258,6 @@ async function showDetails(img) {
         Total time ${object.perf.total.toFixed(0)} ms<br>
         Processed on ${moment(object.processed).format(window.options.dateLong)} in ${object.perf.load.toFixed(0)} ms<br>
         Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
-        Alternative using ${config.alternative ? config.alternative.name : 'N/A'}<br>
         Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
         Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)} ms<br>
       <h2>Tags</h2>
@@ -271,3 +285,4 @@ exports.show = showDetails;
 exports.next = showNextDetails;
 exports.boxes = drawBoxes;
 exports.clear = clearBoxes;
+exports.combine = combineResults;

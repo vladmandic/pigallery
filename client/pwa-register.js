@@ -17,8 +17,9 @@ async function register(path) {
       if (!found) {
         navigator.serviceWorker
           .register(path, { scope: '/' })
+          // eslint-disable-next-line no-unused-vars
           .then((reg) => {
-            log.result(`PWA registration scope: ${reg.scope}`);
+            // log.result(`PWA registration scope: ${reg.scope}`);
           })
           .catch((err) => {
             if (err.name === 'SecurityError') log.result('SSL certificate is untrusted');
