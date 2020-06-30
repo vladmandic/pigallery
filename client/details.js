@@ -2,7 +2,6 @@
 
 const moment = require('moment');
 const log = require('./log.js');
-const config = require('./config.js').default;
 
 let viewer;
 
@@ -158,7 +157,6 @@ async function resizeDetailsImage(object) {
 // show details popup
 async function showDetails(img) {
   if (!img && last) img = last.image;
-  console.log($('.navbar').css('height'));
   $('#popup').css('top', $('.navbar').css('height'));
   $('#popup').height($('#results').height() + $('#log').height());
   $('#popup-image').width($('#popup').width());
@@ -259,9 +257,9 @@ async function showDetails(img) {
       <h2>Processing Details</h2>
         Total time ${object.perf.total.toFixed(0)} ms<br>
         Processed on ${moment(object.processed).format(window.options.dateLong)} in ${object.perf.load.toFixed(0)} ms<br>
-        Classified using ${config.classify ? config.classify.name : 'N/A'} in ${object.perf.classify.toFixed(0)} ms<br>
-        Detected using ${config.detect ? config.detect.name : 'N/A'} in ${object.perf.detect.toFixed(0)} ms<br>
-        Person using ${config.person ? config.person.name : 'N/A'} in ${object.perf.person.toFixed(0)} ms<br>
+        Classified in ${object.perf.classify.toFixed(0)} ms<br>
+        Detected in ${object.perf.detect.toFixed(0)} ms<br>
+        Person in ${object.perf.person.toFixed(0)} ms<br>
       <h2>Tags</h2>
         <i>${JSONtoStr(object.tags)}</i>
       </div>

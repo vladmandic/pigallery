@@ -11,7 +11,6 @@ function api(app) {
   app.get('/api/log', (req, res) => {
     res.status(200).send('true');
     const msg = decodeURI(req.query.msg || '').replace(/\s+/g, ' ');
-    // log.info(`Client ${req.session.user}@${req.client.remoteAddress}`, msg);
     log.info(`Client ${req.session.user}@${req.ip}`, msg);
   });
 
@@ -64,7 +63,7 @@ function api(app) {
       }
     }
     res.json(data);
-    log.info(`API Get ${req.session.user}@${req.client.remoteAddress} root: ${req.session.root} data:`, data.length);
+    log.info(`API Get ${req.session.user}@${req.ip} root: ${req.session.root} data:`, data.length);
   });
 
   app.post('/api/metadata', async (req, res) => {
@@ -137,7 +136,7 @@ function api(app) {
       req.session.admin = found.admin;
       req.session.root = found.mediaRoot;
     }
-    log.info(`API Login: ${email} from ${req.client.remoteAddress} ${req.session.user ? 'success' : 'fail'}`);
+    log.info(`API Login: ${email} from ${req.ip} ${req.session.user ? 'success' : 'fail'}`);
     res.redirect('/gallery');
   });
 }
