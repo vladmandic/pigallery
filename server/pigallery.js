@@ -153,6 +153,8 @@ async function main() {
   } else if (global.config.server.dbEngine === 'nedb') {
     if (!fs.existsSync(global.config.server.nedbDB)) log.warn('Image cache not found:', global.config.server.nedbDB);
     global.db = nedb.create({ filename: global.config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
+    await global.db.ensureIndex({ fieldName: 'image', unique: true });
+    await global.db.ensureIndex({ fieldName: 'processed', unique: false });
     await global.db.loadDatabase();
     const records = await global.db.count({});
     log.state('Image cache loaded:', global.config.server.nedbDB, 'records:', records);

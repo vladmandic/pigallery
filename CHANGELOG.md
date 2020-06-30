@@ -1,8 +1,15 @@
 # PiGallery Change Log
+
+### **origin/HEAD** 2020/06/30 cyan00@gmail.com
+
+
+### **v1.0.1** 2020/06/30 cyan00@gmail.com
+
+- css formatting
 - implemented multi-engine processing
 - tuning models
 
-### **origin/HEAD** 2020/06/28 cyan00@gmail.com
+### **v0.9.15** 2020/06/28 cyan00@gmail.com
 
 - model tuning
 - started on inaturalist models

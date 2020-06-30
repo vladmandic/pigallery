@@ -1,14 +1,11 @@
 {
   "users": [
-    { "email": "mandic00@live.com", "passwd": "qwe", "admin": true, "mediaRoot": "media/" },
-    { "email": "igor.domancic@ri.t-com.hr", "passwd": "pEro", "admin": false, "mediaRoot": "media/" }
+    { "email": "mandic00@live.com", "passwd": "qwe", "admin": true, "mediaRoot": "media/" }
   ],
   "locations": [
     { "folder": "Pictures/Snapseed/", "match": "" },
     { "folder": "Pictures/Camera Roll/", "match": "-01.jp" },
-    { "folder": "People/Vlado/", "match": "" },
-    { "folder": "People/California/", "match": "" },
-    { "folder": "People/Miami/", "match": "" },
+    { "folder": "People/", "match": "", "recursive": true },
     { "folder": "Photos/", "match": "", "recursive": true }
   ],
   "server": {
@@ -18,7 +15,7 @@
     "allowCORS": true,
     "allowPWA": true,
     "logFile": "pigallery.log",
-    "authForce": true,
+    "authForce": false,
     "allowedImageFileTypes": [ ".jpeg", ".jpg", ".png", ".gif" ],
     "mediaRoot": "media/",
     "dbEngine": "nedb",

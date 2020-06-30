@@ -26,7 +26,11 @@ async function open() {
       db = evt.target.result;
       db.onerror = (event) => log.result(`IndexDB DB error: ${event}`);
       db.onsuccess = (event) => log.result(`IndexDB DB open: ${event}`);
+      db.onblocked = (event) => log.result(`IndexDB DB blocked: ${event}`);
       resolve(true);
+    };
+    request.onblocked = () => {
+      if (window.debug) log.result('IndexDB request open blocked');
     };
   });
 }
@@ -42,6 +46,10 @@ async function reset() {
     };
     request.onerror = () => {
       if (window.debug) log.result('IndexDB delete error');
+      resolve(false);
+    };
+    request.onblocked = () => {
+      if (window.debug) log.result('IndexDB delete blocked');
       resolve(false);
     };
   });
@@ -77,11 +85,11 @@ async function all(index = 'date', direction = true, start = 1, end = Number.MAX
           if ((idx >= start) && (obj.image.startsWith(window.user.root))) res.push(obj);
           if (idx < end) evt.target.result.continue();
           else {
-            if (window.debug) log.result(`IndexDB All: ${index} ${direction} ${res.length} ${start}-${end}`);
+            if (window.debug) log.result(`IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} ${start}-${end}`);
             resolve(res);
           }
         } else {
-          if (window.debug) log.result(`IndexDB All: ${index} ${direction} ${res.length}`);
+          if (window.debug) log.result(`IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length}`);
           resolve(res);
         }
       };

@@ -55,10 +55,14 @@ function api(app) {
       data = global.json;
       if (config.server.authForce) data = data.filter((a) => a.image.startsWith(req.session.root));
     } else {
-      const re = new RegExp(`^${req.session.root}`);
-      const records = await global.db.find({ image: re }).sort({ time: -1 }).limit(req.query.limit || config.server.resultsLimit);
+      const root = new RegExp(`^${req.session.root || 'media/'}`);
+      const limit = req.query.limit || config.server.resultsLimit;
+      const time = req.query.time ? new Date(parseInt(req.query.time, 10)) : new Date(0);
+      const records = await global.db
+        .find({ image: root, processed: { $gte: time } })
+        .sort({ processed: -1 })
+        .limit(limit);
       for (const record of records) {
-        // data.push(JSON.parse(record.data));
         data.push(record);
       }
     }

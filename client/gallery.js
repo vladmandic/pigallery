@@ -21,6 +21,7 @@ function busy(working) {
   $('#number').css('color', working ? 'gray' : 'lightyellow');
 }
 
+// eslint-disable-next-line no-unused-vars
 async function time(fn, arg) {
   if (window.debug) {
     const t0 = window.performance.now();
@@ -289,9 +290,9 @@ async function folderHandlers() {
       default:
     }
     // eslint-disable-next-line no-use-before-define
-    time(redrawResults);
+    redrawResults();
     // eslint-disable-next-line no-use-before-define
-    time(enumerateResults);
+    enumerateResults();
     busy(false);
   });
 }
@@ -327,16 +328,16 @@ async function scrollResults() {
     }
     current = i;
     const t1 = window.performance.now();
-    if (window.debug) log.result(`Timed scrollResults: ${Math.round(t1 - t0).toLocaleString()} ms added: ${count} current: ${current} total: ${window.filtered.length}`);
+    if (window.debug) log.result(`scrollResults: ${Math.round(t1 - t0).toLocaleString()} ms added: ${count} current: ${current} total: ${window.filtered.length}`);
   }
   document.getElementById('number').innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length}`;
 }
 
 async function enumerateResults() {
-  time(enumerateFolders);
-  time(enumerateLocations);
-  time(enumerateClasses);
-  time(folderHandlers);
+  enumerateFolders();
+  enumerateLocations();
+  enumerateClasses();
+  folderHandlers();
 }
 
 // redraws gallery view and rebuilds sidebar menu
@@ -361,9 +362,9 @@ async function redrawResults() {
   current = 0;
   $('#results').off('scroll');
   $('#results').scroll(() => scrollResults());
-  time(scrollResults);
+  scrollResults();
   const t1 = window.performance.now();
-  if (window.debug) log.result(`Timed loop printResults: ${Math.round(t1 - t0).toLocaleString()} ms`);
+  if (window.debug) log.result(`redrawResults: ${Math.round(t1 - t0).toLocaleString()} ms`);
   // window.location = `#${moment().format('MMDDHHmmss')}`;
   busy(false);
 }
@@ -396,8 +397,8 @@ async function filterResults(words) {
     if (window.filtered && window.filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} results out of ${await db.count()} matches`);
     else log.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
   }
-  time(enumerateResults);
-  time(redrawResults);
+  enumerateResults();
+  redrawResults();
   busy(false);
 }
 
@@ -421,6 +422,11 @@ let loadTried = false;
 async function sortResults(sort) {
   $('#optionslist').toggle(false);
   busy(true);
+
+  // refresh records
+  // eslint-disable-next-line no-use-before-define
+  await loadGallery(window.options.listLimit, true);
+
   if (window.debug) log.result(`Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
   const t0 = window.performance.now();
   if (sort.includes('random')) {
@@ -443,7 +449,7 @@ async function sortResults(sort) {
   else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
   const t1 = window.performance.now();
-  time(redrawResults);
+  redrawResults();
   const t2 = window.performance.now();
   if (window.debug) log.result(`Cached images: ${window.filtered.length} fetched initial in ${Math.round(t1 - t0).toLocaleString()} ms displayed in ${Math.round(t2 - t1).toLocaleString()} ms`);
   $('#all').focus();
@@ -462,7 +468,8 @@ async function sortResults(sort) {
     // eslint-disable-next-line no-use-before-define
     await loadGallery(window.options.listLimit);
   }
-  time(enumerateResults);
+  enumerateResults();
+  scrollResults();
   busy(false);
 }
 
@@ -489,13 +496,15 @@ async function findDuplicates() {
 }
 
 // loads imagesm, displays gallery and enumerates sidebar
-async function loadGallery(limit) {
+async function loadGallery(limit, refresh = false) {
   if (!window.user.user) return;
   busy(true);
   const t0 = window.performance.now();
-  log.result('Downloading image cache ...');
-  await db.reset();
-  await db.open();
+  if (!refresh) {
+    log.result('Downloading image cache ...');
+    await db.reset();
+    await db.open();
+  }
   if (window.options.liveLoad) {
     /*
     let count = 0;
@@ -520,7 +529,9 @@ async function loadGallery(limit) {
       });
       */
   } else {
-    const res = await fetch(`/api/get?limit=${limit}&find=all`);
+    const updated = new Date().getTime();
+    const since = refresh ? window.options.lastUpdated : 0;
+    const res = await fetch(`/api/get?find=all&limit=${limit}&time=${since}`);
     let json = [];
     if (res && res.ok) json = await res.json();
     const t1 = window.performance.now();
@@ -530,10 +541,15 @@ async function loadGallery(limit) {
       const size = JSON.stringify(await db.all()).length;
       log.result(`Downloaded cache: ${json.length} ${Math.round(t1 - t0).toLocaleString()} ms stored ${await db.count()} images in ${Math.round(t2 - t1).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
     } else {
-      log.result(`Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
+      // eslint-disable-next-line no-lonely-if
+      if (!refresh) log.result(`Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
+    }
+    if (refresh && (json.length > 0)) {
+      log.result(`Refreshed cache: ${json.length} images updated since ${moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss')} in ${Math.round(t1 - t0).toLocaleString()} ms`);
     }
     window.filtered = await db.all();
-    time(sortResults, window.options.listSortOrder);
+    window.options.lastUpdated = updated;
+    if (!refresh) sortResults(window.options.listSortOrder);
   }
   busy(false);
 }
@@ -865,7 +881,7 @@ async function main() {
   await initUser();
   await db.open();
   window.details = details;
-  time(sortResults, window.options.listSortOrder);
+  sortResults(window.options.listSortOrder);
 }
 
 window.onhashchange = async (evt) => {
