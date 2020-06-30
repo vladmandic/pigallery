@@ -49,6 +49,8 @@ window.options = {
   set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
   get mapColor() { return localStorage.getItem('mapColor') || 'dark'; },
   set mapColor(val) { return localStorage.setItem('dark', val); },
+  get lastUpdated() { return parseInt(localStorage.getItem('lastUpdated') || 0, 10); },
+  set lastUpdated(val) { return localStorage.setItem('lastUpdated', val); },
 };
 
 // TFJS Configuration
