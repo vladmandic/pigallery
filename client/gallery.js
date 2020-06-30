@@ -33,7 +33,7 @@ async function time(fn, arg) {
   }
 }
 
-function showTip(parent, text) {
+function showTip(parent, text, timeout = 3000) {
   const tip = document.createElement('div');
   tip.id = 'tooltip';
   tip.role = 'tooltip';
@@ -45,7 +45,7 @@ function showTip(parent, text) {
     popup.destroy();
     popup = null;
     parent.removeChild(tip);
-  }, 3000);
+  }, timeout);
 }
 
 // adds dividiers based on sort order
@@ -113,6 +113,9 @@ function printResult(object) {
     location += ` | ${object.location.city}, ${object.location.state} ${object.location.country} (near ${object.location.near})`;
   }
 
+  const camera = `Camera: ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}`;
+  const settings = `Settings: ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec`;
+
   const timestamp = object.exif.created ? moment(object.exif.created).format(window.options.dateShort) : 'Date unknown';
   const link = `<a class="download fa fa-arrow-alt-circle-down" href="${object.image}" download></a>`;
 
@@ -131,6 +134,8 @@ function printResult(object) {
         ${classified}<br>
         ${detected}<br>
         ${person}<br>
+        ${camera}<br>
+        ${settings}<br>
       </div>
     </div>
   `;
@@ -331,6 +336,8 @@ async function scrollResults() {
     if (window.debug) log.result(`scrollResults: ${Math.round(t1 - t0).toLocaleString()} ms added: ${count} current: ${current} total: ${window.filtered.length}`);
   }
   document.getElementById('number').innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length}`;
+  // $('.description').off();
+  // $('.description').click((evt) => console.log('click', evt.target.id));
 }
 
 async function enumerateResults() {

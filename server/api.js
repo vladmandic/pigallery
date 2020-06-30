@@ -54,6 +54,7 @@ function api(app) {
     if (config.server.dbEngine === 'json') {
       data = global.json;
       if (config.server.authForce) data = data.filter((a) => a.image.startsWith(req.session.root));
+      log.info(`API Get ${req.session.user}@${req.ip} root: ${req.session.root} data:`, data.length);
     } else {
       const root = new RegExp(`^${req.session.root || 'media/'}`);
       const limit = req.query.limit || config.server.resultsLimit;
@@ -65,9 +66,9 @@ function api(app) {
       for (const record of records) {
         data.push(record);
       }
+      log.info(`API Get ${req.session.user}@${req.ip} root: ${req.session.root} data:`, data.length, 'limit:', limit, 'since:', new Date(time));
     }
     res.json(data);
-    log.info(`API Get ${req.session.user}@${req.ip} root: ${req.session.root} data:`, data.length);
   });
 
   app.post('/api/metadata', async (req, res) => {
