@@ -1,4 +1,6 @@
 # PiGallery Change Log
+- implemented multi-engine processing
+- tuning models
 
 ### **origin/HEAD** 2020/06/28 cyan00@gmail.com
 
