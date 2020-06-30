@@ -70,7 +70,7 @@ const config = {
     { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-6k/model.json', score: 0.1, topK: 5, useFloat: false, tensorSize: 299, scoreScale: 1000, classes: 'assets/DeepDetect-Labels.json', offset: 0 },
   ],
   detect: [
-    { name: 'CoCo SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO },
+    { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO },
     { name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD },
   ],
   person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', type: 'tinyFaceDetector', score: 0.3, size: 416 },
@@ -96,8 +96,8 @@ const config = {
   models that can be used for "detect" can be found at
     https://tfhub.dev/s?deployment-format=tfjs&module-type=image-object-detection
   or just pick one from below
-    detect: { name: 'Coco/SSD v1', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v1/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
-    detect: { name: 'Coco/SSD v2', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
+    detect: { name: 'Coco SSD/MobileNet v1', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v1/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
+    detect: { name: 'Coco SSD/MobileNet v2', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
   or enable darknet/yolo model in a separate module (js module is not initialized by default)
   */
 

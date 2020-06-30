@@ -1,5 +1,9 @@
 # PiGallery Change Log
 
+### **v1.0.2** 2020/06/30 cyan00@gmail.com
+
+- db refresh since last update
+
 ### **origin/HEAD** 2020/06/30 cyan00@gmail.com
 
 
