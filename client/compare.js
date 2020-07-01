@@ -8,6 +8,7 @@ const modelYolo = require('./modelYolo.js');
 const processImage = require('./processImage.js');
 
 const models = [];
+window.cache = [];
 
 async function init() {
   const res = await fetch('/api/user');
@@ -68,7 +69,24 @@ async function loadDetect(options) {
   log.result(`Loaded model: ${options.name}  in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 }
 
+async function match(file) {
+  const image = window.cache.find((a) => a.file === file);
+  if (!image) return;
+  log.result('Building face descriptors');
+  const sorted = window.cache
+    .map((a) => {
+      const descriptor = (a.results[0] && a.results[0].data[0] && a.results[0].data[0].descriptor) ? a.results[0].data[0].descriptor : null;
+      a.match = descriptor ? 1 - faceapi.euclideanDistance(image.results[0].data[0].descriptor, descriptor) : 0;
+      return a;
+    })
+    .filter((a) => a.match > 0.46)
+    .sort((a, b) => b.match - a.match);
+  // eslint-disable-next-line no-console
+  for (const item of sorted) console.log(`${item.file} ${Math.round(100 * item.match)} %`);
+}
+
 async function print(file, image, results) {
+  window.cache.push({ file, results });
   let text = '';
   let all = [];
   for (const model of results) {
@@ -101,7 +119,7 @@ async function print(file, image, results) {
   item.className = 'listitem';
   item.innerHTML = `
     <div class="col thumbnail">
-      <img class="thumbnail" src="${image.thumbnail}" align="middle">
+      <img class="thumbnail" src="${image.thumbnail}" align="middle" tag="${file}">
     </div>
     <div class="col description">
       <p class="listtitle">${file}</p>
@@ -110,6 +128,11 @@ async function print(file, image, results) {
     </div>
   `;
   $('#results').append(item);
+}
+
+async function redraw() {
+  $('#results').html('');
+  for (const item of window.cache) await print(item.file, item.image, item.results);
 }
 
 async function classify() {
@@ -216,23 +239,23 @@ async function person() {
   const options = [];
   options[0] = { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'ssdMobilenetv1' };
   options[1] = { name: 'FaceAPI Tiny', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' };
-  options[2] = { name: 'FaceAPI MTCNN', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'mtcnn' };
+  // options[2] = { name: 'FaceAPI MTCNN', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'mtcnn' };
   // options[3] = { name: 'FaceAPI Yolo v2', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyYolov2' };
 
-  await faceapi.nets.ssdMobilenetv1.load(options[0].modelPath);
-  await faceapi.nets.tinyFaceDetector.load(options[1].modelPath);
-  await faceapi.nets.mtcnn.load(options[2].modelPath);
-  // await faceapi.nets.tinyYolov2.load(options[3].modelPath);
+  if (options[0]) await faceapi.nets.ssdMobilenetv1.load(options[0].modelPath);
+  if (options[1]) await faceapi.nets.tinyFaceDetector.load(options[1].modelPath);
+  if (options[2]) await faceapi.nets.mtcnn.load(options[2].modelPath);
+  if (options[3]) await faceapi.nets.tinyYolov2.load(options[1].modelPath);
 
   await faceapi.nets.ageGenderNet.load(options[0].modelPath);
   await faceapi.nets.faceLandmark68Net.load(options[0].modelPath);
   await faceapi.nets.faceRecognitionNet.load(options[0].modelPath);
   await faceapi.nets.faceExpressionNet.load(options[0].modelPath);
 
-  options[0].face = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3, maxResults: 5 });
-  options[1].face = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.3, inputSize: 416 });
-  options[2].face = new faceapi.MtcnnOptions({ scoreThreshold: 0.3 }); // minFaceSize, scaleFactor, maxNumScales, scoreThresholds, scaleSteps
-  // options[3].face = new faceapi.TinyYolov2Options({ minConfidence: 0.5, maxResults: 5, scoreThreshold: 0.5, minFaceSize: 100, scaleFactor: 0.8, inputSize: 128 });
+  if (options[0]) options[0].face = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3, maxResults: 5 });
+  if (options[1]) options[1].face = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.3, inputSize: 416 });
+  if (options[2]) options[2].face = new faceapi.MtcnnOptions({ scoreThreshold: 0.3 }); // minFaceSize, scaleFactor, maxNumScales, scoreThresholds, scaleSteps
+  if (options[3]) options[3].face = new faceapi.TinyYolov2Options({ minConfidence: 0.5, maxResults: 5, scoreThreshold: 0.5, minFaceSize: 100, scaleFactor: 0.8, inputSize: 128 });
 
   engine = await tf.engine();
   stats.time1 = window.performance.now();
@@ -260,6 +283,7 @@ async function person() {
         .detectAllFaces(image.canvas, options[m].face)
         .withFaceLandmarks()
         .withFaceExpressions()
+        .withFaceDescriptors()
         .withAgeAndGender();
       const t1 = window.performance.now();
       stats[m] += t1 - t0;
@@ -268,6 +292,7 @@ async function person() {
     print(file, image, results);
   }
   for (const m in options) log.result(`${options[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+  $('.thumbnail').click((evt) => match(evt.target.getAttribute('tag')));
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -318,8 +343,10 @@ async function main() {
 
   $('#btn-classify').click(() => classify());
   $('#btn-detect').click(() => detect());
+  $('#btn-person').click(() => person());
   // $('#btn-detect').click(() => yolo());
-  // $('#btn-detect').click(() => person());
+
+  $('#btn-redraw').click(() => redraw());
 }
 
 window.onload = main;
