@@ -1,11 +1,12 @@
 # PiGallery Change Log
 
+### **origin/HEAD** 2020/06/30 cyan00@gmail.com
+
+
 ### **v1.0.2** 2020/06/30 cyan00@gmail.com
 
 - db refresh since last update
-
-### **origin/HEAD** 2020/06/30 cyan00@gmail.com
-
+- major release
 
 ### **v1.0.1** 2020/06/30 cyan00@gmail.com
 
