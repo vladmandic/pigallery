@@ -44,6 +44,10 @@ Requires --output_node_names
 TF-Lite to TFJS:
 Not possible.
 
+## Datasets
+
+<https://lionbridge.ai/datasets/tensorflow-datasets-machine-learning/>
+
 ## Open Models
 
 PlaNet: <https://tfhub.dev/google/planet/vision/classifier/planet_v2/1>

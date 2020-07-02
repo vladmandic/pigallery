@@ -1,11 +1,17 @@
 # PiGallery Change Log
 
+### **v1.0.4** 2020/07/02 cyan00@gmail.com
+
+- redone logging
+
+### **origin/HEAD** 2020/07/01 cyan00@gmail.com
+
+- implemented person simmilarity
+
 ### **v1.0.3** 2020/07/01 cyan00@gmail.com
 
 - prototype face compare
-
-### **origin/HEAD** 2020/06/30 cyan00@gmail.com
-
+- print additional details
 
 ### **v1.0.2** 2020/06/30 cyan00@gmail.com
 
