@@ -8,7 +8,7 @@
     { "src": "/assets/dash-128.png", "sizes": "128x128", "type": "image/png" },
     { "src": "/assets/dash-64.png", "sizes": "64x64", "type": "image/png" }
     ],
-  "start_url": "/gallery",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#000000",
