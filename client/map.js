@@ -10,6 +10,7 @@ const gallery = require('./gallery.js');
 let mapContainer;
 
 async function find(lat, lon) {
+  const t0 = window.performance.now();
   // get data
   let all;
   const sort = window.options.listSortOrder;
@@ -32,12 +33,13 @@ async function find(lat, lon) {
     }
     return false;
   });
-  if (window.debug) log.result(`Map search: ${lat} ${lon} Found: ${coord[0].lat} ${coord[0].lon} Images: ${window.filtered.length} Level: ${count}`);
+  log.debug(t0, `Map search: ${lat} ${lon} Found: ${coord[0].lat} ${coord[0].lon} Images: ${window.filtered.length} Level: ${count}`);
   gallery.redraw();
 }
 
 async function show(visible) {
-  if (window.debug) log.result(`Map show: ${visible}`);
+  const t0 = window.performance.now();
+  log.debug(t0, `Map show: ${visible}`);
   if (!visible && mapContainer) {
     mapContainer.off();
     mapContainer.remove();
@@ -66,7 +68,7 @@ async function show(visible) {
     .map((a) => [a.exif.lat, a.exif.lon, 0.1]);
   const heat = { maxZoom: 15, max: 1.0, radius: 25, blur: 15, minOpacity: 0.3 };
   L.heatLayer(points, heat).addTo(mapContainer);
-  if (window.debug) log.result(`Map added ${points.length} points`);
+  log.debug(t0, `Map added ${points.length} points`);
 }
 
 exports.show = show;

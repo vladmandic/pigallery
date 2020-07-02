@@ -7,6 +7,7 @@ const database = 'pigallery';
 const table = 'images';
 
 async function open() {
+  const t0 = window.performance.now();
   return new Promise((resolve) => {
     const request = indexedDB.open(database, 1);
     request.onerror = (evt) => {
@@ -14,7 +15,7 @@ async function open() {
       resolve(false);
     };
     request.onupgradeneeded = (evt) => {
-      if (window.debug) log.result('IndexDB request create');
+      log.debug(t0, 'IndexDB request create');
       db = evt.target.result;
       const tbl = db.createObjectStore(table, { keyPath: 'image' });
       tbl.createIndex('name', 'image', { unique: true });
@@ -22,7 +23,7 @@ async function open() {
       tbl.createIndex('size', 'pixels', { unique: false });
     };
     request.onsuccess = (evt) => {
-      if (window.debug) log.result('IndexDB request open');
+      log.debug(t0, 'IndexDB request open');
       db = evt.target.result;
       db.onerror = (event) => log.result(`IndexDB DB error: ${event}`);
       db.onsuccess = (event) => log.result(`IndexDB DB open: ${event}`);
@@ -30,26 +31,27 @@ async function open() {
       resolve(true);
     };
     request.onblocked = () => {
-      if (window.debug) log.result('IndexDB request open blocked');
+      log.debug(t0, 'IndexDB request open blocked');
     };
   });
 }
 
 async function reset() {
+  const t0 = window.performance.now();
   return new Promise((resolve) => {
-    if (window.debug) log.result('IndexDB reset');
+    log.debug(t0, 'IndexDB reset');
     if (db) db.close();
     const request = indexedDB.deleteDatabase('pigallery');
     request.onsuccess = () => {
-      if (window.debug) log.result('IndexDB delete success');
+      log.debug(t0, 'IndexDB delete success');
       resolve(true);
     };
     request.onerror = () => {
-      if (window.debug) log.result('IndexDB delete error');
+      log.debug(t0, 'IndexDB delete error');
       resolve(false);
     };
     request.onblocked = () => {
-      if (window.debug) log.result('IndexDB delete blocked');
+      log.debug(t0, 'IndexDB delete blocked');
       resolve(false);
     };
   });
@@ -70,6 +72,7 @@ async function get(name) {
 }
 
 async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER) {
+  const t0 = window.performance.now();
   return new Promise((resolve) => {
     const res = [];
     if (!window.user || !window.user.user) resolve(res);
@@ -85,11 +88,11 @@ async function all(index = 'date', direction = true, start = 1, end = Number.MAX
           if ((idx >= start) && (obj.image.startsWith(window.user.root))) res.push(obj);
           if (idx < end) evt.target.result.continue();
           else {
-            if (window.debug) log.result(`IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} ${start}-${end}`);
+            log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images ${start}-${end}`);
             resolve(res);
           }
         } else {
-          if (window.debug) log.result(`IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length}`);
+          log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images`);
           resolve(res);
         }
       };
@@ -122,10 +125,9 @@ async function test() {
   const t0 = window.performance.now();
   log.result(`IndexDB count on put ${await count()} records`);
   const t1 = window.performance.now();
-  log.result(`IndexDB insert ${window.results.length} records in ${(t1 - t0).toLocaleString()} ms`);
+  log.debug(t0, `IndexDB insert ${window.results.length} records`);
   window.results = await all();
-  const t2 = window.performance.now();
-  log.result(`IndexDB retrieve ${window.results.length} records in ${(t2 - t1).toLocaleString()} ms`);
+  log.debug(t1, `IndexDB retrieve ${window.results.length} records`);
 }
 
 exports.open = open; // open database

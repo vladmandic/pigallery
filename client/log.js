@@ -21,6 +21,17 @@ async function result(...msg) {
   console.log(...msg);
 }
 
+async function debug(t0, ...msg) {
+  if (!window.debug) return;
+  let msgs = '';
+  msgs += msg.map((a) => a);
+  const t1 = window.performance.now();
+  const duration = t1 - t0;
+  if (duration > 50) msgs += ` in ${Math.round(duration).toLocaleString()} ms`;
+  // eslint-disable-next-line no-console
+  console.log(msgs);
+}
+
 let divActive;
 async function active(...msg) {
   if (!divActive) divActive = document.getElementById('active');
@@ -41,6 +52,7 @@ async function state(msg, append) {
 
 module.exports = {
   result,
+  debug,
   active,
   state,
   dot,
