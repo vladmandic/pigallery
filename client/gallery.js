@@ -3,11 +3,13 @@
 // const oboe = require('oboe');
 const moment = require('moment');
 const marked = require('marked');
+const faceapi = require('face-api.js');
 const log = require('./log.js');
 const config = require('./config.js').default;
 const details = require('./details.js');
 const map = require('./map.js');
 const db = require('./indexdb.js');
+const hash = require('./blockhash.js');
 const pwa = require('./pwa-register.js');
 
 // global variables
@@ -117,7 +119,6 @@ function printResult(object) {
   const settings = `Settings: ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec`;
 
   const timestamp = object.exif.created ? moment(object.exif.created).format(window.options.dateShort) : 'Date unknown';
-  const link = `<a class="download fa fa-arrow-alt-circle-down" href="${object.image}" download></a>`;
 
   const root = window.user && window.user.root ? window.user.root : 'media/';
   const html = `
@@ -126,9 +127,13 @@ function printResult(object) {
         <img class="thumbnail" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}"
         align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px
         onclick="details.show('${object.image}');">
+        <p class="btn-tiny fa fa-play-circle" onclick="details.show('${object.image}');" title="View image details" style="right: 84px"></p>
+        <a class="btn-tiny fa fa-arrow-alt-circle-down" href="${object.image}" download title="Download image" style="right: 56px"></a>
+        <p class="btn-tiny fa fa-adjust" onclick="simmilarImage('${object.image}');" title="Find simmilar images" style="right: 28px"></p>
+        <p class="btn-tiny fa fa-user-circle" onclick="simmilarPerson('${object.image}');" title="Find simmilar people" style="right: 0px"></p>
       </div>
       <div id="desc-${object.id}" class="col description" style="display: ${window.options.listDetails ? 'block' : 'hidden'}>
-        <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>${link}
+        <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>
         ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
         ${location}<br>
         ${classified}<br>
@@ -162,6 +167,7 @@ async function resizeResults() {
 // extracts all locations from loaded images and builds sidebar menu
 async function enumerateLocations() {
   $('#locations').html('');
+  if (!Array.isArray(window.filtered)) window.filtered = [];
   const locationsList = [];
   let unknown = 0;
   for (const item of window.filtered) {
@@ -192,6 +198,7 @@ async function enumerateLocations() {
 // exctract top classe from classification & detection and builds sidebar menu
 async function enumerateClasses() {
   $('#classes').html('');
+  if (!Array.isArray(window.filtered)) window.filtered = [];
   const classesList = [];
   for (const item of window.filtered) {
     for (const tag of item.tags) {
@@ -232,6 +239,7 @@ async function enumerateFolders(input) {
     }
   } else {
     folderList = [];
+    if (!Array.isArray(window.filtered)) window.filtered = [];
     for (const item of window.filtered) {
       const path = item.image.substr(0, item.image.lastIndexOf('/'));
       const folders = path.split('/').filter((a) => a !== '');
@@ -335,7 +343,10 @@ async function scrollResults() {
     const t1 = window.performance.now();
     if (window.debug) log.result(`scrollResults: ${Math.round(t1 - t0).toLocaleString()} ms added: ${count} current: ${current} total: ${window.filtered.length}`);
   }
-  document.getElementById('number').innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length}`;
+  document.getElementById('number').innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length || 0}`;
+  $('.listitem').mouseenter((evt) => $(evt.target).find('.btn-tiny').css('z-index', '10'));
+  $('.listitem').mouseleave((evt) => $(evt.target).find('.btn-tiny').css('z-index', '-10'));
+
   // $('.description').off();
   // $('.description').click((evt) => console.log('click', evt.target.id));
 }
@@ -354,18 +365,6 @@ async function redrawResults() {
   const t0 = window.performance.now();
   const res = document.getElementById('results');
   res.innerHTML = '';
-  /*
-  const num = document.getElementById('number');
-  for (const i in window.filtered) {
-    setTimeout(() => {
-      const divider = addDividers(window.filtered[i]);
-      const item = printResult(window.filtered[i]);
-      if (divider) res.appendChild(divider);
-      res.appendChild(item);
-      num.innerText = (parseInt(i, 10) + 1);
-    }, i);
-  }
-  */
   current = 0;
   $('#results').off('scroll');
   $('#results').scroll(() => scrollResults());
@@ -422,6 +421,40 @@ function shuffle(array) {
     array[randomIndex] = temporaryValue;
   }
   return array;
+}
+
+// sort by image simmilarity
+async function simmilarImage(image) {
+  busy(true);
+  window.options.listDivider = 'simmilarity';
+  const object = window.filtered.find((a) => a.image === image);
+  for (const img of window.filtered) img.simmilarity = hash.distance(img.phash, object.phash);
+  window.filtered = window.filtered
+    .filter((a) => a.simmilarity < 70)
+    .sort((a, b) => a.simmilarity - b.simmilarity);
+  redrawResults();
+  enumerateResults();
+  scrollResults();
+  busy(false);
+}
+
+async function simmilarPerson(image) {
+  busy(true);
+  window.options.listDivider = 'simmilarity';
+  const object = window.filtered.find((a) => a.image === image);
+  const descriptor = (object.person && object.person[0] && object.person[0].descriptor) ? new Float32Array(Object.values(object.person[0].descriptor)) : null;
+  if (!descriptor) return;
+  for (const i in window.filtered) {
+    const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
+    window.filtered[i].simmilarity = target ? Math.round(100 * faceapi.euclideanDistance(target, descriptor)) : 100;
+  }
+  window.filtered = window.filtered
+    .filter((a) => a.simmilarity < 55)
+    .sort((a, b) => a.simmilarity - b.simmilarity);
+  redrawResults();
+  enumerateResults();
+  scrollResults();
+  busy(false);
 }
 
 // sorts images based on given sort order
@@ -888,6 +921,8 @@ async function main() {
   await initUser();
   await db.open();
   window.details = details;
+  window.simmilarImage = simmilarImage;
+  window.simmilarPerson = simmilarPerson;
   sortResults(window.options.listSortOrder);
 }
 
