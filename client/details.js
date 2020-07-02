@@ -58,7 +58,7 @@ function drawBoxes(object) {
   if (!object) return;
 
   // eslint-disable-next-line no-console
-  if (window.debug) console.log(object);
+  if (window.debug) console.log('Details for object', object);
 
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
@@ -156,6 +156,7 @@ async function resizeDetailsImage(object) {
 
 // show details popup
 async function showDetails(img) {
+  const t0 = window.performance.now();
   if (!img && last) img = last.image;
   $('#popup').css('top', $('.navbar').css('height'));
   $('#popup').height($('#results').height() + $('#log').height());
@@ -168,11 +169,11 @@ async function showDetails(img) {
   if (!img) return;
 
   if (window.options.viewRaw) {
-    if (window.debug) log.result(`Loading Raw image: ${img}`);
+    log.debug(t0, `Loading Raw image: ${img}`);
     window.open(img, '_blank');
     return;
   }
-  if (window.debug) log.result(`Loading image: ${img}`);
+  log.debug(t0, `Loading image: ${img}`);
 
   $('#popup').toggle(true);
   $('#optionsview').toggle(true);

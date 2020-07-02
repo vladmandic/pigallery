@@ -5,7 +5,7 @@ const modelClassify = require('./modelClassify.js');
 // eslint-disable-next-line no-unused-vars
 const modelDetect = require('./modelDetect.js');
 
-window.debug = false;
+window.debug = true;
 
 // user configurable options, stored in browsers local storage
 window.options = {

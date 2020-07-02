@@ -28,8 +28,7 @@ async function time(fn, arg) {
   if (window.debug) {
     const t0 = window.performance.now();
     await fn(arg);
-    const t1 = window.performance.now();
-    log.result(`Timed ${fn.name}: ${Math.round(t1 - t0).toLocaleString()} ms`);
+    log.debug(t0, `Timed ${fn.name}`);
   } else {
     fn(arg);
   }
@@ -276,6 +275,7 @@ async function enumerateFolders(input) {
 
 // handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
+  const t0 = window.performance.now();
   $('.folder').off();
   $('.folder').click(async (evt) => {
     if (!window.filtered || (window.filtered.length === 0)) return;
@@ -283,13 +283,13 @@ async function folderHandlers() {
     const path = $(evt.target).attr('tag');
     switch (evt.target.getAttribute('type')) {
       case 'folder':
-        if (window.debug) log.result(`Selected path: ${path}`);
+        log.debug(t0, `Selected path: ${path}`);
         const root = window.user && window.user.root ? window.user.root : 'media/';
         if (path !== root) window.filtered = window.filtered.filter((a) => a.image.startsWith(path));
         else window.filtered = db.all('date', false);
         break;
       case 'location':
-        if (window.debug) log.result(`Selected location: ${path}`);
+        log.debug(t0, `Selected location: ${path}`);
         if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => path.startsWith(a.location.near));
         else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
         break;
@@ -298,7 +298,7 @@ async function folderHandlers() {
           const found = a.tags.find((b) => (Object.values(b)[0].toString().startsWith(path)));
           return found;
         });
-        if (window.debug) log.result(`Selected class: ${path}`);
+        log.debug(t0, `Selected class: ${path}`);
         break;
       default:
     }
@@ -340,15 +340,12 @@ async function scrollResults() {
       i++;
     }
     current = i;
-    const t1 = window.performance.now();
-    if (window.debug) log.result(`scrollResults: ${Math.round(t1 - t0).toLocaleString()} ms added: ${count} current: ${current} total: ${window.filtered.length}`);
+    log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${window.filtered.length}`);
   }
   document.getElementById('number').innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length || 0}`;
-  $('.listitem').mouseenter((evt) => $(evt.target).find('.btn-tiny').css('z-index', '10'));
-  $('.listitem').mouseleave((evt) => $(evt.target).find('.btn-tiny').css('z-index', '-10'));
-
-  // $('.description').off();
-  // $('.description').click((evt) => console.log('click', evt.target.id));
+  $('.listitem').mouseenter((evt) => $(evt.target).find('.btn-tiny').toggle(true));
+  $('.listitem').mouseleave((evt) => $(evt.target).find('.btn-tiny').toggle(false));
+  $('.description').click((evt) => $(evt.target).parent().find('.btn-tiny').toggle());
 }
 
 async function enumerateResults() {
@@ -369,9 +366,7 @@ async function redrawResults() {
   $('#results').off('scroll');
   $('#results').scroll(() => scrollResults());
   scrollResults();
-  const t1 = window.performance.now();
-  if (window.debug) log.result(`redrawResults: ${Math.round(t1 - t0).toLocaleString()} ms`);
-  // window.location = `#${moment().format('MMDDHHmmss')}`;
+  log.debug(t0, 'Redraw results complete');
   busy(false);
 }
 
@@ -395,14 +390,14 @@ async function filterResults(words) {
   busy(true);
   previous = null;
   let foundWords = 0;
+  const t0 = window.performance.now();
+  const size = window.filtered.length;
   for (const word of words.split(' ')) {
     window.filtered = filterWord(word.toLowerCase());
     foundWords += (window.filtered && window.filtered.length > 0) ? 1 : 0;
   }
-  if (window.debug) {
-    if (window.filtered && window.filtered.length > 0) log.result(`Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} results out of ${await db.count()} matches`);
-    else log.result(`Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
-  }
+  if (window.filtered && window.filtered.length > 0) log.debug(t0, `Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} matches out of ${size} images`);
+  else log.debug(t0, `Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
   enumerateResults();
   redrawResults();
   busy(false);
@@ -426,12 +421,14 @@ function shuffle(array) {
 // sort by image simmilarity
 async function simmilarImage(image) {
   busy(true);
+  const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
   const object = window.filtered.find((a) => a.image === image);
   for (const img of window.filtered) img.simmilarity = hash.distance(img.phash, object.phash);
   window.filtered = window.filtered
     .filter((a) => a.simmilarity < 70)
     .sort((a, b) => a.simmilarity - b.simmilarity);
+  log.debug(t0, `Simmilar: ${window.filtered.length} images`);
   redrawResults();
   enumerateResults();
   scrollResults();
@@ -440,10 +437,15 @@ async function simmilarImage(image) {
 
 async function simmilarPerson(image) {
   busy(true);
+  const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
   const object = window.filtered.find((a) => a.image === image);
   const descriptor = (object.person && object.person[0] && object.person[0].descriptor) ? new Float32Array(Object.values(object.person[0].descriptor)) : null;
-  if (!descriptor) return;
+  if (!descriptor) {
+    log.debug(t0, 'Simmilar Search aborted as no person found in image');
+    busy(false);
+    return;
+  }
   for (const i in window.filtered) {
     const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
     window.filtered[i].simmilarity = target ? Math.round(100 * faceapi.euclideanDistance(target, descriptor)) : 100;
@@ -451,6 +453,7 @@ async function simmilarPerson(image) {
   window.filtered = window.filtered
     .filter((a) => a.simmilarity < 55)
     .sort((a, b) => a.simmilarity - b.simmilarity);
+  log.debug(t0, `Simmilar: ${window.filtered.length} persons`);
   redrawResults();
   enumerateResults();
   scrollResults();
@@ -467,8 +470,8 @@ async function sortResults(sort) {
   // eslint-disable-next-line no-use-before-define
   await loadGallery(window.options.listLimit, true);
 
-  if (window.debug) log.result(`Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
   const t0 = window.performance.now();
+  log.debug(t0, `Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
   if (sort.includes('random')) {
     window.filtered = await db.all();
     shuffle(window.filtered);
@@ -488,10 +491,9 @@ async function sortResults(sort) {
   else if (sort.includes('alpha-down') || sort.includes('alpha-up')) window.options.listDivider = 'folder';
   else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
-  const t1 = window.performance.now();
   redrawResults();
-  const t2 = window.performance.now();
-  if (window.debug) log.result(`Cached images: ${window.filtered.length} fetched initial in ${Math.round(t1 - t0).toLocaleString()} ms displayed in ${Math.round(t2 - t1).toLocaleString()} ms`);
+  log.debug(t0, `Cached images: ${window.filtered.length} fetched initial`);
+  const t1 = window.performance.now();
   $('#all').focus();
   if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await db.all('name', true, window.options.listItemCount + 1));
   if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await db.all('name', false, window.options.listItemCount + 1));
@@ -499,8 +501,7 @@ async function sortResults(sort) {
   if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await db.all('date', true, window.options.listItemCount + 1));
   if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, window.options.listItemCount + 1));
   if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, window.options.listItemCount + 1));
-  const t3 = window.performance.now();
-  if (window.debug) log.result(`Cached images: ${window.filtered.length} fetched remaining in ${Math.round(t3 - t1).toLocaleString()} ms`);
+  log.debug(t1, `Cached images: ${window.filtered.length} fetched remaining`);
   if (window.filtered.length > 0) log.result(`Retrieved ${window.filtered.length} images from cache`);
   else log.result('Image cache empty');
   if (!loadTried && window.filtered.length === 0) {
@@ -578,8 +579,8 @@ async function loadGallery(limit, refresh = false) {
     await db.store(json);
     const t2 = window.performance.now();
     if (window.debug) {
-      const size = JSON.stringify(await db.all()).length;
-      log.result(`Downloaded cache: ${json.length} ${Math.round(t1 - t0).toLocaleString()} ms stored ${await db.count()} images in ${Math.round(t2 - t1).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
+      const size = JSON.stringify(json).length;
+      log.debug(t0, `Cache download: ${json.length} images ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
     } else {
       // eslint-disable-next-line no-lonely-if
       if (!refresh) log.result(`Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
@@ -587,7 +588,7 @@ async function loadGallery(limit, refresh = false) {
     if (refresh && (json.length > 0)) {
       log.result(`Refreshed cache: ${json.length} images updated since ${moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss')} in ${Math.round(t1 - t0).toLocaleString()} ms`);
     }
-    window.filtered = await db.all();
+    // window.filtered = await db.all();
     window.options.lastUpdated = updated;
     if (!refresh) sortResults(window.options.listSortOrder);
   }
@@ -878,7 +879,6 @@ async function initListHandlers() {
 
   // navbar slideshow
   $('#btn-slide').click(() => {
-    if (window.debug) log.result('Starting slide show ...');
     details.show(window.filtered[0].image);
     startSlideshow(true);
   });
@@ -892,8 +892,9 @@ async function initListHandlers() {
 
   // navbar images number
   $('#btn-number').click(async () => {
-    if (window.debug) log.result('Reset filtered results');
+    const t0 = window.performance.now();
     sortResults(window.options.listSortOrder);
+    log.debug(t0, 'Reset filtered results');
   });
 
   $('#btn-number').mouseover(async (evt) => {
@@ -927,23 +928,25 @@ async function main() {
 }
 
 window.onhashchange = async (evt) => {
-  if (window.debug) log.result('OnHashChange', evt.newURL);
+  const t0 = window.performance.now();
+  log.debug(t0, `URL Hash change: ${evt.newURL}`);
   const target = parseInt(evt.newURL.substr(evt.newURL.indexOf('#') + 1), 10);
   const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1), 10);
   if (source > target) {
     const top = parseInt($('#all').scrollTop(), 10) === 0;
     const all = await db.count() - window.filtered.length;
     if (top && all === 0) {
-      if (window.debug) log.result('Exiting ...');
+      log.debug(t0, 'Exiting ...');
     } else {
-      if (window.debug) log.result('Reset image selection');
       sortResults(window.options.listSortOrder);
+      log.debug(t0, 'Reset image selection');
     }
   }
 };
 
 window.onpopstate = (evt) => {
-  if (window.debug) log.result('OnPopState', evt.target.location.href);
+  const t0 = window.performance.now();
+  log.debug(t0, `URL Pop state: ${evt.target.location.href}`);
 };
 
 window.onload = main;
