@@ -1,5 +1,9 @@
 # PiGallery Change Log
 
+### **v1.0.3** 2020/07/01 cyan00@gmail.com
+
+- prototype face compare
+
 ### **origin/HEAD** 2020/06/30 cyan00@gmail.com
 
 
