@@ -71,18 +71,17 @@ async function loadDetect(options) {
 
 async function match(file) {
   const image = window.cache.find((a) => a.file === file);
-  if (!image) return;
   log.result('Building face descriptors');
   const sorted = window.cache
     .map((a) => {
-      const descriptor = (a.results[0] && a.results[0].data[0] && a.results[0].data[0].descriptor) ? a.results[0].data[0].descriptor : null;
-      a.match = descriptor ? 1 - faceapi.euclideanDistance(image.results[0].data[0].descriptor, descriptor) : 0;
+      a.descriptor = (a.results[0] && a.results[0].data[0] && a.results[0].data[0].descriptor) ? a.results[0].data[0].descriptor : null;
+      a.match = a.descriptor ? 1 - faceapi.euclideanDistance(image.results[0].data[0].descriptor, a.descriptor) : 0;
       return a;
     })
     .filter((a) => a.match > 0.46)
     .sort((a, b) => b.match - a.match);
   // eslint-disable-next-line no-console
-  for (const item of sorted) console.log(`${item.file} ${Math.round(100 * item.match)} %`);
+  for (const item of sorted) console.log(`${item.file} ${Math.round(100 * item.match)} % ${JSON.stringify(item.descriptor || {}).length}`);
 }
 
 async function print(file, image, results) {

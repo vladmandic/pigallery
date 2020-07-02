@@ -134,6 +134,7 @@ faceapi.classify = async (image) => {
     // .withFaceDescriptor()
     .withFaceLandmarks()
     .withFaceExpressions()
+    .withFaceDescriptors()
     .withAgeAndGender();
   const faces = [];
   for (const result of results) {
@@ -142,6 +143,7 @@ faceapi.classify = async (image) => {
       scoreGender: result.genderProbability,
       gender: result.gender,
       age: result.age,
+      descriptor: result.descriptor,
       scoreEmotion: emotion && emotion[1] ? emotion[1] : 0,
       emotion: emotion && emotion[0] ? emotion[0] : '',
       box: flattenObject(result.detection.box),
