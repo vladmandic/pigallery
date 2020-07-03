@@ -232,6 +232,7 @@ async function showDetails(img) {
     if (object.exif.bytes) exif += `<b>Size:</b> ${(object.pixels / 1000 / 1000).toFixed(1)} MP in ${object.exif.bytes.toLocaleString()} bytes (compression factor ${(object.pixels / object.exif.bytes).toFixed(2)})<br>`;
     if (object.exif.ctime) exif += `<b>CTime:</b> ${moment(object.exif.ctime).format(window.options.dateLong)} <b>MTime:</b> ${moment(object.exif.mtime).format(window.options.dateLong)}<br>`;
     if (object.exif.created) exif += `<b>Created:</b> ${moment(object.exif.created).format(window.options.dateLong)} <b>Modified:</b> ${moment(object.exif.modified).format(window.options.dateLong)}<br>`;
+    if (object.processed) exif += `Processed on ${moment(object.processed).format(window.options.dateLong)}<br>`;
     if (object.exif.software) exif += `<b>Software:</b> ${object.exif.software}<br>`;
     if (object.exif.exposure) exif += `<b>Settings:</b> ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
   }
@@ -255,12 +256,6 @@ async function showDetails(img) {
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
       ${desc}
-      <h2>Processing Details</h2>
-        Total time ${object.perf.total.toFixed(0)} ms<br>
-        Processed on ${moment(object.processed).format(window.options.dateLong)} in ${object.perf.load.toFixed(0)} ms<br>
-        Classified in ${object.perf.classify.toFixed(0)} ms<br>
-        Detected in ${object.perf.detect.toFixed(0)} ms<br>
-        Person in ${object.perf.person.toFixed(0)} ms<br>
       <h2>Tags</h2>
         <i>${JSONtoStr(object.tags)}</i>
       </div>

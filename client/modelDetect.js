@@ -89,7 +89,8 @@ async function detectCOCO(model, image) {
   const result = await model.executeAsync(batched);
   const [scores, classes] = calculateMaxScores(result);
   const reshaped = tf.tensor2d(result[1].dataSync(), [result[1].shape[1], result[1].shape[3]]);
-  const index = tf.image.nonMaxSuppression(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma); // async version leaks 2 tensors
+  // const index = tf.image.nonMaxSuppression(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma); // async version leaks 2 tensors
+  const index = await tf.image.nonMaxSuppressionAsync(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma); // async version leaks 2 tensors
   const results = buildDetectedObjects(model, batched, result, scores, classes, index); // disposes of batched, result, index
   tf.dispose(imgBuf);
   tf.dispose(reshaped);

@@ -1,11 +1,13 @@
 # PiGallery Change Log
 
+### **origin/HEAD** 2020/07/02 cyan00@gmail.com
+
+- updated
+
 ### **v1.0.4** 2020/07/02 cyan00@gmail.com
 
 - redone logging
-
-### **origin/HEAD** 2020/07/01 cyan00@gmail.com
-
+- updated changelog
 - implemented person simmilarity
 
 ### **v1.0.3** 2020/07/01 cyan00@gmail.com

@@ -198,8 +198,8 @@ async function getImage(url) {
 }
 
 async function processImage(name) {
-  log.active(`Loading: ${name}`);
-  tf.engine().startScope();
+  // log.active(`${moment().format('HH:mm:ss')} Processing: ${name}`);
+  if (config.batchProcessing === 1) tf.engine().startScope();
   log.state(`Engine state: ${tf.memory().numBytes.toLocaleString()} bytes ${tf.memory().numTensors.toLocaleString()} 
     tensors ${tf.memory().numDataBuffers.toLocaleString()} buffers ${tf.memory().numBytesInGPU ? tf.memory().numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj = {};
@@ -208,62 +208,81 @@ async function processImage(name) {
   const t0 = window.performance.now();
 
   // load & preprocess image
-  const ti0 = window.performance.now();
+  // const ti0 = window.performance.now();
   const image = await getImage(name);
   obj.processedSize = { width: image.canvas.width, height: image.canvas.height };
   obj.naturalSize = { width: image.naturalWidth, height: image.naturalHeight };
   obj.pixels = image.naturalHeight * image.naturalWidth;
   obj.thumbnail = image.thumbnail;
-  const ti1 = window.performance.now();
+  // const ti1 = window.performance.now();
 
-  log.active(`Classifying: ${name}`);
+  // log.active(`Classifying: ${name}`);
   obj.classify = [];
-  const tc0 = window.performance.now();
+  // const tc0 = window.performance.now();
+  const promisesClassify = [];
   try {
     if (!error) {
       for (const model of models.classify) {
-        const res = await modelClassify.classify(model, image.canvas);
-        if (res) obj.classify.push(...res);
+        promisesClassify.push(modelClassify.classify(model, image.canvas));
+        // const res = await modelClassify.classify(model, image.canvas);
+        // if (res) obj.classify.push(...res);
       }
     }
   } catch (err) {
     log.result(`Error during classification for ${name}: ${err}`);
     error = true;
   }
-  const tc1 = window.performance.now();
+  // const tc1 = window.performance.now();
 
-  log.active(`Detecting: ${name}`);
+  // log.active(`Detecting: ${name}`);
   obj.detect = [];
-  const td0 = window.performance.now();
+  // const td0 = window.performance.now();
+  const promisesDetect = [];
   try {
     if (!error) {
       for (const model of models.detect) {
-        const res = await modelDetect.exec(model, image.canvas);
-        if (res) obj.detect.push(...res);
+        promisesDetect.push(modelDetect.exec(model, image.canvas));
+        // const res = await modelDetect.exec(model, image.canvas);
+        // if (res) obj.detect.push(...res);
       }
     }
   } catch (err) {
     log.result(`Error during detection for ${name}: ${err}`);
     error = true;
   }
-  const td1 = window.performance.now();
+  // const td1 = window.performance.now();
+
+  const resClassify = await Promise.all(promisesClassify);
+  for (const i in resClassify) {
+    if (resClassify[i]) {
+      for (const j in resClassify[i]) resClassify[i][j].model = config.classify[i].name;
+      obj.classify.push(...resClassify[i]);
+    }
+  }
+  const resDetect = await Promise.all(promisesDetect);
+  for (const i in resDetect) {
+    if (resDetect[i]) {
+      for (const j in resDetect[i]) resDetect[i][j].model = config.detect[i].name;
+      obj.detect.push(...resDetect[i]);
+    }
+  }
 
   obj.phash = await hash.data(image.data);
 
-  const tp0 = window.performance.now();
-  log.active(`Face Detection: ${name}`);
+  // const tp0 = window.performance.now();
+  // log.active(`Face Detection: ${name}`);
   try {
     if (!error && models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
   } catch (err) {
     log.result(`Error in FaceAPI for ${name}: ${err}`);
     error = true;
   }
-  const tp1 = window.performance.now();
+  // const tp1 = window.performance.now();
 
   const t1 = window.performance.now();
-  obj.perf = { total: t1 - t0, load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
+  obj.perf = { total: Math.round(t1 - t0) }; // , load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
   if (error) obj.error = error;
-  tf.engine().endScope();
+  if (config.batchProcessing === 1) tf.engine().endScope();
 
   if (!error) {
     log.active(`Storing: ${name}`);

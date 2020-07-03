@@ -61,7 +61,7 @@ const config = {
   renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 1,      // how many images to process in parallel
   squareImage: false,      // resize proportional to the original image or to a square image
-  registerPWA: true,      // register PWA service worker?
+  registerPWA: true,       // register PWA service worker?
 
   // Default models
   classify: [
