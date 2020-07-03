@@ -251,23 +251,38 @@ async function processImage(name) {
     error = true;
   }
   // const td1 = window.performance.now();
-
-  const resClassify = await Promise.all(promisesClassify);
-  for (const i in resClassify) {
-    if (resClassify[i]) {
-      for (const j in resClassify[i]) resClassify[i][j].model = config.classify[i].name;
-      obj.classify.push(...resClassify[i]);
+  if (!error) {
+    let resClassify = [];
+    try {
+      resClassify = await Promise.all(promisesClassify);
+    } catch (err) {
+      log.result(`Error during classification for ${name}: ${err}`);
+      error = true;
+    }
+    for (const i in resClassify) {
+      if (resClassify[i]) {
+        for (const j in resClassify[i]) resClassify[i][j].model = config.classify[i].name;
+        obj.classify.push(...resClassify[i]);
+      }
     }
   }
-  const resDetect = await Promise.all(promisesDetect);
-  for (const i in resDetect) {
-    if (resDetect[i]) {
-      for (const j in resDetect[i]) resDetect[i][j].model = config.detect[i].name;
-      obj.detect.push(...resDetect[i]);
+  if (!error) {
+    let resDetect = [];
+    try {
+      resDetect = await Promise.all(promisesDetect);
+    } catch (err) {
+      log.result(`Error during detection for ${name}: ${err}`);
+      error = true;
+    }
+    for (const i in resDetect) {
+      if (resDetect[i]) {
+        for (const j in resDetect[i]) resDetect[i][j].model = config.detect[i].name;
+        obj.detect.push(...resDetect[i]);
+      }
     }
   }
 
-  obj.phash = await hash.data(image.data);
+  if (!error) obj.phash = await hash.data(image.data);
 
   // const tp0 = window.performance.now();
   // log.active(`Face Detection: ${name}`);
