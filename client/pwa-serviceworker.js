@@ -1,14 +1,20 @@
 /* eslint-disable no-console */
 
 const cacheName = 'pigallery';
-const cacheFiles = ['/favicon.ico', '/manifest.json'];
+const cacheFiles = [
+  '/favicon.ico', '/manifest.json',
+  '/assets/dash-64.png', '/assets/dash-128.png', '/assets/dash-256.png', '/assets/dash-512.png', '/assets/dash-1024.png',
+  '/assets/warmup.jpg', '/assets/roboto.ttf', '/assets/roboto-condensed.ttf',
+  '/assets/bootstrap.css', '/assets/fontawesome/css/all.css', '/assets/iv-viewer.css', '/assets/mapquest.css',
+];
 
 let listening = false;
 
 async function cached(evt) {
-  let found;
-  found = await caches.match(evt.request);
-  if (!found) found = await fetch(evt.request);
+  const found = await caches.match(evt.request) || await fetch(evt.request);
+  // if (!found) found = await fetch(evt.request);
+  return found;
+  /*
   // cache only /assets folder
   if (evt.request.url.includes('/assets/')) {
     const clone = found.clone();
@@ -18,6 +24,7 @@ async function cached(evt) {
     found = await fetch(evt.request);
   }
   return found;
+  */
 }
 
 if (!listening) {
@@ -42,7 +49,7 @@ if (!listening) {
     if (evt.request.url.includes('/api/')) return; // skip api calls
     if (evt.request.url.includes('/models/')) return; // skip caching model data
     const response = cached(evt);
-    evt.respondWith(response);
+    if (response) evt.respondWith(response);
   });
 
   let refreshed = false;
