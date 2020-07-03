@@ -1,3 +1,4 @@
+const moment = require('moment');
 const log = require('./log.js');
 const config = require('./config.js').default;
 const tf = require('./processImage.js');
@@ -31,7 +32,11 @@ function statSummary() {
 async function warmupModels() {
   log.result('TensorFlow models warming up ...');
   const t0 = window.performance.now();
-  await tf.process('assets/warmup.jpg');
+  const res = await tf.process('assets/warmup.jpg');
+  if (res.error) {
+    log.result('Aborting current run due to error during warmup');
+    setTimeout(() => window.location.reload(true), 2500);
+  }
   const t1 = window.performance.now();
   log.result(`TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
@@ -62,6 +67,8 @@ async function processFiles() {
       promises.push(tf.process(url).then((obj) => {
         log.dot();
         results[id] = obj;
+        // eslint-disable-next-line no-console
+        log.active(`${moment().format('HH:mm:ss')} [${results.length}/${files.length}] Processed ${obj.image} in ${obj.perf.total.toLocaleString()} ms size ${JSON.stringify(obj).length.toLocaleString()} bytes`);
         error = (obj.error === true) || error;
         id += 1;
         stuckTimer = new Date();
@@ -93,11 +100,7 @@ async function processFiles() {
   }
   if (error) {
     log.result('Aborting current run due to error');
-    // eslint-disable-next-line no-console
-    setTimeout(() => {
-      log.result('Restarting ...');
-      window.location.reload(true);
-    }, 2500);
+    setTimeout(() => window.location.reload(true), 2500);
   }
   log.active('Idle ...');
 }
