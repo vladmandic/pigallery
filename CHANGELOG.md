@@ -1,5 +1,10 @@
 # PiGallery Change Log
 
+### **v1.0.6** 2020/07/04 cyan00@gmail.com
+
+- navigation improvements
+- enhanced error handling during processing
+
 ### **origin/HEAD** 2020/07/03 cyan00@gmail.com
 
 
