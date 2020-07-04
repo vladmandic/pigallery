@@ -21,7 +21,6 @@ function JSONtoStr(json) {
   if (!json) return '';
   let res = '';
   if (Array.isArray(json)) {
-    // eslint-disable-next-line prefer-template
     for (const item of json) res += JSON.stringify(item).replace(/{|}|"/g, '').replace(/,/g, ', ');
   } else {
     res = JSON.stringify(json).replace(/{|}|"/g, '').replace(/,/g, ', ');
@@ -38,7 +37,6 @@ async function loadModels() {
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   await tf.dispose();
-  // await tf.engine().startScope();
   if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
   log.result(`Configured Backend: ${tf.getBackend().toUpperCase()}`);
   log.result('Configuration:');
@@ -131,7 +129,6 @@ function flattenObject(object) {
 
 faceapi.classify = async (image) => {
   const results = await faceapi.detectAllFaces(image, faceapi.options)
-    // .withFaceDescriptor()
     .withFaceLandmarks()
     .withFaceExpressions()
     .withFaceDescriptors()

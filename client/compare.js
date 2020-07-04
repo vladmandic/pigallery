@@ -92,7 +92,6 @@ async function print(file, image, results) {
     let classified = model.model.name || model.model;
     all = all.concat(model.data);
     for (const res of model.data) {
-      // console.log(res);
       if (res.score && res.class) classified += ` | ${Math.round(res.score * 100)}% ${res.class}`;
       if (res.age && res.gender) classified += ` | gender: ${Math.round(100 * res.genderProbability)}% ${res.gender} age: ${res.age.toFixed(1)}`;
       if (res.expression) {

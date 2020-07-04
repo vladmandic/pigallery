@@ -4,9 +4,6 @@
 // Based on https://github.com/commonsmachinery/blockhash-js
 // Which is an implementation ofBlock Mean Value Based Image Perceptual Hashing by Bian Yang, Fan Gu and Xiamu Niu
 
-// const fs = require('fs');
-// const jpeg = require('jpeg-js');
-
 const one_bits = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
 
 const median = function (data) {
@@ -83,7 +80,6 @@ const bmvbhash = function (data, bits) {
   const even_x = data.width % bits === 0;
   const even_y = data.height % bits === 0;
   if (even_x && even_y) return bmvbhash_even(data, bits);
-  // initialize blocks array with 0s
   for (let i = 0; i < bits; i++) {
     blocks.push([]);
     for (let j = 0; j < bits; j++) {
@@ -94,7 +90,6 @@ const bmvbhash = function (data, bits) {
   const block_height = data.height / bits;
   for (let y = 0; y < data.height; y++) {
     if (even_y) {
-      // don't bother dividing y, if the size evenly divides by bits
       block_bottom = Math.floor(y / block_height);
       block_top = block_bottom;
       weight_top = 1;
@@ -105,7 +100,6 @@ const bmvbhash = function (data, bits) {
       y_int = y_mod - y_frac;
       weight_top = (1 - y_frac);
       weight_bottom = (y_frac);
-      // y_int will be 0 on bottom/right borders and on block boundaries
       if (y_int > 0 || (y + 1) === data.height) {
         block_bottom = Math.floor(y / block_height);
         block_top = block_bottom;
@@ -131,7 +125,6 @@ const bmvbhash = function (data, bits) {
         x_int = x_mod - x_frac;
         weight_left = (1 - x_frac);
         weight_right = x_frac;
-        // x_int will be 0 on bottom/right borders and on block boundaries
         if (x_int > 0 || (x + 1) === data.width) {
           block_right = Math.floor(x / block_width);
           block_left = block_right;
@@ -140,7 +133,6 @@ const bmvbhash = function (data, bits) {
           block_right = Math.ceil(x / block_width);
         }
       }
-      // add weighted pixel value to relevant blocks
       blocks[block_top][block_left] += avgvalue * weight_top * weight_left;
       blocks[block_top][block_right] += avgvalue * weight_top * weight_right;
       blocks[block_bottom][block_left] += avgvalue * weight_bottom * weight_left;
@@ -153,45 +145,6 @@ const bmvbhash = function (data, bits) {
   translate_blocks_to_bits(result, block_width * block_height);
   return bits_to_hexhash(result);
 };
-
-/*
-async function calculateHashURL(src, bits = 16) {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', src, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function () {
-      let imgData;
-      let hash;
-      const data = new Uint8Array(xhr.response || xhr.mozResponseArrayBuffer);
-      try {
-        imgData = jpeg.decode(data);
-        if (!imgData) reject(new Error('Error decoding image'));
-        hash = bmvbhash(imgData, bits);
-        resolve(hash);
-      } catch (err) {
-        reject(err);
-      }
-    };
-    xhr.onerror = (err) => reject(err);
-    xhr.send();
-  });
-}
-
-async function calculateHashFile(src, bits = 16) {
-  return new Promise((resolve, reject) => {
-    try {
-      const data = fs.readFileSync(src);
-      const imgData = jpeg.decode(data);
-      if (!imgData) reject(new Error('Error decoding image'));
-      const hash = bmvbhash(imgData, bits);
-      resolve(hash);
-    } catch (err) {
-      reject(err);
-    }
-  });
-}
-*/
 
 async function calculateHashData(data, bits = 16) {
   return new Promise((resolve, reject) => {
@@ -216,20 +169,7 @@ function distance(hash1, hash2) {
   return d;
 }
 
-/*
-async function test() {
-  const h1 = await calculateHashFile('./media/test1.jpg');
-  const h2 = await calculateHashFile('./media/test2.jpg');
-  // eslint-disable-next-line no-console
-  console.log('distance:', distance(h1, h2), 'media/test1.jpg', 'media/test2.jpg');
-}
-*/
-
 module.exports = {
   distance,
-  // url: calculateHashURL,
-  // file: calculateHashFile,
   data: calculateHashData,
 };
-
-// if (!module.parent) test();
