@@ -34,6 +34,7 @@ async function time(fn, arg) {
   }
 }
 
+// show tooltip with timeout
 function showTip(parent, text, timeout = 3000) {
   const tip = document.createElement('div');
   tip.id = 'tooltip';
@@ -49,7 +50,7 @@ function showTip(parent, text, timeout = 3000) {
   }, timeout);
 }
 
-// adds dividiers based on sort order
+// adds dividiers to list view based on sort order
 let previous;
 function addDividers(object) {
   let divider;
@@ -85,6 +86,7 @@ function addDividers(object) {
 // print results element with thumbnail and description for a given object
 function printResult(object) {
   previous = object;
+
   let classified = 'Classified';
   for (const item of details.combine(object.classify)) {
     classified += ` | ${item.score}% ${item.name}`;
@@ -110,216 +112,47 @@ function printResult(object) {
 
   let location = '';
   if (object.location && object.location.city) {
-    location = 'Location';
-    location += ` | ${object.location.city}, ${object.location.state} ${object.location.country} (near ${object.location.near})`;
+    location = `Location | ${object.location.city}, ${object.location.state} ${object.location.country} (near ${object.location.near})`;
   }
 
-  const camera = `Camera: ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}`;
-  const settings = `Settings: ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec`;
-
+  const camera = (object.exif && object.exif.make) ? `Camera | ${object.exif.make || ''} ${object.exif.model || ''} ${object.exif.lens || ''}` : '';
+  const settings = (object.exif && object.exif.iso) ? `Settings | ${object.exif.fov ? object.exif.fov + 'mm' : ''} ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec` : '';
   const timestamp = object.exif.created ? moment(object.exif.created).format(window.options.dateShort) : 'Date unknown';
-
   const root = window.user && window.user.root ? window.user.root : 'media/';
-  const html = `
-    <div class="listitem" style="min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px">
-      <div class="col thumbnail">
-        <img class="thumbnail" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}"
-        align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px
-        onclick="details.show('${object.image}');">
-        <p class="btn-tiny fa fa-play-circle" onclick="details.show('${object.image}');" title="View image details" style="right: 84px"></p>
-        <a class="btn-tiny fa fa-arrow-alt-circle-down" href="${object.image}" download title="Download image" style="right: 56px"></a>
-        <p class="btn-tiny fa fa-adjust" onclick="simmilarImage('${object.image}');" title="Find simmilar images" style="right: 28px"></p>
-        <p class="btn-tiny fa fa-user-circle" onclick="simmilarPerson('${object.image}');" title="Find simmilar people" style="right: 0px"></p>
-      </div>
-      <div id="desc-${object.id}" class="col description" style="display: ${window.options.listDetails ? 'block' : 'hidden'}>
-        <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>
-        ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
-        ${location}<br>
-        ${classified}<br>
-        ${detected}<br>
-        ${person}<br>
-        ${camera}<br>
-        ${settings}<br>
-      </div>
-    </div>
+
+  const thumb = document.createElement('div');
+  thumb.className = 'col thumbnail';
+  thumb.id = object.id;
+  thumb.innerHTML = `
+    <img class="thumbnail" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');"
+    align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px>
+    <p class="btn-tiny fa fa-play-circle" onclick="details.show('${escape(object.image)}');" title="View image details" style="right: 84px"></p>
+    <a class="btn-tiny fa fa-arrow-alt-circle-down" href="${object.image}" download title="Download image" style="right: 56px"></a>
+    <p class="btn-tiny fa fa-adjust" onclick="simmilarImage('${escape(object.image)}');" title="Find simmilar images" style="right: 28px"></p>
+    <p class="btn-tiny fa fa-user-circle" onclick="simmilarPerson('${escape(object.image)}');" title="Find simmilar people" style="right: 0px"></p>
   `;
+
+  const desc = document.createElement('div');
+  desc.className = 'col description';
+  desc.id = object.id;
+  desc.style = `display: ${window.options.listDetails ? 'block' : 'hidden'}`;
+  desc.innerHTML = `
+    <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>
+    ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
+    ${location}<br>
+    ${classified}<br>
+    ${detected}<br>
+    ${person}<br>
+    ${camera}<br>
+    ${settings}<br>
+  `;
+
   const div = document.createElement('div');
   div.className = 'listitem';
-  div.innerHTML = html;
+  div.style = `min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px`;
+  div.appendChild(thumb);
+  div.appendChild(desc);
   return div;
-}
-
-// resize gallery view depending on user configuration
-async function resizeResults() {
-  const thumbSize = parseInt($('#thumbsize')[0].value, 10);
-  if (thumbSize !== window.options.listThumbSize) {
-    window.options.listThumbSize = thumbSize;
-    $('#thumblabel').text(`Size: ${window.options.listThumbSize}px`);
-    $('#thumbsize')[0].value = window.options.listThumbSize;
-    $('.thumbnail').width(window.options.listThumbSize);
-    $('.thumbnail').height(window.options.listThumbSize);
-    $('.listitem').css('min-height', `${16 + window.options.listThumbSize}px`);
-    $('.listitem').css('max-height', `${16 + window.options.listThumbSize}px`);
-  }
-}
-
-// extracts all locations from loaded images and builds sidebar menu
-async function enumerateLocations() {
-  $('#locations').html('');
-  if (!Array.isArray(window.filtered)) window.filtered = [];
-  const locationsList = [];
-  let unknown = 0;
-  for (const item of window.filtered) {
-    if (item.location && item.location.near) {
-      const loc = `${item.location.near}, ${item.location.state || item.location.country}`;
-      const here = locationsList.find((a) => (a.loc === loc));
-      if (!here) locationsList.push({ loc, count: 1 });
-      else here.count += 1;
-    } else {
-      unknown += 1;
-    }
-  }
-  locationsList.sort((a, b) => (a.loc > b.loc ? 1 : -1));
-  if (unknown > 0) locationsList.unshift({ loc: 'Unknown', count: unknown });
-  let html = '';
-  for (const item of locationsList) {
-    html += `
-      <li id="loc-${item.loc}">
-        <span tag="${item.loc}" type="location" style="padding-left: 16px" class="folder">&nbsp
-          <i tag="${item.loc}" class="fas fa-chevron-circle-right">&nbsp</i>${item.loc} (${item.count})
-        </span>
-      </li>
-    `;
-  }
-  $('#locations').append(html);
-}
-
-// exctract top classe from classification & detection and builds sidebar menu
-async function enumerateClasses() {
-  $('#classes').html('');
-  if (!Array.isArray(window.filtered)) window.filtered = [];
-  const classesList = [];
-  for (const item of window.filtered) {
-    for (const tag of item.tags) {
-      if (Object.keys(tag).length === 0) continue;
-      const key = Object.keys(tag)[0];
-      if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
-      const val = Object.values(tag)[0].toString().split(',')[0];
-      const found = classesList.find((a) => a.tag === val);
-      if (found) found.count += 1;
-      else classesList.push({ tag: val, count: 1 });
-    }
-  }
-  classesList.sort((a, b) => b.count - a.count);
-  classesList.length = Math.min(window.options.topClasses, classesList.length);
-  let html = '';
-  for (const item of classesList) {
-    html += `
-      <li id="loc-${item.tag}">
-        <span tag="${item.tag}" type="class" style="padding-left: 16px" class="folder">&nbsp
-          <i tag="${item.tag}" class="fas fa-chevron-circle-right">&nbsp</i>${item.tag} (${item.count})
-        </span>
-      </li>
-    `;
-  }
-  $('#classes').append(html);
-}
-
-// builds folder list from all loaded images and builds sidebar menu
-// can be used with entire image list or per-object
-let folderList = [];
-async function enumerateFolders(input) {
-  $('#folders').html('');
-  if (input) {
-    const path = input.substr(0, input.lastIndexOf('/'));
-    const folders = path.split('/').filter((a) => a !== '');
-    if (!folderList.find((a) => a.path === path)) {
-      folderList.push({ path, folders });
-    }
-  } else {
-    folderList = [];
-    if (!Array.isArray(window.filtered)) window.filtered = [];
-    for (const item of window.filtered) {
-      const path = item.image.substr(0, item.image.lastIndexOf('/'));
-      const folders = path.split('/').filter((a) => a !== '');
-      if (!folderList.find((a) => a.path === path)) {
-        folderList.push({ path, folders });
-      }
-    }
-  }
-  folderList = folderList.sort((a, b) => (a.path > b.path ? 1 : -1));
-  const root = window.user && window.user.root ? window.user.root : 'media/';
-  for (let i = 0; i < 10; i++) {
-    for (const item of folderList) {
-      if (item.folders[i]) {
-        const folder = item.folders[i].replace(/[^a-zA-Z]/g, '');
-        const parent = item.folders[i > 0 ? i - 1 : 0].replace(/[^a-zA-Z]/g, '');
-        let path = '';
-        for (let j = 0; j <= i; j++) path += `${item.folders[j]}/`;
-        const name = folder === root.replace(/\//g, '') ? 'All' : item.folders[i];
-        const html = `
-          <li id="dir-${folder}"">
-            <span tag="${path}" type="folder" style="padding-left: ${i * 16}px" class="folder">&nbsp
-              <i tag="${path}" class="fas fa-chevron-circle-right">&nbsp</i>${name}
-            </span>
-          </li>
-        `;
-        let parentElem = $(`#dir-${parent}`);
-        if (parentElem.length === 0) parentElem = $('#folders');
-        const currentElem = $(`[tag="${path}"]`);
-        if (currentElem.length === 0) parentElem.append(html);
-      }
-    }
-  }
-}
-
-// handles all clicks on sidebar menu (folders, locations, classes)
-async function folderHandlers() {
-  const t0 = window.performance.now();
-  $('.folder').off();
-  $('.folder').click(async (evt) => {
-    if (!window.filtered || (window.filtered.length === 0)) return;
-    busy(true);
-    const path = $(evt.target).attr('tag');
-    switch (evt.target.getAttribute('type')) {
-      case 'folder':
-        log.debug(t0, `Selected path: ${path}`);
-        const root = window.user && window.user.root ? window.user.root : 'media/';
-        if (path !== root) window.filtered = window.filtered.filter((a) => a.image.startsWith(path));
-        else window.filtered = db.all('date', false);
-        break;
-      case 'location':
-        log.debug(t0, `Selected location: ${path}`);
-        if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => path.startsWith(a.location.near));
-        else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
-        break;
-      case 'class':
-        window.filtered = window.filtered.filter((a) => {
-          const found = a.tags.find((b) => (Object.values(b)[0].toString().startsWith(path)));
-          return found;
-        });
-        log.debug(t0, `Selected class: ${path}`);
-        break;
-      default:
-    }
-    // eslint-disable-next-line no-use-before-define
-    redrawResults();
-    // eslint-disable-next-line no-use-before-define
-    enumerateResults();
-    busy(false);
-  });
-}
-
-// starts slideshow
-let slideshowRunning;
-async function startSlideshow(start) {
-  if (start) {
-    details.next(false);
-    slideshowRunning = setTimeout(() => startSlideshow(true), window.options.slideDelay);
-  } else if (slideshowRunning) {
-    clearTimeout(slideshowRunning);
-    slideshowRunning = null;
-  }
 }
 
 // adds items to gallery view on scroll event - infinite scroll
@@ -348,13 +181,6 @@ async function scrollResults() {
   $('.description').click((evt) => $(evt.target).parent().find('.btn-tiny').toggle());
 }
 
-async function enumerateResults() {
-  enumerateFolders();
-  enumerateLocations();
-  enumerateClasses();
-  folderHandlers();
-}
-
 // redraws gallery view and rebuilds sidebar menu
 async function redrawResults() {
   window.location = `#${new Date().getTime()}`;
@@ -368,6 +194,184 @@ async function redrawResults() {
   scrollResults();
   log.debug(t0, 'Redraw results complete');
   busy(false);
+}
+
+// resize gallery view depending on user configuration
+async function resizeResults() {
+  const thumbSize = parseInt($('#thumbsize')[0].value, 10);
+  if (thumbSize !== window.options.listThumbSize) {
+    window.options.listThumbSize = thumbSize;
+    $('#thumblabel').text(`Size: ${window.options.listThumbSize}px`);
+    $('#thumbsize')[0].value = window.options.listThumbSize;
+    $('.thumbnail').width(window.options.listThumbSize);
+    $('.thumbnail').height(window.options.listThumbSize);
+    $('.listitem').css('min-height', `${16 + window.options.listThumbSize}px`);
+    $('.listitem').css('max-height', `${16 + window.options.listThumbSize}px`);
+  }
+}
+
+// exctract top classe from classification & detection and builds sidebar menu
+async function enumerateClasses() {
+  $('#classes').html('');
+  if (!Array.isArray(window.filtered)) window.filtered = [];
+  const classesList = [];
+  for (const item of window.filtered) {
+    for (const tag of item.tags) {
+      if (Object.keys(tag).length === 0) continue;
+      const key = Object.keys(tag)[0];
+      if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
+      const val = Object.values(tag)[0].toString().split(',')[0];
+      const found = classesList.find((a) => a.tag === val);
+      if (found) found.count += 1;
+      else classesList.push({ tag: val, count: 1 });
+    }
+  }
+  classesList.sort((a, b) => b.count - a.count);
+  classesList.length = Math.min(window.options.topClasses, classesList.length);
+  let html = '';
+  for (const item of classesList) {
+    const tag = item.tag.split(/ |-|,/)[0];
+    html += `<li><span tag="${escape(tag)}" type="class" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${tag} (${item.count})</span></li>`;
+  }
+  $('#classes').append(html);
+}
+
+// extracts all locations from loaded images and builds sidebar menu
+async function enumerateLocations() {
+  $('#locations').html('');
+  if (!Array.isArray(window.filtered)) window.filtered = [];
+  let countries = [];
+  for (const item of window.filtered) {
+    if (item.location.country && !countries.includes(item.location.country)) countries.push(item.location.country);
+  }
+  countries = countries.sort((a, b) => (a > b ? 1 : -1));
+  let i = 1;
+  for (const country of countries) {
+    const items = window.filtered.filter((a) => a.location.country === country);
+    let places = [];
+    for (const item of items) {
+      const state = item.location.state ? `, ${item.location.state}` : '';
+      if (!places.find((a) => a.name === `${item.location.near}${state}`)) places.push({ name: `${item.location.near}${state}`, sort: `${state}${item.location.near}` });
+    }
+    let children = '';
+    places = places.sort((a, b) => (a.sort > b.sort ? 1 : -1));
+    for (const place of places) {
+      children += `<li><span tag="${escape(place.name)}" type="location" style="padding-left: 32px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${place.name}</span></li>`;
+    }
+    const html = `<li id="loc-${i}"><span tag="${escape(country)}" type="location" style="padding-left: 16px" class="folder"><i class="collapsible fas fa-chevron-circle-right">&nbsp</i>${country} (${items.length})</span></li>`;
+    $('#locations').append(html);
+    $(`#loc-${i}`).append(children);
+    i++;
+  }
+}
+
+// builds folder list from all loaded images and builds sidebar menu, can be used with entire image list or per-object
+async function enumerateFolders() {
+  $('#folders').html('');
+  const root = window.user && window.user.root ? window.user.root : 'media/';
+  const depth = root.split('/').length - 1;
+  if (!Array.isArray(window.filtered)) window.filtered = [];
+
+  let list = [];
+  for (const item of window.filtered) {
+    const path = item.image.substr(0, item.image.lastIndexOf('/'));
+    const folders = path.split('/').filter((a) => a !== '');
+    const existing = list.find((a) => a.path === path);
+    if (!existing) list.push({ path, folders, count: 1 });
+    else existing.count += 1;
+  }
+  list = list.sort((a, b) => (a.path > b.path ? 1 : -1));
+  for (let i = depth; i < 10; i++) {
+    for (const item of list) {
+      if (item.folders[i]) {
+        let pathId = '';
+        for (let j = depth; j <= i; j++) pathId += escape(item.folders[j]);
+        let parentId = '';
+        for (let j = depth; j < i; j++) parentId += escape(item.folders[j]);
+        if (!document.getElementById(`dir-${pathId}`)) {
+          const div = document.createElement('li');
+          div.id = `dir-${pathId}`;
+          let path = '';
+          for (let j = 0; j <= i; j++) path += `${escape(item.folders[j])}/`;
+          const count = i === item.folders.length - 1 ? `(${item.count})` : '';
+          div.innerHTML = `<span tag="${path}" type="folder" style="padding-left: ${i * 16}px" class="folder"><i class="collapsible fas fa-chevron-circle-right">&nbsp</i>${item.folders[i]} ${count}</span>`;
+          if (i === depth) document.getElementById('folders').appendChild(div);
+          else document.getElementById(`dir-${parentId}`).appendChild(div);
+        }
+      }
+    }
+  }
+}
+
+// handles all clicks on sidebar menu (folders, locations, classes)
+async function folderHandlers() {
+  $('.collapsible').off();
+  $('.collapsible').click(async (evt) => {
+    $(evt.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-right');
+    $(evt.target).parent().parent().find('li')
+      .toggle('slow');
+  });
+  $('.folder').off();
+  $('.folder').click(async (evt) => {
+    const path = $(evt.target).attr('tag');
+    if (!path || path.length < 1) return;
+
+    const t0 = window.performance.now();
+    busy(true);
+    switch (evt.target.getAttribute('type')) {
+      case 'folder':
+        log.debug(t0, `Selected path: ${path}`);
+        const root = window.user && window.user.root ? window.user.root : 'media/';
+        if (window.filtered.length < await db.count()) {
+          window.filtered = await db.all();
+          window.options.listSortOrder = 'alpha-down';
+        }
+        if (path !== root) window.filtered = window.filtered.filter((a) => escape(a.image).startsWith(path));
+        enumerateClasses();
+        break;
+      case 'location':
+        log.debug(t0, `Selected location: ${path}`);
+        if (window.filtered.length < await db.count()) {
+          window.filtered = await db.all();
+          window.options.listSortOrder = 'numeric-down';
+        }
+        if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => (path.startsWith(escape(a.location.near)) || path.startsWith(escape(a.location.country))));
+        else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
+        enumerateClasses();
+        break;
+      case 'class':
+        if (!window.filtered) window.filtered = [];
+        window.filtered = window.filtered.filter((a) => {
+          const found = a.tags.find((b) => (escape(Object.values(b)[0]).toString().startsWith(path)));
+          return found;
+        });
+        log.debug(t0, `Selected class: ${path}`);
+        break;
+      default:
+    }
+    redrawResults();
+    // enumerateResults();
+    busy(false);
+  });
+}
+
+async function enumerateResults() {
+  await enumerateFolders();
+  await enumerateLocations();
+  await enumerateClasses();
+  folderHandlers();
+}
+
+// starts slideshow
+let slideshowRunning;
+async function startSlideshow(start) {
+  if (start) {
+    details.next(false);
+    slideshowRunning = setTimeout(() => startSlideshow(true), window.options.slideDelay);
+  } else if (slideshowRunning) {
+    clearTimeout(slideshowRunning);
+    slideshowRunning = null;
+  }
 }
 
 // used by filterresults
@@ -423,7 +427,7 @@ async function simmilarImage(image) {
   busy(true);
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
-  const object = window.filtered.find((a) => a.image === image);
+  const object = window.filtered.find((a) => a.image === decodeURI(image));
   for (const img of window.filtered) img.simmilarity = hash.distance(img.phash, object.phash);
   window.filtered = window.filtered
     .filter((a) => a.simmilarity < 70)
@@ -439,7 +443,7 @@ async function simmilarPerson(image) {
   busy(true);
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
-  const object = window.filtered.find((a) => a.image === image);
+  const object = window.filtered.find((a) => a.image === decodeURI(image));
   const descriptor = (object.person && object.person[0] && object.person[0].descriptor) ? new Float32Array(Object.values(object.person[0].descriptor)) : null;
   if (!descriptor) {
     log.debug(t0, 'Simmilar Search aborted as no person found in image');
@@ -451,7 +455,7 @@ async function simmilarPerson(image) {
     window.filtered[i].simmilarity = target ? Math.round(100 * faceapi.euclideanDistance(target, descriptor)) : 100;
   }
   window.filtered = window.filtered
-    .filter((a) => a.simmilarity < 55)
+    .filter((a) => ((a.person && a.person[0]) && (a.simmilarity < 55) && (a.person[0].gender === object.person[0].gender)))
     .sort((a, b) => a.simmilarity - b.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} persons`);
   redrawResults();
@@ -924,7 +928,9 @@ async function main() {
   window.details = details;
   window.simmilarImage = simmilarImage;
   window.simmilarPerson = simmilarPerson;
-  sortResults(window.options.listSortOrder);
+  await sortResults(window.options.listSortOrder);
+  $('.collapsible').parent().parent().find('li')
+    .toggle(false);
 }
 
 window.onhashchange = async (evt) => {

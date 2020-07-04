@@ -178,7 +178,7 @@ async function showDetails(img) {
   $('#popup').toggle(true);
   $('#optionsview').toggle(true);
 
-  const object = window.filtered.find((a) => a.image === img);
+  const object = window.filtered.find((a) => a.image === decodeURI(img));
   if (!object) return;
 
   // http://ignitersworld.com/lab/imageViewer.html
