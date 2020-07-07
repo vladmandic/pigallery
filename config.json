@@ -1,6 +1,6 @@
 {
   "users": [
-    { "email": "mandic00@live.com", "passwd": "qwe", "admin": true, "mediaRoot": "media/" }
+    { "email": "mandic00@live.com", "passwd": "p3i14", "admin": true, "mediaRoot": "media/" }
   ],
   "locations": [
     { "folder": "Pictures/Snapseed/", "match": "" },
