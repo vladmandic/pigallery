@@ -52,7 +52,7 @@
       .navlinebutton:hover { color: lightskyblue; }
       .blank { background: #555555; min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
 
-      .input { font-size: 1.2rem; margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #555555; width: 50%; height: 2.5rem; border-radius: 1.5rem }
+      .input { font-size: 1.2rem; margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #888888; width: 50%; height: 2.5rem; border-radius: 1.5rem }
       .input:hover { background: lightyellow; }
       .input:focus { background: lightyellow; }
 
@@ -65,9 +65,11 @@
       .folder:hover { background: lightyellow; color: #555555; letter-spacing: 2px; }
       .folder:active { background: lightskyblue; color: #555555; letter-spacing: 2px; }
       .folderstitle { background: lightyellow; color: #555555; letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
+      .folderstitle:hover { background: lightskyblue ;}
 
       .all { background: black; overflow: hidden; width: 100%; display: block; }
       .map { overflow: hidden; width: 100%; height: 40%; display: none; z-index: 5; }
+      .share { overflow: hidden; width: 100%; height: 94px; background: #555555; display: none; z-index: 5; }
       .results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; scroll-snap-type: y mandatory; }
 
       .timestamp { background: #222222; margin-left: 8px; margin-right: 8px; color: lightgray; }
@@ -160,9 +162,17 @@
         <ul id="locations" class="folderlist"></ul>
       <div id="classestitle" class="folderstitle">Top Classes</div>
         <ul id="classes" class="folderlist"></ul>
+      <div id="sharestitle" class="folderstitle">Shares</div>
+        <ul id="shares" class="folderlist"></ul>
     </div>
     <div id="all" class="all">
-      <div id="map" class="row map"></div>  
+      <div id="map" class="row map"></div>
+      <div id="share" class="row share">
+        <input class="input" type="text" id="share-name" placeholder="what is the share name ?"/>
+        <i class="navlinebutton fas fa-plus-square" id="btn-shareadd" style="padding: 0"></i>
+        <input class="input" type="text" id="share-url" placeholder="URL" readonly/>
+        <i class="navlinebutton fas fa-copy" id="btn-sharecopy" style="padding: 0"></i>
+      </div>
       <div id="results" class="row results"></div>
     </div>
   </div>

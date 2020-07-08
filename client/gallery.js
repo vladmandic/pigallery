@@ -303,6 +303,15 @@ async function enumerateFolders() {
   }
 }
 
+async function showShare(path, key) {
+  const t0 = window.performance.now();
+  const res = await fetch(`/api/share?id=${key}`);
+  let json = {};
+  if (res.ok) json = await res.json();
+  if (json) window.filtered = json;
+  log.debug(t0, `Selected share: ${path} key: ${key} received ${json.length} images`);
+}
+
 // handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
   $('.collapsible').off();
@@ -315,10 +324,11 @@ async function folderHandlers() {
   $('.folder').click(async (evt) => {
     const path = $(evt.target).attr('tag');
     if (!path || path.length < 1) return;
+    const type = evt.target.getAttribute('type');
 
     const t0 = window.performance.now();
     busy(true);
-    switch (evt.target.getAttribute('type')) {
+    switch (type) {
       case 'folder':
         log.debug(t0, `Selected path: ${path}`);
         const root = window.user && window.user.root ? window.user.root : 'media/';
@@ -347,6 +357,15 @@ async function folderHandlers() {
         });
         log.debug(t0, `Selected class: ${path}`);
         break;
+      case 'share':
+        $('#share').toggle(true);
+        const share = window.shares.find((a) => a.key === path);
+        if (!share.name || !share.key) return;
+        $('#share-name').val(share.name);
+        $('#share-url').val(`${window.location.origin}?share=${share.key}`);
+        $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
+        await showShare(path, share.key);
+        break;
       default:
     }
     redrawResults();
@@ -355,10 +374,25 @@ async function folderHandlers() {
   });
 }
 
+async function enumerateShares() {
+  window.shares = [];
+  const shares = await fetch('/api/shares');
+  if (shares.ok) window.shares = await shares.json();
+  if (!window.shares || (window.shares.length < 1)) return;
+  let html = '';
+  for (const share of window.shares) {
+    html += `<li><span tag="${share.key}" type="share" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${share.name}</span></li>`;
+  }
+  $('#shares').html(html);
+  $('#shares').find('li').toggle('slow');
+  log.debug(null, `Enumerated shares: ${window.shares.length}`);
+}
+
 async function enumerateResults() {
   await enumerateFolders();
   await enumerateLocations();
   await enumerateClasses();
+  await enumerateShares();
   folderHandlers();
 }
 
@@ -650,6 +684,54 @@ function showNavbar(elem) {
   });
 }
 
+async function initSharesHandler() {
+  $('#sharestitle').off();
+  $('#sharestitle').click(() => {
+    $('#btn-shareadd').removeClass('fa-minus-square').addClass('fa-plus-square');
+    $('#share').toggle('slow');
+    $('#share-name').focus();
+    $('#shares').find('li').toggle('slow');
+    $('#share-name').val('');
+    $('#share-url').val('');
+  });
+
+  $('#btn-shareadd').off();
+  $('#btn-shareadd').click(() => {
+    const t0 = window.performance.now();
+    if ($('#btn-shareadd').hasClass('fa-plus-square')) {
+      const share = {};
+      share.creator = window.user.user;
+      share.name = $('#share-name').val();
+      share.images = window.filtered.map((a) => a.image);
+      log.debug(t0, `Share create: creator: ${share.creator} name: ${share.name} key: ${share.key} images: ${share.images.length}`);
+      if (!share.creator || !share.name || ((share.name.length < 2) || !share.images) || (share.images.length < 1)) {
+        $('#share-url').val('invalid data');
+        return;
+      }
+      $.post('/api/share', share)
+        .done((res) => {
+          $('#share-url').val(`${window.location.origin}?share=${res.key}`);
+        })
+        .fail(() => {
+          $('#share-url').val('error creating share');
+        });
+      enumerateShares();
+    } else {
+      const name = $('#share-name').val();
+      const key = $('#share-url').val().split('=')[1];
+      log.debug(t0, `Share remove: ${name} ${key}`);
+      fetch(`/api/share?rm=${key}`).then(() => enumerateShares());
+    }
+  });
+
+  $('#btn-sharecopy').off();
+  $('#btn-sharecopy').click(() => {
+    $('#share-url').focus();
+    $('#share-url').select();
+    document.execCommand('copy');
+  });
+}
+
 // handle keypresses on main
 async function initHotkeys() {
   $('html').keydown(() => {
@@ -906,6 +988,20 @@ async function initListHandlers() {
   });
 }
 
+async function checkShares() {
+  if (window.location.search && window.location.search.startsWith('?share=')) {
+    busy(true);
+    const key = window.location.search.split('=')[1];
+    log.debug(null, `Direct link to share: ${key}`);
+    await showShare('', key);
+    redrawResults();
+    enumerateResults();
+    scrollResults();
+    busy(false);
+    return true;
+  }
+  return false;
+}
 async function main() {
   // google analytics
   // eslint-disable-next-line prefer-rest-params
@@ -918,19 +1014,19 @@ async function main() {
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
 
   resizeViewport();
+  await initUser();
   initListHandlers();
   initSidebarHandlers();
   initDetailsHandlers();
   initHotkeys();
   showNavbar();
-  await initUser();
   await db.open();
+  initSharesHandler();
   window.details = details;
   window.simmilarImage = simmilarImage;
   window.simmilarPerson = simmilarPerson;
-  await sortResults(window.options.listSortOrder);
-  $('.collapsible').parent().parent().find('li')
-    .toggle(false);
+  if (!await checkShares()) await sortResults(window.options.listSortOrder);
+  $('.collapsible').parent().parent().find('li').toggle(false);
 }
 
 window.onhashchange = async (evt) => {

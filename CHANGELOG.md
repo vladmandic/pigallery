@@ -1,7 +1,13 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/07/04 cyan00@gmail.com
+### **origin/HEAD** 2020/07/08 cyan00@gmail.com
 
+
+### **v1.0.7** 2020/07/06 cyan00@gmail.com
+
+- updated packages
+- adding lineawesome
+- update
 
 ### **v1.0.6** 2020/07/04 cyan00@gmail.com
 

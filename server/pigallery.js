@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const log = require('pilogger');
+const url = require('url');
 const http = require('http');
 const https = require('https');
 const express = require('express');
@@ -101,7 +102,8 @@ async function main() {
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
   // define route for root
-  app.get('/', (req, res) => res.redirect('/gallery'));
+  app.get('/', (req, res) => res.redirect(url.format({ pathname: '/gallery', query: req.query }))); // res.redirect('/gallery'));
+
   // define routes for folders
   app.use('/assets', express.static(path.join(root, './assets'), { maxAge: '365d', cacheControl: true }));
   app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
@@ -153,11 +155,16 @@ async function main() {
   } else if (global.config.server.dbEngine === 'nedb') {
     if (!fs.existsSync(global.config.server.nedbDB)) log.warn('Image cache not found:', global.config.server.nedbDB);
     global.db = nedb.create({ filename: global.config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
-    await global.db.ensureIndex({ fieldName: 'image', unique: true });
-    await global.db.ensureIndex({ fieldName: 'processed', unique: false });
+    await global.db.ensureIndex({ fieldName: 'image', unique: true, sparse: true });
+    await global.db.ensureIndex({ fieldName: 'processed', unique: false, sparse: false });
     await global.db.loadDatabase();
     const records = await global.db.count({});
     log.state('Image cache loaded:', global.config.server.nedbDB, 'records:', records);
+    const shares = await global.db.find({ images: { $exists: true } });
+    for (const share of shares) {
+      log.state('Shares:', share.name, 'creator:', share.creator, 'key:', share.share, 'images:', share.images.length);
+    }
+    // await global.db.remove({ images: { $exists: true } }, { multi: true });
   } else {
     log.error('Unknown Database Engine');
     process.exit(1);
