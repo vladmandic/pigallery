@@ -25,9 +25,11 @@ async function debug(t0, ...msg) {
   if (!window.debug) return;
   let msgs = '';
   msgs += msg.map((a) => a);
-  const t1 = window.performance.now();
-  const duration = t1 - t0;
-  if (duration > 50) msgs += ` in ${Math.round(duration).toLocaleString()} ms`;
+  if (t0) {
+    const t1 = window.performance.now();
+    const duration = t1 - t0;
+    if (duration > 50) msgs += ` in ${Math.round(duration).toLocaleString()} ms`;
+  }
   // eslint-disable-next-line no-console
   console.log(msgs);
 }

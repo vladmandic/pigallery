@@ -14,6 +14,45 @@ function api(app) {
     log.info(`Client ${req.session.user}@${req.ip}`, msg);
   });
 
+  app.get('/api/shares', async (req, res) => {
+    let shares = await global.db.find({ images: { $exists: true } });
+    if (!shares) shares = [];
+    const data = shares.map((a) => ({ key: a.share, processed: a.processed, name: a.name, creator: a.creator, size: a.images.length }));
+    res.json(data);
+  });
+
+  app.get('/api/share', async (req, res) => {
+    if (req.query.id) {
+      const data = await global.db.findOne({ share: req.query.id });
+      const images = [];
+      for (const image of data.images) {
+        images.push(await global.db.findOne({ image }));
+      }
+      log.info(`API Share Get ${req.ip} creator: ${data.creator} name: "${data.name}" key: ${data.share} images: ${images.length}`);
+      res.json(images);
+    } else if (req.query.rm) {
+      const data = await global.db.findOne({ share: req.query.rm });
+      log.info(`API Share Remove ${req.ip} ${data.creator} name: "${data.name}" key: ${data.share} images: ${data.images.length}`);
+      global.db.remove({ share: data.share }, { multi: false });
+      res.status(200).send('true');
+    } else {
+      res.status(400).json([]);
+    }
+  });
+
+  app.post('/api/share', (req, res) => {
+    const data = req.body;
+    const obj = {};
+    obj.creator = data.creator;
+    obj.name = data.name;
+    obj.processed = new Date();
+    obj.images = data['images[]'];
+    obj.share = parseInt(obj.processed.getTime() / 1000, 10).toString(36);
+    global.db.update({ share: obj.share }, obj, { upsert: true });
+    log.info(`API Share Create: "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images.length);
+    res.status(200).json({ key: obj.share });
+  });
+
   app.get('/api/save', (req, res) => {
     if (config.server.dbEngine === 'json') {
       const data = JSON.stringify(global.json);

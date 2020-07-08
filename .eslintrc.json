@@ -16,7 +16,6 @@
     "plugin:import/warnings",
     "plugin:node/recommended",
     "plugin:promise/recommended",
-    "plugin:json/recommended",
     "airbnb-base"
   ],
   "rules": {
@@ -36,6 +35,7 @@
     "no-restricted-globals": "off",
     "no-restricted-syntax": "off",
     "no-underscore-dangle": "off",
+    "newline-per-chained-call": "off",
     "node/no-unsupported-features/es-syntax": "off",
     "node/shebang": "off",
     "object-curly-newline": "off",

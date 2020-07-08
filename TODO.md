@@ -2,6 +2,12 @@
 
 ## Open Bugs
 
+- Autologin on direct share link
+- Check client-side admin for share creation
+- Check server-side admin for share create
+- Check server-side admin for processing
+- Reset selection to share home
+
 N/A
 
 ## Future Features

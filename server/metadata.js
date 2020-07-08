@@ -39,8 +39,6 @@ function storeObject(data) {
     else global.json.push(json);
     log.data(`${index > -1 ? 'Update' : 'Create'}: "${json.image}"`, JSON.stringify(json).length, 'bytes');
   } else {
-    // const record = { name: json.image, data: JSON.stringify(json) };
-    // global.db.update({ name: json.image }, record, { upsert: true });
     global.db.update({ image: json.image }, json, { upsert: true });
     log.data(`Insert: "${json.image}"`, JSON.stringify(json).length, 'bytes');
   }
@@ -383,7 +381,7 @@ async function checkRecords(list) {
     after = global.json.length;
     log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
   } else {
-    let all = await global.db.find({});
+    let all = await global.db.find({ hash: { $exists: true } });
     all = all.map((a) => a.image);
     deleted = all.filter((a) => !list.includes(a));
     for (const item of deleted) {
