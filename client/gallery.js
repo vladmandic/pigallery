@@ -310,6 +310,7 @@ async function showShare(path, key) {
   if (res.ok) json = await res.json();
   if (json) window.filtered = json;
   log.debug(t0, `Selected share: ${path} key: ${key} received ${json.length} images`);
+  log.result(`Retrieved ${window.filtered.length} images from server for share ${key}`);
 }
 
 // handles all clicks on sidebar menu (folders, locations, classes)
