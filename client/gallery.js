@@ -498,6 +498,7 @@ async function simmilarPerson(image) {
 let loadTried = false;
 async function sortResults(sort) {
   $('#optionslist').toggle(false);
+  if (!window.user.user) return;
   busy(true);
 
   // refresh records
