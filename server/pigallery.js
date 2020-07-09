@@ -82,7 +82,8 @@ async function main() {
         log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
       }
     });
-    if (!req.url.startsWith('/api/')) next();
+    if (req.url.startsWith('/api/auth')) next();
+    else if (!req.url.startsWith('/api/')) next();
     else if (req.session.user || !global.config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
   });
@@ -143,32 +144,18 @@ async function main() {
   api.init(app);
 
   // load image cache
-  log.state('Database engine ready:', global.config.server.dbEngine);
-  if (global.config.server.dbEngine === 'json') {
-    if (fs.existsSync(global.config.server.jsonDB)) {
-      const data = fs.readFileSync(global.config.server.jsonDB, 'utf8');
-      global.json = JSON.parse(data);
-      log.state('Image cache loaded:', global.config.server.jsonDB, 'records:', global.json.length, 'size:', data.length, 'bytes');
-    } else {
-      log.warn('Image cache not found:', global.config.server.jsonDB);
-    }
-  } else if (global.config.server.dbEngine === 'nedb') {
-    if (!fs.existsSync(global.config.server.nedbDB)) log.warn('Image cache not found:', global.config.server.nedbDB);
-    global.db = nedb.create({ filename: global.config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
-    await global.db.ensureIndex({ fieldName: 'image', unique: true, sparse: true });
-    await global.db.ensureIndex({ fieldName: 'processed', unique: false, sparse: false });
-    await global.db.loadDatabase();
-    const records = await global.db.count({});
-    log.state('Image cache loaded:', global.config.server.nedbDB, 'records:', records);
-    const shares = await global.db.find({ images: { $exists: true } });
-    for (const share of shares) {
-      log.state('Shares:', share.name, 'creator:', share.creator, 'key:', share.share, 'images:', share.images.length);
-    }
-    // await global.db.remove({ images: { $exists: true } }, { multi: true });
-  } else {
-    log.error('Unknown Database Engine');
-    process.exit(1);
+  if (!fs.existsSync(global.config.server.db)) log.warn('Image cache not found:', global.config.server.db);
+  global.db = nedb.create({ filename: global.config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
+  await global.db.ensureIndex({ fieldName: 'image', unique: true, sparse: true });
+  await global.db.ensureIndex({ fieldName: 'processed', unique: false, sparse: false });
+  await global.db.loadDatabase();
+  const records = await global.db.count({});
+  log.state('Image cache loaded:', global.config.server.db, 'records:', records);
+  const shares = await global.db.find({ images: { $exists: true } });
+  for (const share of shares) {
+    log.state('Shares:', share.name, 'creator:', share.creator, 'key:', share.share, 'images:', share.images.length);
   }
+  // await global.db.remove({ images: { $exists: true } }, { multi: true });
 }
 
 main();

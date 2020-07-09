@@ -15,10 +15,13 @@ function api(app) {
   });
 
   app.get('/api/shares', async (req, res) => {
-    let shares = await global.db.find({ images: { $exists: true } });
-    if (!shares) shares = [];
-    const data = shares.map((a) => ({ key: a.share, processed: a.processed, name: a.name, creator: a.creator, size: a.images.length }));
-    res.json(data);
+    if (req.session.share) res.json([]);
+    else {
+      let shares = await global.db.find({ images: { $exists: true } });
+      if (!shares) shares = [];
+      const data = shares.map((a) => ({ key: a.share, processed: a.processed, name: a.name, creator: a.creator, size: a.images.length }));
+      res.json(data);
+    }
   });
 
   app.get('/api/share', async (req, res) => {
@@ -41,47 +44,49 @@ function api(app) {
   });
 
   app.post('/api/share', (req, res) => {
-    const data = req.body;
-    const obj = {};
-    obj.creator = data.creator;
-    obj.name = data.name;
-    obj.processed = new Date();
-    obj.images = data['images[]'];
-    obj.share = parseInt(obj.processed.getTime() / 1000, 10).toString(36);
-    global.db.update({ share: obj.share }, obj, { upsert: true });
-    log.info(`API Share Create: "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images.length);
-    res.status(200).json({ key: obj.share });
-  });
-
-  app.get('/api/save', (req, res) => {
-    if (config.server.dbEngine === 'json') {
-      const data = JSON.stringify(global.json);
-      fs.writeFileSync(config.server.jsonDB, data);
-      log.info('API Save:', config.server.jsonDB, 'records:', global.json.length, 'size:', data.length, 'bytes');
+    if (req.session.admin) {
+      const data = req.body;
+      const obj = {};
+      obj.creator = data.creator;
+      obj.name = data.name;
+      obj.processed = new Date();
+      obj.images = data['images[]'];
+      obj.share = parseInt(obj.processed.getTime() / 1000, 10).toString(36);
+      global.db.update({ share: obj.share }, obj, { upsert: true });
+      log.info(`API Share Create: "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images.length);
+      res.status(200).json({ key: obj.share });
+    } else {
+      res.status(401).json({});
     }
-    // nothing to do if using nedb
-    res.status(200).send('true');
   });
 
   app.get('/api/list', async (req, res) => {
-    const list = [];
-    let filesAll = [];
-    for (const location of config.locations) {
-      const folder = await metadata.list(location.folder, location.match, location.recursive, location.force);
-      list.push({ location, files: folder.process });
-      filesAll = [...filesAll, ...folder.files];
+    if (req.session.admin) {
+      const list = [];
+      let filesAll = [];
+      for (const location of config.locations) {
+        const folder = await metadata.list(location.folder, location.match, location.recursive, location.force);
+        list.push({ location, files: folder.process });
+        filesAll = [...filesAll, ...folder.files];
+      }
+      res.json(list);
+      metadata.check(filesAll);
+    } else {
+      res.status(401).json([]);
     }
-    res.json(list);
-    metadata.check(filesAll);
   });
 
   app.get('/api/dir', async (req, res) => {
-    if (!req.query.folder) {
-      res.status(400).json([]);
-      return;
+    if (req.session.admin) {
+      if (!req.query.folder) {
+        res.status(400).json([]);
+        return;
+      }
+      const folder = await metadata.list(req.query.folder, '', true, true);
+      res.json(folder.process);
+    } else {
+      res.status(401).json([]);
     }
-    const folder = await metadata.list(req.query.folder, '', true, true);
-    res.json(folder.process);
   });
 
   app.get('/api/get', async (req, res) => {
@@ -89,12 +94,8 @@ function api(app) {
       res.status(400).json([]);
       return;
     }
-    let data = [];
-    if (config.server.dbEngine === 'json') {
-      data = global.json;
-      if (config.server.authForce) data = data.filter((a) => a.image.startsWith(req.session.root));
-      log.info(`API Get ${req.session.user}@${req.ip} root: ${req.session.root} data:`, data.length);
-    } else {
+    const data = [];
+    if (!req.session.share) {
       const root = new RegExp(`^${req.session.root || 'media/'}`);
       const limit = req.query.limit || config.server.resultsLimit;
       const time = req.query.time ? new Date(parseInt(req.query.time, 10)) : new Date(0);
@@ -102,25 +103,33 @@ function api(app) {
         .find({ image: root, processed: { $gte: time } })
         .sort({ processed: -1 })
         .limit(limit);
-      for (const record of records) {
-        data.push(record);
-      }
+      for (const record of records) data.push(record);
       log.info(`API Get ${req.session.user}@${req.ip} root: ${req.session.root} data:`, data.length, 'limit:', limit, 'since:', new Date(time));
+    } else {
+      const records = await global.db.findOne({ share: req.session.share });
+      for (const image of records.images) {
+        data.push(await global.db.findOne({ image }));
+      }
+      log.info(`API Share Get ${req.ip} creator: ${data.creator} name: "${data.name}" key: ${data.share} images: ${data.length}`);
     }
     res.json(data);
   });
 
   app.post('/api/metadata', async (req, res) => {
-    const data = req.body;
-    const exif = await metadata.exif(data.image);
-    const hash = await metadata.hash(data.image, 'sha256');
-    const location = await metadata.location(exif);
-    const descriptions = await metadata.descriptions(data);
-    const result = { ...data, exif, location, descriptions, hash };
-    const tags = await metadata.tags(result);
-    result.tags = tags;
-    res.status(200).json(result);
-    metadata.store(result);
+    if (req.session.admin) {
+      const data = req.body;
+      const exif = await metadata.exif(data.image);
+      const hash = await metadata.hash(data.image, 'sha256');
+      const location = await metadata.location(exif);
+      const descriptions = await metadata.descriptions(data);
+      const result = { ...data, exif, location, descriptions, hash };
+      const tags = await metadata.tags(result);
+      result.tags = tags;
+      res.status(200).json(result);
+      metadata.store(result);
+    } else {
+      res.status(401).json({});
+    }
   });
 
   app.get('/api/user', (req, res) => {
@@ -142,6 +151,8 @@ function api(app) {
     const fileSize = stat.size;
     const splitName = fileName.split('.');
     const fileExt = splitName[splitName.length - 1].toLowerCase();
+    const share = req.session.share ? 'Share: ' + req.session.share : '';
+    log.info(`API File: ${share} ${req.session.share ? '' : req.session.user}@${req.ip} ${fileName} ${fileSize} bytes`);
     let contentType;
     if (fileExt === 'jpeg' || fileExt === 'jpg') contentType = 'image/jpeg';
     if (fileExt === 'mp4') contentType = 'video/mp4';
@@ -170,15 +181,24 @@ function api(app) {
     }
   });
 
-  app.post('/client/auth.html', (req, res) => {
-    const email = req.body.authEmail;
-    const passwd = req.body.authPassword;
-    if (!req.body.authEmail || req.body.authEmail === '') req.session.user = undefined;
+  app.post('/api/auth', (req, res) => {
+    req.session.user = undefined;
+    // if (!req.body.authEmail || req.body.authEmail === '') req.session.user = undefined;
+    let email;
+    let passwd;
+    if (req.body.authShare) {
+      email = 'share@pigallery.ddns.net';
+      passwd = 'd1ff1cuTpa33w0RD';
+    } else {
+      email = req.body.authEmail;
+      passwd = req.body.authPassword;
+    }
     const found = config.users.find((a) => ((a.email && a.email === email) && (a.passwd && a.passwd === passwd) && (a.disabled ? a.disabled === 'false' : true)));
     if (found) {
       req.session.user = found.email;
       req.session.admin = found.admin;
       req.session.root = found.mediaRoot;
+      req.session.share = req.body.authShare;
     }
     log.info(`API Login: ${email} from ${req.ip} ${req.session.user ? 'success' : 'fail'}`);
     res.redirect('/gallery');

@@ -7,6 +7,7 @@ const database = 'pigallery';
 const table = 'images';
 
 async function open() {
+  if (window.share) return null;
   const t0 = window.performance.now();
   return new Promise((resolve) => {
     const request = indexedDB.open(database, 1);
@@ -71,35 +72,53 @@ async function get(name) {
     .onsuccess = (evt) => evt.target.result;
 }
 
+async function share() {
+  const t0 = window.performance.now();
+  const res = await fetch(`/api/share?id=${window.share}`);
+  let json = {};
+  if (res.ok) json = await res.json();
+  log.debug(t0, `Selected share: ${window.share} received ${json.length} images`);
+  log.result(`Retrieved ${window.filtered.length} images from server for share ${window.share}`);
+  return json;
+}
+
 async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER) {
   const t0 = window.performance.now();
   return new Promise((resolve) => {
-    const res = [];
-    if (!window.user || !window.user.user) resolve(res);
-    let idx = 0;
-    db.transaction([table], 'readonly')
-      .objectStore(table)
-      .index(index)
-      .openCursor(null, direction ? 'next' : 'prev')
-      .onsuccess = (evt) => {
-        if (evt.target.result) {
-          idx++;
-          const obj = evt.target.result.value;
-          if ((idx >= start) && (obj.image.startsWith(window.user.root))) res.push(obj);
-          if (idx < end) evt.target.result.continue();
-          else {
-            log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images ${start}-${end}`);
+    if (window.share) {
+      let res;
+      if (start === 1) res = share();
+      else res = [];
+      resolve(res);
+    } else {
+      const res = [];
+      if (!window.user || !window.user.user) resolve(res);
+      let idx = 0;
+      db.transaction([table], 'readonly')
+        .objectStore(table)
+        .index(index)
+        .openCursor(null, direction ? 'next' : 'prev')
+        .onsuccess = (evt) => {
+          if (evt.target.result) {
+            idx++;
+            const obj = evt.target.result.value;
+            if ((idx >= start) && (obj.image.startsWith(window.user.root))) res.push(obj);
+            if (idx < end) evt.target.result.continue();
+            else {
+              log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images ${start}-${end}`);
+              resolve(res);
+            }
+          } else {
+            log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images`);
             resolve(res);
           }
-        } else {
-          log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images`);
-          resolve(res);
-        }
-      };
+        };
+    }
   });
 }
 
 async function count() {
+  if (window.share) return Number.MAX_SAFE_INTEGER;
   return new Promise((resolve) => {
     db.transaction([table], 'readonly')
       .objectStore(table)

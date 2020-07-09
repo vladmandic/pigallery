@@ -234,6 +234,8 @@ async function enumerateClasses() {
     html += `<li><span tag="${escape(tag)}" type="class" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${tag} (${item.count})</span></li>`;
   }
   $('#classes').append(html);
+  // eslint-disable-next-line no-use-before-define
+  folderHandlers();
 }
 
 // extracts all locations from loaded images and builds sidebar menu
@@ -303,16 +305,6 @@ async function enumerateFolders() {
   }
 }
 
-async function showShare(path, key) {
-  const t0 = window.performance.now();
-  const res = await fetch(`/api/share?id=${key}`);
-  let json = {};
-  if (res.ok) json = await res.json();
-  if (json) window.filtered = json;
-  log.debug(t0, `Selected share: ${path} key: ${key} received ${json.length} images`);
-  log.result(`Retrieved ${window.filtered.length} images from server for share ${key}`);
-}
-
 // handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
   $('.collapsible').off();
@@ -324,9 +316,8 @@ async function folderHandlers() {
   $('.folder').off();
   $('.folder').click(async (evt) => {
     const path = $(evt.target).attr('tag');
-    if (!path || path.length < 1) return;
     const type = evt.target.getAttribute('type');
-
+    if (!path || path.length < 1) return;
     const t0 = window.performance.now();
     busy(true);
     switch (type) {
@@ -365,7 +356,11 @@ async function folderHandlers() {
         $('#share-name').val(share.name);
         $('#share-url').val(`${window.location.origin}?share=${share.key}`);
         $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
-        await showShare(path, share.key);
+        if (window.filtered.length < await db.count()) {
+          window.filtered = await db.all();
+          window.options.listSortOrder = 'numeric-down';
+        }
+        enumerateClasses();
         break;
       default:
     }
@@ -392,9 +387,9 @@ async function enumerateShares() {
 async function enumerateResults() {
   await enumerateFolders();
   await enumerateLocations();
-  await enumerateClasses();
   await enumerateShares();
-  folderHandlers();
+  await enumerateClasses();
+  // reinit of folderHandlers() is called from enumerateClasses();
 }
 
 // starts slideshow
@@ -577,7 +572,12 @@ async function findDuplicates() {
 
 // loads imagesm, displays gallery and enumerates sidebar
 async function loadGallery(limit, refresh = false) {
+  if (window.share) return;
   if (!window.user.user) return;
+  if (window.user.user.startsWith('share')) {
+    log.result('Application access with share credentials and no direct share');
+    return;
+  }
   busy(true);
   const t0 = window.performance.now();
   if (!refresh) {
@@ -642,8 +642,16 @@ async function showContextPopup(evt) {
 
 // called on startup to get logged in user details from server
 async function initUser() {
+  if (window.share) {
+    await $.post('/api/auth', { authShare: window.share }); // autologin for direct shares
+  }
   const res = await fetch('/api/user');
   if (res.ok) window.user = await res.json();
+  if (!window.share && window.user && window.user.user && window.user.user.startsWith('share')) {
+    $.post('/api/auth'); // logout on share credentials and no share
+    log.debug('Logging out user with share credentials and no direct share link');
+    window.user = {};
+  }
   if (window.user && window.user.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user.split('@')[0]);
@@ -667,6 +675,7 @@ function resizeViewport() {
 
 // show/hide navigation bar elements
 function showNavbar(elem) {
+  if (!window.user.admin) $('#livevideo').toggle(false);
   if (elem) elem.toggle('slow');
   // hide the rest
   elem = elem || $('#main');
@@ -686,6 +695,10 @@ function showNavbar(elem) {
 }
 
 async function initSharesHandler() {
+  if (!window.user.admin) {
+    $('#sharestitle').toggle(false);
+    return;
+  }
   $('#sharestitle').off();
   $('#sharestitle').click(() => {
     $('#btn-shareadd').removeClass('fa-minus-square').addClass('fa-plus-square');
@@ -897,7 +910,7 @@ async function initListHandlers() {
   // navline user logout
   $('#btn-logout').click(() => {
     showNavbar();
-    $.post('/client/auth.html');
+    $.post('/api/auth');
     if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     window.location.reload(false);
@@ -989,20 +1002,6 @@ async function initListHandlers() {
   });
 }
 
-async function checkShares() {
-  if (window.location.search && window.location.search.startsWith('?share=')) {
-    busy(true);
-    const key = window.location.search.split('=')[1];
-    log.debug(null, `Direct link to share: ${key}`);
-    await showShare('', key);
-    redrawResults();
-    enumerateResults();
-    scrollResults();
-    busy(false);
-    return true;
-  }
-  return false;
-}
 async function main() {
   // google analytics
   // eslint-disable-next-line prefer-rest-params
@@ -1013,6 +1012,7 @@ async function main() {
 
   // Register PWA
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
+  window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
 
   resizeViewport();
   await initUser();
@@ -1026,7 +1026,8 @@ async function main() {
   window.details = details;
   window.simmilarImage = simmilarImage;
   window.simmilarPerson = simmilarPerson;
-  if (!await checkShares()) await sortResults(window.options.listSortOrder);
+  if (window.share) log.debug(null, `Direct link to share: ${window.share}`);
+  await sortResults(window.options.listSortOrder);
   $('.collapsible').parent().parent().find('li').toggle(false);
 }
 
