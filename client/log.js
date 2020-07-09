@@ -2,11 +2,11 @@ const moment = require('moment');
 
 let dots = 0;
 let divDot;
-async function dot() {
+async function dot(line) {
   if (!divDot) divDot = document.getElementById('log');
   if (divDot) divDot.innerHTML += '.';
   dots = dots < 100 ? dots + 1 : 0;
-  if (dots >= 100) divDot.innerHTML += '<br>';
+  if ((dots >= 100) || line) divDot.innerHTML += '<br>';
 }
 
 let divResult;
