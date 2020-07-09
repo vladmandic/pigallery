@@ -33,15 +33,8 @@ function storeObject(data) {
   if (data.image === config.server.warmupImage) return;
   const json = data;
   json.processed = new Date();
-  if (config.server.dbEngine === 'json') {
-    const index = global.json.findIndex((a) => a.image === json.image);
-    if (index > -1) global.json[index] = json;
-    else global.json.push(json);
-    log.data(`${index > -1 ? 'Update' : 'Create'}: "${json.image}"`, JSON.stringify(json).length, 'bytes');
-  } else {
-    global.db.update({ image: json.image }, json, { upsert: true });
-    log.data(`Insert: "${json.image}"`, JSON.stringify(json).length, 'bytes');
-  }
+  global.db.update({ image: json.image }, json, { upsert: true });
+  log.data(`Insert: "${json.image}"`, JSON.stringify(json).length, 'bytes');
 }
 
 function buildTags(object) {
@@ -327,38 +320,21 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
   if (force) {
     process = files;
   } else {
-    // eslint-disable-next-line no-lonely-if
-    if (config.server.dbEngine === 'json') {
-      process = files.filter((a) => {
-        for (const item of global.json) {
-          if (item.image === a) {
-            if (item.analyzed) {
-              processed++;
-              return false;
-            }
-            return true;
-          }
-        }
-        return true;
-      });
-      process = process.map((a) => a.image);
-    } else {
-      for (const a of files) {
-        const image = await global.db.find({ image: a });
-        if (image && image[0]) {
-          const stat = fs.statSync(a);
-          if (stat.ctime.getTime() !== image[0].exif.ctime.getTime()) {
-            log.data(`Updated ctime: ${a} ${image[0].exif.ctime} ${stat.ctime}`);
-            process.push(a);
-            updated++;
-          } else if (stat.mtime.getTime() !== image[0].exif.mtime.getTime()) {
-            log.data(`Updated mtime: ${a} ${image[0].exif.mtime} ${stat.mtime}`);
-            process.push(a);
-            updated++;
-          } else processed++;
-        } else {
+    for (const a of files) {
+      const image = await global.db.find({ image: a });
+      if (image && image[0]) {
+        const stat = fs.statSync(a);
+        if (stat.ctime.getTime() !== image[0].exif.ctime.getTime()) {
+          log.data(`Updated ctime: ${a} ${image[0].exif.ctime} ${stat.ctime}`);
           process.push(a);
-        }
+          updated++;
+        } else if (stat.mtime.getTime() !== image[0].exif.mtime.getTime()) {
+          log.data(`Updated mtime: ${a} ${image[0].exif.mtime} ${stat.mtime}`);
+          process.push(a);
+          updated++;
+        } else processed++;
+      } else {
+        process.push(a);
       }
     }
   }
@@ -367,30 +343,15 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
 }
 
 async function checkRecords(list) {
-  let before = 0;
-  let after = 0;
-  let deleted = 0;
-  if (config.server.dbEngine === 'json') {
-    deleted = global.json.filter((a) => !list.includes(a.image));
-    deleted = deleted.map((a) => a.image);
-    before = global.json.length;
-    for (const remove of deleted) {
-      log.data('Delete:', remove);
-    }
-    global.json = global.json.filter((a) => !deleted.includes(a.image));
-    after = global.json.length;
-    log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
-  } else {
-    let all = await global.db.find({ hash: { $exists: true } });
-    all = all.map((a) => a.image);
-    deleted = all.filter((a) => !list.includes(a));
-    for (const item of deleted) {
-      log.data('Delete:', item);
-      global.db.remove({ image: item });
-    }
-    before = all.length;
-    after = await global.db.count({});
+  let all = await global.db.find({ hash: { $exists: true } });
+  all = all.map((a) => a.image);
+  const deleted = all.filter((a) => !list.includes(a));
+  for (const item of deleted) {
+    log.data('Delete:', item);
+    global.db.remove({ image: item });
   }
+  const before = all.length;
+  const after = await global.db.count({});
   log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
 }
 
@@ -399,7 +360,7 @@ async function testExif(dir) {
   console.log('Test', dir);
   await init();
   /*
-  global.db = nedb.create({ filename: config.server.nedbDB, inMemoryOnly: false, timestampData: true, autoload: false });
+  global.db = nedb.create({ filename: config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
   await global.db.loadDatabase();
   const list = [];
   let filesAll = [];

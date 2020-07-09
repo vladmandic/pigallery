@@ -1,5 +1,10 @@
 # PiGallery Change Log
 
+### **v1.0.8** 2020/07/08 cyan00@gmail.com
+
+- logging update
+- first pass of sharing feature
+
 ### **origin/HEAD** 2020/07/08 cyan00@gmail.com
 
 
