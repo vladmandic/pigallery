@@ -1,5 +1,8 @@
 # PiGallery Change Log
 
+### **origin/HEAD** 2020/07/09 cyan00@gmail.com
+
+
 ### **v1.0.9** 2020/07/09 cyan00@gmail.com
 
 - secured share urls
@@ -9,9 +12,7 @@
 
 - logging update
 - first pass of sharing feature
-
-### **origin/HEAD** 2020/07/08 cyan00@gmail.com
-
+- package version update
 
 ### **v1.0.7** 2020/07/06 cyan00@gmail.com
 
