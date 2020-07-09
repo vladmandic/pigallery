@@ -95,7 +95,7 @@ function api(app) {
       return;
     }
     const data = [];
-    if (!req.session.share) {
+    if (!req.session.share || req.session.share === '') {
       const root = new RegExp(`^${req.session.root || 'media/'}`);
       const limit = req.query.limit || config.server.resultsLimit;
       const time = req.query.time ? new Date(parseInt(req.query.time, 10)) : new Date(0);

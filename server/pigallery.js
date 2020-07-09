@@ -69,7 +69,7 @@ async function main() {
   // load expressjs middleware
   app.use(session(global.config.cookie));
   app.use(express.json());
-  app.use(express.urlencoded({ extended: false }));
+  app.use(express.urlencoded({ extended: false, limit: '1mb', parameterLimit: 10000 }));
   app.use(shrinkRay({ useZopfliForGzip: false, brotli: { quality: 4 } }));
   if (global.config.server.allowCORS) app.use(allowCORS);
   if (global.config.server.allowPWA) app.use(allowPWA);

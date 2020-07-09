@@ -586,52 +586,27 @@ async function loadGallery(limit, refresh = false) {
     await db.reset();
     await db.open();
   }
-  if (window.options.liveLoad) {
-    /*
-    let count = 0;
-    oboe({ url: `/api/get?limit=${limit}&find=all`, cached: true, withCredentials: false })
-      .node('{image}', (image) => {
-        db.put(image);
-        $('#number').text(count++);
-        $('#results').append(printResult(image));
-        enumerateFolders(image.image);
-        // time: 15sec load, 10sec print, 3sec enumerate
-      })
-      .done(async () => {
-        const t1 = window.performance.now();
-        if (window.debug) {
-          const size = JSON.stringify(await db.all()).length;
-          log.result(`Received ${await db.count()} images: ${Math.round(t1 - t0).toLocaleString()} ms ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
-        } else {
-          log.result(`Received ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms`);
-        }
-        window.filtered = await db.all();
-        time(sortResults, window.options.listSortOrder);
-      });
-      */
+  const updated = new Date().getTime();
+  const since = refresh ? window.options.lastUpdated : 0;
+  const res = await fetch(`/api/get?find=all&limit=${limit}&time=${since}`);
+  let json = [];
+  if (res && res.ok) json = await res.json();
+  const t1 = window.performance.now();
+  await db.store(json);
+  const t2 = window.performance.now();
+  if (window.debug) {
+    const size = JSON.stringify(json).length;
+    log.debug(t0, `Cache download: ${json.length} images ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
   } else {
-    const updated = new Date().getTime();
-    const since = refresh ? window.options.lastUpdated : 0;
-    const res = await fetch(`/api/get?find=all&limit=${limit}&time=${since}`);
-    let json = [];
-    if (res && res.ok) json = await res.json();
-    const t1 = window.performance.now();
-    await db.store(json);
-    const t2 = window.performance.now();
-    if (window.debug) {
-      const size = JSON.stringify(json).length;
-      log.debug(t0, `Cache download: ${json.length} images ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
-    } else {
-      // eslint-disable-next-line no-lonely-if
-      if (!refresh) log.result(`Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
-    }
-    if (refresh && (json.length > 0)) {
-      log.result(`Refreshed cache: ${json.length} images updated since ${moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss')} in ${Math.round(t1 - t0).toLocaleString()} ms`);
-    }
-    // window.filtered = await db.all();
-    window.options.lastUpdated = updated;
-    if (!refresh) sortResults(window.options.listSortOrder);
+    // eslint-disable-next-line no-lonely-if
+    if (!refresh) log.result(`Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
   }
+  if (refresh && (json.length > 0)) {
+    log.result(`Refreshed cache: ${json.length} images updated since ${moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss')} in ${Math.round(t1 - t0).toLocaleString()} ms`);
+  }
+  // window.filtered = await db.all();
+  window.options.lastUpdated = updated;
+  if (!refresh) sortResults(window.options.listSortOrder);
   busy(false);
 }
 
@@ -718,7 +693,7 @@ async function initSharesHandler() {
       share.creator = window.user.user;
       share.name = $('#share-name').val();
       share.images = window.filtered.map((a) => a.image);
-      log.debug(t0, `Share create: creator: ${share.creator} name: ${share.name} key: ${share.key} images: ${share.images.length}`);
+      log.debug(t0, `Share create: creator: ${share.creator} name: ${share.name} images: ${share.images.length.toLocaleString()} size: ${JSON.stringify(share).length.toLocaleString()} bytes`);
       if (!share.creator || !share.name || ((share.name.length < 2) || !share.images) || (share.images.length < 1)) {
         $('#share-url').val('invalid data');
         return;
