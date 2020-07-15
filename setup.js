@@ -83,10 +83,10 @@ async function main() {
   npm.installOpt = await exec('npm install --only=opt --json', 'NPM install optional modules');
 
   // ncu upgrade
-  process.stdout.write('NCU force upgrade modules\n');
+  process.stdout.write('Skipping NCU force upgrade modules\n');
   // eslint-disable-next-line node/no-unpublished-require
-  const ncu = require('npm-check-updates'); // eariliest we can load it
-  npm.ncu = await ncu.run({ jsonUpgraded: true, upgrade: true, packageManager: 'npm', silent: true });
+  // const ncu = require('npm-check-updates'); // eariliest we can load it
+  // npm.ncu = await ncu.run({ jsonUpgraded: true, upgrade: true, packageManager: 'npm', silent: true });
 
   // npm optimize
   npm.update = await exec('npm update --depth=5 --json', 'NPM update modules');
