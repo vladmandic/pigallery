@@ -1,5 +1,12 @@
 # PiGallery Change Log
 
+### **v1.1.2** 2020/07/16 cyan00@gmail.com
+
+
+### **v1.1.1** 2020/07/16 cyan00@gmail.com
+
+- implemented user configuration
+
 ### **origin/HEAD** 2020/07/15 cyan00@gmail.com
 
 - updated packages
