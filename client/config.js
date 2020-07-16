@@ -7,50 +7,95 @@ const modelDetect = require('./modelDetect.js');
 
 window.debug = true;
 
+function colorHex(str) {
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.fillStyle = str;
+  console.log('color', str, ctx.fillStyle);
+  return ctx.fillStyle;
+}
+
 // user configurable options, stored in browsers local storage
 window.options = {
   get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || 500, 10); },
   set listItemCount(val) { return localStorage.setItem('listItemCount', val); },
+
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
   set listFolders(val) { return localStorage.setItem('listFolders', val); },
+
   get listDetails() { return localStorage.getItem('listDetails') ? localStorage.getItem('listDetails') === 'true' : true; },
   set listDetails(val) { return localStorage.setItem('listDetails', val); },
+
   get listDivider() { return localStorage.getItem('listDivider') || 'month'; },
   set listDivider(val) { return localStorage.setItem('listDivider', val); },
+
   get listSortOrder() { return localStorage.getItem('listSortOrder') || 'numeric-down'; },
   set listSortOrder(val) { return localStorage.setItem('listSortOrder', val); },
+
+  get listThumbSquare() { return localStorage.getItem('listThumbSquare') ? localStorage.getItem('listThumbSquare') === 'true' : true; },
+  set listThumbSquare(val) { return localStorage.setItem('listThumbSquare', val); },
+
   get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 165, 10); },
   set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
+
   get listLimit() { return parseInt(localStorage.getItem('listLimit') || 10000, 10); },
   set listLimit(val) { return localStorage.setItem('listLimit', val); },
+
   get viewDetails() { return localStorage.getItem('viewDetails') ? localStorage.getItem('viewDetails') === 'true' : true; },
   set viewDetails(val) { return localStorage.setItem('viewDetails', val); },
+
   get viewBoxes() { return localStorage.getItem('viewBoxes') ? localStorage.getItem('viewBoxes') === 'true' : true; },
   set viewBoxes(val) { return localStorage.setItem('viewBoxes', val); },
+
   get viewFaces() { return localStorage.getItem('viewFaces') ? localStorage.getItem('viewFaces') === 'true' : true; },
   set viewFaces(val) { return localStorage.setItem('viewFaces', val); },
+
   get viewRaw() { return localStorage.getItem('viewRaw') ? localStorage.getItem('viewRaw') === 'true' : false; },
   set viewRaw(val) { return localStorage.setItem('viewRaw', val); },
+
   get liveLoad() { return localStorage.getItem('liveLoad') ? localStorage.getItem('liveLoad') === 'true' : false; },
   set liveLoad(val) { return localStorage.setItem('liveLoad', val); },
+
   get dateShort() { return localStorage.getItem('dateShort') || 'YYYY/MM/DD'; },
   set dateShort(val) { return localStorage.setItem('dateShort', val); },
+
   get dateLong() { return localStorage.getItem('dateLong') || 'dddd, MMMM Do, YYYY'; },
   set dateLong(val) { return localStorage.setItem('dateLong', val); },
+
   get dateDivider() { return localStorage.getItem('dateDivider') || 'MMMM YYYY'; },
   set dateDivider(val) { return localStorage.setItem('dateDivider', val); },
+
   get fontSize() { return localStorage.getItem('fontSize') || '14px'; },
   set fontSize(val) { return localStorage.setItem('fontSize', val); },
+
   get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || 2500, 10); },
   set slideDelay(val) { return localStorage.setItem('slidedelay', val); },
-  get topClasses() { return parseInt(localStorage.getItem('slidedelay') || 25, 10); },
-  set topClasses(val) { return localStorage.setItem('slidedelay', val); },
+
+  get topClasses() { return parseInt(localStorage.getItem('topClasses') || 25, 10); },
+  set topClasses(val) { return localStorage.setItem('topClasses', val); },
+
   get listDetailsWidth() { return parseFloat(localStorage.getItem('listDetailsWidth') || 0.25); },
   set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
+
   get mapColor() { return localStorage.getItem('mapColor') || 'dark'; },
-  set mapColor(val) { return localStorage.setItem('dark', val); },
+  set mapColor(val) { return localStorage.setItem('mapColor', val); },
+
   get lastUpdated() { return parseInt(localStorage.getItem('lastUpdated') || 0, 10); },
   set lastUpdated(val) { return localStorage.setItem('lastUpdated', val); },
+
+  get colorText() { return localStorage.getItem('colorText') || colorHex('#ebebeb'); },
+  set colorText(val) { return localStorage.setItem('colorText', colorHex(val)); },
+
+  get colorHigh() { return localStorage.getItem('colorHigh') || colorHex('lightyellow'); },
+  set colorHigh(val) { return localStorage.setItem('colorHigh', colorHex(val)); },
+
+  get colorHover() { return localStorage.getItem('colorHover') || colorHex('lightskyblue'); },
+  set colorHover(val) { return localStorage.setItem('colorHover', colorHex(val)); },
+
+  get colorBack() { return localStorage.getItem('colorBack') || colorHex('black'); },
+  set colorBack(val) { return localStorage.setItem('colorBack', colorHex(val)); },
+
+  get colorBody() { return localStorage.getItem('colorBody') || colorHex('#555555'); },
+  set colorBody(val) { return localStorage.setItem('colorBody', colorHex(val)); },
 };
 
 // TFJS Configuration
@@ -65,13 +110,13 @@ const config = {
 
   // Default models
   classify: [
-    { name: 'ImageNet Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.22, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200 },
-    { name: 'ImageNet EfficientNet B4', modelPath: 'models/efficientnet-b4/model.json', score: 0.1, topK: 3, slice: 0, tensorSize: 380, offset: 0, scoreScale: 1 },
-    { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-6k/model.json', score: 0.1, topK: 5, useFloat: false, tensorSize: 299, scoreScale: 1000, classes: 'assets/DeepDetect-Labels.json', offset: 0 },
+    { name: 'ImageNet Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.22, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200, classes: 'assets/ImageNet-Labels1000.json' },
+    { name: 'ImageNet EfficientNet B4', modelPath: 'models/efficientnet-b4/model.json', score: 0.1, topK: 3, slice: 0, tensorSize: 380, offset: 0, scoreScale: 1, classes: 'assets/ImageNet-Labels1000.json' },
+    { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-6k/model.json', score: 0.1, topK: 5, useFloat: false, tensorSize: 299, scoreScale: 1000, offset: 0, classes: 'assets/DeepDetect-Labels.json' },
   ],
   detect: [
-    { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO },
-    { name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD },
+    { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO, classes: 'assets/Coco-Labels.json' },
+    { name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, exec: modelDetect.detectSSD, classes: 'assets/OpenImage-Labels.json' },
   ],
   person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', type: 'tinyFaceDetector', score: 0.3, size: 416 },
 
