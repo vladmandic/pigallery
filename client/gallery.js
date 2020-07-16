@@ -10,6 +10,7 @@ const details = require('./details.js');
 const map = require('./map.js');
 const db = require('./indexdb.js');
 const hash = require('./blockhash.js');
+const options = require('./options.js');
 const pwa = require('./pwa-register.js');
 
 // global variables
@@ -18,9 +19,9 @@ window.filtered = [];
 function busy(working) {
   $('body').css('cursor', working ? 'wait' : 'default');
   $('main').css('cursor', working ? 'wait' : 'default');
-  $('#btn-number').css('color', working ? 'lightcoral' : 'lightyellow');
+  $('#btn-number').css('color', working ? 'lightcoral' : 'var(--fg)');
   $('#btn-number').toggleClass('fa-images fa-clock');
-  $('#number').css('color', working ? 'gray' : 'lightyellow');
+  $('#number').css('color', working ? 'gray' : 'var(--fg)');
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -123,9 +124,10 @@ function printResult(object) {
   const thumb = document.createElement('div');
   thumb.className = 'col thumbnail';
   thumb.id = object.id;
+  const square = window.options.listThumbSquare ? `width=${window.options.listThumbSize}px` : '';
   thumb.innerHTML = `
     <img class="thumbnail" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');"
-    align="middle" width=${window.options.listThumbSize}px height=${window.options.listThumbSize}px>
+    align="middle" ${square} height=${window.options.listThumbSize}px>
     <p class="btn-tiny fa fa-play-circle" onclick="details.show('${escape(object.image)}');" title="View image details" style="right: 84px"></p>
     <a class="btn-tiny fa fa-arrow-alt-circle-down" href="${object.image}" download title="Download image" style="right: 56px"></a>
     <p class="btn-tiny fa fa-adjust" onclick="simmilarImage('${escape(object.image)}');" title="Find simmilar images" style="right: 28px"></p>
@@ -179,6 +181,7 @@ async function scrollResults() {
   $('.listitem').mouseenter((evt) => $(evt.target).find('.btn-tiny').toggle(true));
   $('.listitem').mouseleave((evt) => $(evt.target).find('.btn-tiny').toggle(false));
   $('.description').click((evt) => $(evt.target).parent().find('.btn-tiny').toggle());
+  $('.description').toggle(window.options.listDetails);
 }
 
 // redraws gallery view and rebuilds sidebar menu
@@ -189,6 +192,13 @@ async function redrawResults() {
   const res = document.getElementById('results');
   res.innerHTML = '';
   current = 0;
+
+  document.documentElement.style.setProperty('--fg', window.options.colorHigh);
+  document.documentElement.style.setProperty('--tx', window.options.colorText);
+  document.documentElement.style.setProperty('--hl', window.options.colorHover);
+  document.documentElement.style.setProperty('--bg', window.options.colorBack);
+  document.documentElement.style.setProperty('--bd', window.options.colorBody);
+
   $('#results').off('scroll');
   $('#results').scroll(() => scrollResults());
   scrollResults();
@@ -873,6 +883,7 @@ async function initListHandlers() {
     }
   });
 
+  // navline user changelog
   $('#btn-changelog').click(async () => {
     await showNavbar($('#docs'));
     // $('#docs').click(() => $('#docs').toggle('fast'));
@@ -881,6 +892,12 @@ async function initListHandlers() {
       const md = await res.text();
       if (md) $('#docs').html(marked(md));
     }
+  });
+
+  // navline user options
+  $('#btn-options').click(async () => {
+    await showNavbar($('#docs'));
+    if ($('#docs').css('display') !== 'none') options.show();
   });
 
   // navline user logout

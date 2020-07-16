@@ -1,7 +1,9 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/07/09 cyan00@gmail.com
+### **origin/HEAD** 2020/07/15 cyan00@gmail.com
 
+- updated packages
+- increased server limits
 - changelog
 
 ### **v1.0.9** 2020/07/09 cyan00@gmail.com

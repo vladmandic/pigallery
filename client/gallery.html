@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="Description" content="Image Gallery and Classification; Author: Vladimir Mandic <mandic00@live.com>">
     <meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.1, maximum-scale=4.0, shrink-to-fit=yes, user-scalable=yes">
-    <meta name="theme-color" content="#555555"/>
+    <meta name="theme-color" content="var(--bd)"/>
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="/favicon.ico">
@@ -24,52 +24,58 @@
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
-      body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; display: block; margin: 0; padding: 0; width: 100%; height: 100%; }
+      :root { --fg: lightyellow; --tx: #ebebeb; --hl: lightskyblue; --bg: black; --bd: #555555 }
+      body { font-family: Roboto; font-size: 14px; background: var(--bg); color: var(--tx); display: block; margin: 0; padding: 0; width: 100%; height: 100%; }
       ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0px; }
-      ::-webkit-scrollbar-thumb { background: #555555; }
-      ::-webkit-scrollbar-track { background: black; margin: 8px; }
-      ::-webkit-scrollbar-button:single-button { background: #555555; display: block; border-style: solid; height: 40px; }
+      ::-webkit-scrollbar-thumb { background: var(--bd); }
+      ::-webkit-scrollbar-track { background: var(--bg); margin: 8px; }
+      ::-webkit-scrollbar-button:single-button { background: var(--bd); display: block; border-style: solid; height: 40px; }
       ::-webkit-scrollbar-button:single-button:vertical:decrement { border-width: 0 10px 15px 10px; border-color: transparent transparent white transparent; }
       ::-webkit-scrollbar-button:single-button:vertical:increment { border-width: 15px 10px 0 10px; border-color: white transparent transparent transparent; }
       h1 { font-size: 1.4rem; margin-top: 1.2rem; font-weight: bold; }
       h2 { font-size: 1.2rem; margin-top: 1.1rem; font-weight: bold; }
-      a { color: lightcyan }
+      a { color: var(--hl) }
       a:hover { color: darkcyan; text-decoration: none; }
       p { margin: 0; }
       .row { width: 100%; margin: 0; align-content: start; }
-      .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; white-space: nowrap; text-overflow: ellipsis; }
-      .log { width: 100vw; height: 4rem; background: black; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
-      .popper { padding: 8px; background: lightblue; color: #555555; font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; z-index: 50; }
+      .col { background: var(--bd); text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; white-space: nowrap; text-overflow: ellipsis; }
+      .log { width: 100vw; height: 4rem; background: var(--bg); position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
+      .popper { padding: 8px; background: lightblue; color: var(--bd); font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; z-index: 50; }
 
-      .navbar { background: #555555; height: 80px; top: 0; justify-content: space-evenly; }
-      .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
-      .navbarbutton:hover { color: lightskyblue; }
+      .navbar { background: var(--bd); height: 80px; top: 0; justify-content: space-evenly; }
+      .navbarbutton { font-size: 2.5rem; color: var(--fg); padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
+      .navbarbutton:hover { color: var(--hl); }
       .number { font-size: 1.2rem; color: gray}
       .btntext { text-align: center; margin: 0; }
 
-      .navline { background: #555555; min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10;}
-      .navlinebutton { font-size: 1.6rem; color: lightyellow; padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
-      .navlinebutton:hover { color: lightskyblue; }
-      .blank { background: #555555; min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
+      .navline { background: var(--bd); min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10;}
+      .navlinebutton { font-size: 1.6rem; color: var(--fg); padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
+      .navlinebutton:hover { color: var(--hl) }
+      .blank { background: var(--bd); min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
 
-      .input { font-size: 1.2rem; margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #888888; width: 50%; height: 2.5rem; border-radius: 1.5rem }
-      .input:hover { background: lightyellow; }
-      .input:focus { background: lightyellow; }
+      .input { font-size: 1.2rem; margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #888888; width: 50%; height: 2.5rem; border-radius: 1.5rem; }
+      .input:hover { background: var(--fg); }
+      .input:focus { background: var(--fg); }
 
-      .main { height: 100%; display: flex; background: #555555; }
-      .folderbar { background: #555555; overflow-x: hidden; overflow-y: auto; cursor: pointer; }
+      .label { display: flex; margin-left: 30px; }
+      .options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #888888; height: 1.5rem; border-radius: 1.5rem; position: sticky; left: 220px; }
+      .options:hover { background: var(--fg); }
+      .options:focus { background: var(--fg); }
+
+      .main { height: 100%; display: flex; background: var(--bd); }
+      .folderbar { background: var(--bd); overflow-x: hidden; overflow-y: auto; cursor: pointer; }
       .folderbar::-webkit-scrollbar { display:none; }
-      .folderlist { margin: 0; min-width: 9rem; max-width: 15rem; background: #555555; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
-      .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: #555555; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
-      .folder { background: #555555; margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: bold; letter-spacing: 1px; }
-      .folder:hover { background: lightyellow; color: #555555; letter-spacing: 2px; }
-      .folder:active { background: lightskyblue; color: #555555; letter-spacing: 2px; }
-      .folderstitle { background: lightyellow; color: #555555; letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
-      .folderstitle:hover { background: lightskyblue ;}
+      .folderlist { margin: 0; min-width: 10rem; max-width: 15rem; background: var(--bd); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
+      .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--bd); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
+      .folder { background: var(--bd); margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: bold; letter-spacing: 1px; }
+      .folder:hover { background: var(--fg); color: var(--bd); letter-spacing: 2px; }
+      .folder:active { background: var(--hl); color: var(--bd); letter-spacing: 2px; }
+      .folderstitle { background: var(--fg); color: var(--bd); letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
+      .folderstitle:hover { background: var(--hl) ;}
 
-      .all { background: black; overflow: hidden; width: 100%; display: block; }
+      .all { background: var(--bg); overflow: hidden; width: 100%; display: block; }
       .map { overflow: hidden; width: 100%; height: 40%; display: none; z-index: 5; }
-      .share { overflow: hidden; width: 100%; height: 94px; background: #555555; display: none; z-index: 5; }
+      .share { overflow: hidden; width: 100%; height: 94px; background: var(--bd); display: none; z-index: 5; }
       .results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; scroll-snap-type: y mandatory; }
 
       .timestamp { background: #222222; margin-left: 8px; margin-right: 8px; color: lightgray; }
@@ -77,18 +83,18 @@
       .listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; }
       .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; scroll-margin-top: 8px; }
       .thumbnail { padding: 0; cursor: zoom-in; }
-      .description { min-width: 240px; max-width: 240px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
+      .description { min-width: 250px; max-width: 250px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
       .description:hover { background: #333333 }
-      .description:active { background: lightskyblue }
+      .description:active { background: var(--hl) }
       .btn-tiny { font-size: 1.2rem; color: gray; position: absolute; bottom: 0px; padding: 4px; cursor: grab; z-index: 10; display: none; }
-      .btn-tiny:hover { color: lightskyblue; }
+      .btn-tiny:hover { color: var(--hl) }
       .listtitle { font-weight: bold; background: #444444; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; }
 
       .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px }
-      .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; background: lightyellow; border-radius: 1rem; }
-      .thumbsize::-moz-range-track { width: 100%; height: 1rem; background: lightyellow; border-radius: 1rem; }
+      .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; background: var(--fg); border-radius: 1rem; }
+      .thumbsize::-moz-range-track { width: 100%; height: 1rem; background: var(--fg); border-radius: 1rem; }
 
-      .popup { background: lightyellow; color: black; overflow: hidden; position: fixed; top: 70px; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
+      .popup { background: var(--fg); color: var(--bg); overflow: hidden; position: fixed; top: 70px; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
       .popup-image { width: 100%; height: 100%; }
       .popup-details { margin: 0 0 0 10px; overflow-x: hidden; overflow-y: scroll; word-break: break-word; }
 
@@ -123,6 +129,7 @@
     <div><i id="btn-update" class="navlinebutton fas fa-sync"></i><p>Update DB</p></div>
     <div><i id="btn-changelog" class="navlinebutton fas fa-clipboard-list"></i><p>Change Log</p></div>
     <div><i id="btn-doc" class="navlinebutton fas fa-book"></i><p>Documentation</p></div>
+    <div><i id="btn-options" class="navlinebutton fas fa-cog"></i><p>Configuration</p></div>
     <div><i id="btn-logout" class="navlinebutton fas fa-sign-out-alt"></i><p class="btntext">Logout</p></div>
   </div>
 
