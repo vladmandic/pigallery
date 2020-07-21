@@ -24,7 +24,7 @@
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
-      :root { --fg: lightyellow; --tx: #ebebeb; --hl: lightskyblue; --bg: black; --bd: #555555 }
+      :root { --fg: lightyellow; --tx: #ebebeb; --hl: lightskyblue; --bg: black; --bd: #555555; --shadow: '5px 5px #222222' }
       body { font-family: Roboto; font-size: 14px; background: var(--bg); color: var(--tx); display: block; margin: 0; padding: 0; width: 100%; height: 100%; }
       ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0px; }
       ::-webkit-scrollbar-thumb { background: var(--bd); }
@@ -38,7 +38,7 @@
       a:hover { color: darkcyan; text-decoration: none; }
       p { margin: 0; }
       .row { width: 100%; margin: 0; align-content: start; }
-      .col { background: var(--bd); text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; white-space: nowrap; text-overflow: ellipsis; }
+      .col { background: var(--bd); text-align: left; margin: 8px; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
       .log { width: 100vw; height: 4rem; background: var(--bg); position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
       .popper { padding: 8px; background: lightblue; color: var(--bd); font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; z-index: 50; }
 
@@ -83,10 +83,12 @@
       .listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; }
       .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; scroll-margin-top: 8px; }
       .thumbnail { padding: 0; cursor: zoom-in; }
+      .thumb-top { display: flex; position: absolute; top: 0; right: 0;;}
+      .thumb-bottom { display: flex; position: absolute; bottom: 0; right: 0;;}
       .description { min-width: 250px; max-width: 250px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
       .description:hover { background: #333333 }
       .description:active { background: var(--hl) }
-      .btn-tiny { font-size: 1.2rem; color: gray; position: absolute; bottom: 0px; padding: 4px; cursor: grab; z-index: 10; display: none; }
+      .btn-tiny { font-size: 2.0rem; color: gray; padding: 4px 4px 4px 8px; cursor: grab; z-index: 10; display: none; }
       .btn-tiny:hover { color: var(--hl) }
       .listtitle { font-weight: bold; background: #444444; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; }
 

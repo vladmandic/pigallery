@@ -5,7 +5,7 @@ const config = require('./config.js').default;
 const db = require('./indexdb.js');
 const log = require('./log.js');
 const nearest = require('./nearest.js');
-const gallery = require('./gallery.js');
+const list = require('./list.js');
 
 let mapContainer;
 
@@ -34,7 +34,7 @@ async function find(lat, lon) {
     return false;
   });
   log.debug(t0, `Map search: ${lat} ${lon} Found: ${coord[0].lat} ${coord[0].lon} Images: ${window.filtered.length} Level: ${count}`);
-  gallery.redraw();
+  list.redraw();
 }
 
 async function show(visible) {

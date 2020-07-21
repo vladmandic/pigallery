@@ -1,6 +1,6 @@
 const tf = require('@tensorflow/tfjs');
 const log = require('./log.js');
-const gallery = require('./gallery.js');
+const list = require('./list.js');
 const config = require('./config.js').default;
 
 function JSONtoStr(json) {
@@ -45,7 +45,7 @@ function resetOptions() {
   sessionStorage.clear();
   // eslint-disable-next-line no-use-before-define
   showOptions();
-  gallery.redraw();
+  list.redraw();
 }
 
 function saveOptions() {
@@ -66,15 +66,18 @@ function saveOptions() {
   window.options.colorHover = $('#colorHover').val();
   window.options.colorBack = $('#colorBack').val();
   window.options.colorBody = $('#colorBody').val();
-  gallery.redraw();
+  window.options.listShadow = $('#listShadow')[0].checked;
+  list.redraw();
 }
 
 function userOptions() {
   let html = '<h1>User Configuration</h1>';
   html += `
     <form>
+
     <input type="button" id="btnSaveConfig" class="options" style="left: 30px" value="Save configuration">
     <input type="button" id="btnResetConfig" class="options" style="left: 30px" value="Reset to default">
+
     <h1>Application:</h1>
     <label class="label">Short date format <input class="options" type="text" id="dateShort" value="${window.options.dateShort}" /></label>
     <label class="label">Long date format <input class="options" type="text" id="dateLong" value="${window.options.dateLong}" /></label>
@@ -91,11 +94,15 @@ function userOptions() {
     <label class="label">Show details <input class="options" type="checkbox" id="listDetails" ${window.options.listDetails ? 'checked' : ''} /></label>
     <label class="label">Thumbnail size <input class="options" type="number" id="listThumbSize" value="${window.options.listThumbSize}" /></label>
     <label class="label">Use square thumbnails <input class="options" type="checkbox" id="listThumbSquare" ${window.options.listThumbSquare ? 'checked' : ''} /></label>
+    <label class="label">List items have shadows <input class="options" type="checkbox" id="listShadow" ${window.options.listShadow ? 'checked' : ''} /></label>
+
     <h1>Details view:</h1>
     <label class="label">Draw bounding box around detected objects <input class="options" type="checkbox" id="viewBoxes" ${window.options.viewBoxes ? 'checked' : ''} /></label>
     <label class="label">Draw bounding box around detected faces <input class="options" type="checkbox" id="viewFaces" ${window.options.viewFaces ? 'checked' : ''} /></label>
+
     <h1>Map view:</h1>
     <label class="label">Theme <input class="options" type="text" id="mapColor" value="${window.options.mapColor}" /></label>
+
     </form>
   `;
   return html;

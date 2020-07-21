@@ -44,7 +44,7 @@ if (!listening) {
   self.addEventListener('fetch', (evt) => {
     const uri = new URL(evt.request.url);
     if (evt.request.cache === 'only-if-cached' && evt.request.mode !== 'same-origin') return; // required for chrome bug
-    if (evt.request.method !== 'GET') return; // skip anything but post
+    if (evt.request.method !== 'GET') return; // only cache get requests
     if (uri.origin !== location.origin) return; // skip non-local requests
     if (evt.request.url.includes('/api/')) return; // skip api calls
     if (evt.request.url.includes('/models/')) return; // skip caching model data
