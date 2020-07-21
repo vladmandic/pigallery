@@ -10,7 +10,6 @@ window.debug = true;
 function colorHex(str) {
   const ctx = document.createElement('canvas').getContext('2d');
   ctx.fillStyle = str;
-  console.log('color', str, ctx.fillStyle);
   return ctx.fillStyle;
 }
 
@@ -33,6 +32,9 @@ window.options = {
 
   get listThumbSquare() { return localStorage.getItem('listThumbSquare') ? localStorage.getItem('listThumbSquare') === 'true' : true; },
   set listThumbSquare(val) { return localStorage.setItem('listThumbSquare', val); },
+
+  get listShadow() { return localStorage.getItem('listShadow') ? localStorage.getItem('listShadow') === 'true' : true; },
+  set listShadow(val) { return localStorage.setItem('listShadow', val); },
 
   get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 165, 10); },
   set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },

@@ -277,8 +277,77 @@ async function showNextDetails(left) {
   showDetails(target.image);
 }
 
+// starts slideshow
+let slideshowRunning;
+async function startSlideshow(start) {
+  if (start) {
+    showNextDetails(false);
+    slideshowRunning = setTimeout(() => startSlideshow(true), window.options.slideDelay);
+  } else if (slideshowRunning) {
+    clearTimeout(slideshowRunning);
+    slideshowRunning = null;
+  }
+}
+
+// navbar details - used when in details view
+function initDetailsHandlers() {
+  // handle clicks inside details view
+  $('#popup').click(() => {
+    if (event.screenX < 50) showNextDetails(true);
+    else if (event.clientX > $('#popup').width() - 50) showNextDetails(false);
+    else if (!event.target.className.includes('iv-large-image')) {
+      clearBoxes();
+      $('#popup').toggle('fast');
+      $('#optionsview').toggle(false);
+    }
+  });
+
+  // navbar details previous
+  $('#details-previous').click(() => showNextDetails(true));
+
+  // navbar details close
+  $('#details-close').click(() => {
+    clearBoxes();
+    startSlideshow(false);
+    $('#popup').toggle('fast');
+    $('#optionsview').toggle(false);
+  });
+
+  // navbar details next
+  $('#details-next').click(() => showNextDetails(false));
+
+  // navbar details show/hide details
+  $('#details-desc').click(() => {
+    $('#details-desc').toggleClass('fa-comment fa-comment-slash');
+    window.options.viewDetails = !window.options.viewDetails;
+    $('#popup-details').toggle(window.options.viewDetails);
+  });
+
+  // navbar details show/hide detection boxes
+  $('#details-boxes').click(() => {
+    $('#details-boxes').toggleClass('fa-store fa-store-slash');
+    window.options.viewBoxes = !window.options.viewBoxes;
+    drawBoxes();
+  });
+
+  // navbar details show/hide faces
+  $('#details-faces').click(() => {
+    $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
+    window.options.viewFaces = !window.options.viewFaces;
+    drawBoxes();
+  });
+
+  // navbar details download image
+  $('#details-raw').click(() => {
+    $('#details-raw').toggleClass('fa-video fa-video-slash');
+    window.options.viewRaw = !window.options.viewRaw;
+  });
+}
+
 exports.show = showDetails;
 exports.next = showNextDetails;
 exports.boxes = drawBoxes;
 exports.clear = clearBoxes;
 exports.combine = combineResults;
+exports.slideshow = startSlideshow;
+exports.handlers = initDetailsHandlers;
