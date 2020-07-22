@@ -25,7 +25,7 @@
     <style>
       @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
       :root { --fg: lightyellow; --tx: #ebebeb; --hl: lightskyblue; --bg: black; --bd: #555555; --shadow: '5px 5px #222222' }
-      body { font-family: Roboto; font-size: 14px; background: var(--bg); color: var(--tx); display: block; margin: 0; padding: 0; width: 100%; height: 100%; }
+      body { font-family: Roboto; font-size: 14px; background: var(--bg); color: var(--tx); margin: 0; padding: 0; width: 100%; height: 100%; display: none; }
       ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0px; }
       ::-webkit-scrollbar-thumb { background: var(--bd); }
       ::-webkit-scrollbar-track { background: var(--bg); margin: 8px; }
@@ -48,7 +48,7 @@
       .number { font-size: 1.2rem; color: gray}
       .btntext { text-align: center; margin: 0; }
 
-      .navline { background: var(--bd); min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10;}
+      .navline { background: var(--bd); min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10; }
       .navlinebutton { font-size: 1.6rem; color: var(--fg); padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
       .navlinebutton:hover { color: var(--hl) }
       .blank { background: var(--bd); min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }

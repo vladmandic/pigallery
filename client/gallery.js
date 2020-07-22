@@ -106,11 +106,10 @@ async function folderHandlers() {
         $('#share-name').val(share.name);
         $('#share-url').val(`${window.location.origin}?share=${share.key}`);
         $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
-        if (window.filtered.length < await db.count()) {
-          window.filtered = await db.all();
-          window.options.listSortOrder = 'numeric-down';
-        }
-        await menu.classes();
+        window.share = share.key;
+        // eslint-disable-next-line no-use-before-define
+        sortResults(window.options.listSortOrder);
+        await menu.enumerate();
         folderHandlers();
         break;
       default:
@@ -148,7 +147,7 @@ async function filterResults(words) {
   }
   if (window.filtered && window.filtered.length > 0) log.debug(t0, `Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} matches out of ${size} images`);
   else log.debug(t0, `Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
-  menu.enumerate();
+  await menu.enumerate();
   folderHandlers();
   list.redraw();
   busy(false);
@@ -181,7 +180,7 @@ async function simmilarImage(image) {
     .sort((a, b) => a.simmilarity - b.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} images`);
   list.redraw();
-  menu.enumerate();
+  await menu.enumerate();
   folderHandlers();
   list.scroll();
   busy(false);
@@ -207,7 +206,7 @@ async function simmilarPerson(image) {
     .sort((a, b) => a.simmilarity - b.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} persons`);
   list.redraw();
-  menu.enumerate();
+  await menu.enumerate();
   folderHandlers();
   list.scroll();
   busy(false);
@@ -232,7 +231,7 @@ async function simmilarClasses(image) {
     .sort((a, b) => b.simmilarity - a.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} classes`);
   list.redraw();
-  menu.enumerate();
+  await menu.enumerate();
   folderHandlers();
   list.scroll();
   busy(false);
@@ -241,6 +240,7 @@ async function simmilarClasses(image) {
 // sorts images based on given sort order
 let loadTried = false;
 async function sortResults(sort) {
+  // window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
   $('#optionslist').toggle(false);
   if (!window.user.user) return;
   busy(true);
@@ -288,7 +288,7 @@ async function sortResults(sort) {
     // eslint-disable-next-line no-use-before-define
     await loadGallery(window.options.listLimit);
   }
-  menu.enumerate();
+  await menu.enumerate();
   folderHandlers();
   list.scroll();
   busy(false);
@@ -395,12 +395,13 @@ async function initSharesHandler() {
   }
   $('#sharestitle').off();
   $('#sharestitle').click(() => {
+    const show = $('#share').is(':visible');
     $('#btn-shareadd').removeClass('fa-minus-square').addClass('fa-plus-square');
-    $('#share').toggle('slow');
-    $('#share-name').focus();
-    $('#shares').find('li').toggle('slow');
+    $('#share').toggle(!show);
+    $('#shares').find('li').toggle(!show);
     $('#share-name').val('');
     $('#share-url').val('');
+    $('#share-name').focus();
   });
 
   $('#btn-shareadd').off();
@@ -474,7 +475,10 @@ async function initHotkeys() {
 }
 
 function initSidebarHandlers() {
-  $('#resettitle').click(() => sortResults(window.options.listSortOrder));
+  $('#resettitle').click(() => {
+    window.share = null;
+    sortResults(window.options.listSortOrder);
+  });
   $('#folderstitle').click(() => $('#folders').toggle('slow'));
   $('#locationstitle').click(() => $('#locations').toggle('slow'));
   $('#classestitle').click(() => $('#classes').toggle('slow'));
@@ -559,8 +563,8 @@ async function initListHandlers() {
   });
 
   // navbar search
-  $('#btn-search').click(() => {
-    showNavbar($('#searchbar'));
+  $('#btn-search').click(async () => {
+    await showNavbar($('#searchbar'));
     $('#btn-search').toggleClass('fa-search fa-search-location');
     $('#search-input').focus();
   });
@@ -589,7 +593,9 @@ async function initListHandlers() {
   });
 
   // navbar list
-  $('#btn-list').click(() => showNavbar($('#optionslist')));
+  $('#btn-list').click(async () => {
+    await showNavbar($('#optionslist'));
+  });
 
   // navline list sidebar
   $('#btn-folder').click(() => {
@@ -652,6 +658,9 @@ async function main() {
   // gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
   // gtag('set', { user_id: `${window.user}` }); // Set the user ID using signed-in user_id.
 
+  // hide menus at startup
+  await showNavbar();
+
   // Register PWA
   if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
@@ -663,7 +672,6 @@ async function main() {
   initSidebarHandlers();
   details.handlers();
   initHotkeys();
-  showNavbar();
   await db.open();
   initSharesHandler();
   window.details = details;
@@ -671,6 +679,7 @@ async function main() {
   window.simmilarPerson = simmilarPerson;
   window.simmilarClasses = simmilarClasses;
   if (window.share) log.debug(null, `Direct link to share: ${window.share}`);
+  $('body').css('display', 'block');
   await sortResults(window.options.listSortOrder);
   $('.collapsible').parent().parent().find('li').toggle(false);
 }
