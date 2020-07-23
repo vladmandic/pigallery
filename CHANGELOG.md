@@ -1,5 +1,20 @@
 # PiGallery Change Log
 
+### **v1.1.5** 2020/07/23 cyan00@gmail.com
+
+- ui improvements
+
+### **origin/HEAD** 2020/07/22 cyan00@gmail.com
+
+
+### **v1.1.4** 2020/07/22 cyan00@gmail.com
+
+
+### **v1.1.3** 2020/07/21 cyan00@gmail.com
+
+- find images with simmilar classes
+- version bumb
+
 ### **v1.1.2** 2020/07/16 cyan00@gmail.com
 
 
@@ -7,7 +22,7 @@
 
 - implemented user configuration
 
-### **origin/HEAD** 2020/07/15 cyan00@gmail.com
+### **v1.0.10** 2020/07/15 cyan00@gmail.com
 
 - updated packages
 - increased server limits
