@@ -36,6 +36,9 @@ window.options = {
   get listShadow() { return localStorage.getItem('listShadow') ? localStorage.getItem('listShadow') === 'true' : true; },
   set listShadow(val) { return localStorage.setItem('listShadow', val); },
 
+  get listTitle() { return localStorage.getItem('listTitle') ? localStorage.getItem('listTitle') === 'true' : true; },
+  set listTitle(val) { return localStorage.setItem('listTitle', val); },
+
   get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 165, 10); },
   set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
 

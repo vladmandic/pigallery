@@ -56,6 +56,7 @@ function saveOptions() {
   window.options.listLimit = $('#listLimit').val();
   window.options.listItemCount = $('#listItemCount').val();
   window.options.listDetails = $('#listDetails')[0].checked;
+  window.options.listTitle = $('#listTitle')[0].checked;
   window.options.listThumbSize = $('#listThumbSize').val();
   window.options.listThumbSquare = $('#listThumbSquare')[0].checked;
   window.options.viewBoxes = $('#viewBoxes')[0].checked;
@@ -92,6 +93,7 @@ function userOptions() {
     <label class="label">Maximum images to load <input class="options" type="number" id="listLimit" value="${window.options.listLimit}" /></label>
     <label class="label">Initial image display count <input class="options" type="number" id="listItemCount" value="${window.options.listItemCount}" /></label>
     <label class="label">Show details <input class="options" type="checkbox" id="listDetails" ${window.options.listDetails ? 'checked' : ''} /></label>
+    <label class="label">Show group headers <input class="options" type="checkbox" id="listTitle" ${window.options.listTitle ? 'checked' : ''} /></label>
     <label class="label">Thumbnail size <input class="options" type="number" id="listThumbSize" value="${window.options.listThumbSize}" /></label>
     <label class="label">Use square thumbnails <input class="options" type="checkbox" id="listThumbSquare" ${window.options.listThumbSquare ? 'checked' : ''} /></label>
     <label class="label">List items have shadows <input class="options" type="checkbox" id="listShadow" ${window.options.listShadow ? 'checked' : ''} /></label>

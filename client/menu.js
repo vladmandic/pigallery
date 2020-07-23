@@ -94,6 +94,7 @@ async function enumerateFolders() {
 }
 
 async function enumerateShares() {
+  $('#shares').html('');
   window.shares = [];
   const shares = await fetch('/api/shares');
   if (shares.ok) window.shares = await shares.json();
@@ -102,8 +103,8 @@ async function enumerateShares() {
   for (const share of window.shares) {
     html += `<li><span tag="${share.key}" type="share" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${share.name}</span></li>`;
   }
-  $('#shares').html(html);
-  $('#shares').find('li').toggle('slow');
+  $('#shares').append(html);
+  $('#shares').find('li').toggle(false);
   log.debug(null, `Enumerated shares: ${window.shares.length}`);
 }
 
