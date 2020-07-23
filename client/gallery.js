@@ -611,6 +611,12 @@ async function initListHandlers() {
     $('#btn-desc').toggleClass('fa-comment fa-comment-slash');
   });
 
+  $('#btn-title').click(() => {
+    window.options.listTitle = !window.options.listTitle;
+    $('.divider').toggle('slow');
+    $('#btn-title').toggleClass('fa-comment-dots fa-comment-slash');
+  });
+
   // navline list duplicates
   $('#btn-duplicates').click(() => {
     findDuplicates();
@@ -680,6 +686,7 @@ async function main() {
   window.simmilarClasses = simmilarClasses;
   if (window.share) log.debug(null, `Direct link to share: ${window.share}`);
   $('body').css('display', 'block');
+  list.resize();
   await sortResults(window.options.listSortOrder);
   $('.collapsible').parent().parent().find('li').toggle(false);
 }

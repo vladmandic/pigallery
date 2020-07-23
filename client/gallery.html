@@ -24,7 +24,7 @@
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
-      :root { --fg: lightyellow; --tx: #ebebeb; --hl: lightskyblue; --bg: black; --bd: #555555; --shadow: '5px 5px #222222' }
+      :root { --fg: lightyellow; --tx: #ebebeb; --hl: lightskyblue; --bg: black; --bd: #555555; --shadow: '5px 5px #222222'; --btntiny: 20px }
       body { font-family: Roboto; font-size: 14px; background: var(--bg); color: var(--tx); margin: 0; padding: 0; width: 100%; height: 100%; display: none; }
       ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0px; }
       ::-webkit-scrollbar-thumb { background: var(--bd); }
@@ -63,20 +63,21 @@
       .options:focus { background: var(--fg); }
 
       .main { height: 100%; display: flex; background: var(--bd); }
-      .folderbar { background: var(--bd); overflow-x: hidden; overflow-y: auto; cursor: pointer; }
+      .folderbar { background: var(--bd); overflow-x: hidden; overflow-y: auto; cursor: pointer; min-width: fit-content; }
       .folderbar::-webkit-scrollbar { display:none; }
       .folderlist { margin: 0; min-width: 10rem; max-width: 15rem; background: var(--bd); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
       .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--bd); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
       .folder { background: var(--bd); margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: bold; letter-spacing: 1px; }
       .folder:hover { background: var(--fg); color: var(--bd); letter-spacing: 2px; }
       .folder:active { background: var(--hl); color: var(--bd); letter-spacing: 2px; }
-      .folderstitle { background: var(--fg); color: var(--bd); letter-spacing: 2px; font-weight: bold; line-height: 2.2rem; padding: 4px; }
+      .folderstitle { background: var(--fg); color: var(--bd); letter-spacing: 2px; font-weight: bold; line-height: 2.6rem; padding: 4px; }
+      .folderbutton { padding-right: 4px; }
       .folderstitle:hover { background: var(--hl) ;}
 
       .all { background: var(--bg); overflow: hidden; width: 100%; display: block; }
       .map { overflow: hidden; width: 100%; height: 40%; display: none; z-index: 5; }
       .share { overflow: hidden; width: 100%; height: 94px; background: var(--bd); display: none; z-index: 5; }
-      .results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; scroll-snap-type: y mandatory; }
+      .results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; scroll-snap-type: y mandatory; padding: 4px; }
 
       .timestamp { background: #222222; margin-left: 8px; margin-right: 8px; color: lightgray; }
 
@@ -88,7 +89,7 @@
       .description { min-width: 250px; max-width: 250px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
       .description:hover { background: #333333 }
       .description:active { background: var(--hl) }
-      .btn-tiny { font-size: 2.0rem; color: gray; padding: 4px 4px 4px 8px; cursor: grab; z-index: 10; display: none; }
+      .btn-tiny { font-size: var(--btntiny); color: gray; padding: 4px; cursor: grab; z-index: 8; display: none; }
       .btn-tiny:hover { color: var(--hl) }
       .listtitle { font-weight: bold; background: #444444; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; }
 
@@ -126,7 +127,7 @@
   </div>
 
   <div id="userbar" class="row navline text-center">
-    <input class="input" type="number" id="imagenum" placeholder="100" style="width: 130px; height: 2.5rem" />
+    <input class="input" type="number" id="imagenum" placeholder="100" style="width: 110px; height: 1.8rem" />
     <div><i id="btn-load" class="navlinebutton fas fa-cloud-download-alt"></i><p class="btntext">Load Images</p></div>
     <div><i id="btn-update" class="navlinebutton fas fa-sync"></i><p>Update DB</p></div>
     <div><i id="btn-changelog" class="navlinebutton fas fa-clipboard-list"></i><p>Change Log</p></div>
@@ -138,6 +139,7 @@
   <div id="optionslist" class="row navline text-center">
     <div><i class="navlinebutton fas fa-folder-open" id="btn-folder"></i><p class="btntext">Sidebar</p></div>
     <div><i class="navlinebutton fas fa-comment" id="btn-desc"></i><p class="btntext">Descriptions</p></div>
+    <div><i class="navlinebutton fas fa-comment-dots" id="btn-title"></i><p class="btntext">Titles</p></div>
     <div><i class="navlinebutton fas sort fa-random"></i><p class="btntext">Randomize</p></div>
     <div><i class="navlinebutton fas fa-eye" id="btn-duplicates"></i><p class="btntext">Sort by Simmilarity</p></div>
     <div><i class="navlinebutton fas sort fa-sort-alpha-down"></i><i class="navlinebutton fas sort fa-sort-alpha-up" style="padding-left: 0"></i>
@@ -164,14 +166,14 @@
 
   <div id="main" class="main">
     <div id="folderbar" class="folderbar">
-      <div id="resettitle" class="folderstitle">Reset Selection</div>
-      <div id="folderstitle" class="folderstitle">Folders</div>
+      <div id="resettitle" class="folderstitle"><i class="folderbutton fas fa-images"></i>Reset View</div>
+      <div id="folderstitle" class="folderstitle"><i class="folderbutton fas fa-clone"></i>Folders</div>
         <ul id="folders" class="folderlist collapsibleList"></ul>
-      <div id="locationstitle" class="folderstitle">Locations</div>
+      <div id="locationstitle" class="folderstitle"><i class="folderbutton fas fa-globe-americas"></i>Locations</div>
         <ul id="locations" class="folderlist"></ul>
-      <div id="classestitle" class="folderstitle">Top Classes</div>
+      <div id="classestitle" class="folderstitle"><i class="folderbutton fas fa-comment-alt"></i>Top Classes</div>
         <ul id="classes" class="folderlist"></ul>
-      <div id="sharestitle" class="folderstitle">Shares</div>
+      <div id="sharestitle" class="folderstitle"><i class="folderbutton fas fa-share-square"></i>Shares</div>
         <ul id="shares" class="folderlist"></ul>
     </div>
     <div id="all" class="all">

@@ -95,9 +95,9 @@ function buildTags(object) {
     if (object.exif.make) tags.push({ camera: object.exif.make.toLowerCase() });
     if (object.exif.model) tags.push({ camera: object.exif.model.toLowerCase() });
     if (object.exif.lens) tags.push({ lens: object.exif.lens.toLowerCase() });
-    if (object.exif.created) tags.push({ created: new Date(1000 * object.exif.created) });
-    if (object.exif.created) tags.push({ year: new Date(1000 * object.exif.created).getFullYear() });
-    if (object.exif.modified) tags.push({ edited: new Date(1000 * object.exif.modified) });
+    if (object.exif.created) tags.push({ created: new Date(object.exif.created) });
+    if (object.exif.created) tags.push({ year: new Date(object.exif.created).getFullYear() });
+    if (object.exif.modified) tags.push({ edited: new Date(object.exif.modified) });
     if (object.exif.software) tags.push({ software: object.exif.software.toLowerCase() });
     if (object.exif.iso && object.exif.apperture && object.exif.exposure) {
       const conditions = object.exif.iso / (object.exif.apperture ** 2) * object.exif.exposure;

@@ -13,6 +13,7 @@ function busy(working) {
 // adds dividiers to list view based on sort order
 let previous;
 function addDividers(object) {
+  if (!window.options.listTitle) return '';
   let divider;
   if (window.options.listDivider === 'simmilarity' && object.simmilarity) {
     const curr = `${100 - object.simmilarity}%`;
@@ -183,6 +184,7 @@ async function resizeResults() {
     $('.listitem').css('min-height', `${16 + window.options.listThumbSize}px`);
     $('.listitem').css('max-height', `${16 + window.options.listThumbSize}px`);
   }
+  $('body').get(0).style.setProperty('--btntiny', `${Math.round(window.options.listThumbSize / 4)}px`);
 }
 
 exports.previous = previous;
