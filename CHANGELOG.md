@@ -1,11 +1,9 @@
 # PiGallery Change Log
 
-### **v1.1.6** 2020/07/25 cyan00@gmail.com
+### **origin/HEAD** 2020/07/25 cyan00@gmail.com
 
 - added themes
-
-### **origin/HEAD** 2020/07/23 cyan00@gmail.com
-
+- updated changelog
 
 ### **v1.1.5** 2020/07/23 cyan00@gmail.com
 
