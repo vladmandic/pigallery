@@ -3,8 +3,9 @@
 const cacheName = 'pigallery';
 const cacheFiles = [
   '/favicon.ico', '/manifest.json',
+  '/assets/loading1.gif', '/assets/loading2.gif',
   '/assets/dash-64.png', '/assets/dash-128.png', '/assets/dash-256.png', '/assets/dash-512.png', '/assets/dash-1024.png',
-  '/assets/warmup.jpg', '/assets/roboto.ttf', '/assets/roboto-condensed.ttf',
+  '/assets/warmup.jpg', '/assets/roboto.ttf', '/assets/roboto-condensed.ttf', '/assets/marcellus.ttf', '/assets/carrois.ttf',
   '/assets/bootstrap.css', '/assets/fontawesome/css/all.css', '/assets/iv-viewer.css', '/assets/mapquest.css',
 ];
 

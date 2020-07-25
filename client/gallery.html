@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="Description" content="Image Gallery and Classification; Author: Vladimir Mandic <mandic00@live.com>">
     <meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.1, maximum-scale=4.0, shrink-to-fit=yes, user-scalable=yes">
-    <meta name="theme-color" content="var(--bd)"/>
+    <meta name="theme-color" content="var(--body)"/>
     <link rel="manifest" href="/manifest.json">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="/favicon.ico">
@@ -24,84 +24,86 @@
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
-      :root { --fg: lightyellow; --tx: #ebebeb; --hl: lightskyblue; --bg: black; --bd: #555555; --shadow: '5px 5px #222222'; --btntiny: 20px }
-      body { font-family: Roboto; font-size: 14px; background: var(--bg); color: var(--tx); margin: 0; padding: 0; width: 100%; height: 100%; display: none; }
+      @font-face { font-family: 'Marcellus'; font-display: swap; font-style: normal; font-variant: small-caps; font-weight: 400; src: local('Marcellus'), url('../assets/marcellus.ttf') format('truetype'); }
+      @font-face { font-family: 'Carrois'; font-display: swap; font-style: normal; font-variant: small-caps; font-weight: 400; src: local('Carrois'), url('../assets/carrois.ttf') format('truetype'); }
+      body { font-size: 14px; background: var(--background); color: var(--text); margin: 0; padding: 0; width: 100%; height: 100%; display: none; }
       ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0px; }
-      ::-webkit-scrollbar-thumb { background: var(--bd); }
-      ::-webkit-scrollbar-track { background: var(--bg); margin: 8px; }
-      ::-webkit-scrollbar-button:single-button { background: var(--bd); display: block; border-style: solid; height: 40px; }
+      ::-webkit-scrollbar-thumb { background: var(--body); }
+      ::-webkit-scrollbar-track { background: var(--background); margin: 8px; }
+      ::-webkit-scrollbar-button:single-button { background: var(--body); display: block; border-style: solid; height: 40px; }
       ::-webkit-scrollbar-button:single-button:vertical:decrement { border-width: 0 10px 15px 10px; border-color: transparent transparent white transparent; }
       ::-webkit-scrollbar-button:single-button:vertical:increment { border-width: 15px 10px 0 10px; border-color: white transparent transparent transparent; }
-      h1 { font-size: 1.4rem; margin-top: 1.2rem; font-weight: bold; }
-      h2 { font-size: 1.2rem; margin-top: 1.1rem; font-weight: bold; }
-      a { color: var(--hl) }
-      a:hover { color: darkcyan; text-decoration: none; }
+      h1 { font-size: 1.4rem; margin-top: 1.2rem; font-weight: bold; color: var(--text); }
+      h2 { font-size: 1.2rem; margin-top: 1.1rem; font-weight: bold; color: var(--text); }
+      a { color: var(--text) }
+      a:hover { color: var(--link); text-decoration: none; }
       p { margin: 0; }
       .row { width: 100%; margin: 0; align-content: start; }
-      .col { background: var(--bd); text-align: left; margin: 8px; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
-      .log { width: 100vw; height: 4rem; background: var(--bg); position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
-      .popper { padding: 8px; background: lightblue; color: var(--bd); font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; z-index: 50; }
+      .col { background: var(--body); text-align: left; margin: 8px; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
+      .log { width: 100vw; height: 4rem; background: var(--background); position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
+      .popper { padding: 8px; background: var(--text); color: var(--body); font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; z-index: 50; }
 
-      .navbar { background: var(--bd); height: 80px; top: 0; justify-content: space-evenly; }
-      .navbarbutton { font-size: 2.5rem; color: var(--fg); padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
-      .navbarbutton:hover { color: var(--hl); }
-      .number { font-size: 1.2rem; color: gray}
+      .navbar { background: var(--body); height: 80px; top: 0; justify-content: space-evenly; }
+      .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
+      .navbarbutton:hover { color: var(--highlight); }
+      .number { font-size: 1.2rem; color: var(--inactive)}
       .btntext { text-align: center; margin: 0; }
 
-      .navline { background: var(--bd); min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10; }
-      .navlinebutton { font-size: 1.6rem; color: var(--fg); padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
-      .navlinebutton:hover { color: var(--hl) }
-      .blank { background: var(--bd); min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
+      .navline { background: var(--body); min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10; }
+      .navlinebutton { font-size: 1.6rem; color: var(--foreground); padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
+      .navlinebutton:hover { color: var(--highlight) }
+      .blank { background: var(--body); min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
 
-      .input { font-size: 1.2rem; margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #888888; width: 50%; height: 2.5rem; border-radius: 1.5rem; }
-      .input:hover { background: var(--fg); }
-      .input:focus { background: var(--fg); }
+      .input { font-size: 1.2rem; margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); width: 50%; height: 2.5rem; border-radius: 1.5rem; }
+      .input:hover { background: var(--foreground); }
+      .input:focus { background: var(--foreground); }
 
       .label { display: flex; margin-left: 30px; }
-      .options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #888888; height: 1.5rem; border-radius: 1.5rem; position: sticky; left: 220px; }
-      .options:hover { background: var(--fg); }
-      .options:focus { background: var(--fg); }
+      .options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); height: 1.5rem; border-radius: 1.5rem; position: sticky; left: 220px; }
+      .options:hover { background: var(--foreground); }
+      .options:focus { background: var(--foreground); }
 
-      .main { height: 100%; display: flex; background: var(--bd); }
-      .folderbar { background: var(--bd); overflow-x: hidden; overflow-y: auto; cursor: pointer; min-width: fit-content; }
+      .main { height: 100%; display: flex; background: var(--body); }
+      .folderbar { background: var(--body); overflow-x: hidden; overflow-y: auto; cursor: pointer; min-width: fit-content; }
       .folderbar::-webkit-scrollbar { display:none; }
-      .folderlist { margin: 0; min-width: 10rem; max-width: 15rem; background: var(--bd); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
-      .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--bd); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
-      .folder { background: var(--bd); margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: bold; letter-spacing: 1px; }
-      .folder:hover { background: var(--fg); color: var(--bd); letter-spacing: 2px; }
-      .folder:active { background: var(--hl); color: var(--bd); letter-spacing: 2px; }
-      .folderstitle { background: var(--fg); color: var(--bd); letter-spacing: 2px; font-weight: bold; line-height: 2.6rem; padding: 4px; }
+      .folderlist { margin: 0; min-width: 10rem; max-width: 15rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
+      .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
+      .folder { background: var(--body); margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: bold; letter-spacing: 1px; }
+      .folder:hover { background: var(--foreground); color: var(--body); letter-spacing: 2px; }
+      .folder:active { background: var(--highlight); color: var(--body); letter-spacing: 2px; }
+      .folderstitle { background: var(--foreground); color: var(--text); letter-spacing: 2px; font-weight: bold; line-height: 2.6rem; padding: 4px; }
+      .folderstitle:hover { background: var(--highlight); color: var(--title); }
       .folderbutton { padding-right: 4px; }
-      .folderstitle:hover { background: var(--hl) ;}
 
-      .all { background: var(--bg); overflow: hidden; width: 100%; display: block; }
+      .all { background: var(--background); overflow: hidden; width: 100%; display: block; }
       .map { overflow: hidden; width: 100%; height: 40%; display: none; z-index: 5; }
-      .share { overflow: hidden; width: 100%; height: 94px; background: var(--bd); display: none; z-index: 5; }
+      .share { overflow: hidden; width: 100%; height: 94px; background: var(--body); display: none; z-index: 5; }
       .results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; scroll-snap-type: y mandatory; padding: 4px; }
 
-      .timestamp { background: #222222; margin-left: 8px; margin-right: 8px; color: lightgray; }
+      .timestamp { background: var(--title); margin-right: 4px; padding-left: 4px; padding-right: 4px; color: var(--text); }
 
       .listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; }
-      .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; scroll-margin-top: 8px; }
+      .divider { background: var(--title); padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; scroll-margin-top: 8px; }
       .thumbnail { padding: 0; cursor: zoom-in; }
       .thumb-top { display: flex; position: absolute; top: 0; right: 0;;}
       .thumb-bottom { display: flex; position: absolute; bottom: 0; right: 0;;}
       .description { min-width: 250px; max-width: 250px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
-      .description:hover { background: #333333 }
-      .description:active { background: var(--hl) }
-      .btn-tiny { font-size: var(--btntiny); color: gray; padding: 4px; cursor: grab; z-index: 8; display: none; }
-      .btn-tiny:hover { color: var(--hl) }
-      .listtitle { font-weight: bold; background: #444444; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; }
+      .description:hover { background: var(--title); }
+      .description:active { background: var(--highlight) }
+      .btn-tiny { font-size: var(--btntiny); color: var(--inactive); padding: 4px; cursor: grab; z-index: 8; display: none; }
+      .btn-tiny:hover { color: var(--foreground) }
+      .listtitle { font-weight: bold; background: var(--title); margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; line-height: 1.4rem; }
 
       .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px }
-      .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; background: var(--fg); border-radius: 1rem; }
-      .thumbsize::-moz-range-track { width: 100%; height: 1rem; background: var(--fg); border-radius: 1rem; }
+      .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; background: var(--foreground); border-radius: 1rem; }
+      .thumbsize::-moz-range-track { width: 100%; height: 1rem; background: var(--foreground); border-radius: 1rem; }
 
-      .popup { background: var(--fg); color: var(--bg); overflow: hidden; position: fixed; top: 70px; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
+      .popup { background: var(--body); color: var(--background); overflow: hidden; position: fixed; top: 70px; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
       .popup-image { width: 100%; height: 100%; }
-      .popup-details { margin: 0 0 0 10px; overflow-x: hidden; overflow-y: scroll; word-break: break-word; }
+      .popup-details { margin: 0 0 0 10px; overflow-x: hidden; overflow-y: scroll; word-break: break-word; color: var(--text); background: var(--body); z-index: 10; }
 
-      .docs { height: 87vh; background: #333333; color: white; overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
+      .docs { height: 87vh; background: var(--body); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
+      .splash { width: 100%; height: 100%; z-index: 100; position: absolute; top: 0; left: 0; background: white; text-align-last: center; }
     </style>
 </head>
 <body>
@@ -110,6 +112,9 @@
     <h1>You really need JS enabled...</h1>
   </noscript>
 
+  <div id="splash" class="splash">
+    <img src="assets/loading1.gif">
+  </div>
   <div id="navbar" class="row navbar text-center">
     <div><i id="btn-user" class="navbarbutton fas fa-user-slash"></i><p id="user">User</p></div>
     <div><i id="btn-search" class="navbarbutton fas fa-search"></i><p>Search</p></div>
