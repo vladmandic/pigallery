@@ -665,9 +665,6 @@ async function main() {
   // gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
   // gtag('set', { user_id: `${window.user}` }); // Set the user ID using signed-in user_id.
 
-  // hide menus at startup
-  await showNavbar();
-
   // Register PWA
   if (config.default.registerPWA) pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
@@ -675,6 +672,7 @@ async function main() {
   resizeViewport();
   await config.theme();
   await init.user();
+  await showNavbar();
   $('body').contextmenu((evt) => showContextPopup(evt));
   initListHandlers();
   initSidebarHandlers();

@@ -1,3 +1,4 @@
+/*
 const log = require('pilogger');
 const Parcel = require('parcel-bundler');
 
@@ -32,3 +33,4 @@ async function parcel(app) {
 }
 
 exports.init = parcel;
+*/
