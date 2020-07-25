@@ -16,6 +16,7 @@
     "plugin:import/warnings",
     "plugin:node/recommended",
     "plugin:promise/recommended",
+    "plugin:json/recommended-with-comments",
     "airbnb-base"
   ],
   "rules": {
