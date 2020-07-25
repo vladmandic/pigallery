@@ -5,7 +5,7 @@ const moment = require('moment');
 const marked = require('marked');
 const faceapi = require('face-api.js');
 const log = require('./log.js');
-const config = require('./config.js').default;
+const config = require('./config.js');
 const init = require('./init.js');
 const list = require('./list.js');
 const details = require('./details.js');
@@ -22,9 +22,9 @@ window.filtered = [];
 function busy(working) {
   $('body').css('cursor', working ? 'wait' : 'default');
   $('main').css('cursor', working ? 'wait' : 'default');
-  $('#btn-number').css('color', working ? 'lightcoral' : 'var(--fg)');
   $('#btn-number').toggleClass('fa-images fa-clock');
-  $('#number').css('color', working ? 'gray' : 'var(--fg)');
+  // $('#btn-number').css('color', working ? 'lightcoral' : `${window.theme.foreground}`);
+  // $('#number').css('color', working ? 'gray' : '${window.theme.foreground}');
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -353,6 +353,7 @@ async function loadGallery(limit, refresh = false) {
   window.options.lastUpdated = updated;
   if (!refresh) sortResults(window.options.listSortOrder);
   busy(false);
+  $('#splash').toggle(false);
 }
 
 // popup on right-click
@@ -651,8 +652,8 @@ async function initListHandlers() {
     log.debug(t0, 'Reset filtered results');
   });
 
-  $('#btn-number').mouseover(async (evt) => {
-    showTip(evt.target, `Currently displaying: ${(parseInt(list.current - 1, 10) + 1)}<br><br>Total images: ${window.filtered.length}`);
+  $('#btn-number').mouseover(async () => {
+    // showTip(evt.target, `Currently displaying: ${(parseInt(list.current - 1, 10) + 1)}<br><br>Total images: ${window.filtered.length}`);
   });
 }
 
@@ -668,10 +669,11 @@ async function main() {
   await showNavbar();
 
   // Register PWA
-  if (config.registerPWA) pwa.register('/client/pwa-serviceworker.js');
+  if (config.default.registerPWA) pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
 
   resizeViewport();
+  await config.theme();
   await init.user();
   $('body').contextmenu((evt) => showContextPopup(evt));
   initListHandlers();

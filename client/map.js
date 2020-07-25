@@ -54,7 +54,7 @@ async function show(visible) {
   L.mapquest.key = 'lYrP4vF3Uk5zgTiGGuEzQGwGIVDGuy24';
   mapContainer = L.mapquest.map('map', {
     center: [25.7632076, -80.1927073],
-    layers: L.mapquest.tileLayer(window.options.mapColor),
+    layers: L.mapquest.tileLayer(window.theme.map),
     zoom: 3,
   });
   mapContainer.on('click', (evt) => {

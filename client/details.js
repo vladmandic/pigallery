@@ -195,19 +195,19 @@ async function showDetails(img) {
   $('.iv-large-image').on('wheel', () => resizeDetailsImage());
 
   let classified = 'Classified ';
-  for (const obj of combineResults(object.classify)) classified += ` | <font color="teal">${obj.score}% ${obj.name}</font>`;
+  for (const obj of combineResults(object.classify)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
 
   let detected = 'Detected ';
-  for (const obj of combineResults(object.detect)) detected += ` | <font color="teal">${obj.score}% ${obj.name}</font>`;
+  for (const obj of combineResults(object.detect)) detected += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
 
   let person = '';
   let nsfw = '';
   for (const i in object.person) {
     if (object.person[i].age) {
       person += `Person ${1 + parseInt(i, 10)} | 
-          <font color="teal">gender: ${(100 * object.person[i].scoreGender).toFixed(0)}% ${object.person[i].gender}</font> | 
-          <font color="teal">age: ${object.person[i].age.toFixed(1)}</font> | 
-          <font color="teal">emotion: ${(100 * object.person[i].scoreEmotion).toFixed(0)}% ${object.person[i].emotion}<br></font>`;
+          <font color="${window.theme.link}">gender: ${(100 * object.person[i].scoreGender).toFixed(0)}% ${object.person[i].gender}</font> | 
+          <font color="${window.theme.link}">age: ${object.person[i].age.toFixed(1)}</font> | 
+          <font color="${window.theme.link}">emotion: ${(100 * object.person[i].scoreEmotion).toFixed(0)}% ${object.person[i].emotion}<br></font>`;
     }
     if (object.person[i].class) {
       nsfw += `Class: ${(100 * object.person[i].scoreClass).toFixed(0)}% ${object.person[i].class} `;
@@ -215,7 +215,7 @@ async function showDetails(img) {
     if (object.person.length === 1) person = person.replace('Person 1', 'Person');
   }
 
-  let desc = '<h2>Lexicon:</h2><ul>';
+  let desc = '<h2>Lexicon</h2><ul>';
   if (object.descriptions) {
     for (const description of object.descriptions) {
       for (const lines of description) {
@@ -239,14 +239,14 @@ async function showDetails(img) {
   let location = '';
   if (object.location && object.location.city) {
     location += `
-      Location: <font color="teal">${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})</font><br>`;
+      Location: <font color="${window.theme.link}">${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})</font><br>`;
   }
   if (object.exif && object.exif.lat) location += `Coordinates: <a target="_blank" href="https://www.google.com/maps/@${object.exif.lat},${object.exif.lon},15z"> Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)} </a><br>`;
 
   $('#details-download').off();
   $('#details-download').click(() => window.open(object.image, '_blank'));
   const html = `
-      <h2>Image: <font color="teal">${object.image}</font></h2>
+      <h2>Image: <font color="${window.theme.link}">${object.image}</font></h2>
       <h2>Image Data</h2>
       <b>Resolution</b>: ${object.naturalSize.width} x ${object.naturalSize.height}<br>
       ${exif}

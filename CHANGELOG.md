@@ -1,11 +1,16 @@
 # PiGallery Change Log
 
+### **v1.1.6** 2020/07/25 cyan00@gmail.com
+
+- added themes
+
+### **origin/HEAD** 2020/07/23 cyan00@gmail.com
+
+
 ### **v1.1.5** 2020/07/23 cyan00@gmail.com
 
 - ui improvements
-
-### **origin/HEAD** 2020/07/22 cyan00@gmail.com
-
+- fixed slow loading artifacts
 
 ### **v1.1.4** 2020/07/22 cyan00@gmail.com
 

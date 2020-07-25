@@ -3,11 +3,12 @@ const details = require('./details.js');
 const log = require('./log.js');
 
 function busy(working) {
-  $('body').css('cursor', working ? 'wait' : 'default');
-  $('main').css('cursor', working ? 'wait' : 'default');
-  $('#btn-number').css('color', working ? 'lightcoral' : 'var(--fg)');
-  $('#btn-number').toggleClass('fa-images fa-clock');
-  $('#number').css('color', working ? 'gray' : 'var(--fg)');
+  return working;
+  // $('body').css('cursor', working ? 'wait' : 'default');
+  // $('main').css('cursor', working ? 'wait' : 'default');
+  // $('#btn-number').css('color', working ? 'lightcoral' : 'var(--foreground)');
+  // $('#btn-number').toggleClass('fa-images fa-clock');
+  // $('#number').css('color', working ? 'gray' : 'var(--foreground)');
 }
 
 // adds dividiers to list view based on sort order
@@ -123,7 +124,7 @@ function printResult(object) {
 }
 
 // adds items to gallery view on scroll event - infinite scroll
-let current = 0;
+let current;
 async function scrollResults() {
   const scrollHeight = $('#results').prop('scrollHeight');
   const bottom = $('#results').scrollTop() + $('#all').height();
@@ -157,13 +158,6 @@ async function redrawResults() {
   const res = document.getElementById('results');
   res.innerHTML = '';
   current = 0;
-
-  document.documentElement.style.setProperty('--fg', window.options.colorHigh);
-  document.documentElement.style.setProperty('--tx', window.options.colorText);
-  document.documentElement.style.setProperty('--hl', window.options.colorHover);
-  document.documentElement.style.setProperty('--bg', window.options.colorBack);
-  document.documentElement.style.setProperty('--bd', window.options.colorBody);
-  document.documentElement.style.setProperty('--shadow', window.options.listShadow ? '5px 5px #222222' : '0');
 
   $('#results').off('scroll');
   $('#results').scroll(() => scrollResults());

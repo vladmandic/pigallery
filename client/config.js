@@ -13,6 +13,79 @@ function colorHex(str) {
   return ctx.fillStyle;
 }
 
+window.themes = [
+  {
+    name: 'Light Grey',
+    map: 'light',
+    body: colorHex('lightgrey'),
+    background: colorHex('white'),
+    foreground: colorHex('darkgrey'),
+    text: colorHex('black'),
+    highlight: colorHex('black'),
+    shadow: '',
+    title: colorHex('#bbbbbb'),
+    link: colorHex('#222222'),
+    inactive: colorHex('grey'),
+    font: 'Marcellus',
+  },
+  {
+    name: 'Light Blue',
+    map: 'light',
+    body: colorHex('white'),
+    background: colorHex('white'),
+    foreground: colorHex('#a3e2ff'),
+    text: colorHex('#004463'),
+    highlight: colorHex('black'),
+    shadow: '',
+    title: colorHex('white'),
+    link: colorHex('#222222'),
+    inactive: colorHex('grey'),
+    font: 'Marcellus',
+  },
+  {
+    name: 'Dark Grey',
+    map: 'dark',
+    body: colorHex('#555555'),
+    background: colorHex('black'),
+    foreground: colorHex('#999999'),
+    text: colorHex('#ebebeb'),
+    highlight: colorHex('white'),
+    shadow: '4px 4px #333333',
+    title: colorHex('#333333'),
+    link: colorHex('#eeeeee'),
+    inactive: colorHex('lightgrey'),
+    font: 'Roboto',
+  },
+  {
+    name: 'Dark Blue',
+    map: 'dark',
+    body: colorHex('#00283b'),
+    background: colorHex('black'),
+    foreground: colorHex('#00557d'),
+    text: colorHex('#e0f5ff'),
+    highlight: colorHex('white'),
+    shadow: '',
+    title: colorHex('#006391'),
+    link: colorHex('#abe4ff'),
+    inactive: colorHex('lightgrey'),
+    font: 'Roboto',
+  },
+];
+
+async function initTheme() {
+  window.theme = window.themes[window.options.theme];
+  document.documentElement.style.setProperty('--body', window.theme.body);
+  document.documentElement.style.setProperty('--background', window.theme.background);
+  document.documentElement.style.setProperty('--foreground', window.theme.foreground);
+  document.documentElement.style.setProperty('--text', window.theme.text);
+  document.documentElement.style.setProperty('--title', window.theme.title);
+  document.documentElement.style.setProperty('--highlight', window.theme.highlight);
+  document.documentElement.style.setProperty('--shadow', window.theme.shadow);
+  document.documentElement.style.setProperty('--link', window.theme.link);
+  document.documentElement.style.setProperty('--inactive', window.theme.inactive);
+  document.body.style.setProperty('font-family', window.theme.font);
+}
+
 // user configurable options, stored in browsers local storage
 window.options = {
   get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || 500, 10); },
@@ -21,7 +94,7 @@ window.options = {
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
   set listFolders(val) { return localStorage.setItem('listFolders', val); },
 
-  get listDetails() { return localStorage.getItem('listDetails') ? localStorage.getItem('listDetails') === 'true' : true; },
+  get listDetails() { return localStorage.getItem('listDetails') ? localStorage.getItem('listDetails') === 'true' : false; },
   set listDetails(val) { return localStorage.setItem('listDetails', val); },
 
   get listDivider() { return localStorage.getItem('listDivider') || 'month'; },
@@ -32,9 +105,6 @@ window.options = {
 
   get listThumbSquare() { return localStorage.getItem('listThumbSquare') ? localStorage.getItem('listThumbSquare') === 'true' : true; },
   set listThumbSquare(val) { return localStorage.setItem('listThumbSquare', val); },
-
-  get listShadow() { return localStorage.getItem('listShadow') ? localStorage.getItem('listShadow') === 'true' : true; },
-  set listShadow(val) { return localStorage.setItem('listShadow', val); },
 
   get listTitle() { return localStorage.getItem('listTitle') ? localStorage.getItem('listTitle') === 'true' : true; },
   set listTitle(val) { return localStorage.setItem('listTitle', val); },
@@ -81,26 +151,11 @@ window.options = {
   get listDetailsWidth() { return parseFloat(localStorage.getItem('listDetailsWidth') || 0.25); },
   set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
 
-  get mapColor() { return localStorage.getItem('mapColor') || 'dark'; },
-  set mapColor(val) { return localStorage.setItem('mapColor', val); },
-
   get lastUpdated() { return parseInt(localStorage.getItem('lastUpdated') || 0, 10); },
   set lastUpdated(val) { return localStorage.setItem('lastUpdated', val); },
 
-  get colorText() { return localStorage.getItem('colorText') || colorHex('#ebebeb'); },
-  set colorText(val) { return localStorage.setItem('colorText', colorHex(val)); },
-
-  get colorHigh() { return localStorage.getItem('colorHigh') || colorHex('lightyellow'); },
-  set colorHigh(val) { return localStorage.setItem('colorHigh', colorHex(val)); },
-
-  get colorHover() { return localStorage.getItem('colorHover') || colorHex('lightskyblue'); },
-  set colorHover(val) { return localStorage.setItem('colorHover', colorHex(val)); },
-
-  get colorBack() { return localStorage.getItem('colorBack') || colorHex('black'); },
-  set colorBack(val) { return localStorage.setItem('colorBack', colorHex(val)); },
-
-  get colorBody() { return localStorage.getItem('colorBody') || colorHex('#555555'); },
-  set colorBody(val) { return localStorage.setItem('colorBody', colorHex(val)); },
+  get theme() { return parseInt(localStorage.getItem('theme') || 1, 10); },
+  set theme(val) { return localStorage.setItem('theme', val); },
 };
 
 // TFJS Configuration
@@ -161,3 +216,4 @@ const config = {
 };
 
 exports.default = config;
+exports.theme = initTheme;
