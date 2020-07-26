@@ -53,7 +53,7 @@ function drawBoxes(object) {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.linewidth = 2;
-  ctx.font = '16px Roboto';
+  ctx.font = 'small-caps 16px Lato';
   if (!object) object = last;
   if (!object) return;
 

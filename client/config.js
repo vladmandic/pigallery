@@ -28,7 +28,7 @@ window.themes = [
     link: colorHex('#222222'),
     inactive: colorHex('grey'),
     gradient: 'lightgrey',
-    font: 'Marcellus',
+    font: 'Lato',
   },
   {
     name: 'Light Blue',
@@ -43,7 +43,7 @@ window.themes = [
     link: colorHex('#222222'),
     inactive: colorHex('grey'),
     gradient: 'lightskyblue',
-    font: 'Marcellus',
+    font: 'Lato',
   },
   {
     name: 'Dark Grey',
@@ -58,7 +58,7 @@ window.themes = [
     link: colorHex('#eeeeee'),
     inactive: colorHex('lightgrey'),
     gradient: '#555555',
-    font: 'Roboto',
+    font: 'Lato',
   },
   {
     name: 'Dark Blue',
@@ -73,7 +73,7 @@ window.themes = [
     link: colorHex('#abe4ff'),
     inactive: colorHex('lightgrey'),
     gradient: '#00477a',
-    font: 'Roboto',
+    font: 'Lato',
   },
 ];
 
