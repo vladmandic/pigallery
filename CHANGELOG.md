@@ -1,5 +1,9 @@
 # PiGallery Change Log
 
+### **v1.1.8** 2020/07/26 cyan00@gmail.com
+
+- theme animations
+
 ### **origin/HEAD** 2020/07/25 cyan00@gmail.com
 
 - updated changelog
