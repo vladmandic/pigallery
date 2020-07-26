@@ -25,6 +25,7 @@
     "guard-for-in": "off",
     "prefer-template":"off",
     "import/extensions": "off",
+    "func-names": "off",
     "no-await-in-loop": "off",
     "no-bitwise": "off",
     "no-case-declarations":"off",

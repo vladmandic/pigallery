@@ -178,7 +178,7 @@ async function resizeResults() {
     $('.listitem').css('min-height', `${16 + window.options.listThumbSize}px`);
     $('.listitem').css('max-height', `${16 + window.options.listThumbSize}px`);
   }
-  $('body').get(0).style.setProperty('--btntiny', `${Math.round(window.options.listThumbSize / 4)}px`);
+  $('body').get(0).style.setProperty('--btntiny', `${Math.round(window.options.listThumbSize / 5)}px`);
 }
 
 exports.previous = previous;

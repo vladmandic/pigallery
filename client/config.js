@@ -1,5 +1,6 @@
 /* eslint-disable no-multi-spaces */
 
+const log = require('./log.js');
 // eslint-disable-next-line no-unused-vars
 const modelClassify = require('./modelClassify.js');
 // eslint-disable-next-line no-unused-vars
@@ -26,6 +27,7 @@ window.themes = [
     title: colorHex('#bbbbbb'),
     link: colorHex('#222222'),
     inactive: colorHex('grey'),
+    gradient: 'lightgrey',
     font: 'Marcellus',
   },
   {
@@ -33,13 +35,14 @@ window.themes = [
     map: 'light',
     body: colorHex('white'),
     background: colorHex('white'),
-    foreground: colorHex('#a3e2ff'),
+    foreground: colorHex('#417eb0'),
     text: colorHex('#004463'),
     highlight: colorHex('black'),
     shadow: '',
     title: colorHex('white'),
     link: colorHex('#222222'),
     inactive: colorHex('grey'),
+    gradient: 'lightskyblue',
     font: 'Marcellus',
   },
   {
@@ -54,6 +57,7 @@ window.themes = [
     title: colorHex('#333333'),
     link: colorHex('#eeeeee'),
     inactive: colorHex('lightgrey'),
+    gradient: '#555555',
     font: 'Roboto',
   },
   {
@@ -61,13 +65,14 @@ window.themes = [
     map: 'dark',
     body: colorHex('#00283b'),
     background: colorHex('black'),
-    foreground: colorHex('#00557d'),
+    foreground: colorHex('#e0f5ff'),
     text: colorHex('#e0f5ff'),
     highlight: colorHex('white'),
     shadow: '',
     title: colorHex('#006391'),
     link: colorHex('#abe4ff'),
     inactive: colorHex('lightgrey'),
+    gradient: '#00477a',
     font: 'Roboto',
   },
 ];
@@ -83,7 +88,8 @@ async function initTheme() {
   document.documentElement.style.setProperty('--shadow', window.theme.shadow);
   document.documentElement.style.setProperty('--link', window.theme.link);
   document.documentElement.style.setProperty('--inactive', window.theme.inactive);
-  document.body.style.setProperty('font-family', window.theme.font);
+  // document.body.style.setProperty('font-family', window.theme.font);
+  log.debug(null, `Theme: ${window.theme.name}`);
 }
 
 // user configurable options, stored in browsers local storage
@@ -154,7 +160,7 @@ window.options = {
   get lastUpdated() { return parseInt(localStorage.getItem('lastUpdated') || 0, 10); },
   set lastUpdated(val) { return localStorage.setItem('lastUpdated', val); },
 
-  get theme() { return parseInt(localStorage.getItem('theme') || 1, 10); },
+  get theme() { return parseInt(localStorage.getItem('theme') || 2, 10); },
   set theme(val) { return localStorage.setItem('theme', val); },
 };
 

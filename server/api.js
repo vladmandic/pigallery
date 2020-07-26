@@ -112,6 +112,7 @@ function api(app) {
       }
       log.info(`API Share Get ${req.ip} creator: ${data.creator} name: "${data.name}" key: ${data.share} images: ${data.length}`);
     }
+    res.set('content-Size', JSON.stringify(data).length);
     res.json(data);
   });
 

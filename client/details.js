@@ -191,8 +191,8 @@ async function showDetails(img) {
   resizeDetailsImage(object);
 
   // handle pan&zoom redraws
-  $('.iv-large-image').click(() => resizeDetailsImage());
-  $('.iv-large-image').on('wheel', () => resizeDetailsImage());
+  $('.iv-large-image').click(() => resizeDetailsImage(object));
+  $('.iv-large-image').on('wheel', () => resizeDetailsImage(object));
 
   let classified = 'Classified ';
   for (const obj of combineResults(object.classify)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;

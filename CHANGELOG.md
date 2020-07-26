@@ -2,6 +2,9 @@
 
 ### **origin/HEAD** 2020/07/25 cyan00@gmail.com
 
+- updated changelog
+- updated packages
+- delete
 - added themes
 - updated changelog
 
