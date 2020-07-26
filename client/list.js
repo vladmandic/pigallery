@@ -90,13 +90,13 @@ function printResult(object) {
     <img class="thumbnail" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');"
     align="middle" ${square} height=${window.options.listThumbSize}px>
     <div class="thumb-top">
-      <p class="btn-tiny fa fa-play-circle" onclick="details.show('${escape(object.image)}');" title="View image details"></p>
-      <a class="btn-tiny fa fa-arrow-alt-circle-down" href="${object.image}" download title="Download image"></a>
+      <p class="btn-tiny fa fa-file-image" onclick="details.show('${escape(object.image)}');" title="View image details"></p>
+      <a class="btn-tiny fa fa-file" href="${object.image}" download title="Download image"></a>
     </div>
     <div class="thumb-bottom">
-      <p class="btn-tiny fab fa-gg-circle" onclick="simmilarClasses('${escape(object.image)}');" title="Find images with simmilar classes"></p>
-      <p class="btn-tiny fa fa-adjust" onclick="simmilarImage('${escape(object.image)}');" title="Find with simmilar features"></p>
-      <p class="btn-tiny fa fa-user-circle" onclick="simmilarPerson('${escape(object.image)}');" title="Find images with simmilar faces"></p>
+      <p class="btn-tiny fa fa-images" onclick="simmilarClasses('${escape(object.image)}');" title="Find images with simmilar classes"></p>
+      <p class="btn-tiny fa fa-photo-video" onclick="simmilarImage('${escape(object.image)}');" title="Find with simmilar features"></p>
+      <p class="btn-tiny fa fa-id-card" onclick="simmilarPerson('${escape(object.image)}');" title="Find images with simmilar faces"></p>
     </div>
   `;
 
