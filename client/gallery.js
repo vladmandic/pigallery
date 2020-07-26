@@ -333,7 +333,7 @@ async function fetchChunks(response) {
     const t1 = window.performance.now();
     const perf = Math.round(received / (t1 - t0));
     const progress = Math.round(100 * received / size);
-    $('#progress').text(`Downloading ${progress}%: ${received.toLocaleString()} / ${size.toLocaleString()} bytes (${perf.toLocaleString()} KB/sec)`);
+    $('#progress').html(`Downloading ${progress}%:<br>${received.toLocaleString()} / ${size.toLocaleString()} bytes<br> (${perf.toLocaleString()} KB/sec)`);
   }
   const all = new Uint8Array(received);
   let position = 0;
