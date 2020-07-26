@@ -45,7 +45,7 @@ function resetOptions() {
   sessionStorage.clear();
   // eslint-disable-next-line no-use-before-define
   showOptions();
-  config.init();
+  config.theme();
   list.redraw();
 }
 

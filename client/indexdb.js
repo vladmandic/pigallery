@@ -128,10 +128,10 @@ async function count() {
 }
 
 async function store(objects) {
-  for (const obj of objects) {
-    if (!obj.exif) obj.exif = {};
-    if (!obj.exif.created) obj.exif.created = 0;
-    put(obj);
+  for (const i in objects) {
+    if (!objects[i].exif) objects[i].exif = {};
+    if (!objects[i].exif.created) objects[i].exif.created = 0;
+    put(objects[i]);
   }
 }
 

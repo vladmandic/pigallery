@@ -271,6 +271,7 @@ async function sortResults(sort) {
   else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
   else window.options.listDivider = '';
   list.redraw();
+  $('#splash').toggle(false);
   log.debug(t0, `Cached images: ${window.filtered.length} fetched initial`);
   const t1 = window.performance.now();
   $('#all').focus();
@@ -316,8 +317,38 @@ async function findDuplicates() {
   worker.postMessage(all);
 }
 
+async function fetchChunks(response) {
+  const t0 = window.performance.now();
+  const reader = response.body.getReader();
+  // for (const header of response.headers.entries()) console.log('header', header);
+  const size = parseInt(response.headers.get('content-Size') || response.headers.get('content-Length'), 10);
+  let received = 0;
+  const chunks = [];
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    received += value.length;
+    const t1 = window.performance.now();
+    const perf = Math.round(received / (t1 - t0));
+    const progress = Math.round(100 * received / size);
+    $('#progress').text(`Downloading ${progress}%: ${received.toLocaleString()} / ${size.toLocaleString()} bytes (${perf.toLocaleString()} KB/sec)`);
+  }
+  const all = new Uint8Array(received);
+  let position = 0;
+  for (const chunk of chunks) {
+    all.set(chunk, position);
+    position += chunk.length;
+  }
+  const result = new TextDecoder('utf-8').decode(all);
+  const json = JSON.parse(result);
+  return json;
+}
+
 // loads imagesm, displays gallery and enumerates sidebar
 async function loadGallery(limit, refresh = false) {
+  $('#progress').text('Requesting');
   if (window.share) return;
   if (!window.user.user) return;
   if (window.user.user.startsWith('share')) {
@@ -335,8 +366,11 @@ async function loadGallery(limit, refresh = false) {
   const since = refresh ? window.options.lastUpdated : 0;
   const res = await fetch(`/api/get?find=all&limit=${limit}&time=${since}`);
   let json = [];
-  if (res && res.ok) json = await res.json();
+  // if (res && res.ok) json = await res.json();
+  if (res && res.ok) json = await fetchChunks(res);
+
   const t1 = window.performance.now();
+  $('#progress').text('Indexing');
   await db.store(json);
   const t2 = window.performance.now();
   if (window.debug) {
@@ -351,9 +385,9 @@ async function loadGallery(limit, refresh = false) {
   }
   // window.filtered = await db.all();
   window.options.lastUpdated = updated;
+  $('#progress').text('Almost done');
   if (!refresh) sortResults(window.options.listSortOrder);
   busy(false);
-  $('#splash').toggle(false);
 }
 
 // popup on right-click
@@ -657,20 +691,48 @@ async function initListHandlers() {
   });
 }
 
-async function main() {
-  // google analytics
+async function hashChange(evt) {
+  const t0 = window.performance.now();
+  log.debug(t0, `URL Hash change: ${evt.newURL}`);
+  const target = parseInt(evt.newURL.substr(evt.newURL.indexOf('#') + 1), 10);
+  const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1), 10);
+  if (source > target) {
+    const top = parseInt($('#all').scrollTop(), 10) === 0;
+    const all = await db.count() - window.filtered.length;
+    if (top && all === 0) {
+      log.debug(t0, 'Exiting ...');
+    } else {
+      sortResults(window.options.listSortOrder);
+      log.debug(t0, 'Reset image selection');
+    }
+  }
+}
+
+async function animate() {
+  $('body').css('background', `radial-gradient(at 50% 100%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+  $(document).mousemove((event) => {
+    const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
+    const mouseYpercentage = Math.round(event.pageY / $(window).height() * 100);
+    $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+  });
+}
+
+async function googleAnalytics() {
   // eslint-disable-next-line prefer-rest-params
   // function gtag() { window.dataLayer.push(arguments); }
   // gtag('js', new Date());
   // gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
   // gtag('set', { user_id: `${window.user}` }); // Set the user ID using signed-in user_id.
+}
 
-  // Register PWA
+async function main() {
   if (config.default.registerPWA) pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
 
   resizeViewport();
+  googleAnalytics();
   await config.theme();
+  animate();
   await init.user();
   await showNavbar();
   $('body').contextmenu((evt) => showContextPopup(evt));
@@ -691,28 +753,8 @@ async function main() {
   $('.collapsible').parent().parent().find('li').toggle(false);
 }
 
-window.onhashchange = async (evt) => {
-  const t0 = window.performance.now();
-  log.debug(t0, `URL Hash change: ${evt.newURL}`);
-  const target = parseInt(evt.newURL.substr(evt.newURL.indexOf('#') + 1), 10);
-  const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1), 10);
-  if (source > target) {
-    const top = parseInt($('#all').scrollTop(), 10) === 0;
-    const all = await db.count() - window.filtered.length;
-    if (top && all === 0) {
-      log.debug(t0, 'Exiting ...');
-    } else {
-      sortResults(window.options.listSortOrder);
-      log.debug(t0, 'Reset image selection');
-    }
-  }
-};
-
-window.onpopstate = (evt) => {
-  const t0 = window.performance.now();
-  log.debug(t0, `URL Pop state: ${evt.target.location.href}`);
-};
-
+window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
+window.onhashchange = (evt) => hashChange(evt);
 window.onload = main;
 
 exports.load = loadGallery;
