@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const log = require('pilogger');
 const metadata = require('./metadata.js');
-const config = require('../config.json');
 
 function api(app) {
   log.state('RESTful API ready');
@@ -64,7 +63,7 @@ function api(app) {
     if (req.session.admin) {
       const list = [];
       let filesAll = [];
-      for (const location of config.locations) {
+      for (const location of global.config.locations) {
         const folder = await metadata.list(location.folder, location.match, location.recursive, location.force);
         list.push({ location, files: folder.process });
         filesAll = [...filesAll, ...folder.files];
@@ -97,7 +96,7 @@ function api(app) {
     const data = [];
     if (!req.session.share || req.session.share === '') {
       const root = new RegExp(`^${req.session.root || 'media/'}`);
-      const limit = req.query.limit || config.server.resultsLimit;
+      const limit = req.query.limit || global.config.server.resultsLimit;
       const time = req.query.time ? new Date(parseInt(req.query.time, 10)) : new Date(0);
       const records = await global.db
         .find({ image: root, processed: { $gte: time } })
@@ -137,7 +136,7 @@ function api(app) {
     res.json({ user: req.session.user, admin: req.session.admin, root: req.session.root });
   });
 
-  app.get(`${config.server.mediaRoot}/*`, async (req, res) => {
+  app.get(`${global.config.server.mediaRoot}/*`, async (req, res) => {
     const fileName = decodeURI(req.url);
     if (fileName.startsWith('/')) fileName.substr(1);
     if (!fileName.startsWith(req.session.root)) {
@@ -194,7 +193,7 @@ function api(app) {
       email = req.body.authEmail;
       passwd = req.body.authPassword;
     }
-    const found = config.users.find((a) => ((a.email && a.email === email) && (a.passwd && a.passwd === passwd) && (a.disabled ? a.disabled === 'false' : true)));
+    const found = global.config.users.find((a) => ((a.email && a.email === email) && (a.passwd && a.passwd === passwd) && (a.disabled ? a.disabled === 'false' : true)));
     if (found) {
       req.session.user = found.email;
       req.session.admin = found.admin;

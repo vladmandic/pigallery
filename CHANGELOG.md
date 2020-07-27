@@ -1,4 +1,7 @@
 # PiGallery Change Log
+- splash screen
+- added loader
+- changelog
 
 ### **v1.1.8** 2020/07/26 cyan00@gmail.com
 
