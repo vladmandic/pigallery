@@ -5,6 +5,7 @@ async function initUser() {
     await $.post('/api/auth', { authShare: window.share }); // autologin for direct shares
   }
   const res = await fetch('/api/user');
+  $('#progress').html('Authenticating');
   if (res.ok) window.user = await res.json();
   if (!window.share && window.user && window.user.user && window.user.user.startsWith('share')) {
     $.post('/api/auth'); // logout on share credentials and no share

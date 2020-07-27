@@ -333,8 +333,9 @@ async function fetchChunks(response) {
     const t1 = window.performance.now();
     const perf = Math.round(received / (t1 - t0));
     const progress = Math.round(100 * received / size);
-    $('#progress').html(`Downloading ${progress}%:<br>${received.toLocaleString()} / ${size.toLocaleString()} bytes<br> (${perf.toLocaleString()} KB/sec)`);
+    $('#progress').html(`Downloading ${progress}%:<br>${received.toLocaleString()} / ${size.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
   }
+  $('#progress').html(`Download complete<br>${size.toLocaleString()} bytes`);
   const all = new Uint8Array(received);
   let position = 0;
   for (const chunk of chunks) {
@@ -381,7 +382,8 @@ async function loadGallery(limit, refresh = false) {
     if (!refresh) log.result(`Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
   }
   if (refresh && (json.length > 0)) {
-    log.result(`Refreshed cache: ${json.length} images updated since ${moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss')} in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    const dt = window.options.lastUpdated === 0 ? 'start' : moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss');
+    log.result(`Refreshed cache: ${json.length} images updated since ${dt} in ${Math.round(t1 - t0).toLocaleString()} ms`);
   }
   // window.filtered = await db.all();
   window.options.lastUpdated = updated;
