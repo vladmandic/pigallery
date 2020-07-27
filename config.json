@@ -2,7 +2,8 @@
   "users": [
     { "email": "mandic00@live.com", "passwd": "p3i14", "admin": true, "mediaRoot": "media/" },
     { "email": "cyan00@gmail.com", "passwd": "p3i14", "admin": false, "mediaRoot": "media/" },
-    { "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" }
+    { "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" },
+    { "email": "igor.domancic@ri.t-com.hr", "passwd": "pEr0", "admin": false, "mediaRoot": "media/Photos/Croatia" }
   ],
   "locations": [
     { "folder": "Pictures/Snapseed/", "match": "" },

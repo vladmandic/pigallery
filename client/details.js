@@ -56,9 +56,7 @@ function drawBoxes(object) {
   ctx.font = 'small-caps 16px Lato';
   if (!object) object = last;
   if (!object) return;
-
-  // eslint-disable-next-line no-console
-  if (window.debug) console.log('Details for object', object);
+  log.debug(null, 'Details for object', object);
 
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;

@@ -2,6 +2,7 @@ const log = require('./log.js');
 
 // exctract top classe from classification & detection and builds sidebar menu
 async function enumerateClasses() {
+  const t0 = window.performance.now();
   $('#classes').html('');
   if (!Array.isArray(window.filtered)) window.filtered = [];
   const classesList = [];
@@ -17,6 +18,7 @@ async function enumerateClasses() {
     }
   }
   classesList.sort((a, b) => b.count - a.count);
+  const classesCount = classesList.length;
   classesList.length = Math.min(window.options.topClasses, classesList.length);
   let html = '';
   for (const item of classesList) {
@@ -24,10 +26,12 @@ async function enumerateClasses() {
     html += `<li><span tag="${escape(tag)}" type="class" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${tag} (${item.count})</span></li>`;
   }
   $('#classes').append(html);
+  log.debug(t0, `Enumerated classees: ${classesCount}`);
 }
 
 // extracts all locations from loaded images and builds sidebar menu
 async function enumerateLocations() {
+  const t0 = window.performance.now();
   $('#locations').html('');
   if (!Array.isArray(window.filtered)) window.filtered = [];
   let countries = [];
@@ -36,6 +40,7 @@ async function enumerateLocations() {
   }
   countries = countries.sort((a, b) => (a > b ? 1 : -1));
   let i = 1;
+  let locCount = 0;
   for (const country of countries) {
     const items = window.filtered.filter((a) => a.location.country === country);
     let places = [];
@@ -45,6 +50,7 @@ async function enumerateLocations() {
     }
     let children = '';
     places = places.sort((a, b) => (a.sort > b.sort ? 1 : -1));
+    locCount += places.length;
     for (const place of places) {
       children += `<li><span tag="${escape(place.name)}" type="location" style="padding-left: 32px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${place.name}</span></li>`;
     }
@@ -53,10 +59,12 @@ async function enumerateLocations() {
     $(`#loc-${i}`).append(children);
     i++;
   }
+  log.debug(t0, `Enumerated locations: ${locCount}`);
 }
 
 // builds folder list from all loaded images and builds sidebar menu, can be used with entire image list or per-object
 async function enumerateFolders() {
+  const t0 = window.performance.now();
   $('#folders').html('');
   const root = window.user && window.user.root ? window.user.root : 'media/';
   const depth = root.split('/').length - 1;
@@ -71,6 +79,7 @@ async function enumerateFolders() {
     else existing.count += 1;
   }
   list = list.sort((a, b) => (a.path > b.path ? 1 : -1));
+  let folderCount = 0;
   for (let i = depth; i < 10; i++) {
     for (const item of list) {
       if (item.folders[i]) {
@@ -87,13 +96,16 @@ async function enumerateFolders() {
           div.innerHTML = `<span tag="${path}" type="folder" style="padding-left: ${i * 16}px" class="folder"><i class="collapsible fas fa-chevron-circle-right">&nbsp</i>${item.folders[i]} ${count}</span>`;
           if (i === depth) document.getElementById('folders').appendChild(div);
           else document.getElementById(`dir-${parentId}`).appendChild(div);
+          folderCount++;
         }
       }
     }
   }
+  log.debug(t0, `Enumerated folders: ${folderCount}`);
 }
 
 async function enumerateShares() {
+  const t0 = window.performance.now();
   $('#shares').html('');
   window.shares = [];
   const shares = await fetch('/api/shares');
@@ -105,7 +117,7 @@ async function enumerateShares() {
   }
   $('#shares').append(html);
   $('#shares').find('li').toggle(false);
-  log.debug(null, `Enumerated shares: ${window.shares.length}`);
+  log.debug(t0, `Enumerated shares: ${window.shares.length}`);
 }
 
 async function enumerateResults() {

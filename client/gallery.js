@@ -728,16 +728,17 @@ async function googleAnalytics() {
 }
 
 async function main() {
+  const t0 = window.performance.now();
+  log.debug(null, 'Starting PiGallery');
   if (config.default.registerPWA) pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
 
   resizeViewport();
-  googleAnalytics();
   await config.theme();
   animate();
   await init.user();
   await showNavbar();
-  $('body').contextmenu((evt) => showContextPopup(evt));
+  googleAnalytics();
   initListHandlers();
   initSidebarHandlers();
   details.handlers();
@@ -749,13 +750,15 @@ async function main() {
   window.simmilarPerson = simmilarPerson;
   window.simmilarClasses = simmilarClasses;
   if (window.share) log.debug(null, `Direct link to share: ${window.share}`);
+  $('body').contextmenu((evt) => showContextPopup(evt));
   $('body').css('display', 'block');
+  $('.collapsible').parent().parent().find('li').toggle(false);
   list.resize();
   await sortResults(window.options.listSortOrder);
-  $('.collapsible').parent().parent().find('li').toggle(false);
+  log.debug(t0, 'Ready');
 }
 
-window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
+// window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
 window.onhashchange = (evt) => hashChange(evt);
 window.onload = main;
 

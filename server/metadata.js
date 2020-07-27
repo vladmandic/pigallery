@@ -8,29 +8,28 @@ const parser = require('exif-parser');
 const log = require('pilogger');
 // const nedb = require('nedb-promises');
 const distance = require('./nearest.js');
-const config = require('../config.json');
 
 let wordNet = {};
 
 async function init() {
   let data;
-  data = fs.readFileSync(config.server.descriptionsDB, 'utf8');
+  data = fs.readFileSync(global.config.server.descriptionsDB, 'utf8');
   let terms = 0;
   for (const line of data.split('\n')) {
     if (line.includes('_wnid')) terms++;
   }
   wordNet = JSON.parse(data);
-  log.state('Loaded WordNet database:', config.server.descriptionsDB, terms, 'terms in', data.length, 'bytes');
-  data = fs.readFileSync(config.server.citiesDB);
+  log.state('Loaded WordNet database:', global.config.server.descriptionsDB, terms, 'terms in', data.length, 'bytes');
+  data = fs.readFileSync(global.config.server.citiesDB);
   const cities = JSON.parse(data);
   const large = cities.data.filter((a) => a.population > 100000);
-  log.state('Loaded all cities database:', config.server.citiesDB, cities.data.length, 'all cities', large.length, 'large cities');
+  log.state('Loaded all cities database:', global.config.server.citiesDB, cities.data.length, 'all cities', large.length, 'large cities');
   distance.init(cities.data, large);
   data = null;
 }
 
 function storeObject(data) {
-  if (data.image === config.server.warmupImage) return;
+  if (data.image === global.config.server.warmupImage) return;
   const json = data;
   json.processed = new Date();
   global.db.update({ image: json.image }, json, { upsert: true });
@@ -307,9 +306,9 @@ function readDir(folder, match = null, recursive = false) {
 }
 
 async function listFiles(folder, match = '', recursive = false, force = false) {
-  let files = readDir(`${config.server.mediaRoot}${folder}`, match, recursive);
+  let files = readDir(`${global.config.server.mediaRoot}${folder}`, match, recursive);
   files = files.filter((a) => {
-    for (const ext of config.server.allowedImageFileTypes) {
+    for (const ext of global.config.server.allowedImageFileTypes) {
       if (a.toLowerCase().endsWith(ext)) return true;
     }
     return false;
@@ -360,11 +359,11 @@ async function testExif(dir) {
   console.log('Test', dir);
   await init();
   /*
-  global.db = nedb.create({ filename: config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
+  global.db = nedb.create({ filename: global.config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
   await global.db.loadDatabase();
   const list = [];
   let filesAll = [];
-  for (const location of config.locations) {
+  for (const location of global.config.locations) {
     const folder = await listFiles(location.folder, location.match, location.recursive, location.force);
     list.push({ location, files: folder.process });
     filesAll = [...filesAll, ...folder.files];
