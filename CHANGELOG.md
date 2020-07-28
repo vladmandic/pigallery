@@ -1,4 +1,10 @@
 # PiGallery Change Log
+
+### **v1.1.9** 2020/07/28 cyan00@gmail.com
+
+- updated icons
+- visual tweaks
+- cosmetic tweaks
 - splash screen
 - added loader
 - changelog
