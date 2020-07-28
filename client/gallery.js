@@ -74,7 +74,7 @@ async function folderHandlers() {
         const root = window.user && window.user.root ? window.user.root : 'media/';
         if (window.filtered.length < await db.count()) {
           window.filtered = await db.all();
-          window.options.listSortOrder = 'alpha-down';
+          // window.options.listSortOrder = 'alpha-down';
         }
         if (path !== root) window.filtered = window.filtered.filter((a) => escape(a.image).startsWith(path));
         await menu.classes();
@@ -84,7 +84,7 @@ async function folderHandlers() {
         log.debug(t0, `Selected location: ${path}`);
         if (window.filtered.length < await db.count()) {
           window.filtered = await db.all();
-          window.options.listSortOrder = 'numeric-down';
+          // window.options.listSortOrder = 'numeric-down';
         }
         if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => (path.startsWith(escape(a.location.near)) || path.startsWith(escape(a.location.country))));
         else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
@@ -250,7 +250,7 @@ async function sortResults(sort) {
   await loadGallery(window.options.listLimit, true);
 
   const t0 = window.performance.now();
-  log.debug(t0, `Sorting: ${sort.replace('navlinebutton fas sort fa-', '')}`);
+  log.debug(t0, `Sorting: ${sort.replace('navlinebutton fad sort fa-', '')}`);
   if (sort.includes('random')) {
     window.filtered = await db.all();
     shuffle(window.filtered);
