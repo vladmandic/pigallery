@@ -24,6 +24,7 @@ async function initUser() {
   $('#folderbar').toggle(window.options.listFolders);
   $('.description').toggle(window.options.listDetails);
   $('#thumbsize')[0].value = window.options.listThumbSize;
+  // log.debug(null, 'Cookie:', document.cookie);
 }
 
 exports.user = initUser;

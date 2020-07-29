@@ -123,6 +123,17 @@ function printResult(object) {
   return div;
 }
 
+async function thumbButtons(evt, show) {
+  let items = [];
+  if (items.length === 0) items = $(evt.target).find('.btn-tiny');
+  if (items.length === 0) items = $(evt.target).parent().find('.btn-tiny');
+  if (items.length === 0) items = $(evt.relatedTarget).find('.btn-tiny');
+  if (items.length === 0) items = $(evt.relatedTarget).parent().find('.btn-tiny');
+  // $(items).toggle(show);
+  if (show) $(items).show();
+  else $(items).hide();
+}
+
 // adds items to gallery view on scroll event - infinite scroll
 let current;
 async function scrollResults() {
@@ -144,9 +155,12 @@ async function scrollResults() {
     log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${window.filtered.length}`);
   }
   document.getElementById('number').innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length || 0}`;
-  $('.listitem').mouseenter((evt) => $(evt.target).find('.btn-tiny').toggle(true));
-  $('.listitem').mouseleave((evt) => $(evt.target).find('.btn-tiny').toggle(false));
-  $('.description').click((evt) => $(evt.target).parent().find('.btn-tiny').toggle(true));
+  $('.listitem').mouseover((evt) => thumbButtons(evt, true));
+  $('.listitem').mouseout((evt) => thumbButtons(evt, false));
+  // $('.listitem').mouseenter((evt) => thumbButtons(evt, true));
+  // $('.listitem').mouseleave((evt) => thumbButtons(evt, false));
+  $('.listitem').contextmenu((evt) => $(evt.target).parent().find('.btn-tiny').show());
+  $('.description').click((evt) => $(evt.target).parent().find('.btn-tiny').show());
   $('.description').toggle(window.options.listDetails);
 }
 

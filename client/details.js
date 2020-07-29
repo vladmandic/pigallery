@@ -48,15 +48,14 @@ function drawBoxes(object) {
   canvas.style.position = 'absolute';
   canvas.style.left = `${img.offsetLeft}px`;
   canvas.style.top = `${img.offsetTop}px`;
-  canvas.width = img.width;
-  canvas.height = img.height;
+  canvas.width = Math.min($('#popup-image').width(), $('.iv-image').width()); // img.width;
+  canvas.height = Math.min($('#popup-image').height(), $('.iv-image').height()); // img.height;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.linewidth = 2;
   ctx.font = 'small-caps 16px Lato';
   if (!object) object = last;
   if (!object) return;
-  log.debug(null, 'Details for object', object);
 
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
@@ -120,35 +119,25 @@ async function resizeDetailsImage(object) {
   if (!img || !img[0] || !img[0].complete) {
     setTimeout(() => resizeDetailsImage(object), 25);
   } else {
+    // move details panel to side or bottom depending on screen aspect ratio
     const ratioScreen = $('#popup').width() / $('#popup').height();
     const ratioImage = last.naturalSize.width / last.naturalSize.height;
     const vertical = ratioImage < (ratioScreen + 0.3);
-    // move details panel to side or bottom depending on screen aspect ratio
-    if (vertical) $('#popup').css('display', 'flex');
-    else $('#popup').css('display', 'block');
-    // zoom to fill usable screen area on initial draw
-    if (object) {
-      const zoomX = $('#popup').width() / $('.iv-image').width();
-      const zoomY = $('#popup').height() / $('.iv-image').height();
-      await viewer.zoom(100 * Math.min(zoomX, zoomY));
-      $('.iv-image').css('cursor', 'zoom-in');
-      // resize container to fit image
-      $('#popup-image').width($('.iv-image').width());
-      $('#popup-image').height($('.iv-image').height());
-      // resize details pane to fill screen not taken by image
-      if (!vertical) $('#popup-details').height($('#popup').height() - $('.iv-image').height());
-      else $('#popup-details').height('100%');
-      if (vertical) $('#popup-details').width($('#popup').width() - $('.iv-image').width());
-      else $('#popup-details').width('100%');
-      // resize again if no room for details
-      if (vertical && ($('#popup-details').width() / $('#popup').width()) < window.options.listDetailsWidth) {
-        $('#popup-details').width(`${100 * window.options.listDetailsWidth}%`);
-      } else if (vertical && $('#popup-details').height() / $('#popup').height() < window.options.listDetailsWidth) {
-        $('#popup-details').height(`${100 * window.options.listDetailsWidth}%`);
-      }
-      //  draw detection boxes and faces
-      drawBoxes();
-    }
+    $('#popup').css('display', vertical ? 'flex' : 'block');
+    // resize panels
+    $('.iv-image').css('cursor', 'zoom-in');
+    document.getElementById('popup-image').style.width = vertical ? `${100 - window.options.listDetailsWidth}%` : '100%';
+    $('#popup-image').width(vertical && window.options.viewDetails ? `${100 - window.options.listDetailsWidth}%` : '100%');
+    $('#popup-image').height(!vertical && window.options.viewDetails ? `${100 - window.options.listDetailsWidth}%` : '100%');
+    $('#popup-details').width(vertical && window.options.viewDetails ? `${window.options.listDetailsWidth}%` : '100%');
+    $('#popup-details').height(!vertical && window.options.viewDetails ? `${window.options.listDetailsWidth}%` : '100%');
+    const details = window.options.viewDetails ? 100.0 - window.options.listDetailsWidth : 100;
+    const zoomX = $('body').width() * (vertical ? details / 100 : 1) / $('.iv-image').width();
+    const zoomY = $('body').height() * (!vertical ? details / 100 : 1) / $('.iv-image').height();
+    const zoom = Math.trunc(viewer._state.zoomValue * Math.min(zoomX, zoomY));
+    await viewer.zoom(zoom);
+    //  draw detection boxes and faces
+    drawBoxes();
   }
 }
 
@@ -156,41 +145,48 @@ async function resizeDetailsImage(object) {
 async function showDetails(img) {
   const t0 = window.performance.now();
   if (!img && last) img = last.image;
-  $('#popup').css('top', $('.navbar').css('height'));
-  $('#popup').height($('#results').height() + $('#log').height());
-  $('#popup-image').width($('#popup').width());
-  $('#popup-image').height($('#popup').height());
-  $('#popup-details').height('0');
-  $('.iv-image').width($('#popup').width());
-  $('.iv-image').height($('#popup').height());
-
   if (!img) return;
-
   if (window.options.viewRaw) {
     log.debug(t0, `Loading Raw image: ${img}`);
     window.open(img, '_blank');
     return;
   }
   log.debug(t0, `Loading image: ${img}`);
+  const object = window.filtered.find((a) => a.image === decodeURI(img));
+  if (!object) return;
 
+  log.debug(null, 'Details for object', object);
+
+  const top = $('#optionsview').height() + 6;
+  $('#popup').css('top', top);
+  $('#popup').height($('body').height() - top);
   $('#popup').toggle(true);
   $('#optionsview').toggle(true);
 
-  const object = window.filtered.find((a) => a.image === decodeURI(img));
-  if (!object) return;
+  $('#details-desc').removeClass('fa-comment fa-comment-slash');
+  $('#details-desc').addClass(window.options.viewDetails ? 'fa-comment' : 'fa-comment-slash');
+  $('#details-boxes').removeClass('fa-store fa-store-slash');
+  $('#details-boxes').addClass(window.options.viewBoxes ? 'fa-comment' : 'fa-comment-slash');
+  $('#details-faces').removeClass('fa-head-side-cough fa-head-side-cough-slash');
+  $('#details-faces').addClass(window.options.viewFaces ? 'fa-head-side-cough' : 'fa-head-side-cough-slash');
 
   // http://ignitersworld.com/lab/imageViewer.html
   if (!viewer) {
     const div = document.getElementById('popup-image');
-    viewer = new ImageViewer(div, { zoomValue: 100, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
+    viewer = new ImageViewer(div, { zoomValue: 500, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
+    window.viewer = viewer;
   }
-  viewer.load(object.thumbnail, img);
-
+  await viewer.load(object.thumbnail, img);
   resizeDetailsImage(object);
 
   // handle pan&zoom redraws
-  $('.iv-large-image').click(() => resizeDetailsImage(object));
-  $('.iv-large-image').on('wheel', () => resizeDetailsImage(object));
+  $('.iv-large-image').mousedown(() => clearBoxes());
+  $('.iv-large-image').mouseup(() => drawBoxes(object));
+  $('.iv-large-image').on('wheel', () => {
+    clearBoxes();
+    setTimeout(() => drawBoxes(object), 100);
+  });
+  // $('.iv-large-image').on('wheel', () => resizeDetailsImage(object));
 
   let classified = 'Classified ';
   for (const obj of combineResults(object.classify)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
@@ -263,6 +259,7 @@ async function showDetails(img) {
 }
 
 async function showNextDetails(left) {
+  clearBoxes();
   const img = $('.iv-image');
   if (!img || img.length < 1) return;
   const url = new URL(img[0].src);
@@ -319,6 +316,7 @@ function initDetailsHandlers() {
     $('#details-desc').toggleClass('fa-comment fa-comment-slash');
     window.options.viewDetails = !window.options.viewDetails;
     $('#popup-details').toggle(window.options.viewDetails);
+    resizeDetailsImage();
   });
 
   // navbar details show/hide detection boxes

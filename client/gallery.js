@@ -22,7 +22,8 @@ window.filtered = [];
 function busy(working) {
   $('body').css('cursor', working ? 'wait' : 'default');
   $('main').css('cursor', working ? 'wait' : 'default');
-  $('#btn-number').toggleClass('fa-images fa-clock');
+  $('#btn-number').removeClass('fa-images fa-clock');
+  $('#btn-number').addClass(working ? 'fa-clock' : 'fa-clock');
   // $('#btn-number').css('color', working ? 'lightcoral' : `${window.theme.foreground}`);
   // $('#number').css('color', working ? 'gray' : '${window.theme.foreground}');
 }
@@ -423,6 +424,10 @@ function showNavbar(elem) {
       data.options.transition = 'flip';
     }
   });
+  $('#btn-desc').removeClass('fa-comment fa-comment-slash');
+  $('#btn-desc').addClass(window.options.listDetails ? 'fa-comment' : 'fa-comment-slash');
+  $('#btn-title').removeClass('fa-comment-dots fa-comment-slash');
+  $('#btn-title').addClass(window.options.listTitle ? 'fa-comment-dots' : 'fa-comment-slash');
 }
 
 async function initSharesHandler() {
@@ -591,11 +596,12 @@ async function initListHandlers() {
   });
 
   // navline user logout
-  $('#btn-logout').click(() => {
-    showNavbar();
+  $('#btn-logout').click(async () => {
+    await showNavbar();
     $.post('/api/auth');
     if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
     $('#btn-user').toggleClass('fa-user-slash fa-user');
+    document.cookie = 'connect.sid=null; expires=Thu, 1 Jan 2000 12:00:00 UTC; path=/';
     window.location.reload();
   });
 

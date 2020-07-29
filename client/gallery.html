@@ -48,13 +48,13 @@
       .log { width: 100vw; height: 4rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
       .popper { padding: 8px; background: var(--text); color: var(--body); font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; z-index: 50; }
       .navbar { background: var(--body); height: 80px; top: 0; }
-      .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
-      .navbarbutton:hover { color: var(--highlight); }
+      .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
+      .navbarbutton:hover { color: var(--title); text-shadow: 0; }
       .number { font-size: 1.2rem; color: var(--inactive)}
       .btntext { text-align: center; margin: 0; }
       .navline { background: var(--body); min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10; }
-      .navlinebutton { font-size: 1.6rem; color: var(--foreground); padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
-      .navlinebutton:hover { color: var(--highlight) }
+      .navlinebutton { font-size: 1.6rem; color: var(--foreground); padding: 0 2.5rem 0 2.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
+      .navlinebutton:hover { color: var(--title) }
       .blank { min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
       .input { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); width: 50%; height: 2.5rem; border-radius: 1.5rem; }
       .input:hover { background: var(--foreground); }
@@ -90,7 +90,7 @@
       .description { min-width: 250px; max-width: 250px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
       /* .description:hover { background: var(--title); box-shadow: 0 0 8px 8px white; } */
       /* .description:active { background: var(--highlight) } */
-      .btn-tiny { font-size: var(--btntiny); color: var(--inactive); padding: 6px; cursor: grab; z-index: 8; display: none; }
+      .btn-tiny { font-size: var(--btntiny); color: var(--inactive); padding: 6px; cursor: grab; z-index: 8; display: none; text-shadow: 1px 1px var(--title); }
       .btn-tiny:hover { color: var(--foreground) }
       .listtitle { font-weight: bold; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; line-height: 1.4rem; }
       .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px }
@@ -105,7 +105,7 @@
       .cm-spinner { width: 300px; height: 300px; border: 3px solid transparent; border-radius: 50%; border-top: 4px solid #f15e41; animation: spin 4s linear infinite; position: relative; }
       .cm-spinner::before, .cm-spinner::after { content: ""; position: absolute; top: 6px; bottom: 6px; left: 6px; right: 6px; border-radius: 50%; border: 4px solid transparent; }
       .cm-spinner::before { border-top-color: #bad375; animation: 3s spin linear infinite; }
-      .cm-spinner::after { border-top-color: #26a9e0; animation: spin 1.5s linear infinite; }   
+      .cm-spinner::after { border-top-color: #26a9e0; animation: spin 1.5s linear infinite; }
       @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }     
     </style>
 </head>
@@ -116,7 +116,6 @@
   </noscript>
 
   <div id="splash" class="splash">
-    <!-- <img src="assets/loading1.gif" width="534" height="534"> -->
     <div class="loading" style="top: 120px"><div class="cm-spinner"></div></div>
     <div id="progress" class="loading"></div>
   </div>
