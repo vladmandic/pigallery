@@ -403,6 +403,9 @@ async function showContextPopup(evt) {
 function resizeViewport() {
   $('#main').height(window.innerHeight - $('#log').height() - $('#navbar').height() - 16);
   if ($('#popup').css('display') !== 'none') details.show();
+  const top = $('#optionsview').height() + 6;
+  $('#popup').height($('body').height() - top);
+  $('#docs').height($('body').height() - top);
 }
 
 // show/hide navigation bar elements

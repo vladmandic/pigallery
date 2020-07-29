@@ -94,8 +94,8 @@ function printResult(object) {
       <a class="btn-tiny fa fa-file" href="${object.image}" download title="Download image"></a>
     </div>
     <div class="thumb-bottom">
-      <p class="btn-tiny fa fa-images" onclick="simmilarClasses('${escape(object.image)}');" title="Find images with simmilar classes"></p>
-      <p class="btn-tiny fa fa-photo-video" onclick="simmilarImage('${escape(object.image)}');" title="Find with simmilar features"></p>
+      <p class="btn-tiny fa fa-images" onclick="simmilarClasses('${escape(object.image)}');" title="Find images with simmilar description"></p>
+      <p class="btn-tiny fa fa-photo-video" onclick="simmilarImage('${escape(object.image)}');" title="Find images with simmilar features"></p>
       <p class="btn-tiny fa fa-id-card" onclick="simmilarPerson('${escape(object.image)}');" title="Find images with simmilar faces"></p>
     </div>
   `;

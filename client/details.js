@@ -182,11 +182,14 @@ async function showDetails(img) {
   // handle pan&zoom redraws
   $('.iv-large-image').mousedown(() => clearBoxes());
   $('.iv-large-image').mouseup(() => drawBoxes(object));
+  $('.iv-large-image').dblclick(() => {
+    clearBoxes();
+    setTimeout(() => drawBoxes(object), 200);
+  });
   $('.iv-large-image').on('wheel', () => {
     clearBoxes();
-    setTimeout(() => drawBoxes(object), 100);
+    setTimeout(() => drawBoxes(object), 200);
   });
-  // $('.iv-large-image').on('wheel', () => resizeDetailsImage(object));
 
   let classified = 'Classified ';
   for (const obj of combineResults(object.classify)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
@@ -259,6 +262,7 @@ async function showDetails(img) {
 }
 
 async function showNextDetails(left) {
+  if ($('#popup').css('display') === 'none') return;
   clearBoxes();
   const img = $('.iv-image');
   if (!img || img.length < 1) return;
@@ -288,9 +292,9 @@ async function startSlideshow(start) {
 function initDetailsHandlers() {
   // handle clicks inside details view
   $('#popup').click(() => {
-    if (event.screenX < 50) showNextDetails(true);
-    else if (event.clientX > $('#popup').width() - 50) showNextDetails(false);
-    else if (!event.target.className.includes('iv-large-image')) {
+    if (event.screenX < 20) showNextDetails(true);
+    else if (event.clientX > $('#popup').width() - 20) showNextDetails(false);
+    else if (!event.target.className.includes('iv-large-image') && !event.target.className.includes('iv-snap-handle') && !event.target.className.includes('iv-snap-view')) {
       clearBoxes();
       $('#popup').toggle('fast');
       $('#optionsview').toggle(false);
