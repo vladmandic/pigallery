@@ -141,8 +141,17 @@ async function resizeDetailsImage(object) {
   }
 }
 
+async function hideNavbar() {
+  $('#docs').hide();
+  $('#searchbar').hide();
+  $('#userbar').hide();
+  $('#optionslist').hide();
+  $('#optionsview').hide();
+}
+
 // show details popup
 async function showDetails(img) {
+  hideNavbar();
   const t0 = window.performance.now();
   if (!img && last) img = last.image;
   if (!img) return;
@@ -157,7 +166,7 @@ async function showDetails(img) {
 
   log.debug(null, 'Details for object', object);
 
-  const top = $('#optionsview').height() + 6;
+  const top = $('#optionsview').height() + 10;
   $('#popup').css('top', top);
   $('#popup').height($('body').height() - top);
   $('#popup').toggle(true);
