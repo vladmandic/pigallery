@@ -45,6 +45,7 @@ function resetOptions() {
   sessionStorage.clear();
   // eslint-disable-next-line no-use-before-define
   showOptions();
+  $('#docs').hide();
   config.theme();
   list.redraw();
 }
@@ -72,6 +73,7 @@ function saveOptions() {
   window.options.colorBody = $('#colorBody').val();
   window.options.listShadow = $('#listShadow')[0].checked;
   */
+  $('#docs').hide();
   config.theme();
   list.redraw();
 }
