@@ -8,13 +8,11 @@ const cacheFiles = [
   // '/assets/warmup.jpg', '/assets/roboto.ttf', '/assets/roboto-condensed.ttf', '/assets/marcellus.ttf', '/assets/carrois.ttf',
   // '/assets/loading1.gif', '/assets/loading2.gif',
 ];
-
 let listening = false;
 
 async function cached(evt) {
   const found = await caches.match(evt.request) || await fetch(evt.request);
   // if (!found) found = await fetch(evt.request);
-  return found;
   /*
   // cache only /assets folder
   if (evt.request.url.includes('/assets/')) {
@@ -24,8 +22,13 @@ async function cached(evt) {
   } else {
     found = await fetch(evt.request);
   }
-  return found;
   */
+  return found;
+}
+
+async function refresh() {
+  console.log('PWA Cache refresh');
+  caches.open(cacheName).then((cache) => cache.addAll(cacheFiles));
 }
 
 if (!listening) {
@@ -34,12 +37,15 @@ if (!listening) {
   });
 
   self.addEventListener('install', (evt) => {
+    console.log('PWA Install');
     self.skipWaiting();
-    evt.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(cacheFiles)));
+    evt.waitUntil(refresh);
   });
 
   self.addEventListener('activate', (evt) => {
+    console.log('PWA Activate');
     evt.waitUntil(self.clients.claim());
+    refresh();
   });
 
   self.addEventListener('fetch', (evt) => {
