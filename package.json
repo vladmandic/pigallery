@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server/pigallery.js",
     "upgrade": "npm update; npm install; npm dedupe; npm prune",
-    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && depcheck --ignores='eslint-plugin-*,auditjs,npm-check-updates' --ignore-dirs='dist' && auditjs ossi --quiet"
+    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && stylelint client/* && depcheck --ignores='eslint-plugin-*,auditjs,npm-check-updates' --ignore-dirs='dist' && auditjs ossi --quiet"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -19,6 +19,17 @@
     "excludeGlob": [
       "*"
     ]
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "declaration-block-single-line-max-declarations": 50,
+      "comment-empty-line-before": "never",
+      "block-closing-brace-newline-after": "always-single-line",
+      "at-rule-empty-line-before": "never",
+      "selector-list-comma-newline-after": "always-multi-line",
+      "color-hex-length": "long"
+    }
   },
   "repository": {
     "type": "git",
@@ -73,6 +84,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "htmlhint": "^0.14.1",
-    "npm-check-updates": "^6.0.1"
+    "npm-check-updates": "^6.0.1",
+    "stylelint": "^13.6.1",
+    "stylelint-config-standard": "^20.0.0"
   }
 }
