@@ -19,11 +19,11 @@ const pwa = require('./pwa-register.js');
 // global variables
 window.filtered = [];
 
-function busy(working) {
-  $('body').css('cursor', working ? 'wait' : 'default');
-  $('main').css('cursor', working ? 'wait' : 'default');
+async function busy(working) {
+  // $('body').css('cursor', working ? 'wait' : 'default');
+  // $('main').css('cursor', working ? 'wait' : 'default');
   $('#btn-number').removeClass('fa-images fa-clock');
-  $('#btn-number').addClass(working ? 'fa-clock' : 'fa-clock');
+  $('#btn-number').addClass(working ? 'fa-clock' : 'fa-images');
   // $('#btn-number').css('color', working ? 'lightcoral' : `${window.theme.foreground}`);
   // $('#number').css('color', working ? 'gray' : '${window.theme.foreground}');
 }
@@ -137,7 +137,6 @@ function filterWord(word) {
 
 // filters images based on search strings
 async function filterResults(words) {
-  busy(true);
   list.previous = null;
   let foundWords = 0;
   const t0 = window.performance.now();
@@ -151,7 +150,6 @@ async function filterResults(words) {
   await menu.enumerate();
   folderHandlers();
   list.redraw();
-  busy(false);
 }
 
 // randomize image order using Fisher-Yates (aka Knuth) shuffle
@@ -390,7 +388,6 @@ async function loadGallery(limit, refresh = false) {
   window.options.lastUpdated = updated;
   $('#progress').text('Almost done');
   if (!refresh) sortResults(window.options.listSortOrder);
-  busy(false);
 }
 
 // popup on right-click
