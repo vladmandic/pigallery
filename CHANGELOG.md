@@ -1,5 +1,11 @@
 # PiGallery Change Log
 
+### **v1.1.11** 2020/07/29 cyan00@gmail.com
+
+- busy fix
+- cosmetic fixes
+- updated
+
 ### **v1.1.10** 2020/07/28 cyan00@gmail.com
 
 - cosmetic fixes
