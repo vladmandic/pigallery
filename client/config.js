@@ -50,7 +50,7 @@ window.themes = [
     map: 'dark',
     body: colorHex('#555555'),
     background: colorHex('black'),
-    foreground: colorHex('#999999'),
+    foreground: colorHex('ivory'),
     text: colorHex('#ebebeb'),
     highlight: colorHex('white'),
     shadow: '4px 4px #333333',
@@ -154,7 +154,7 @@ window.options = {
   get topClasses() { return parseInt(localStorage.getItem('topClasses') || 25, 10); },
   set topClasses(val) { return localStorage.setItem('topClasses', val); },
 
-  get listDetailsWidth() { return parseFloat(localStorage.getItem('listDetailsWidth') || 0.25); },
+  get listDetailsWidth() { return parseInt(localStorage.getItem('listDetailsWidth') || 25, 10); },
   set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
 
   get lastUpdated() { return parseInt(localStorage.getItem('lastUpdated') || 0, 10); },

@@ -161,8 +161,8 @@
   }
 
   // constants
-  const ZOOM_CONSTANT = 15; // increase or decrease value for zoom on mouse wheel
-  const MOUSE_WHEEL_COUNT = 5; // A mouse delta after which it should stop preventing default behaviour of mouse wheel
+  const ZOOM_CONSTANT = 3; // increase or decrease value for zoom on mouse wheel
+  const MOUSE_WHEEL_COUNT = 15; // A mouse delta after which it should stop preventing default behaviour of mouse wheel
 
   function noop() {} // ease out method
 
@@ -192,7 +192,7 @@
       options.parent.appendChild(elem);
     }
     return elem;
-  } // method to add class
+  }
 
   function addClass(el, className) {
     const classNameAry = className.split(' ');
@@ -203,7 +203,7 @@
     } else {
       el.className += ' '.concat(className); // eslint-disable-line no-param-reassign
     }
-  } // method to remove class
+  }
 
   function removeClass(el, className) {
     const classNameAry = className.split(' ');
@@ -214,7 +214,7 @@
     } else {
       el.className = el.className.replace(new RegExp('(^|\\b)'.concat(className.split(' ').join('|'), '(\\b|$)'), 'gi'), ' '); // eslint-disable-line no-param-reassign
     }
-  } // function to check if image is loaded
+  }
 
   function imageLoaded(img) {
     return img.complete && (typeof img.naturalWidth === 'undefined' || img.naturalWidth !== 0);
@@ -225,11 +225,9 @@
   }
   function css(elements, properties) {
     const elmArray = toArray(elements);
-
     if (typeof properties === 'string') {
       return window.getComputedStyle(elmArray[0])[properties];
     }
-
     elmArray.forEach((element) => {
       Object.keys(properties).forEach((key) => {
         const value = properties[key];
@@ -238,9 +236,11 @@
     });
     return undefined;
   }
+
   function removeCss(element, property) {
     element.style.removeProperty(property);
   }
+
   function wrap(element, _ref) {
     const _ref$tag = _ref.tag;
     const tag = _ref$tag === undefined ? 'div' : _ref$tag;
@@ -256,6 +256,7 @@
     wrapper.appendChild(element);
     return wrapper;
   }
+
   function unwrap(element) {
     const parent = element.parentNode;
     if (parent !== document.body) {
@@ -263,15 +264,18 @@
       parent.parentNode.removeChild(parent);
     }
   }
+
   function remove(elements) {
     const elmArray = toArray(elements);
     elmArray.forEach((element) => {
       if (element.parentNode) element.parentNode.removeChild(element);
     });
   }
+
   function clamp(num, min, max) {
     return Math.min(Math.max(num, min), max);
   }
+
   function assignEvent(element, events, handler) {
     if (typeof events === 'string') events = [events];
     events.forEach((event) => {
@@ -283,6 +287,7 @@
       });
     };
   }
+
   function getTouchPointsDistance(touches) {
     const touch0 = touches[0];
     const touch1 = touches[1];
@@ -313,7 +318,6 @@
           x: _this.sx,
           y: _this.sy,
         }); // add listeners
-
         document.addEventListener(_this.touchMoveEvent, moveHandler);
         document.addEventListener(_this.touchEndEvent, endHandler);
         document.addEventListener('contextmenu', endHandler);
@@ -363,19 +367,13 @@
       key: 'init',
       value: function init() {
         const _this2 = this;
-
-        ['touchstart', 'mousedown'].forEach((evt) => {
-          _this2.container.addEventListener(evt, _this2.startHandler);
-        });
+        ['touchstart', 'mousedown'].forEach((evt) => _this2.container.addEventListener(evt, _this2.startHandler));
       },
     }, {
       key: 'destroy',
       value: function destroy() {
         const _this3 = this;
-
-        ['touchstart', 'mousedown'].forEach((evt) => {
-          _this3.container.removeEventListener(evt, _this3.startHandler);
-        });
+        ['touchstart', 'mousedown'].forEach((evt) => _this3.container.removeEventListener(evt, _this3.startHandler));
         this.removeListeners();
       },
     }]);
@@ -431,8 +429,8 @@
           if (step < 16) _this._frames.zoomFrame = requestAnimationFrame(zoom);
           const tickZoom = easeOutQuart(step, curPerc, perc - curPerc, 16);
           const ratio = tickZoom / curPerc;
-          const imgWidth = imageDim.w * tickZoom / 100;
-          const imgHeight = imageDim.h * tickZoom / 100;
+          const imgWidth = imageDim.w * tickZoom / 500;
+          const imgHeight = imageDim.h * tickZoom / 500;
           let newLeft = -((point.x - curLeft) * ratio - point.x);
           let newTop = -((point.y - curTop) * ratio - point.y); // fix for left and top
           newLeft = Math.min(newLeft, baseLeft);
@@ -885,7 +883,8 @@
           const zoomValue = _this7$_state.zoomValue;
           if (!_options.zoomOnMouseWheel || !loaded) return; // clear all animation frame and interval
           _this7._clearFrames(); // cross-browser wheel delta
-          const delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail || -e.deltaY));
+          // const delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail || -e.deltaY));
+          const delta = (e.wheelDelta || -e.detail || -e.deltaY) > 0 ? 1 : -1;
           const newZoomValue = zoomValue * (100 + delta * ZOOM_CONSTANT) / 100;
           if (!(newZoomValue >= 100 && newZoomValue <= _options.maxZoom)) {
             changedDelta += Math.abs(delta);
@@ -897,10 +896,7 @@
           const contOffset = container.getBoundingClientRect();
           const x = (e.pageX || e.pageX) - (contOffset.left + document.body.scrollLeft);
           const y = (e.pageY || e.pageY) - (contOffset.top + document.body.scrollTop);
-          _this7.zoom(newZoomValue, {
-            x,
-            y,
-          }); // show the snap viewer
+          _this7.zoom(newZoomValue, { x, y });
           _this7.showSnapView();
         };
         this._ev = assignEvent(imageWrap, 'wheel', onMouseWheel);
@@ -952,7 +948,6 @@
       key: '_loadImages',
       value: function _loadImages() {
         const _this9 = this;
-
         const _images = this._images;
         const _elements = this._elements;
         const imageSrc = _images.imageSrc;
@@ -961,9 +956,7 @@
         const snapImageWrap = _elements.snapImageWrap;
         const imageWrap = _elements.imageWrap;
         const ivLoader = container.querySelector('.iv-loader'); // remove old images
-
         remove(container.querySelectorAll('.iv-snap-image, .iv-image')); // add snapView image
-
         const snapImage = createElement({
           tagName: 'img',
           className: 'iv-snap-image',
@@ -971,7 +964,6 @@
           insertBefore: snapImageWrap.firstChild,
           parent: snapImageWrap,
         }); // add image
-
         const image = createElement({
           tagName: 'img',
           className: 'iv-image iv-small-image',
@@ -979,48 +971,27 @@
           parent: imageWrap,
         });
         this._state.loaded = false; // store image reference in _elements
-
         this._elements.image = image;
         this._elements.snapImage = snapImage;
-        css(ivLoader, {
-          display: 'block',
-        }); // keep visibility hidden until image is loaded
-
-        css(image, {
-          visibility: 'hidden',
-        }); // hide snap view if open
-
+        css(ivLoader, { display: 'block' }); // keep visibility hidden until image is loaded
+        css(image, { visibility: 'hidden' }); // hide snap view if open
         this.hideSnapView();
-
         const onImageLoad = function onImageLoad() {
           // hide the iv loader
-          css(ivLoader, {
-            display: 'none',
-          }); // show the image
-
-          css(image, {
-            visibility: 'visible',
-          }); // load high resolution image if provided
-
-          if (hiResImageSrc) {
-            _this9._loadHighResImage(hiResImageSrc);
-          } // set loaded flag to true
+          css(ivLoader, { display: 'none' }); // show the image
+          css(image, { visibility: 'visible' }); // load high resolution image if provided
+          if (hiResImageSrc) _this9._loadHighResImage(hiResImageSrc); // set loaded flag to true
           _this9._state.loaded = true; // calculate the dimension
           _this9._calculateDimensions(); // reset the zoom
           _this9.resetZoom();
         };
-
-        if (imageLoaded(image)) {
-          onImageLoad();
-        } else {
-          this._events.imageLoad = assignEvent(image, 'load', onImageLoad);
-        }
+        if (imageLoaded(image)) onImageLoad();
+        else this._events.imageLoad = assignEvent(image, 'load', onImageLoad);
       },
     }, {
       key: '_loadHighResImage',
       value: function _loadHighResImage(hiResImageSrc) {
         const _this10 = this;
-
         const _this$_elements5 = this._elements;
         const imageWrap = _this$_elements5.imageWrap;
         const container = _this$_elements5.container;
@@ -1032,10 +1003,8 @@
           parent: imageWrap,
           style: lowResImg.style.cssText,
         }); // add all the style attributes from lowResImg to highResImg
-
         hiResImage.style.cssText = lowResImg.style.cssText;
         this._elements.image = container.querySelectorAll('.iv-image');
-
         const onHighResImageLoad = function onHighResImageLoad() {
           // remove the low size image and set this image as default image
           remove(lowResImg);
@@ -1164,7 +1133,7 @@
   ImageViewer.defaults = {
     zoomValue: 100,
     snapView: true,
-    maxZoom: 500,
+    maxZoom: 1000,
     refreshOnResize: true,
     zoomOnMouseWheel: true,
   };
