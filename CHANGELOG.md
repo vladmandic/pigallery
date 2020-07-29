@@ -1,4 +1,8 @@
 # PiGallery Change Log
+- added style lining
+
+### **origin/HEAD** 2020/07/29 cyan00@gmail.com
+
 
 ### **v1.1.11** 2020/07/29 cyan00@gmail.com
 
@@ -11,9 +15,7 @@
 - cosmetic fixes
 - typo
 - fixed permissions
-
-### **origin/HEAD** 2020/07/28 cyan00@gmail.com
-
+- changelog
 
 ### **v1.1.9** 2020/07/28 cyan00@gmail.com
 
