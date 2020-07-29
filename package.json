@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server/pigallery.js",
     "upgrade": "npm update; npm install; npm dedupe; npm prune",
-    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && stylelint client/* && depcheck --ignores='eslint-plugin-*,auditjs,npm-check-updates' --ignore-dirs='dist' && auditjs ossi --quiet"
+    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && stylelint client/* && depcheck --ignores='eslint-plugin-*,auditjs,npm-check-updates,stylelint-config-standard' --ignore-dirs='dist' && auditjs ossi --quiet"
   },
   "engines": {
     "node": ">=14.0.0"
