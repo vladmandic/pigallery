@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- updated lint rules
 - added style lining
 
 ### **origin/HEAD** 2020/07/29 cyan00@gmail.com
