@@ -1,5 +1,14 @@
 # PiGallery Change Log
 
+### **v1.1.10** 2020/07/28 cyan00@gmail.com
+
+- cosmetic fixes
+- typo
+- fixed permissions
+
+### **origin/HEAD** 2020/07/28 cyan00@gmail.com
+
+
 ### **v1.1.9** 2020/07/28 cyan00@gmail.com
 
 - updated icons
@@ -13,7 +22,7 @@
 
 - theme animations
 
-### **origin/HEAD** 2020/07/25 cyan00@gmail.com
+### **v1.1.7** 2020/07/25 cyan00@gmail.com
 
 - updated changelog
 - updated packages
