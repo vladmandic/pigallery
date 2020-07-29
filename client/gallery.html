@@ -32,7 +32,7 @@
       body { font-size: 14px; background: linear-gradient(0deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; animation: gradient 5s ease infinite; }
       @keyframes gradient { 0% { background-position: 50% 0%;	}	50% {	background-position: 50% 100%; } 100% {	background-position: 50% 0%; } }
       */
-      ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0px; }
+      ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0; }
       ::-webkit-scrollbar-thumb { background: var(--body); }
       ::-webkit-scrollbar-track { margin: 8px; }
       ::-webkit-scrollbar-button:single-button { display: block; border-style: solid; height: 40px; }
@@ -40,21 +40,21 @@
       ::-webkit-scrollbar-button:single-button:vertical:increment { border-width: 15px 10px 0 10px; border-color: var(--body) transparent transparent transparent; }
       h1 { font-size: 1.4rem; margin-top: 1.2rem; font-weight: bold; color: var(--text); }
       h2 { font-size: 1.2rem; margin-top: 1.1rem; font-weight: bold; color: var(--text); }
-      a { color: var(--text) }
+      a { color: var(--text); }
       a:hover { color: var(--link); text-decoration: none; }
       p { margin: 0; }
       .row { width: 100%; margin: 0; align-content: start; }
       .col { text-align: left; margin: 8px; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
       .log { width: 100vw; height: 4rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
-      .popper { padding: 8px; background: var(--text); color: var(--body); font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; z-index: 50; }
+      .popper { padding: 8px; background: var(--text); color: var(--body); box-shadow: 2px 2px var(--background); border-radius: 4px; z-index: 50; }
       .navbar { background: var(--body); height: 80px; top: 0; }
       .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
       .navbarbutton:hover { color: var(--title); text-shadow: 0; }
-      .number { font-size: 1.2rem; color: var(--inactive)}
+      .number { font-size: 1.2rem; color: var(--inactive); }
       .btntext { text-align: center; margin: 0; }
       .navline { background: var(--body); min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10; }
       .navlinebutton { font-size: 1.6rem; color: var(--foreground); padding: 0 2.5rem 0 2.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
-      .navlinebutton:hover { color: var(--title) }
+      .navlinebutton:hover { color: var(--title); }
       .blank { min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
       .input { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); width: 50%; height: 2.5rem; border-radius: 1.5rem; }
       .input:hover { background: var(--foreground); }
@@ -65,7 +65,7 @@
       .options:focus { background: var(--foreground); }
       .main { height: 100%; display: flex; }
       .folderbar { overflow-x: hidden; overflow-y: auto; cursor: pointer; min-width: fit-content; margin-top: 65px; }
-      .folderbar::-webkit-scrollbar { display:none; }
+      .folderbar::-webkit-scrollbar { display: none; }
       .folderlist { margin: 0; min-width: 10rem; max-width: 15rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
       .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
       .folder { background: var(--body); margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: bold; letter-spacing: 1px; }
@@ -91,22 +91,25 @@
       /* .description:hover { background: var(--title); box-shadow: 0 0 8px 8px white; } */
       /* .description:active { background: var(--highlight) } */
       .btn-tiny { font-size: var(--btntiny); color: var(--inactive); padding: 6px; cursor: grab; z-index: 8; display: none; text-shadow: 1px 1px var(--title); }
-      .btn-tiny:hover { color: var(--foreground) }
+      .btn-tiny:hover { color: var(--foreground); }
       .listtitle { font-weight: bold; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; line-height: 1.4rem; }
-      .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px }
+      .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px; }
       .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; background: var(--foreground); border-radius: 1rem; }
       .thumbsize::-moz-range-track { width: 100%; height: 1rem; background: var(--foreground); border-radius: 1rem; }
       .popup { background: var(--body); color: var(--background); overflow: hidden; position: fixed; top: 70px; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
       .popup-image { width: 100%; height: 100%; }
       .popup-details { background: var(--body); margin: 0 0 0 10px; overflow-x: hidden; overflow-y: scroll; word-break: break-word; color: var(--text); z-index: 10; }
       .docs { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
-      .splash { width: 100%; height: 100%; z-index: 100; position: absolute; top: 0; left: 0; background: black; text-align-last: center; }          
+      .splash { width: 100%; height: 100%; z-index: 100; position: absolute; top: 0; left: 0; background: black; text-align-last: center; }
       .loading { color: white; position: absolute; top: 220px; left: 50%; transform: translateX(-50%); }
       .cm-spinner { width: 300px; height: 300px; border: 3px solid transparent; border-radius: 50%; border-top: 4px solid #f15e41; animation: spin 4s linear infinite; position: relative; }
       .cm-spinner::before, .cm-spinner::after { content: ""; position: absolute; top: 6px; bottom: 6px; left: 6px; right: 6px; border-radius: 50%; border: 4px solid transparent; }
       .cm-spinner::before { border-top-color: #bad375; animation: 3s spin linear infinite; }
       .cm-spinner::after { border-top-color: #26a9e0; animation: spin 1.5s linear infinite; }
-      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }     
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
     </style>
 </head>
 <body>
@@ -116,7 +119,7 @@
   </noscript>
 
   <div id="splash" class="splash">
-    <div class="loading" style="top: 120px"><div class="cm-spinner"></div></div>
+    <div class="loading" style="top: 120px;"><div class="cm-spinner"></div></div>
     <div id="progress" class="loading"></div>
   </div>
 
@@ -132,12 +135,12 @@
 
   <div id="searchbar" class="row navline text-center">
     <input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
-    <i class="navlinebutton fad fa-check-circle" style="font-size: 2.3rem; padding: 4px" id="btn-searchnow"></i>
-    <i class="navlinebutton fad fa-times-circle" style="font-size: 2.3rem; padding: 4px" id="btn-resetsearch"></i>
+    <i class="navlinebutton fad fa-check-circle" style="font-size: 2.3rem; padding: 4px;" id="btn-searchnow"></i>
+    <i class="navlinebutton fad fa-times-circle" style="font-size: 2.3rem; padding: 4px;" id="btn-resetsearch"></i>
   </div>
 
   <div id="userbar" class="row navline text-center">
-    <input class="input" type="number" id="imagenum" placeholder="100" style="width: 110px; height: 1.8rem" />
+    <input class="input" type="number" id="imagenum" placeholder="100" style="width: 110px; height: 1.8rem;" />
     <div><i id="btn-load" class="navlinebutton fad fa-cloud-download-alt"></i><p class="btntext">Load Images</p></div>
     <div><i id="btn-update" class="navlinebutton fad fa-sync"></i><p>Update DB</p></div>
     <div><i id="btn-changelog" class="navlinebutton fad fa-clipboard-list"></i><p>Change Log</p></div>
@@ -152,19 +155,19 @@
     <div><i class="navlinebutton fad fa-comment-dots" id="btn-title"></i><p class="btntext">Titles</p></div>
     <div><i class="navlinebutton fad sort fa-random"></i><p class="btntext">Randomize</p></div>
     <div><i class="navlinebutton fad fa-eye" id="btn-duplicates"></i><p class="btntext">Sort by Simmilarity</p></div>
-    <div><i class="navlinebutton fad sort fa-sort-alpha-down"></i><i class="navlinebutton fad sort fa-sort-alpha-up" style="padding-left: 0"></i>
+    <div><i class="navlinebutton fad sort fa-sort-alpha-down"></i><i class="navlinebutton fad sort fa-sort-alpha-up" style="padding-left: 0;"></i>
       <p class="btntext">Sort by Name</p></div>
-    <div><i class="navlinebutton fad sort fa-sort-numeric-down"></i><i class="navlinebutton fad sort fa-sort-numeric-up" style="padding-left: 0"></i>
+    <div><i class="navlinebutton fad sort fa-sort-numeric-down"></i><i class="navlinebutton fad sort fa-sort-numeric-up" style="padding-left: 0;"></i>
       <p class="btntext">Sort by Date</p></div>
-    <div><i class="navlinebutton fad sort fa-sort-amount-down"></i><i class="navlinebutton fad sort fa-sort-amount-up" style="padding-left: 0"></i>
+    <div><i class="navlinebutton fad sort fa-sort-amount-down"></i><i class="navlinebutton fad sort fa-sort-amount-up" style="padding-left: 0;"></i>
       <p class="btntext">Sort by Size</p></div>
-    <div style="width: 100px; margin-left: 50px">
+    <div style="width: 100px; margin-left: 50px;">
       <input type="range" class="thumbsize" name="thumbsize" id="thumbsize" min="50" max="500" step="1" value="130">
       <label id="thumblabel" class="btntext" for="thumbsize">Thumbnail Size</label>
     </div>
   </div>
 
-  <div id="optionsview" class="row navbar text-center" style="position: fixed; ">
+  <div id="optionsview" class="row navbar text-center" style="position: fixed;">
     <div><i class="navbarbutton fad fa-arrow-circle-left" id="details-previous"></i><p class="btntext">Previous</p></div>
     <div><i class="navbarbutton fad fa-times-circle" id="details-close"></i><p class="btntext">Close</p></div>
     <div><i class="navbarbutton fad fa-arrow-circle-right" id="details-next"></i><p class="btntext">Next</p></div>
@@ -190,9 +193,9 @@
       <div id="map" class="row map"></div>
       <div id="share" class="row share">
         <input class="input" type="text" id="share-name" placeholder="what is the share name ?"/>
-        <i class="navlinebutton fad fa-plus-square" id="btn-shareadd" style="padding: 0"></i>
+        <i class="navlinebutton fad fa-plus-square" id="btn-shareadd" style="padding: 0;"></i>
         <input class="input" type="text" id="share-url" placeholder="URL" readonly/>
-        <i class="navlinebutton fad fa-copy" id="btn-sharecopy" style="padding: 0"></i>
+        <i class="navlinebutton fad fa-copy" id="btn-sharecopy" style="padding: 0;"></i>
       </div>
       <div id="results" class="row results"></div>
     </div>
@@ -202,7 +205,7 @@
 
   <div id="popup" class="popup">
     <div class="popup-image" id="popup-image"></div>
-    <canvas id="popup-canvas" style="pointer-events: none"></canvas>
+    <canvas id="popup-canvas" style="pointer-events: none;"></canvas>
     <div class="popup-details" id="popup-details"></div>
   </div>
   

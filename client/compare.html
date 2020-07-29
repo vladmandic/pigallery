@@ -19,9 +19,9 @@
     <script type="text/javascript" src="/assets/jquery.js"></script>
     <script type="text/javascript" src="/dist/compare.js"></script>
     <style>
-      @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), local('Roboto-Regular'), url('../assets/roboto.ttf') format('truetype'); }
-      body { font-family: Roboto; font-size: 14px; background: black; color: #ebebeb; display: block; margin: 0; padding: 0; width: 100%; height: 100%; }
-      ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0px; }
+      @font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('../assets/lato.ttf') format('truetype'); }
+      body { font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-size: 14px; background: black; color: #ebebeb; display: block; margin: 0; padding: 0; width: 100%; height: 100%; }
+      ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0; }
       ::-webkit-scrollbar-thumb { background: #555555; }
       ::-webkit-scrollbar-track { background: black; margin: 8px; }
       ::-webkit-scrollbar-button:single-button { background: #555555; display: block; border-style: solid; height: 40px; }
@@ -29,32 +29,31 @@
       ::-webkit-scrollbar-button:single-button:vertical:increment { border-width: 15px 10px 0 10px; border-color: white transparent transparent transparent; }
       h1 { font-size: 1.4rem; margin-top: 1.2rem; font-weight: bold; }
       h2 { font-size: 1.2rem; margin-top: 1.1rem; font-weight: bold; }
-      a { color: lightcyan }
+      a { color: lightcyan; }
       a:hover { color: darkcyan; text-decoration: none; }
       p { margin: 0; }
       .row { width: 100vw; margin: 0; align-content: start; }
       .col { background: #555555; text-align: left; margin: 8px; width: 100%; box-shadow: 5px 5px #222222; white-space: nowrap; text-overflow: ellipsis; }
       .log { width: 100vw; height: 23vh; background: black; position: fixed; bottom: 0; overflow-y: scroll; }
-      .popper { padding: 8px; background: lightblue; color: #555555; font-size: 14px; font-family: Roboto; box-shadow: 2px 2px #222222; border-radius: 4px; z-index: 50; }
 
       .navbar { background: #555555; height: 80px; top: 0; justify-content: space-evenly; }
       .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1.5rem 0 1.5rem; cursor: pointer; }
       .navbarbutton:hover { color: lightskyblue; }
-      .number { font-size: 1.6rem; color: gray}
+      .number { font-size: 1.6rem; color: gray; }
       .btntext { text-align: center; margin: 0; }
 
-      .navline { background: #555555; min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10;}
+      .navline { background: #555555; min-height: 3.2rem; position: fixed; top: 70px; justify-content: center; z-index: 10; }
       .navlinebutton { font-size: 1.6rem; color: lightyellow; padding: 0 2.5rem 0 2.5rem; cursor: pointer; }
       .navlinebutton:hover { color: lightskyblue; }
       .blank { background: #555555; min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
 
-      .input { font-size: 1.2rem; margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #555555; width: 50%; height: 2.5rem; border-radius: 1.5rem }
+      .input { font-size: 1.2rem; margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: #555555; width: 50%; height: 2.5rem; border-radius: 1.5rem; }
       .input:hover { background: lightyellow; }
       .input:focus { background: lightyellow; }
 
       .main { height: 100%; display: flex; background: #555555; }
       .folderbar { background: #555555; overflow-x: hidden; overflow-y: auto; }
-      .folderbar::-webkit-scrollbar { display:none; }
+      .folderbar::-webkit-scrollbar { display: none; }
       .folderlist { margin: 0; min-width: 17rem; max-width: 17rem; background: #555555; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
       .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: #555555; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
       .folder { background: #555555; margin: 0; padding: 0.4rem 200px 0.4rem 0; cursor: pointer; font-weight: bold; letter-spacing: 1px; }
@@ -67,13 +66,13 @@
       .divider { background: #222222; padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; }
       .thumbnail { padding: 0; cursor: zoom-in; }
       .description { min-width: 540px; max-width: 540px; padding: 2px 0 0 4px; overflow: hidden; }
-      .description:hover { background: #333333 }
-      .description:active { background: lightskyblue }
+      .description:hover { background: #333333; }
+      .description:active { background: lightskyblue; }
       .download { font-size: 1.2rem; color: gray; position: relative; float: right; padding: 4px; cursor: grab; z-index: 5; }
       .download:hover { color: lightskyblue; }
       .listtitle { font-weight: bold; background: #444444; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; }
 
-      .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px }
+      .thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px; }
       .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: lightyellow; border-radius: 1rem; }
       .thumbsize::-moz-range-track { width: 100%; height: 1rem; cursor: pointer; background: lightyellow; border-radius: 1rem; }
 
