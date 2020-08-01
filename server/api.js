@@ -201,7 +201,7 @@ function api(app) {
       req.session.share = req.body.authShare;
     }
     log.info(`API Login: ${email} from ${req.ip} ${req.session.user ? 'success' : 'fail'}`);
-    res.redirect('/gallery');
+    res.redirect('/');
   });
 }
 

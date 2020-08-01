@@ -166,7 +166,10 @@ async function scrollResults() {
 
 // redraws gallery view and rebuilds sidebar menu
 async function redrawResults() {
-  window.location = `#${new Date().getTime()}`;
+  const dt = new Date();
+  const base = new Date(dt.getFullYear(), dt.getMonth(), 0).getTime();
+  const hash = Math.trunc((dt.getTime() - base) / 1000);
+  window.location = `#${hash}`;
   busy(true);
   const t0 = window.performance.now();
   const res = document.getElementById('results');
