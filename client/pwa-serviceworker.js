@@ -2,16 +2,19 @@
 
 const cacheName = 'pigallery';
 const cacheFiles = [
-  '/favicon.ico', '/manifest.json', '/assets/lato.ttf',
-  '/assets/dash-64.png', '/assets/dash-128.png', '/assets/dash-256.png', '/assets/dash-512.png', '/assets/dash-1024.png',
-  '/assets/bootstrap.css', '/assets/fontawesome/css/all.css', '/assets/iv-viewer.css', '/assets/mapquest.css',
+  '/favicon.ico', '/manifest.json', '/assets/lato.ttf', '/client/offline.html',
+  '/assets/dash-64.png', '/assets/dash-128.png', '/assets/dash-256.png', '/assets/dash-512.png', '/assets/dash-1024.png', '/assets/dash-mask.png',
+  '/assets/fontawesome/css/all.css', '/assets/fontawesome/webfonts/fa-solid-900.woff2', '/assets/fontawesome/webfonts/fa-duotone-900.woff2',
+  '/assets/bootstrap.css', '/assets/iv-viewer.css', '/assets/mapquest.css',
   // '/assets/warmup.jpg', '/assets/roboto.ttf', '/assets/roboto-condensed.ttf', '/assets/marcellus.ttf', '/assets/carrois.ttf',
   // '/assets/loading1.gif', '/assets/loading2.gif',
 ];
 let listening = false;
 
 async function cached(evt) {
-  const found = await caches.match(evt.request) || await fetch(evt.request);
+  let found;
+  if (navigator.onLine) found = await caches.match(evt.request) || await fetch(evt.request);
+  else found = await caches.match('/client/offline.html');
   // if (!found) found = await fetch(evt.request);
   /*
   // cache only /assets folder

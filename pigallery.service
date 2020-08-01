@@ -4,13 +4,14 @@ After=network.target network-online.target
 
 [Service]
 Type=simple
-ExecStart=/home/vlado/.nvm/versions/node/v14.0.0/bin/node server/server.js
+ExecStart=/home/vlado/.nvm/versions/node/v14.4.0/bin/node server/pigallery.js
 WorkingDirectory=/home/vlado/dev/pigallery
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
 RestartSec=60
 User=vlado
+StandardOutput=null
 
 [Install]
 WantedBy=multi-user.target
