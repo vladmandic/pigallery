@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- visual fixes
 
 ### **origin/HEAD** 2020/07/29 cyan00@gmail.com
 
