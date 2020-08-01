@@ -2,6 +2,7 @@
   "name": "PiGallery",
   "short_name": "PiGallery",
   "icons": [
+    { "src": "/assets/dash-mask.png", "sizes": "853x853", "type": "image/png", "purpose": "any maskable" },
     { "src": "/assets/dash-1024.png", "sizes": "1024x1024", "type": "image/png" },
     { "src": "/assets/dash-512.png", "sizes": "512x512", "type": "image/png" },
     { "src": "/assets/dash-256.png", "sizes": "256x256", "type": "image/png" },
