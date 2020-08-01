@@ -1,8 +1,13 @@
 # PiGallery Change Log
+
+### **origin/HEAD** 2020/08/01 cyan00@gmail.com
+
+
+### **v1.1.13** 2020/08/01 cyan00@gmail.com
+
+- lighthouse optimizations
 - visual fixes
-
-### **origin/HEAD** 2020/07/29 cyan00@gmail.com
-
+- updated
 
 ### **v1.1.12** 2020/07/29 cyan00@gmail.com
 

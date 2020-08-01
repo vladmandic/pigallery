@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const log = require('pilogger');
-const url = require('url');
 const http = require('http');
 const https = require('https');
 const express = require('express');
@@ -55,10 +54,6 @@ async function main() {
   // update changelog
   changelog.update('CHANGELOG.md');
 
-  // initialize parceljs bundler
-  // const parcel = require('./bundler.js');
-  // await parcel.init(app);
-
   // initialize esbuild bundler
   await build.init();
   await build.compile();
@@ -103,8 +98,9 @@ async function main() {
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
   // define route for root
-  app.get('/', (req, res) => res.redirect(url.format({ pathname: '/gallery', query: req.query }))); // res.redirect('/gallery'));
+  // app.get('/', (req, res) => res.redirect(url.format({ pathname: '/gallery', query: req.query }))); // res.redirect('/gallery'));
 
+  app.get('/', (req, res) => res.sendFile('gallery.html', { root: './client' }));
   // define routes for folders
   app.use('/assets', express.static(path.join(root, './assets'), { maxAge: '365d', cacheControl: true }));
   app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
