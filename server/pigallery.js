@@ -3,6 +3,7 @@ const path = require('path');
 const log = require('pilogger');
 const http = require('http');
 const https = require('https');
+const http2 = require('http2');
 const express = require('express');
 const session = require('express-session');
 const shrinkRay = require('shrink-ray-current');
@@ -101,6 +102,7 @@ async function main() {
   // app.get('/', (req, res) => res.redirect(url.format({ pathname: '/gallery', query: req.query }))); // res.redirect('/gallery'));
 
   app.get('/', (req, res) => res.sendFile('gallery.html', { root: './client' }));
+  app.get('/true', (req, res) => res.status(200).send(true));
   // define routes for folders
   app.use('/assets', express.static(path.join(root, './assets'), { maxAge: '365d', cacheControl: true }));
   app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
@@ -115,7 +117,7 @@ async function main() {
     };
     const serverhttp = http.createServer(httpOptions, app);
     serverhttp.on('error', (err) => log.error(err.message));
-    serverhttp.on('listening', () => log.state('Server HTTP listening on', serverhttp.address().family, serverhttp.address().address, serverhttp.address().port));
+    serverhttp.on('listening', () => log.state('Server HTTP listening:', serverhttp.address()));
     serverhttp.on('close', () => log.state('Server http closed'));
     serverhttp.listen(global.config.server.httpPort);
   }
@@ -131,9 +133,26 @@ async function main() {
     };
     const serverHttps = https.createServer(httpsOptions, app);
     serverHttps.on('error', (err) => log.error(err.message));
-    serverHttps.on('listening', () => log.state('Server HTTPS listening on', serverHttps.address().family, serverHttps.address().address, serverHttps.address().port));
+    serverHttps.on('listening', () => log.state('Server HTTPS listening:', serverHttps.address()));
     serverHttps.on('close', () => log.state('Server HTTPS closed'));
     serverHttps.listen(global.config.server.httpsPort);
+  }
+
+  // start http2 server
+  if (global.config.server.http2Port && global.config.server.http2Port !== 0) {
+    const http2Options = {
+      allowHTTP1: true,
+      maxHeaderSize: 65536,
+      key: fs.readFileSync(global.config.server.SSLKey, 'utf8'),
+      cert: fs.readFileSync(global.config.server.SSLCrt, 'utf8'),
+      requestCert: false,
+      rejectUnauthorized: false,
+    };
+    const serverHttp2 = http2.createServer(http2Options, app);
+    serverHttp2.on('error', (err) => log.error(err.message));
+    serverHttp2.on('listening', () => log.state('Server HTTP2 listening:', serverHttp2.address()));
+    serverHttp2.on('close', () => log.state('Server HTTPS closed'));
+    serverHttp2.listen(global.config.server.http2Port);
   }
 
   // initialize api calls
