@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- added dummy endpoint
 - uri simplification
 
 ### **origin/HEAD** 2020/08/01 cyan00@gmail.com
