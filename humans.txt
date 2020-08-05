@@ -1,0 +1,11 @@
+/* TEAM */
+  Chef: Vladimir Mandic
+  Contact: mandic00@live.com
+  GitHub: https://github.com/vladmandic
+
+/* SITE */
+  Language: English
+  Doctype: HTML5
+  IDE: VSCode
+  Backend: NodeJS
+  Frontend: VanillaJS
