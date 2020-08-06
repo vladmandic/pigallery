@@ -1,6 +1,6 @@
 const fs = require('fs');
 const chokidar = require('chokidar');
-const log = require('pilogger');
+const log = require('@vladmandic/pilogger');
 const build = require('./build.js');
 
 const monitor = ['config.json', 'package.json', 'server/*.js', 'client/*.js'];

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const log = require('pilogger');
+const log = require('@vladmandic/pilogger');
 const metadata = require('./metadata.js');
 
 function api(app) {
