@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const nedb = require('nedb-promises');
-const log = require('pilogger');
+const log = require('@vladmandic/pilogger');
 
 global.config = JSON.parse(fs.readFileSync('./config.json'));
 const now = new Date();

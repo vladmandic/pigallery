@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- reduced logging
 - added dummy endpoint
 - uri simplification
 

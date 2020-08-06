@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const moment = require('moment');
 const exif = require('jpeg-exif');
 const parser = require('exif-parser');
-const log = require('pilogger');
+const log = require('@vladmandic/pilogger');
 // const nedb = require('nedb-promises');
 const distance = require('./nearest.js');
 

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const log = require('pilogger');
+const log = require('@vladmandic/pilogger');
 const http = require('http');
 const https = require('https');
 const http2 = require('http2');
