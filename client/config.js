@@ -115,7 +115,7 @@ window.options = {
   get listTitle() { return localStorage.getItem('listTitle') ? localStorage.getItem('listTitle') === 'true' : true; },
   set listTitle(val) { return localStorage.setItem('listTitle', val); },
 
-  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 165, 10); },
+  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 180, 10); },
   set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
 
   get listLimit() { return parseInt(localStorage.getItem('listLimit') || 10000, 10); },
@@ -145,7 +145,7 @@ window.options = {
   get dateDivider() { return localStorage.getItem('dateDivider') || 'MMMM YYYY'; },
   set dateDivider(val) { return localStorage.setItem('dateDivider', val); },
 
-  get fontSize() { return localStorage.getItem('fontSize') || '14px'; },
+  get fontSize() { return localStorage.getItem('fontSize') || '16px'; },
   set fontSize(val) { return localStorage.setItem('fontSize', val); },
 
   get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || 2500, 10); },

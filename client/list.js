@@ -2,15 +2,6 @@ const moment = require('moment');
 const details = require('./details.js');
 const log = require('./log.js');
 
-function busy(working) {
-  return working;
-  // $('body').css('cursor', working ? 'wait' : 'default');
-  // $('main').css('cursor', working ? 'wait' : 'default');
-  // $('#btn-number').css('color', working ? 'lightcoral' : 'var(--foreground)');
-  // $('#btn-number').toggleClass('fa-images fa-clock');
-  // $('#number').css('color', working ? 'gray' : 'var(--foreground)');
-}
-
 // adds dividiers to list view based on sort order
 let previous;
 function addDividers(object) {
@@ -154,7 +145,6 @@ async function scrollResults() {
     current = i;
     log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${window.filtered.length}`);
   }
-  document.getElementById('number').innerText = `${(parseInt(current - 1, 10) + 1)}/${window.filtered.length || 0}`;
   $('.listitem').mouseover((evt) => thumbButtons(evt, true));
   $('.listitem').mouseout((evt) => thumbButtons(evt, false));
   // $('.listitem').mouseenter((evt) => thumbButtons(evt, true));
@@ -170,7 +160,6 @@ async function redrawResults() {
   const base = new Date(dt.getFullYear(), dt.getMonth(), 0).getTime();
   const hash = Math.trunc((dt.getTime() - base) / 1000);
   window.location = `#${hash}`;
-  busy(true);
   const t0 = window.performance.now();
   const res = document.getElementById('results');
   res.innerHTML = '';
@@ -180,7 +169,6 @@ async function redrawResults() {
   $('#results').scroll(() => scrollResults());
   scrollResults();
   log.debug(t0, 'Redraw results complete');
-  busy(false);
 }
 
 // resize gallery view depending on user configuration

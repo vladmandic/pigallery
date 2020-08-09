@@ -132,8 +132,8 @@ async function resizeDetailsImage(object) {
     $('#popup-details').width(vertical && window.options.viewDetails ? `${window.options.listDetailsWidth}%` : '100%');
     $('#popup-details').height(!vertical && window.options.viewDetails ? `${window.options.listDetailsWidth}%` : '100%');
     const details = window.options.viewDetails ? 100.0 - window.options.listDetailsWidth : 100;
-    const zoomX = $('body').width() * (vertical ? details / 100 : 1) / $('.iv-image').width();
-    const zoomY = $('body').height() * (!vertical ? details / 100 : 1) / $('.iv-image').height();
+    const zoomX = $('#popup').width() * (vertical ? details / 100 : 1) / $('.iv-image').width();
+    const zoomY = $('#popup').height() * (!vertical ? details / 100 : 1) / $('.iv-image').height();
     const zoom = Math.trunc(viewer._state.zoomValue * Math.min(zoomX, zoomY));
     await viewer.zoom(zoom);
     //  draw detection boxes and faces
@@ -166,9 +166,7 @@ async function showDetails(img) {
 
   log.debug(null, 'Details for object', object);
 
-  const top = $('#optionsview').height() + 10;
-  $('#popup').css('top', top);
-  $('#popup').height($('body').height() - top);
+  // const top = $('#navbar').height() + 6;
   $('#popup').toggle(true);
   $('#optionsview').toggle(true);
 
@@ -189,8 +187,10 @@ async function showDetails(img) {
   resizeDetailsImage(object);
 
   // handle pan&zoom redraws
-  $('.iv-large-image').mousedown(() => clearBoxes());
-  $('.iv-large-image').mouseup(() => drawBoxes(object));
+  // $('.iv-large-image').mousedown(() => clearBoxes());
+  $('.iv-large-image').on('touchstart mousedown', () => clearBoxes(object));
+  // $('.iv-large-image').mouseup(() => drawBoxes(object));
+  $('.iv-large-image').on('touchend mouseup', () => drawBoxes(object));
   $('.iv-large-image').dblclick(() => {
     clearBoxes();
     setTimeout(() => drawBoxes(object), 200);

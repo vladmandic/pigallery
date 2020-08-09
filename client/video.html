@@ -23,7 +23,7 @@
       select { height: 2rem; width: 8rem; margin-top: 0.3rem; background: lightyellow; }
       select:hover { background: lightblue; }
       .row { width: 100%; margin: 0; padding: 0; vertical-align: top; }
-      .navbar { background: #555555; align-items: center; padding: 0.5rem 2rem 0 2rem; }
+      .navbar { background: #555555; align-items: center; justify-items: center; padding: 0.5rem 3rem 0 3rem; }
       .navbarbutton { font-size: 2.5rem; color: lightyellow; padding: 0 1rem 0 1rem; cursor: pointer; }
       .navbarbutton:hover { color: lightblue; }
       .main { width: 100%; height: 100%; }
@@ -37,6 +37,8 @@
     <div><i id="btn-load" class="navbarbutton fad fa-arrow-alt-circle-down"></i><p id="text-load">Load Models</p></div>
     <div><i id="btn-play" class="navbarbutton fad fa-play-circle"></i><p id="text-play">Live Video</p></div>
     <div><i id="btn-facing" class="navbarbutton fad fa-sync-alt"></i><p id="text-facing">Camera: Front</p></div>
+  </div>
+  <div id="navbar" class="row navbar text-center">
     <div>
       <p>Object Detect Model</p>
       <select id="detect" name="detect" size="1">

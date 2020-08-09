@@ -34,14 +34,8 @@
     <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('../assets/lato.ttf') format('truetype'); }
-      body { width: 100vw; height: 100vh; font-size: 14px; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; background: var(--background); color: var(--text); }
-      /*
-      @font-face { font-family: 'Roboto'; font-display: swap; font-style: normal; font-weight: 400; src: local('Roboto'), url('../assets/roboto.ttf') format('truetype'); }
-      @font-face { font-family: 'Marcellus'; font-display: swap; font-style: normal; font-weight: 400; src: local('Marcellus'), url('../assets/marcellus.ttf') format('truetype'); }
-      @font-face { font-family: 'Carrois'; font-display: swap; font-style: normal; font-weight: 400; src: local('Carrois'), url('../assets/carrois.ttf') format('truetype'); }
-      body { font-size: 14px; background: linear-gradient(0deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); background-size: 400% 400%; animation: gradient 5s ease infinite; }
-      @keyframes gradient { 0% { background-position: 50% 0%;	}	50% {	background-position: 50% 100%; } 100% {	background-position: 50% 0%; } }
-      */
+      html { font-size: 18px; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; }
+      body { font-size: 1rem; width: 100vw; height: 100vh; background: var(--background); color: var(--text); }
       ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0; }
       ::-webkit-scrollbar-thumb { background: var(--body); }
       ::-webkit-scrollbar-track { margin: 8px; }
@@ -57,11 +51,11 @@
       .col { text-align: left; margin: 8px; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
       .log { width: 100vw; height: 4rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
       .popper { padding: 8px; background: var(--text); color: var(--body); box-shadow: 2px 2px var(--background); border-radius: 4px; z-index: 50; }
-      .navbar { background: var(--body); height: 80px; top: 0; }
+      .navbar { background: var(--body); height: 86px; top: 0; }
       .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
       .navbarbutton:hover { color: var(--title); text-shadow: 0; }
       .number { font-size: 1.2rem; color: var(--inactive); }
-      .btntext { text-align: center; margin: 0; }
+      .btntext { text-align: center; margin: 0; white-space: nowrap; }
       .navline { background: var(--body); min-height: 70px; position: fixed; top: 80px; padding-top: 10px; justify-content: center; z-index: 10; }
       .navlinebutton { font-size: 1.6rem; color: var(--foreground); padding: 0 2.5rem 0 2.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
       .navlinebutton:hover { color: var(--title); }
@@ -78,10 +72,10 @@
       .folderbar::-webkit-scrollbar { display: none; }
       .folderlist { margin: 0; min-width: 10rem; max-width: 15rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
       .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
-      .folder { background: var(--body); margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: bold; letter-spacing: 1px; }
+      .folder { background: var(--body); margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: 400; letter-spacing: 1px; }
       .folder:hover { background: var(--highlight); color: var(--background); letter-spacing: 2px; }
       .folder:active { background: var(--highlight); color: var(--background); letter-spacing: 2px; }
-      .folderstitle { color: var(--text); letter-spacing: 2px; font-weight: bold; line-height: 2.6rem; padding: 4px; }
+      .folderstitle { color: var(--text); letter-spacing: 2px; font-weight: 400; line-height: 2.6rem; padding: 4px; }
       .folderstitle:hover { background: var(--highlight); color: var(--background); }
       .folderbutton { padding-right: 4px; }
       .all { overflow: hidden; width: 100%; display: block; }
@@ -98,8 +92,6 @@
       .thumb-bottom { display: flex; position: absolute; bottom: 0; width: 100%; justify-content: flex-end; }
       .thumb-bottom:hover { background: rgba(0, 0, 0, 0.4); }
       .description { min-width: 250px; max-width: 250px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
-      /* .description:hover { background: var(--title); box-shadow: 0 0 8px 8px white; } */
-      /* .description:active { background: var(--highlight) } */
       .btn-tiny { font-size: var(--btntiny); color: var(--inactive); padding: 6px; cursor: grab; z-index: 8; display: none; text-shadow: 1px 1px var(--title); }
       .btn-tiny:hover { color: var(--foreground); }
       .listtitle { font-weight: bold; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; line-height: 1.4rem; }
@@ -112,14 +104,12 @@
       .docs { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
       .splash { width: 100%; height: 100%; z-index: 100; position: absolute; top: 0; left: 0; background: black; text-align-last: center; }
       .loading { color: white; position: absolute; top: 220px; left: 50%; transform: translateX(-50%); }
-      .cm-spinner { width: 300px; height: 300px; border: 3px solid transparent; border-radius: 50%; border-top: 4px solid #f15e41; animation: spin 4s linear infinite; position: relative; }
-      .cm-spinner::before, .cm-spinner::after { content: ""; position: absolute; top: 6px; bottom: 6px; left: 6px; right: 6px; border-radius: 50%; border: 4px solid transparent; }
-      .cm-spinner::before { border-top-color: #bad375; animation: 3s spin linear infinite; }
-      .cm-spinner::after { border-top-color: #26a9e0; animation: spin 1.5s linear infinite; }
-      @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-      }
+      .busy { margin: 10px; width: 100px; height: 100px; border: 3px solid transparent; border-radius: 50%; border-top: 4px solid #f15e41; animation: spin 4s linear infinite; position: relative; }
+      .loader { width: 300px; height: 300px; border: 3px solid transparent; border-radius: 50%; border-top: 4px solid #f15e41; animation: spin 4s linear infinite; position: relative; }
+      .busy::before, .loader::before, .busy::after, .loader::after { content: ""; position: absolute; top: 6px; bottom: 6px; left: 6px; right: 6px; border-radius: 50%; border: 4px solid transparent; }
+      .busy::before, .loader::before { border-top-color: #bad375; animation: 3s spin linear infinite; }
+      .busy::after, .loader::after { border-top-color: #26a9e0; animation: spin 1.5s linear infinite; }
+      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -129,7 +119,7 @@
   </noscript>
 
   <div id="splash" class="splash">
-    <div class="loading" style="top: 120px;"><div class="cm-spinner"></div></div>
+    <div class="loading" style="top: 120px;"><div class="loader"></div></div>
     <div id="progress" class="loading"></div>
   </div>
 
@@ -140,7 +130,6 @@
     <div><i id="btn-list" class="navbarbutton fad fa-images"></i><p>List Options</p></div>
     <div><i id="btn-slide" class="navbarbutton fad fa-film"></i><p>Slideshow</p></div>
     <div id="livevideo"><i id="btn-video" class="navbarbutton fad fa-video"></i><p>Live Video</p></div>
-    <div><i id="btn-number" class="number fad fa-images"></i><p id="number">0</p></div>
   </div>
 
   <div id="searchbar" class="row navline text-center">
@@ -150,12 +139,11 @@
   </div>
 
   <div id="userbar" class="row navline text-center">
-    <input class="input" type="number" id="imagenum" placeholder="100" style="width: 110px; height: 1.8rem;" />
-    <div><i id="btn-load" class="navlinebutton fad fa-cloud-download-alt"></i><p class="btntext">Load Images</p></div>
+    <div><i id="btn-load" class="navlinebutton fad fa-cloud-download-alt"></i><p class="btntext">Reload Images</p></div>
     <div><i id="btn-update" class="navlinebutton fad fa-sync"></i><p>Update DB</p></div>
     <div><i id="btn-changelog" class="navlinebutton fad fa-clipboard-list"></i><p>Change Log</p></div>
-    <div><i id="btn-doc" class="navlinebutton fad fa-book"></i><p>Documentation</p></div>
-    <div><i id="btn-options" class="navlinebutton fad fa-cog"></i><p>Configuration</p></div>
+    <div><i id="btn-doc" class="navlinebutton fad fa-book"></i><p>Docs</p></div>
+    <div><i id="btn-options" class="navlinebutton fad fa-cog"></i><p>Settings</p></div>
     <div><i id="btn-logout" class="navlinebutton fad fa-sign-out-alt"></i><p class="btntext">Logout</p></div>
   </div>
 
@@ -198,6 +186,7 @@
         <ul id="classes" class="folderlist"></ul>
       <div id="sharestitle" class="folderstitle"><i class="folderbutton fad fa-share-square"></i>Shares</div>
         <ul id="shares" class="folderlist"></ul>
+      <div id="busy" style="text-align: -webkit-center;"><div class="busy"></div><span style="position: relative; top: -78px; color: grey">working</span></div>
     </div>
     <div id="all" class="all">
       <div id="map" class="row map"></div>
