@@ -20,12 +20,7 @@ const pwa = require('./pwa-register.js');
 window.filtered = [];
 
 async function busy(working) {
-  // $('body').css('cursor', working ? 'wait' : 'default');
-  // $('main').css('cursor', working ? 'wait' : 'default');
-  $('#btn-number').removeClass('fa-images fa-clock');
-  $('#btn-number').addClass(working ? 'fa-clock' : 'fa-images');
-  // $('#btn-number').css('color', working ? 'lightcoral' : `${window.theme.foreground}`);
-  // $('#number').css('color', working ? 'gray' : '${window.theme.foreground}');
+  $('#busy').toggle(working);
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -400,9 +395,11 @@ async function showContextPopup(evt) {
 function resizeViewport() {
   $('#main').height(window.innerHeight - $('#log').height() - $('#navbar').height() - 16);
   if ($('#popup').css('display') !== 'none') details.show();
-  const top = $('#optionsview').height() + 6;
-  $('#popup').height($('body').height() - top);
-  $('#docs').height($('body').height() - top);
+
+  $('#popup').css('top', $('#optionsview').css('height'));
+  $('#popup').height($('body').height() - parseInt($('#optionsview').css('height'), 10));
+  $('#docs').css('top', $('#optionsview').css('height'));
+  $('#docs').height($('body').height() - parseInt($('#optionsview').css('height'), 10));
 }
 
 // show/hide navigation bar elements
@@ -535,8 +532,6 @@ async function initListHandlers() {
   // navbar user
   $('#btn-user').click(() => {
     showNavbar($('#userbar'));
-    $('#imagenum')[0].value = window.options.listLimit;
-    $('#imagenum')[0].focus();
   });
 
   // navline user input
@@ -740,7 +735,6 @@ async function main() {
   if (config.default.registerPWA) pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
 
-  resizeViewport();
   await config.theme();
   animate();
   await init.user();
@@ -760,7 +754,8 @@ async function main() {
   $('body').contextmenu((evt) => showContextPopup(evt));
   $('body').css('display', 'block');
   $('.collapsible').parent().parent().find('li').toggle(false);
-  list.resize();
+  await resizeViewport();
+  await list.resize();
   await sortResults(window.options.listSortOrder);
   log.debug(t0, 'Ready');
 }

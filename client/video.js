@@ -254,16 +254,7 @@ async function handlers() {
 
 async function main() {
   parent = document.getElementById('main');
-
-  // const navbarHeight = $('#navbar').height();
-  // $('#main').css('top', `${navbarHeight}px`);
-  // video.width = $('#main').width();
-  // video.height = $('#main').height();
-
   handlers();
-  // transcode rtsp from camera to m3u8
-  // ffmpeg -hide_banner -y -i rtsp://user:pwd@reolink-black:554/h264Preview_01_main -vcodec copy reolink.m3u8
-  // video.src = 'media/reolink.m3u8'; video.width = 720; video.height = 480;
 }
 
 window.onload = main;

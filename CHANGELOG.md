@@ -1,10 +1,12 @@
 # PiGallery Change Log
+
+### **origin/HEAD** 2020/08/06 cyan00@gmail.com
+
+- server metadata
 - reduced logging
 - added dummy endpoint
 - uri simplification
-
-### **origin/HEAD** 2020/08/01 cyan00@gmail.com
-
+- update
 
 ### **v1.1.13** 2020/08/01 cyan00@gmail.com
 
