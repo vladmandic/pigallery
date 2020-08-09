@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- updated changelog
 
 ### **v1.2.1** 2020/08/09 cyan00@gmail.com
 
