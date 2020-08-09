@@ -80,7 +80,7 @@
       .folderbutton { padding-right: 4px; }
       .all { overflow: hidden; width: 100%; display: block; }
       .map { overflow: hidden; width: 100%; height: 40%; display: none; z-index: 5; }
-      .share { overflow: hidden; width: 100%; height: 94px; background: var(--body); display: none; z-index: 5; }
+      .share { overflow: hidden; width: 100%; padding-bottom: 8px; background: var(--body); display: none; z-index: 5; }
       .results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; scroll-snap-type: y mandatory; padding: 4px; }
       .timestamp { background: var(--title); margin-right: 4px; padding-left: 4px; padding-right: 4px; color: var(--text); }
       .listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; }
@@ -186,7 +186,7 @@
         <ul id="classes" class="folderlist"></ul>
       <div id="sharestitle" class="folderstitle"><i class="folderbutton fad fa-share-square"></i>Shares</div>
         <ul id="shares" class="folderlist"></ul>
-      <div id="busy" style="text-align: -webkit-center;"><div class="busy"></div><span style="position: relative; top: -78px; color: grey">working</span></div>
+      <div id="busy" style="text-align: -webkit-center;"><div class="busy"></div><span style="position: relative; top: -78px; color: grey">processing</span></div>
     </div>
     <div id="all" class="all">
       <div id="map" class="row map"></div>
