@@ -72,6 +72,7 @@
     "marked": "^1.1.1",
     "moment": "^2.27.0",
     "nedb-promises": "^4.0.4",
+    "session-file-store": "^1.4.0",
     "shrink-ray-current": "^4.1.2",
     "simple-git": "^2.17.0"
   },

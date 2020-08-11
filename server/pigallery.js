@@ -6,7 +6,8 @@ const https = require('https');
 const http2 = require('http2');
 const express = require('express');
 const session = require('express-session');
-const shrinkRay = require('shrink-ray-current');
+const FileStore = require('session-file-store')(session);
+// const shrinkRay = require('shrink-ray-current');
 const nedb = require('nedb-promises');
 const api = require('./api.js');
 const build = require('./build.js');
@@ -18,6 +19,7 @@ const changelog = require('./changelog.js');
 global.json = [];
 global.config = JSON.parse(fs.readFileSync('./config.json'));
 
+/*
 function allowCORS(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -25,6 +27,7 @@ function allowCORS(req, res, next) {
   if (req.method === 'OPTIONS') res.send(200);
   else next();
 }
+*/
 
 function allowPWA(req, res, next) {
   if (req.url.endsWith('.js')) res.header('Service-Worker-Allowed', '/');
@@ -63,20 +66,21 @@ async function main() {
   await watcher.watch();
 
   // load expressjs middleware
+  global.config.cookie.store = new FileStore({ path: global.config.cookie.path });
   app.use(session(global.config.cookie));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false, limit: '1mb', parameterLimit: 10000 }));
-  app.use(shrinkRay({ useZopfliForGzip: false, brotli: { quality: 4 } }));
-  if (global.config.server.allowCORS) app.use(allowCORS);
+  // app.use(shrinkRay({ useZopfliForGzip: false, brotli: { quality: 4 } }));
+  // if (global.config.server.allowCORS) app.use(allowCORS);
   if (global.config.server.allowPWA) app.use(allowPWA);
   if (global.config.server.forceHTTPS) app.use(forceSSL);
 
   // expressjs passthrough for all requests
   app.use((req, res, next) => {
     res.on('finish', () => {
-      if (res.statusCode !== 200 && res.statusCode !== 302 && res.statusCode !== 304 && !req.url.endsWith('.map') && (req.url !== '/true')) {
-        log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
-      }
+      // if (res.statusCode !== 200 && res.statusCode !== 302 && res.statusCode !== 304 && !req.url.endsWith('.map') && (req.url !== '/true')) {
+      log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${req.ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
+      // }
     });
     if (req.url.startsWith('/api/auth')) next();
     else if (!req.url.startsWith('/api/')) next();
@@ -104,11 +108,12 @@ async function main() {
   app.get('/', (req, res) => res.sendFile('gallery.html', { root: './client' }));
   app.get('/true', (req, res) => res.status(200).send(true));
   // define routes for folders
-  app.use('/assets', express.static(path.join(root, './assets'), { maxAge: '365d', cacheControl: true }));
-  app.use('/models', express.static(path.join(root, './models'), { maxAge: '365d', cacheControl: true }));
-  app.use('/media', express.static(path.join(root, './media'), { maxAge: '365d', cacheControl: true }));
-  app.use('/client', express.static(path.join(root, './client'), { cacheControl: false }));
-  app.use('/dist', express.static(path.join(root, './dist'), { cacheControl: false }));
+  const optionsStatic = { maxAge: '365d', cacheControl: true, etag: true, lastModified: true };
+  app.use('/assets', express.static(path.join(root, './assets'), optionsStatic));
+  app.use('/models', express.static(path.join(root, './models'), optionsStatic));
+  app.use('/media', express.static(path.join(root, './media'), optionsStatic));
+  app.use('/client', express.static(path.join(root, './client'), optionsStatic));
+  app.use('/dist', express.static(path.join(root, './dist'), optionsStatic));
 
   // start http server
   if (global.config.server.httpPort && global.config.server.httpPort !== 0) {
