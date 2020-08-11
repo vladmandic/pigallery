@@ -31,6 +31,7 @@
     "SSLCrt": "/home/vlado/dev/piproxy/cert/fullchain.pem"
   },
   "cookie": {
+    "path": "./sessions",
     "secret": "whaTEvEr!42", "proxy": false, "resave": false, "rolling": true, "saveUninitialized": false,
     "cookie": { "httpOnly": false, "sameSite": true, "secure": false, "maxAge": 6048000001000 }
   }

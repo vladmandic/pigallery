@@ -1,12 +1,14 @@
 # PiGallery Change Log
+
+### **origin/HEAD** 2020/08/09 cyan00@gmail.com
+
+- updated dependencies
 - updated changelog
 
 ### **v1.2.1** 2020/08/09 cyan00@gmail.com
 
 - touch optimizations
-
-### **origin/HEAD** 2020/08/06 cyan00@gmail.com
-
+- updated dependencies
 - server metadata
 - reduced logging
 - added dummy endpoint
