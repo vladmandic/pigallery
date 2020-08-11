@@ -1,7 +1,10 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/08/09 cyan00@gmail.com
+### **origin/HEAD** 2020/08/11 cyan00@gmail.com
 
+- caching optimizations
+- fix
+- updated changelog
 - updated dependencies
 - updated changelog
 
