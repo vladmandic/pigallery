@@ -234,7 +234,6 @@ async function simmilarClasses(image) {
 // sorts images based on given sort order
 let loadTried = false;
 async function sortResults(sort) {
-  // window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
   $('#optionslist').toggle(false);
   if (!window.user.user) return;
   busy(true);
@@ -343,9 +342,9 @@ async function fetchChunks(response) {
 
 // loads imagesm, displays gallery and enumerates sidebar
 async function loadGallery(limit, refresh = false) {
-  $('#progress').text('Requesting');
   if (window.share) return;
   if (!window.user.user) return;
+  $('#progress').text('Requesting');
   if (window.user.user.startsWith('share')) {
     log.result('Application access with share credentials and no direct share');
     return;
@@ -515,7 +514,7 @@ async function initHotkeys() {
 
 function initSidebarHandlers() {
   $('#resettitle').click(() => {
-    window.share = null;
+    window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
     sortResults(window.options.listSortOrder);
   });
   $('#folderstitle').click(() => $('#folders').toggle('slow'));

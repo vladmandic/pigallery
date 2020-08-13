@@ -1,10 +1,7 @@
 {
   "users": [
-    { "email": "mandic00@live.com", "passwd": "p3i14", "admin": true, "mediaRoot": "media/" },
-    { "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" },
-    { "email": "cyan00@gmail.com", "passwd": "p3i14", "admin": false, "mediaRoot": "media/" },
-    { "email": "igor.domancic@ri.t-com.hr", "passwd": "pEr0", "admin": false, "mediaRoot": "media/Photos/Croatia" },
-    { "email": "drozmanic@gmail.com", "passwd": "whAT3v3r!", "admin": false, "mediaRoot": "media/Photos/Croatia" }
+    { "email": "user@example.com", "passwd": "test", "admin": true, "mediaRoot": "media/" },
+    { "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" }
   ],
   "locations": [
     { "folder": "Pictures/Snapseed/", "match": "" },
@@ -28,8 +25,8 @@
     "citiesDB": "assets/Cities.json",
     "warmupImage": "assets/warmup.jpg",
     "forceHTTPS": false,
-    "SSLKey": "/home/vlado/dev/piproxy/cert/private.pem",
-    "SSLCrt": "/home/vlado/dev/piproxy/cert/fullchain.pem"
+    "SSLKey": "cert/private.pem",
+    "SSLCrt": "cert/fullchain.pem"
   },
   "cookie": {
     "path": "./sessions",

@@ -2,6 +2,9 @@
 
 ### **origin/HEAD** 2020/08/11 cyan00@gmail.com
 
+
+### **v1.2.2** 2020/08/11 cyan00@gmail.com
+
 - caching optimizations
 - fix
 - updated changelog

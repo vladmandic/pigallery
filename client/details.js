@@ -57,6 +57,7 @@ function drawBoxes(object) {
   if (!object) object = last;
   if (!object) return;
 
+  clearBoxes();
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
 
@@ -187,18 +188,9 @@ async function showDetails(img) {
   resizeDetailsImage(object);
 
   // handle pan&zoom redraws
-  // $('.iv-large-image').mousedown(() => clearBoxes());
   $('.iv-large-image').on('touchstart mousedown', () => clearBoxes(object));
-  // $('.iv-large-image').mouseup(() => drawBoxes(object));
-  $('.iv-large-image').on('touchend mouseup', () => drawBoxes(object));
-  $('.iv-large-image').dblclick(() => {
-    clearBoxes();
-    setTimeout(() => drawBoxes(object), 200);
-  });
-  $('.iv-large-image').on('wheel', () => {
-    clearBoxes();
-    setTimeout(() => drawBoxes(object), 200);
-  });
+  $('.iv-large-image').on('touchend mouseup dblclick', () => drawBoxes(object));
+  $('.iv-large-image').on('wheel mousewheel', () => setTimeout(() => drawBoxes(object), 200));
 
   let classified = 'Classified ';
   for (const obj of combineResults(object.classify)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;

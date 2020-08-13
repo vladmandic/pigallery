@@ -7,4 +7,5 @@ pigallerydb.nedb
 pigallery.log
 setup.json
 backup
-sessions
+sessions/*
+config.json
