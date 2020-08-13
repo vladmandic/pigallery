@@ -1,7 +1,12 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/08/11 cyan00@gmail.com
+### **origin/HEAD** 2020/08/13 cyan00@gmail.com
 
+
+### **v1.2.3** 2020/08/13 cyan00@gmail.com
+
+- touch optimizations
+- updated
 
 ### **v1.2.2** 2020/08/11 cyan00@gmail.com
 
