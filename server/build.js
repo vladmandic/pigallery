@@ -9,6 +9,10 @@ async function init() {
 }
 
 async function compile() {
+  if (!service) {
+    log.error('ESBuild not initialized');
+    return;
+  }
   try {
     await service.build({
       entryPoints,
@@ -18,10 +22,11 @@ async function compile() {
       sourcemap: true,
       external: ['fs', 'crypto', 'util'],
       logLevel: 'error',
+      metafile: './asset-manifest.json',
     });
     log.state('Client application rebuild ready');
   } catch (err) {
-    log.state('Client application build error', err.errors);
+    log.error('Client application build error', err.errors);
   }
 }
 
