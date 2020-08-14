@@ -99,7 +99,7 @@ async function main() {
     }
   }
   // define routes for static files
-  for (const f of ['/favicon.ico', '/manifest.json', '/README.md', '/CHANGELOG.md', '/LICENSE', '/robots.txt', '/humans.txt', '/security.txt']) {
+  for (const f of ['/favicon.ico', '/manifest.json', '/asset-manifest.json', '/README.md', '/CHANGELOG.md', '/LICENSE', '/robots.txt', '/humans.txt', '/security.txt']) {
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
   // define route for root
