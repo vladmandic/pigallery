@@ -1,7 +1,9 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/08/14 cyan00@gmail.com
+### **origin/HEAD** 2020/08/15 cyan00@gmail.com
 
+- new html head
+- added asset-manifest.json
 - assets path fix
 - updated
 - removed
