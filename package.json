@@ -5,7 +5,6 @@
   "main": "server/pigallery.js",
   "scripts": {
     "start": "node server/pigallery.js",
-    "install": "node ./setup.js",
     "version": "node server/changelog.js",
     "upgrade": "node ./setup.js",
     "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && stylelint client/* && depcheck --ignores='eslint-plugin-*,auditjs,npm-check-updates,stylelint-config-standard' --ignore-dirs='dist' && auditjs ossi --quiet"
