@@ -32,6 +32,9 @@ function getPalette() {
   if (!thief) thief = new ColorThief();
   const img = document.getElementsByClassName('iv-image')[0];
   const color = thief.getColor(img);
+  window.dominant = `rgb(${color})`;
+  $('#popup').css('background', window.dominant);
+  $('#optionsview').css('background', window.dominant);
   const palette = thief.getPalette(img, 15);
   let txt = '<div style="text-align: -webkit-center"><div style="width: 15rem">\n';
   txt += `<span class="palette" style="color: rgb(${color})" title="RGB: ${color}">■</span>\n`;
