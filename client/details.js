@@ -32,10 +32,10 @@ function getPalette() {
   if (!thief) thief = new ColorThief();
   const img = document.getElementsByClassName('iv-image')[0];
   const color = thief.getColor(img);
-  window.dominant = `rgb(${color})`;
-  $('#popup').css('background', window.dominant);
-  $('#optionsview').css('background', window.dominant);
   const palette = thief.getPalette(img, 15);
+  window.dominant = [`rgb(${color})`, `rgb(${palette[0]})`];
+  $('#popup').css('background', `radial-gradient(at 50% 50%, ${window.dominant[1] || window.theme.gradient} 0, ${window.dominant[0] || window.theme.background} 100%, ${window.dominant[0] || window.theme.background} 100%)`);
+  $('#optionsview').css('background', window.dominant[0]);
   let txt = '<div style="text-align: -webkit-center"><div style="width: 15rem">\n';
   txt += `<span class="palette" style="color: rgb(${color})" title="RGB: ${color}">■</span>\n`;
   for (const col of palette) txt += `<span class="palette" style="color: rgb(${col})" title="RGB: ${col}">■</span>\n`;
