@@ -48,7 +48,8 @@ window.themes = [
   {
     name: 'Dark',
     map: 'dark',
-    body: colorHex('#555555'),
+    // body: colorHex('#555555'),
+    body: 'rgba(100, 100, 100, 0.9)',
     background: colorHex('black'),
     foreground: colorHex('ivory'),
     text: colorHex('#ebebeb'),

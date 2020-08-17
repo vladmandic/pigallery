@@ -716,7 +716,8 @@ async function animate() {
     const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
     const mouseYpercentage = Math.round(event.pageY / $(window).height() * 100);
     $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
-    $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.dominant || window.theme.background} 100%, ${window.dominant || window.theme.background} 100%)`);
+    if (window.dominant) $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.dominant[1]} 0, ${window.dominant[0]} 100%, ${window.dominant[0]} 100%)`);
+    else $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
   });
 }
 
@@ -726,6 +727,12 @@ async function googleAnalytics() {
   // gtag('js', new Date());
   // gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
   // gtag('set', { user_id: `${window.user}` }); // Set the user ID using signed-in user_id.
+}
+
+async function chromeDetails() {
+  if (!window.chrome) return;
+  const ts = window.chrome.loadTimes();
+  log.debug(null, 'Chrome load time:', Math.trunc(100 * (ts.finishLoadTime - ts.startLoadTime)) / 100, 'sec');
 }
 
 async function main() {
@@ -739,6 +746,7 @@ async function main() {
   await init.user();
   await showNavbar();
   googleAnalytics();
+  chromeDetails();
   initListHandlers();
   initSidebarHandlers();
   details.handlers();
