@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- updated dependencies
 
 ### **origin/HEAD** 2020/08/15 cyan00@gmail.com
 
