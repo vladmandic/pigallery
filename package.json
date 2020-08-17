@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server/pigallery.js",
     "version": "node server/changelog.js",
-    "upgrade": "node ./setup.js",
+    "setup": "node ./setup.js",
     "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && stylelint client/* && depcheck --ignores='eslint-plugin-*,auditjs,npm-check-updates,stylelint-config-standard' --ignore-dirs='dist' && auditjs ossi --quiet"
   },
   "engines": {
@@ -60,7 +60,7 @@
   "homepage": "https://github.com/vladmandic/pigallery#readme",
   "dependencies": {
     "@tensorflow/tfjs": "^1.7.4",
-    "@vladmandic/pilogger": "^0.1.7",
+    "@vladmandic/pilogger": "^0.1.9",
     "chokidar": "^3.4.2",
     "esbuild": "^0.5.26",
     "exif-parser": "^0.1.12",
