@@ -716,7 +716,7 @@ async function animate() {
     const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
     const mouseYpercentage = Math.round(event.pageY / $(window).height() * 100);
     $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
-    $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+    $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.dominant || window.theme.background} 100%, ${window.dominant || window.theme.background} 100%)`);
   });
 }
 
