@@ -43,10 +43,8 @@ function forceSSL(req, res, next) {
 }
 
 async function main() {
-  global.config.node = JSON.parse(fs.readFileSync('./package.json'));
-  log.logFile(global.config.server.logFile);
-  log.info(global.config.node.name, 'version', global.config.node.version);
-  log.info('Platform:', process.platform, 'Arch:', process.arch, 'Node:', process.version);
+  log.configure({ logFile: global.config.server.logFile });
+  log.header();
   log.info('Authentication required:', global.config.server.authForce);
   log.info('Media root:', global.config.server.mediaRoot);
   log.info('Allowed image file types:', global.config.server.allowedImageFileTypes);
