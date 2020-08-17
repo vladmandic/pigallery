@@ -1,9 +1,10 @@
-/* global ImageViewer */
+/* global ImageViewer, ColorThief */
 
 const moment = require('moment');
 const log = require('./log.js');
 
 let viewer;
+let thief;
 
 function JSONtoStr(json) {
   if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
@@ -25,6 +26,18 @@ function combineResults(object) {
     res.push({ score: Math.round(item.score * 100), name: item.class });
   }
   return res;
+}
+
+function getPalette() {
+  if (!thief) thief = new ColorThief();
+  const img = document.getElementsByClassName('iv-image')[0];
+  const color = thief.getColor(img);
+  const palette = thief.getPalette(img, 15);
+  let txt = '<div style="text-align: -webkit-center"><div style="width: 15rem">\n';
+  txt += `<span class="palette" style="color: rgb(${color})" title="RGB: ${color}">■</span>\n`;
+  for (const col of palette) txt += `<span class="palette" style="color: rgb(${col})" title="RGB: ${col}">■</span>\n`;
+  txt += '</div></div>\n';
+  return txt;
 }
 
 function clearBoxes() {
@@ -52,8 +65,6 @@ function drawBoxes(object) {
   canvas.height = Math.min($('#popup-image').height(), $('.iv-image').height()); // img.height;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.linewidth = 2;
-  ctx.font = 'small-caps 16px Lato';
   if (!object) object = last;
   if (!object) return;
 
@@ -65,32 +76,41 @@ function drawBoxes(object) {
   if (window.options.viewBoxes && object.detect) {
     ctx.strokeStyle = 'lightyellow';
     ctx.fillStyle = 'lightyellow';
+    ctx.lineWidth = 4;
     for (const obj of object.detect) {
       const x = obj.box[0] * resizeX;
       const y = obj.box[1] * resizeY;
+      ctx.globalAlpha = 0.2;
       ctx.beginPath();
       ctx.rect(x, y, obj.box[2] * resizeX, obj.box[3] * resizeY);
       ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.font = 'small-caps 1rem Lato';
       ctx.fillText(`${(100 * obj.score).toFixed(0)}% ${obj.class}`, x + 2, y + 18);
     }
   }
 
   // draw faces
   if (window.options.viewFaces && object.person) {
+    ctx.strokeStyle = 'deepskyblue';
+    ctx.fillStyle = 'deepskyblue';
+    ctx.lineWidth = 3;
     for (const i in object.person) {
       if (object.person[i].box) {
         // draw box around face
         const x = object.person[i].box.x * resizeX;
         const y = object.person[i].box.y * resizeY;
-        ctx.strokeStyle = 'deepskyblue';
-        ctx.fillStyle = 'deepskyblue';
+        ctx.globalAlpha = 0.4;
         ctx.beginPath();
         ctx.rect(x, y, object.person[i].box.width * resizeX, object.person[i].box.height * resizeY);
         ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.font = 'small-caps 1rem Lato';
         ctx.fillText(`face#${1 + parseInt(i, 10)}`, x + 2, y + 18);
 
         // draw face points
         ctx.fillStyle = 'lightblue';
+        ctx.globalAlpha = 0.5;
         const pointSize = 2;
         for (const pt of object.person[i].points) {
           ctx.beginPath();
@@ -250,6 +270,8 @@ async function showDetails(img) {
       ${exif}
       <h2>Location</h2>
       ${location}
+      <h2>Dominant Palette</h2>
+      ${getPalette()}
       <h2>${classified}</h2>
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
@@ -289,13 +311,46 @@ async function startSlideshow(start) {
   }
 }
 
+function detectSwipe() {
+  const swipePos = { sX: 0, sY: 0, eX: 0, eY: 0 };
+  // function detectSwipe(el, func, deltaMin = 90)
+  const deltaMin = 180;
+  // Directions enumeration
+  const directions = Object.freeze({ UP: 'up', DOWN: 'down', RIGHT: 'right', LEFT: 'left' });
+  const el = document.getElementById('popup');
+  el.addEventListener('touchstart', (e) => {
+    swipePos.sX = e.touches[0].screenX;
+    swipePos.sY = e.touches[0].screenY;
+  });
+  el.addEventListener('touchmove', (e) => {
+    swipePos.eX = e.touches[0].screenX;
+    swipePos.eY = e.touches[0].screenY;
+  });
+  el.addEventListener('touchend', () => {
+    const deltaX = swipePos.eX - swipePos.sX;
+    const deltaY = swipePos.eY - swipePos.sY;
+    // min swipe distance, you could use absolute value rather than square. It just felt better for personnal use
+    if (deltaX ** 2 + deltaY ** 2 < deltaMin ** 2) return;
+    // direction
+    let direction = null;
+    if (deltaY === 0 || Math.abs(deltaX / deltaY) > 1) direction = deltaX > 0 ? directions.RIGHT : directions.LEFT;
+    else direction = deltaY > 0 ? directions.UP : directions.DOWN;
+    // if (direction && typeof func === 'function') func(el, direction);
+    if (direction === directions.LEFT) showNextDetails(false);
+    if (direction === directions.RIGHT) showNextDetails(true);
+  });
+}
+
 // navbar details - used when in details view
 function initDetailsHandlers() {
   // handle clicks inside details view
+
+  detectSwipe();
+
   $('#popup').click(() => {
-    if (event.screenX < 20) showNextDetails(true);
-    else if (event.clientX > $('#popup').width() - 20) showNextDetails(false);
-    else if (!event.target.className.includes('iv-large-image') && !event.target.className.includes('iv-snap-handle') && !event.target.className.includes('iv-snap-view')) {
+    // if (event.screenX < 20) showNextDetails(true);
+    // else if (event.clientX > $('#popup').width() - 20) showNextDetails(false);
+    if (!event.target.className.includes('iv-large-image') && !event.target.className.includes('iv-snap-handle') && !event.target.className.includes('iv-snap-view')) {
       clearBoxes();
       $('#popup').toggle('fast');
       $('#optionsview').toggle(false);
