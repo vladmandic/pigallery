@@ -10,7 +10,6 @@ const modelDetect = require('./modelDetect.js');
 const modelYolo = require('./modelYolo.js');
 const processImage = require('./processImage.js');
 
-
 const models = [];
 window.cache = [];
 
