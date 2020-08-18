@@ -1,8 +1,16 @@
 # PiGallery Change Log
+
+### **origin/HEAD** 2020/08/17 cyan00@gmail.com
+
+- added taglines
+- added transparency effect
+- updated logger
+
+### **v1.2.4** 2020/08/16 cyan00@gmail.com
+
+- added swipe and color palette
 - updated dependencies
-
-### **origin/HEAD** 2020/08/15 cyan00@gmail.com
-
+- webgl background
 - new html head
 - added asset-manifest.json
 - assets path fix

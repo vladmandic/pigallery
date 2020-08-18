@@ -1,5 +1,5 @@
 const tf = require('@tensorflow/tfjs');
-const faceapi = require('face-api.js');
+const faceapi = require('/home/vlado/dev/face-api/build/index.js');
 const modelDetect = require('./modelDetect.js');
 const log = require('./log.js');
 const config = require('./config.js').default;

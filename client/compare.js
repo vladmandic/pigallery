@@ -1,5 +1,5 @@
 const tf = require('@tensorflow/tfjs');
-const faceapi = require('face-api.js');
+const faceapi = require('/home/vlado/dev/face-api/build/index.js');
 const log = require('./log.js');
 const config = require('./config.js').default;
 const modelClassify = require('./modelClassify.js');
@@ -225,6 +225,7 @@ async function yolo() {
 
 // eslint-disable-next-line no-unused-vars
 async function person() {
+  log.result('FaceAPI', faceapi.tf.version_core);
   log.result('Loading models ...');
 
   let engine;
@@ -235,13 +236,13 @@ async function person() {
   stats.tensors0 = engine.state.numTensors;
 
   const options = [];
-  options[0] = { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'ssdMobilenetv1' };
-  options[1] = { name: 'FaceAPI Tiny', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' };
+  options[0] = { name: 'FaceAPI Tiny', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' };
+  // options[1] = { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'ssdMobilenetv1' };
   // options[2] = { name: 'FaceAPI MTCNN', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'mtcnn' };
   // options[3] = { name: 'FaceAPI Yolo v2', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyYolov2' };
 
-  if (options[0]) await faceapi.nets.ssdMobilenetv1.load(options[0].modelPath);
-  if (options[1]) await faceapi.nets.tinyFaceDetector.load(options[1].modelPath);
+  if (options[0]) await faceapi.nets.tinyFaceDetector.load(options[0].modelPath);
+  if (options[1]) await faceapi.nets.ssdMobilenetv1.load(options[1].modelPath);
   if (options[2]) await faceapi.nets.mtcnn.load(options[2].modelPath);
   if (options[3]) await faceapi.nets.tinyYolov2.load(options[1].modelPath);
 
@@ -250,8 +251,8 @@ async function person() {
   await faceapi.nets.faceRecognitionNet.load(options[0].modelPath);
   await faceapi.nets.faceExpressionNet.load(options[0].modelPath);
 
-  if (options[0]) options[0].face = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3, maxResults: 5 });
-  if (options[1]) options[1].face = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.3, inputSize: 416 });
+  if (options[0]) options[0].face = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.3, inputSize: 416 });
+  if (options[1]) options[1].face = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.3, maxResults: 5 });
   if (options[2]) options[2].face = new faceapi.MtcnnOptions({ scoreThreshold: 0.3 }); // minFaceSize, scaleFactor, maxNumScales, scoreThresholds, scaleSteps
   if (options[3]) options[3].face = new faceapi.TinyYolov2Options({ minConfidence: 0.5, maxResults: 5, scoreThreshold: 0.5, minFaceSize: 100, scaleFactor: 0.8, inputSize: 128 });
 
@@ -335,9 +336,10 @@ async function detect() {
 }
 
 async function main() {
-  init();
+  await init();
   tf.ENV.set('WEBGL_PACK', false);
   tf.ENV.set('WEBGL_CONV_IM2COL', false);
+  log.result('TensorFlow/JS', tf.version_core, JSON.stringify(tf.version));
 
   $('#btn-classify').click(() => classify());
   $('#btn-detect').click(() => detect());

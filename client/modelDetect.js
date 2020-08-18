@@ -19,8 +19,12 @@ let config = {
 async function load(cfg) {
   let model;
   config = { ...config, ...cfg };
-  if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath);
-  if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath);
+  const loadOpts = {
+    fetchFunc: (...args) => fetch(...args),
+    fromTFHub: config.modelPath.includes('tfhub.dev'),
+  };
+  if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath, loadOpts);
+  if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath, loadOpts);
   const res = await fetch(config.classes);
   model.labels = await res.json();
   model.config = config;
@@ -78,7 +82,7 @@ function calculateMaxScores(result) {
 
 async function detectCOCO(model, image) {
   const imgBuf = tf.browser.fromPixels(image, 3);
-  const expanded = imgBuf.expandDims(0);
+  const expanded = tf.expandDims(imgBuf, 0);
   let batched;
   if (!model.config.useFloat) {
     batched = expanded;
