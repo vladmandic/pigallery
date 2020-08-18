@@ -7,7 +7,7 @@ require('@tensorflow/tfjs-backend-cpu');
 require('@tensorflow/tfjs-backend-webgl');
 require('@tensorflow/tfjs-converter');
 */
-const faceapi = require('face-api.js');
+const faceapi = require('/home/vlado/dev/face-api/build/index.js');
 const modelClassify = require('./modelClassify.js');
 const modelDetect = require('./modelDetect.js');
 const log = require('./log.js');

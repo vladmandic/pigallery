@@ -19,9 +19,12 @@ let config = {
 async function load(cfg) {
   let model;
   config = { ...config, ...cfg };
-  const tfHub = config.modelPath.includes('tfhub.dev');
-  if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath, { fromTFHub: tfHub });
-  if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath, { fromTFHub: tfHub });
+  const loadOpts = {
+    fetchFunc: (...args) => fetch(...args),
+    fromTFHub: config.modelPath.includes('tfhub.dev'),
+  };
+  if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath, loadOpts);
+  if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath, loadOpts);
   const res = await fetch(config.classes);
   model.labels = await res.json();
   model.config = config;
@@ -49,11 +52,11 @@ async function decodeValues(model, values) {
 async function classify(model, image) {
   const values = tf.tidy(() => {
     const imgBuf = tf.browser.fromPixels(image, 3);
-    const bufFloat = imgBuf.toFloat();
-    const mul = bufFloat.mul((model.config.inputMax - model.config.inputMin) / 255.0);
-    const add = mul.add(model.config.inputMin);
+    const bufFloat = tf.cast(imgBuf, 'float32'); // imgBuf.toFloat();
+    const mul = tf.mul(bufFloat, (model.config.inputMax - model.config.inputMin) / 255.0); // bufFloat.mul((model.config.inputMax - model.config.inputMin) / 255.0);
+    const add = tf.add(mul, model.config.inputMin); // mul.add(model.config.inputMin);
     const resized = tf.image.resizeBilinear(add, [model.config.tensorSize, model.config.tensorSize], model.config.alignCorners);
-    const reshaped = resized.reshape([-1, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]);
+    const reshaped = tf.reshape(resized, [-1, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]); // resized.reshape([-1, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]);
     let batched;
     if (!model.config.useFloat) {
       batched = reshaped;

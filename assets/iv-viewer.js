@@ -407,7 +407,7 @@
         const _state = _this._state;
         const curPerc = _state.zoomValue;
         const imageDim = _state.imageDim;
-        const containerDim = _state.containerDim;
+        const containerDim = _state.containerDim || { w: 0, h: 0 };
         const zoomSliderLength = _state.zoomSliderLength;
         const image = _elements.image;
         const zoomHandle = _elements.zoomHandle;
