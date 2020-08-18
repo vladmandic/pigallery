@@ -7,27 +7,14 @@ const http2 = require('http2');
 const express = require('express');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
-// const shrinkRay = require('shrink-ray-current');
 const nedb = require('nedb-promises');
 const api = require('./api.js');
 const build = require('./build.js');
 const watcher = require('./watcher.js');
 const changelog = require('./changelog.js');
-// const nodeconfig = require('../package.json');
-// const config = require('../global.config.json');
 
 global.json = [];
 global.config = JSON.parse(fs.readFileSync('./config.json'));
-
-/*
-function allowCORS(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') res.send(200);
-  else next();
-}
-*/
 
 function allowPWA(req, res, next) {
   if (req.url.endsWith('.js')) res.header('Service-Worker-Allowed', '/');
@@ -68,8 +55,6 @@ async function main() {
   app.use(session(global.config.cookie));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false, limit: '1mb', parameterLimit: 10000 }));
-  // app.use(shrinkRay({ useZopfliForGzip: false, brotli: { quality: 4 } }));
-  // if (global.config.server.allowCORS) app.use(allowCORS);
   if (global.config.server.allowPWA) app.use(allowPWA);
   if (global.config.server.forceHTTPS) app.use(forceSSL);
 
@@ -101,8 +86,6 @@ async function main() {
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
   // define route for root
-  // app.get('/', (req, res) => res.redirect(url.format({ pathname: '/gallery', query: req.query }))); // res.redirect('/gallery'));
-
   app.get('/', (req, res) => res.sendFile('gallery.html', { root: './client' }));
   app.get('/true', (req, res) => res.status(200).send(true));
   // define routes for folders
