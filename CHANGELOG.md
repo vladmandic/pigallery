@@ -1,14 +1,15 @@
 # PiGallery Change Log
 
+### **origin/HEAD** 2020/08/18 cyan00@gmail.com
+
+
 ### **v1.2.5** 2020/08/18 cyan00@gmail.com
 
 - tinkering with tfjs@2.3.0 vs tfjs@1.7.4
 - removed shrink-ray
 - import branched face-api
 - preparing for tfjs 2.0 upgrade
-
-### **origin/HEAD** 2020/08/17 cyan00@gmail.com
-
+- improved location scanning
 - added taglines
 - added transparency effect
 - updated logger
