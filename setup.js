@@ -113,6 +113,7 @@ async function main() {
   process.stdout.write('Results written to setup.json\n');
   let old = [];
   if (fs.existsSync(f)) old = JSON.parse(fs.readFileSync(f));
+  if (!Array.isArray(old)) old = [];
   old.push(npm);
   fs.writeFileSync(f, JSON.stringify(npm, null, 2));
 }

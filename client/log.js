@@ -41,13 +41,14 @@ async function active(...msg) {
 }
 
 let divState;
-async function state(msg, append) {
-  if (!divState) divState = document.getElementById('state');
+async function state(msg, append = true) {
+  if (!divState) divState = document.getElementById('state') || document.getElementById('log');
   if (divState) {
     if (!append) divState.innerHTML = `${msg}`;
-    else divState.innerHTML += `&nbsp${msg}`;
+    else divState.innerHTML += `&nbsp${msg}<br>`;
+  }
   // eslint-disable-next-line no-console
-  } else console.log(...msg);
+  console.log(msg);
 }
 
 module.exports = {

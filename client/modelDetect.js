@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-
 const tf = require('@tensorflow/tfjs');
 
 let config = {
@@ -13,6 +11,7 @@ let config = {
   softNmsSigma: 0,
   useFloat: false,
   classes: 'assets/Coco-Labels.json',
+  // eslint-disable-next-line no-use-before-define
   exec: detectCOCO,
 };
 
@@ -94,7 +93,7 @@ async function detectCOCO(model, image) {
   const [scores, classes] = calculateMaxScores(result);
   const reshaped = tf.tensor2d(result[1].dataSync(), [result[1].shape[1], result[1].shape[3]]);
   // const index = tf.image.nonMaxSuppression(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma); // async version leaks 2 tensors
-  const index = await tf.image.nonMaxSuppressionAsync(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma); // async version leaks 2 tensors
+  const index = await tf.image.nonMaxSuppressionAsync(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma);
   const results = buildDetectedObjects(model, batched, result, scores, classes, index); // disposes of batched, result, index
   tf.dispose(imgBuf);
   tf.dispose(reshaped);
@@ -103,7 +102,7 @@ async function detectCOCO(model, image) {
 
 async function detectSSD(model, image) {
   const imgBuf = tf.browser.fromPixels(image, 3);
-  const expanded = imgBuf.expandDims(0);
+  const expanded = tf.expandDims(imgBuf, 0);
   let batched;
   if (!model.config.useFloat) {
     batched = expanded;
@@ -114,6 +113,8 @@ async function detectSSD(model, image) {
   }
   // console.log('execute start', model); look at model.inputs and model.outputs on how to execute a model
   const result = await model.executeAsync({ images: batched }, ['module_apply_default/hub_input/strided_slice_1', 'module_apply_default/hub_input/strided_slice_2', 'module_apply_default/hub_input/strided_slice']); // scores, classes, boxes
+  // model.executeAsync({'inputs': tf.zeros([1, 16], 'int32'), 'softmax_temperature': tf.scalar(0.6)}, ["decoder/decode_sample/decoder/transpose_1"])
+
   // console.log('execute end', model, result); model.outputs map to result
   // for (const data of result) console.log(data, data.dataSync());
   const scores = result[0].dataSync();

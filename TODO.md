@@ -7,21 +7,19 @@ N/A
 ## Future Features
 
 - Server-side processing using TFJS-Node: nVidia CUDA on WSL2 requires kernel 4.19.121 current 4.19.104
-- Options editor
 - Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0: Face-API Incompatibility
-- Use DeepDetect model
 
 ## Convert
 
 TF-Hub to TFJS:
 
-    tensorflowjs_converter --input_format tf_hub --output_format tfjs_graph_model --signature_name serving_default --skip_op_check --weight_shard_size_bytes 4194304 <url> .
+    tensorflowjs_converter --input_format tf_hub --output_format tfjs_graph_model --strip_debug_ops=True --signature_name serving_default --skip_op_check --weight_shard_size_bytes 4194304 <url> .
 
 TF-Saved to TFJS:
 Requires that model has tags
 
     saved_model_cli show --dir . --all
-    tensorflowjs_converter --input_format tf_saved_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 . ./tfjs/
+    tensorflowjs_converter --input_format tf_saved_model --output_format tfjs_graph_model --skip_op_check --strip_debug_ops=True --weight_shard_size_bytes 4194304 . ./tfjs/
 
 TF-Frozen to TFJS:
 Requires --output_node_names
