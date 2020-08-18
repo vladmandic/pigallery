@@ -1,4 +1,7 @@
 const tf = require('@tensorflow/tfjs');
+// const tf = require('/home/vlado/dev/tensorflow@1.7.4/tfjs-core');
+// const tf = require('/home/vlado/dev/tensorflow@2.3.0/tfjs-core/dist/index.js');
+// const tf = faceapi.tf;
 const faceapi = require('@vladmandic/face-api');
 const log = require('./log.js');
 const config = require('./config.js').default;
@@ -6,6 +9,7 @@ const modelClassify = require('./modelClassify.js');
 const modelDetect = require('./modelDetect.js');
 const modelYolo = require('./modelYolo.js');
 const processImage = require('./processImage.js');
+
 
 const models = [];
 window.cache = [];
@@ -16,15 +20,22 @@ async function init() {
   if (window.user && window.user.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user.split('@')[0]);
-    log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
+    log.state(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
     if (!window.user.admin) $('#btn-update').css('color', 'gray');
   } else {
     window.location = '/client/auth.html';
   }
+  log.state(`TensorFlow/JS Version: ${tf.version_core}`);
+  // eslint-disable-next-line no-console
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
+  tf.ENV.set('DEBUG', false);
   if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
-  log.result(`Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.batchProcessing} image resize: ${config.maxSize}px shape: ${config.squareImage ? 'square' : 'native'} float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);
+  const f = `float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`;
+  log.state(`Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.batchProcessing} image resize: ${config.maxSize}px shape: ${config.squareImage ? 'square' : 'native'} ${f}`);
+  log.state(`Features: ${JSON.stringify(tf.ENV.features)}`);
+  // eslint-disable-next-line no-console
+  console.log(tf.ENV.features);
 }
 
 async function loadClassify(options) {
@@ -45,7 +56,7 @@ async function loadClassify(options) {
   stats.tensors = Math.round(stats.tensors1 - stats.tensors0);
   stats.time = Math.round(stats.time1 - stats.time0);
   models.push({ name: options.name, stats, model });
-  log.result(`Loaded model: ${options.name}  in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
+  log.state(`Loaded model: ${options.name}  in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 }
 
 async function loadDetect(options) {
@@ -66,12 +77,12 @@ async function loadDetect(options) {
   stats.tensors = Math.round(stats.tensors1 - stats.tensors0);
   stats.time = Math.round(stats.time1 - stats.time0);
   models.push({ name: options.name, stats, model });
-  log.result(`Loaded model: ${options.name}  in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
+  log.state(`Loaded model: ${options.name}  in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 }
 
 async function match(file) {
   const image = window.cache.find((a) => a.file === file);
-  log.result('Building face descriptors');
+  log.state('Building face descriptors');
   const sorted = window.cache
     .map((a) => {
       a.descriptor = (a.results[0] && a.results[0].data[0] && a.results[0].data[0].descriptor) ? a.results[0].data[0].descriptor : null;
@@ -134,13 +145,13 @@ async function redraw() {
 }
 
 async function classify() {
-  log.result('Loading models ...');
+  log.state('Loading models ...');
   // console.table('Clean', tf.memory());
   // await loadClassify({ name: 'ImageNet MobileNet v1', modelPath: '/models/mobilenet-v1/model.json', score: 0.2, topK: 3 });
-  // await loadClassify({ name: 'ImageNet MobileNet v2', modelPath: '/models/mobilenet-v2/model.json', score: 0.2, topK: 3 });
+  await loadClassify({ name: 'ImageNet MobileNet v2', modelPath: '/models/mobilenet-v2/model.json', score: 0.2, topK: 3 });
   // await loadClassify({ name: 'ImageNet Inception v1', modelPath: 'models/inception-v1/model.json', score: 0.2, topK: 3 });
   // await loadClassify({ name: 'ImageNet Inception v2', modelPath: 'models/inception-v2/model.json', score: 0.2, topK: 3 });
-  // await loadClassify({ name: 'ImageNet Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 });
+  await loadClassify({ name: 'ImageNet Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 });
   await loadClassify({ name: 'ImageNet Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.22, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200 });
   // await loadClassify({ name: 'ImageNet ResNet v2-50', modelPath: '/models/resnet-v2-50/model.json', score: 0.2, topK: 3, tensorSize: 224 });
   // await loadClassify({ name: 'ImageNet ResNet v2-101', modelPath: '/models/resnet-v2-101/model.json', score: 0.2, topK: 3 });
@@ -153,24 +164,27 @@ async function classify() {
   // await loadClassify({ name: 'ImageNet-21k BiT-S R101x1', modelPath: 'models/bit-s-r101x1/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 1, classes: 'assets/ImageNet-Labels21k.json' });
   // await loadClassify({ name: 'ImageNet-21k BiT-M R101x1', modelPath: 'models/bit-m-r101x1/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 1, classes: 'assets/ImageNet-Labels21k.json' });
   await loadClassify({ name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-6k/model.json', score: 0.1, topK: 5, useFloat: false, tensorSize: 299, scoreScale: 1000, classes: 'assets/DeepDetect-Labels.json', offset: 0 });
-  await loadClassify({ name: 'iNaturalist Food MobileNet v1', modelPath: 'models/inaturalist/food/model.json', score: 0.38, scoreScale: 500, topK: 1, useFloat: false, tensorSize: 192, classes: 'assets/iNaturalist-Food-Labels.json', offset: 0 });
-  await loadClassify({ name: 'iNaturalist Plants MobileNet v2', modelPath: 'models/inaturalist/plants/model.json', score: 0.2, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Plants-Labels.json', offset: 0, background: 2101 });
-  await loadClassify({ name: 'iNaturalist Birds MobileNet v2', modelPath: 'models/inaturalist/birds/model.json', score: 0.25, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Birds-Labels.json', offset: 0, background: 964 });
-  await loadClassify({ name: 'iNaturalist Insects MobileNet v2', modelPath: 'models/inaturalist/insects/model.json', score: 0.3, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Insects-Labels.json', offset: 0, background: 1021 });
+  // await loadClassify({ name: 'iNaturalist Food MobileNet v1', modelPath: 'models/inaturalist/food/model.json', score: 0.38, scoreScale: 500, topK: 1, useFloat: false, tensorSize: 192, classes: 'assets/iNaturalist-Food-Labels.json', offset: 0 });
+  // await loadClassify({ name: 'iNaturalist Plants MobileNet v2', modelPath: 'models/inaturalist/plants/model.json', score: 0.2, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Plants-Labels.json', offset: 0, background: 2101 });
+  // await loadClassify({ name: 'iNaturalist Birds MobileNet v2', modelPath: 'models/inaturalist/birds/model.json', score: 0.25, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Birds-Labels.json', offset: 0, background: 964 });
+  // await loadClassify({ name: 'iNaturalist Insects MobileNet v2', modelPath: 'models/inaturalist/insects/model.json', score: 0.3, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Insects-Labels.json', offset: 0, background: 1021 });
   // console.table('Loaded', tf.memory());
 
-  log.result('Warming up ...');
+  log.state('Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   await modelClassify.classify(models[0].model, warmup.canvas);
   // console.table('Warmed up', tf.memory());
 
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   const files = await api.json();
-  log.result(`Received list from server: ${files.length} images`);
+  log.state(`Received list from server: ${files.length} images`);
 
   const stats = [];
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
+
+  // eslint-disable-next-line no-console
+  console.table('Starting', tf.memory());
   for (const file of files) {
     const results = [];
     const image = await processImage.getImage(file);
@@ -184,15 +198,17 @@ async function classify() {
     }
     print(file, image, results);
   }
-  log.result('');
+  log.state('');
   // eslint-disable-next-line no-console
   console.table('Finished', tf.memory());
-  for (const m in models) log.result(`${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+  for (const m in models) {
+    log.state(`${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+  }
 }
 
 // eslint-disable-next-line no-unused-vars
 async function yolo() {
-  log.result('Loading models ...');
+  log.state('Loading models ...');
   const yolov1tiny = await modelYolo.v1tiny();
   const yolov2tiny = await modelYolo.v2tiny();
   const yolov3tiny = await modelYolo.v3tiny();
@@ -200,12 +216,14 @@ async function yolo() {
 
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   const files = await api.json();
-  log.result(`Received list from server: ${files.length} images`);
+  log.state(`Received list from server: ${files.length} images`);
 
   const stats = [];
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   let data;
+  // eslint-disable-next-line no-console
+  console.table('Starting', tf.memory());
   for (const file of files) {
     const results = [];
     const image = await processImage.getImage(file);
@@ -220,13 +238,13 @@ async function yolo() {
     results.push({ model: 'CoCo DarkNet/Yolo v1 Full', data });
     print(file, image, results);
   }
-  log.result('');
+  log.state('');
 }
 
 // eslint-disable-next-line no-unused-vars
 async function person() {
-  log.result('FaceAPI', faceapi.tf.version_core);
-  log.result('Loading models ...');
+  log.state(`FaceAPI version: ${faceapi.tf.version_core}`);
+  log.state('Loading models ...');
 
   let engine;
   let stats = {};
@@ -264,11 +282,11 @@ async function person() {
   stats.size = Math.round((stats.bytes1 - stats.bytes0) / 1024 / 1024);
   stats.tensors = Math.round(stats.tensors1 - stats.tensors0);
   stats.time = Math.round(stats.time1 - stats.time0);
-  log.result(`Loaded model: FaceAPI in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
+  log.state(`Loaded model: FaceAPI in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 
   const api = await fetch('/api/dir?folder=Samples/Persons/');
   const files = await api.json();
-  log.result(`Received list from server: ${files.length} images`);
+  log.state(`Received list from server: ${files.length} images`);
 
   stats = [];
   // eslint-disable-next-line no-unused-vars
@@ -290,14 +308,16 @@ async function person() {
     }
     print(file, image, results);
   }
-  for (const m in options) log.result(`${options[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+  for (const m in options) {
+    log.state(`${options[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+  }
   $('.thumbnail').click((evt) => match(evt.target.getAttribute('tag')));
 }
 
 // eslint-disable-next-line no-unused-vars
 async function detect() {
-  log.result('Loading models ...');
-  await loadDetect({ name: 'CoCo SSD v1', modelPath: 'models/cocossd-v1/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
+  log.state('Loading models ...');
+  // await loadDetect({ name: 'CoCo SSD v1', modelPath: 'models/cocossd-v1/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
   await loadDetect({ name: 'CoCo SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
   // await loadDetect({ name: 'CoCo DarkNet/Yolo v1 Tiny', modelPath: 'models/yolo-v1-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
   // await loadDetect({ name: 'CoCo DarkNet/Yolo v2 Tiny', modelPath: 'models/yolo-v2-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
@@ -306,18 +326,19 @@ async function detect() {
   await loadDetect({ name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD });
   // await loadDetect({ name: 'OpenImages RCNN/Inception-ResNet v2', modelPath: 'models/rcnn-inception-resnet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD });
 
-  log.result('Warming up ...');
+  log.state('Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   // await modelDetect.detect(models[0].model, warmup.canvas);
   await modelDetect.exec(models[0].model, warmup.canvas);
-
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   const files = await api.json();
-  log.result(`Received list from server: ${files.length} images`);
+  log.state(`Received list from server: ${files.length} images`);
 
   const stats = [];
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
+  // eslint-disable-next-line no-console
+  console.table('Starting', tf.memory());
   for (const file of files) {
     const results = [];
     const image = await processImage.getImage(file);
@@ -331,15 +352,16 @@ async function detect() {
     }
     print(file, image, results);
   }
-  log.result('');
-  for (const m in models) log.result(`${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+  log.state('');
+  for (const m in models) {
+    log.state(`${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+  }
 }
 
 async function main() {
   await init();
-  tf.ENV.set('WEBGL_PACK', false);
-  tf.ENV.set('WEBGL_CONV_IM2COL', false);
-  log.result('TensorFlow/JS', tf.version_core, JSON.stringify(tf.version));
+  // tf.ENV.set('WEBGL_PACK', false);
+  // tf.ENV.set('WEBGL_CONV_IM2COL', false);
 
   $('#btn-classify').click(() => classify());
   $('#btn-detect').click(() => detect());

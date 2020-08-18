@@ -1,4 +1,5 @@
 const tf = require('@tensorflow/tfjs');
+
 const log = require('./log.js');
 const list = require('./list.js');
 const config = require('./config.js');

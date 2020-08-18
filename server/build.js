@@ -22,6 +22,9 @@ async function compile() {
       sourcemap: true,
       external: ['fs', 'crypto', 'util'],
       logLevel: 'error',
+      platform: 'browser',
+      target: 'es2020',
+      format: 'iife',
       metafile: './asset-manifest.json',
     });
     log.state('Client application rebuild ready');

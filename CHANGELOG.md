@@ -1,4 +1,6 @@
 # PiGallery Change Log
+- import branched face-api
+- preparing for tfjs 2.0 upgrade
 
 ### **origin/HEAD** 2020/08/17 cyan00@gmail.com
 
