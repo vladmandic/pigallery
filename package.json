@@ -60,6 +60,7 @@
   "homepage": "https://github.com/vladmandic/pigallery#readme",
   "dependencies": {
     "@tensorflow/tfjs": "^1.7.0",
+    "@vladmandic/face-api": "^0.3.0",
     "@vladmandic/pilogger": "^0.1.9",
     "chokidar": "^3.4.2",
     "esbuild": "^0.5.26",

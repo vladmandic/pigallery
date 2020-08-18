@@ -3,7 +3,7 @@
 // const oboe = require('oboe');
 const moment = require('moment');
 const marked = require('marked');
-const faceapi = require('/home/vlado/dev/face-api/build/index.js');
+const faceapi = require('@vladmandic/face-api');
 const log = require('./log.js');
 const config = require('./config.js');
 const init = require('./init.js');
