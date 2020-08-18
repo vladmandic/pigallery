@@ -39,14 +39,16 @@ async function enumerateLocations() {
     if (item.location.country && !countries.includes(item.location.country)) countries.push(item.location.country);
   }
   countries = countries.sort((a, b) => (a > b ? 1 : -1));
+  countries.push('Unknown');
   let i = 1;
   let locCount = 0;
   for (const country of countries) {
-    const items = window.filtered.filter((a) => a.location.country === country);
+    let items = window.filtered.filter((a) => a.location.country === country);
+    if (country === 'Unknown') items = window.filtered.filter((a) => a.location.country === undefined);
     let places = [];
     for (const item of items) {
       const state = item.location.state ? `, ${item.location.state}` : '';
-      if (!places.find((a) => a.name === `${item.location.near}${state}`)) places.push({ name: `${item.location.near}${state}`, sort: `${state}${item.location.near}` });
+      if ((country !== 'Unknown') && !places.find((a) => a.name === `${item.location.near}${state}`)) places.push({ name: `${item.location.near}${state}`, sort: `${state}${item.location.near}` });
     }
     let children = '';
     places = places.sort((a, b) => (a.sort > b.sort ? 1 : -1));
