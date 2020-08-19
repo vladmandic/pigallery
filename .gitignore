@@ -1,11 +1,9 @@
-node_modules
+node_modules/*
+sessions/*
 models/*
 media/*
 dist/*
-pigallerydb.json
-pigallerydb.nedb
+pigallery.db
 pigallery.log
 setup.json
-backup
-sessions/*
 config.json
