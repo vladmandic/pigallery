@@ -51,7 +51,7 @@ async function main() {
   await watcher.watch();
 
   // load expressjs middleware
-  global.config.cookie.store = new FileStore({ path: global.config.cookie.path });
+  global.config.cookie.store = new FileStore({ path: global.config.cookie.path, retries: 1, logFn: log.warn, ttl: 24 * 3600, reapSyncFallback: true });
   app.use(session(global.config.cookie));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false, limit: '1mb', parameterLimit: 10000 }));
@@ -63,7 +63,7 @@ async function main() {
     res.on('finish', () => {
       if (res.statusCode !== 200 && res.statusCode !== 302 && res.statusCode !== 304 && !req.url.endsWith('.map') && (req.url !== '/true')) {
         const ip = (req.headers['forwarded'] || '').match(/for="\[(.*)\]:/)[1] || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
-        log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`);
+        log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);
       }
     });
     if (req.url.startsWith('/api/auth')) next();
@@ -152,7 +152,7 @@ async function main() {
   await global.db.ensureIndex({ fieldName: 'processed', unique: false, sparse: false });
   await global.db.loadDatabase();
   const records = await global.db.count({});
-  log.state('Image cache loaded:', global.config.server.db, 'records:', records);
+  log.state('Image DB loaded:', global.config.server.db, 'records:', records);
   const shares = await global.db.find({ images: { $exists: true } });
   for (const share of shares) {
     log.state('Shares:', share.name, 'creator:', share.creator, 'key:', share.share, 'images:', share.images.length);

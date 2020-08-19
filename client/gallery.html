@@ -26,13 +26,13 @@
     <link rel="stylesheet" href="/assets/iv-viewer.css">
     <link rel="stylesheet" href="/assets/mapquest.css"/>
     <!-- <script type="text/javascript" src="/assets/gtag.js"></script> -->
+    <script type="text/javascript" src="/dist/gallery.js"></script>
+    <script async type="text/javascript" src="/assets/jquery.js"></script>
     <script defer type="text/javascript" src="/assets/popper.js"></script>
     <script defer type="text/javascript" src="/assets/mapquest.js"></script>
     <script defer type="text/javascript" src="/assets/leaflet-heat.js"></script>
     <script defer type="text/javascript" src="/assets/color-thief.js"></script>
     <script defer type="text/javascript" src="/assets/iv-viewer.js"></script>
-    <script type="text/javascript" src="/assets/jquery.js"></script>
-    <script type="text/javascript" src="/dist/gallery.js"></script>
     <style>
       @font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('../assets/lato.ttf') format('truetype'); }
       html { font-size: 18px; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; }
@@ -107,7 +107,7 @@
       .palette { font-size: 3.5rem; line-height: 2.7rem; }
       .loading { color: white; position: absolute; top: 220px; left: 50%; transform: translateX(-50%); }
       .processing { position: relative; top: -78px; color: grey; font-size: 0.6rem; }
-      .busy { justify-content: center; text-align: center; align-items: center; position: fixed; bottom: 80px; }
+      .busy { justify-content: center; text-align: center; align-items: center; position: fixed; bottom: 80px; display: none; }
       .busy-dots { width: 1rem; height: 1rem; border-radius: 100%;	margin: 1rem; background-image: linear-gradient(145deg, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0) 100%);	animation: bounce 1.5s 0.5s linear infinite; }
       @keyframes bounce {
 	      0%, 50%, 100% { transform: scale(1); filter: blur(0px);	}
@@ -129,6 +129,16 @@
   <noscript>
     <h1>You really need JS enabled...</h1>
   </noscript>
+  <!-- <script>
+    fetch('/api/user').then((res) => {
+      if (!res.ok) {
+        window.location = '/client/auth.html';
+      } else {
+        res.json().then((json) => { alert(JSON.stringify(json)); });
+        window.pigallery();
+      }
+    });
+  </script> -->
 
   <div id="splash" class="splash">
     <div class="loading" style="top: 120px;"><div class="loader"></div></div>
@@ -228,6 +238,5 @@
   </div>
   
   <div id="docs" class="docs"></div>
-
 </body>
 </html>

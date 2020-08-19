@@ -27,13 +27,13 @@ function year(obj) {
 }
 
 async function main() {
-  if (!fs.existsSync(global.config.server.db)) log.warn('Image cache not found:', global.config.server.db);
+  if (!fs.existsSync(global.config.server.db)) log.warn('Image DB not found:', global.config.server.db);
   global.db = nedb.create({ filename: global.config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
   await global.db.ensureIndex({ fieldName: 'image', unique: true, sparse: true });
   await global.db.ensureIndex({ fieldName: 'processed', unique: false, sparse: false });
   await global.db.loadDatabase();
   const records = await global.db.count({});
-  console.log('Image cache loaded:', global.config.server.db, 'records:', records);
+  log.state('Image DB loaded:', global.config.server.db, 'records:', records);
 
   const images = await global.db.find({ hash: { $exists: true } });
   // console.log(new Date(i.exif.created), new Date(i.exif.modified), new Date(i.exif.modified).getFullYear());
