@@ -59,22 +59,28 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 30906,
+      "bytes": 30934,
       "imports": [
         {
-          "path": "node_modules/moment/moment.js"
+          "path": "node_modules/@vladmandic/face-api/build/index.js"
         },
         {
           "path": "node_modules/marked/lib/marked.js"
         },
         {
-          "path": "node_modules/@vladmandic/face-api/build/index.js"
-        },
-        {
-          "path": "client/log.js"
+          "path": "node_modules/moment/moment.js"
         },
         {
           "path": "client/config.js"
+        },
+        {
+          "path": "client/indexdb.js"
+        },
+        {
+          "path": "client/details.js"
+        },
+        {
+          "path": "client/blockhash.js"
         },
         {
           "path": "client/init.js"
@@ -83,22 +89,16 @@
           "path": "client/list.js"
         },
         {
-          "path": "client/details.js"
+          "path": "client/log.js"
         },
         {
           "path": "client/map.js"
         },
         {
-          "path": "client/indexdb.js"
-        },
-        {
-          "path": "client/blockhash.js"
+          "path": "client/menu.js"
         },
         {
           "path": "client/options.js"
-        },
-        {
-          "path": "client/menu.js"
         },
         {
           "path": "client/pwa-register.js"
@@ -13342,17 +13342,11 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4742815
+      "bytes": 4743113
     },
     "dist/gallery.js": {
       "imports": [],
       "inputs": {
-        "node_modules/moment/moment.js": {
-          "bytesInOutput": 60825
-        },
-        "node_modules/marked/lib/marked.js": {
-          "bytesInOutput": 36253
-        },
         "node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 995
         },
@@ -13372,7 +13366,7 @@
           "bytesInOutput": 885
         },
         "node_modules/seedrandom/seedrandom.js": {
-          "bytesInOutput": 1647
+          "bytesInOutput": 1654
         },
         "node_modules/seedrandom/index.js": {
           "bytesInOutput": 176
@@ -13407,6 +13401,12 @@
         "node_modules/@vladmandic/face-api/build/index.js": {
           "bytesInOutput": 1228
         },
+        "node_modules/marked/lib/marked.js": {
+          "bytesInOutput": 36253
+        },
+        "node_modules/moment/moment.js": {
+          "bytesInOutput": 60844
+        },
         "client/log.js": {
           "bytesInOutput": 1092
         },
@@ -13428,17 +13428,20 @@
         "client/config.js": {
           "bytesInOutput": 6812
         },
-        "client/init.js": {
-          "bytesInOutput": 959
+        "client/indexdb.js": {
+          "bytesInOutput": 3196
         },
         "client/details.js": {
           "bytesInOutput": 10512
         },
+        "client/blockhash.js": {
+          "bytesInOutput": 1967
+        },
+        "client/init.js": {
+          "bytesInOutput": 959
+        },
         "client/list.js": {
           "bytesInOutput": 5670
-        },
-        "client/indexdb.js": {
-          "bytesInOutput": 3196
         },
         "client/nearest.js": {
           "bytesInOutput": 1508
@@ -13446,20 +13449,14 @@
         "client/map.js": {
           "bytesInOutput": 1780
         },
-        "client/blockhash.js": {
-          "bytesInOutput": 1967
+        "client/menu.js": {
+          "bytesInOutput": 3957
         },
         "client/options.js": {
           "bytesInOutput": 5707
         },
-        "client/menu.js": {
-          "bytesInOutput": 3957
-        },
         "client/pwa-register.js": {
           "bytesInOutput": 658
-        },
-        "client/gallery.js": {
-          "bytesInOutput": 19919
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/environment.js": {
           "bytesInOutput": 2159
@@ -13495,7 +13492,7 @@
           "bytesInOutput": 671
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/engine.js": {
-          "bytesInOutput": 15028
+          "bytesInOutput": 15035
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/device_util.js": {
           "bytesInOutput": 2284
@@ -14092,7 +14089,7 @@
           "bytesInOutput": 139
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/boolean_mask.js": {
-          "bytesInOutput": 496
+          "bytesInOutput": 503
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/compare.js": {
           "bytesInOutput": 1488
@@ -14272,7 +14269,7 @@
           "bytesInOutput": 3598
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/io/progress.js": {
-          "bytesInOutput": 557
+          "bytesInOutput": 571
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/io/weights_loader.js": {
           "bytesInOutput": 1564
@@ -14413,7 +14410,7 @@
           "bytesInOutput": 973
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/AvgPool3D_grad.js": {
-          "bytesInOutput": 183
+          "bytesInOutput": 190
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/avg_pool_backprop.js": {
           "bytesInOutput": 725
@@ -14464,7 +14461,7 @@
           "bytesInOutput": 196
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/DepthwiseConv2dNative_grad.js": {
-          "bytesInOutput": 1037
+          "bytesInOutput": 1044
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/Dilation2D_grad.js": {
           "bytesInOutput": 195
@@ -14491,7 +14488,7 @@
           "bytesInOutput": 349
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/FusedBatchNorm_grad.js": {
-          "bytesInOutput": 737
+          "bytesInOutput": 744
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/GatherV2_grad.js": {
           "bytesInOutput": 565
@@ -14539,7 +14536,7 @@
           "bytesInOutput": 1175
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/MaxPool3D_grad.js": {
-          "bytesInOutput": 206
+          "bytesInOutput": 213
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/max_pool_backprop.js": {
           "bytesInOutput": 748
@@ -15091,30 +15088,33 @@
           "bytesInOutput": 450
         },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
-          "bytesInOutput": 546355
+          "bytesInOutput": 546397
         },
         "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
-          "bytesInOutput": 232093
+          "bytesInOutput": 232156
         },
         "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
           "bytesInOutput": 86836
         },
         "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
-          "bytesInOutput": 51670
+          "bytesInOutput": 51677
+        },
+        "client/gallery.js": {
+          "bytesInOutput": 19911
         }
       },
-      "bytes": 1406359
+      "bytes": 1406529
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4520545
+      "bytes": 4520820
     },
     "dist/video.js": {
       "imports": [],
       "inputs": {
         "node_modules/moment/moment.js": {
-          "bytesInOutput": 60843
+          "bytesInOutput": 60862
         },
         "client/log.js": {
           "bytesInOutput": 1091
@@ -15156,7 +15156,7 @@
           "bytesInOutput": 885
         },
         "node_modules/seedrandom/seedrandom.js": {
-          "bytesInOutput": 1627
+          "bytesInOutput": 1634
         },
         "node_modules/seedrandom/index.js": {
           "bytesInOutput": 176
@@ -15198,16 +15198,16 @@
           "bytesInOutput": 4906
         },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
-          "bytesInOutput": 545786
+          "bytesInOutput": 545828
         },
         "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
-          "bytesInOutput": 231806
+          "bytesInOutput": 231869
         },
         "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
           "bytesInOutput": 86791
         },
         "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
-          "bytesInOutput": 51644
+          "bytesInOutput": 51651
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/environment.js": {
           "bytesInOutput": 2159
@@ -15243,7 +15243,7 @@
           "bytesInOutput": 671
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/engine.js": {
-          "bytesInOutput": 15028
+          "bytesInOutput": 15035
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/device_util.js": {
           "bytesInOutput": 2284
@@ -15840,7 +15840,7 @@
           "bytesInOutput": 139
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/boolean_mask.js": {
-          "bytesInOutput": 496
+          "bytesInOutput": 503
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/compare.js": {
           "bytesInOutput": 1488
@@ -16020,7 +16020,7 @@
           "bytesInOutput": 3598
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/io/progress.js": {
-          "bytesInOutput": 557
+          "bytesInOutput": 571
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/io/weights_loader.js": {
           "bytesInOutput": 1564
@@ -16161,7 +16161,7 @@
           "bytesInOutput": 973
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/AvgPool3D_grad.js": {
-          "bytesInOutput": 183
+          "bytesInOutput": 190
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/avg_pool_backprop.js": {
           "bytesInOutput": 725
@@ -16212,7 +16212,7 @@
           "bytesInOutput": 196
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/DepthwiseConv2dNative_grad.js": {
-          "bytesInOutput": 1037
+          "bytesInOutput": 1044
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/Dilation2D_grad.js": {
           "bytesInOutput": 195
@@ -16239,7 +16239,7 @@
           "bytesInOutput": 349
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/FusedBatchNorm_grad.js": {
-          "bytesInOutput": 737
+          "bytesInOutput": 744
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/GatherV2_grad.js": {
           "bytesInOutput": 565
@@ -16287,7 +16287,7 @@
           "bytesInOutput": 1175
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/MaxPool3D_grad.js": {
-          "bytesInOutput": 206
+          "bytesInOutput": 213
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/max_pool_backprop.js": {
           "bytesInOutput": 748
@@ -16839,18 +16839,18 @@
           "bytesInOutput": 450
         }
       },
-      "bytes": 1321407
+      "bytes": 1321605
     },
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4530466
+      "bytes": 4530741
     },
     "dist/process.js": {
       "imports": [],
       "inputs": {
         "node_modules/moment/moment.js": {
-          "bytesInOutput": 60843
+          "bytesInOutput": 60862
         },
         "client/log.js": {
           "bytesInOutput": 1091
@@ -16892,7 +16892,7 @@
           "bytesInOutput": 885
         },
         "node_modules/seedrandom/seedrandom.js": {
-          "bytesInOutput": 1627
+          "bytesInOutput": 1634
         },
         "node_modules/seedrandom/index.js": {
           "bytesInOutput": 176
@@ -16934,16 +16934,16 @@
           "bytesInOutput": 6248
         },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
-          "bytesInOutput": 545638
+          "bytesInOutput": 545680
         },
         "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
-          "bytesInOutput": 231806
+          "bytesInOutput": 231869
         },
         "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
           "bytesInOutput": 86791
         },
         "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
-          "bytesInOutput": 51644
+          "bytesInOutput": 51651
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/environment.js": {
           "bytesInOutput": 2159
@@ -16979,7 +16979,7 @@
           "bytesInOutput": 671
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/engine.js": {
-          "bytesInOutput": 15028
+          "bytesInOutput": 15035
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/device_util.js": {
           "bytesInOutput": 2284
@@ -17576,7 +17576,7 @@
           "bytesInOutput": 139
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/boolean_mask.js": {
-          "bytesInOutput": 496
+          "bytesInOutput": 503
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/compare.js": {
           "bytesInOutput": 1488
@@ -17756,7 +17756,7 @@
           "bytesInOutput": 3598
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/io/progress.js": {
-          "bytesInOutput": 557
+          "bytesInOutput": 571
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/io/weights_loader.js": {
           "bytesInOutput": 1564
@@ -17897,7 +17897,7 @@
           "bytesInOutput": 973
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/AvgPool3D_grad.js": {
-          "bytesInOutput": 183
+          "bytesInOutput": 190
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/avg_pool_backprop.js": {
           "bytesInOutput": 725
@@ -17948,7 +17948,7 @@
           "bytesInOutput": 196
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/DepthwiseConv2dNative_grad.js": {
-          "bytesInOutput": 1037
+          "bytesInOutput": 1044
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/Dilation2D_grad.js": {
           "bytesInOutput": 195
@@ -17975,7 +17975,7 @@
           "bytesInOutput": 349
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/FusedBatchNorm_grad.js": {
-          "bytesInOutput": 737
+          "bytesInOutput": 744
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/GatherV2_grad.js": {
           "bytesInOutput": 565
@@ -18023,7 +18023,7 @@
           "bytesInOutput": 1175
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/MaxPool3D_grad.js": {
-          "bytesInOutput": 206
+          "bytesInOutput": 213
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/max_pool_backprop.js": {
           "bytesInOutput": 748
@@ -18578,12 +18578,12 @@
           "bytesInOutput": 2161
         }
       },
-      "bytes": 1323498
+      "bytes": 1323681
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4569115
+      "bytes": 4569390
     },
     "dist/compare.js": {
       "imports": [],
@@ -18616,7 +18616,7 @@
           "bytesInOutput": 885
         },
         "node_modules/seedrandom/seedrandom.js": {
-          "bytesInOutput": 1627
+          "bytesInOutput": 1634
         },
         "node_modules/seedrandom/index.js": {
           "bytesInOutput": 176
@@ -18652,7 +18652,7 @@
           "bytesInOutput": 1228
         },
         "node_modules/moment/moment.js": {
-          "bytesInOutput": 60843
+          "bytesInOutput": 60862
         },
         "client/log.js": {
           "bytesInOutput": 1091
@@ -18676,16 +18676,16 @@
           "bytesInOutput": 6248
         },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
-          "bytesInOutput": 545786
+          "bytesInOutput": 545828
         },
         "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
-          "bytesInOutput": 231806
+          "bytesInOutput": 231869
         },
         "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
           "bytesInOutput": 86791
         },
         "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
-          "bytesInOutput": 51644
+          "bytesInOutput": 51651
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/environment.js": {
           "bytesInOutput": 2159
@@ -18721,7 +18721,7 @@
           "bytesInOutput": 671
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/engine.js": {
-          "bytesInOutput": 15028
+          "bytesInOutput": 15035
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/device_util.js": {
           "bytesInOutput": 2284
@@ -19318,7 +19318,7 @@
           "bytesInOutput": 139
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/boolean_mask.js": {
-          "bytesInOutput": 496
+          "bytesInOutput": 503
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/compare.js": {
           "bytesInOutput": 1488
@@ -19498,7 +19498,7 @@
           "bytesInOutput": 3598
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/io/progress.js": {
-          "bytesInOutput": 557
+          "bytesInOutput": 571
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/io/weights_loader.js": {
           "bytesInOutput": 1564
@@ -19639,7 +19639,7 @@
           "bytesInOutput": 973
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/AvgPool3D_grad.js": {
-          "bytesInOutput": 183
+          "bytesInOutput": 190
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/avg_pool_backprop.js": {
           "bytesInOutput": 725
@@ -19690,7 +19690,7 @@
           "bytesInOutput": 196
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/DepthwiseConv2dNative_grad.js": {
-          "bytesInOutput": 1037
+          "bytesInOutput": 1044
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/Dilation2D_grad.js": {
           "bytesInOutput": 195
@@ -19717,7 +19717,7 @@
           "bytesInOutput": 349
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/FusedBatchNorm_grad.js": {
-          "bytesInOutput": 737
+          "bytesInOutput": 744
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/GatherV2_grad.js": {
           "bytesInOutput": 565
@@ -19765,7 +19765,7 @@
           "bytesInOutput": 1175
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/gradients/MaxPool3D_grad.js": {
-          "bytesInOutput": 206
+          "bytesInOutput": 213
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/ops/max_pool_backprop.js": {
           "bytesInOutput": 748
@@ -20320,7 +20320,7 @@
           "bytesInOutput": 8621
         }
       },
-      "bytes": 1335370
+      "bytes": 1335553
     },
     "dist/worker.js.map": {
       "imports": [],
@@ -20337,7 +20337,7 @@
           "bytesInOutput": 351
         }
       },
-      "bytes": 2405
+      "bytes": 2394
     }
   }
 }

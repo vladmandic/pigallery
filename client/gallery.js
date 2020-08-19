@@ -1,19 +1,19 @@
 /* global Popper */
 
 // const oboe = require('oboe');
-const moment = require('moment');
-const marked = require('marked');
 const faceapi = require('@vladmandic/face-api');
-const log = require('./log.js');
+const marked = require('marked');
+const moment = require('moment');
 const config = require('./config.js');
+const db = require('./indexdb.js');
+const details = require('./details.js');
+const hash = require('./blockhash.js');
 const init = require('./init.js');
 const list = require('./list.js');
-const details = require('./details.js');
+const log = require('./log.js');
 const map = require('./map.js');
-const db = require('./indexdb.js');
-const hash = require('./blockhash.js');
-const options = require('./options.js');
 const menu = require('./menu.js');
+const options = require('./options.js');
 const pwa = require('./pwa-register.js');
 
 // global variables
@@ -777,5 +777,6 @@ async function main() {
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
 window.onhashchange = (evt) => hashChange(evt);
 window.onload = main;
+window.pigallery = main;
 
-exports.load = loadGallery;
+// exports.load = loadGallery;
