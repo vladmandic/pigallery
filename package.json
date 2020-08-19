@@ -7,7 +7,7 @@
     "start": "node server/pigallery.js",
     "version": "node server/changelog.js",
     "setup": "node ./setup.js",
-    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && stylelint client/* && depcheck --ignores='eslint-plugin-*,auditjs,npm-check-updates,stylelint-config-standard' --ignore-dirs='dist' && auditjs ossi --quiet"
+    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && && depcheck --ignores='eslint-plugin-*,npm-check-updates,stylelint-config-standard' --ignore-dirs='dist'"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -61,9 +61,9 @@
   "dependencies": {
     "@tensorflow/tfjs": "^1.7.4",
     "@vladmandic/face-api": "^0.3.2",
-    "@vladmandic/pilogger": "^0.1.9",
+    "@vladmandic/pilogger": "^0.1.10",
     "chokidar": "^3.4.2",
-    "esbuild": "^0.6.25",
+    "esbuild": "^0.6.26",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
@@ -72,10 +72,9 @@
     "moment": "^2.27.0",
     "nedb-promises": "^4.0.4",
     "session-file-store": "^1.4.0",
-    "simple-git": "^2.17.0"
+    "simple-git": "^2.18.0"
   },
   "devDependencies": {
-    "auditjs": "^4.0.18",
     "depcheck": "^1.2.0",
     "eslint": "^7.7.0",
     "eslint-config-airbnb-base": "^14.2.0",
@@ -85,8 +84,6 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "htmlhint": "^1.0.0-beta.1",
-    "npm-check-updates": "^8.0.0-alpha.1",
-    "stylelint": "^13.6.1",
-    "stylelint-config-standard": "^20.0.0"
+    "npm-check-updates": "^8.0.0-alpha.1"
   }
 }

@@ -92,7 +92,7 @@ async function main() {
   npm.update = await exec('npm update --depth=5 --json', 'NPM update modules');
   npm.dedupe = await exec('npm dedupe --json', 'NPM deduplicate modules');
   npm.prune = await exec('npm prune --no-production --json', 'NPM prune unused modules');
-  npm.audit = await exec('npm audit fix --json', 'NPM audit modules');
+  // npm.audit = await exec('npm audit fix --json', 'NPM audit modules');
 
   // delete examples
   await deleteExamples();
@@ -106,7 +106,7 @@ async function main() {
 
   // 3rd party checks
   await dependencyCheck();
-  await auditCheck();
+  // await auditCheck();
 
   // npm.cache = await exec('npm cache verify', 'NPM verify cache');
 

@@ -1,7 +1,8 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/08/18 cyan00@gmail.com
+### **origin/HEAD** 2020/08/19 cyan00@gmail.com
 
+- added asset-manifest
 - build optimization
 - updated changelog
 
