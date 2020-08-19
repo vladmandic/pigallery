@@ -2,6 +2,8 @@
 
 ### **origin/HEAD** 2020/08/18 cyan00@gmail.com
 
+- build optimization
+- updated changelog
 
 ### **v1.2.5** 2020/08/18 cyan00@gmail.com
 

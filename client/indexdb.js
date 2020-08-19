@@ -78,7 +78,7 @@ async function share() {
   let json = {};
   if (res.ok) json = await res.json();
   log.debug(t0, `Selected share: ${window.share} received ${json.length} images`);
-  log.result(`Retrieved ${window.filtered.length} images from server for share ${window.share}`);
+  log.result(`Loaded ${window.filtered.length} images from server for share ${window.share}`);
   return json;
 }
 

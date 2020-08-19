@@ -19,8 +19,13 @@ const pwa = require('./pwa-register.js');
 // global variables
 window.filtered = [];
 
-async function busy(working) {
-  $('#busy').toggle(working);
+async function busy(text) {
+  if (text) {
+    $('#busy-text').html(text);
+    $('.busy').toggle(true);
+  } else {
+    $('.busy').toggle('slow');
+  }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -63,7 +68,7 @@ async function folderHandlers() {
     const type = evt.target.getAttribute('type');
     if (!path || path.length < 1) return;
     const t0 = window.performance.now();
-    busy(true);
+    busy(`Selected<br>${path}`);
     switch (type) {
       case 'folder':
         log.debug(t0, `Selected path: ${path}`);
@@ -111,7 +116,7 @@ async function folderHandlers() {
       default:
     }
     list.redraw();
-    busy(false);
+    busy();
   });
 }
 
@@ -164,7 +169,7 @@ function shuffle(array) {
 
 // sort by image simmilarity
 async function simmilarImage(image) {
-  busy(true);
+  busy('Searching for<br>simmilar images');
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
   const object = window.filtered.find((a) => a.image === decodeURI(image));
@@ -177,18 +182,18 @@ async function simmilarImage(image) {
   await menu.enumerate();
   folderHandlers();
   list.scroll();
-  busy(false);
+  busy();
 }
 
 async function simmilarPerson(image) {
-  busy(true);
+  busy('Searching for<br>simmilar people');
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
   const object = window.filtered.find((a) => a.image === decodeURI(image));
   const descriptor = (object.person && object.person[0] && object.person[0].descriptor) ? new Float32Array(Object.values(object.person[0].descriptor)) : null;
   if (!descriptor) {
     log.debug(t0, 'Simmilar Search aborted as no person found in image');
-    busy(false);
+    busy();
     return;
   }
   for (const i in window.filtered) {
@@ -203,11 +208,11 @@ async function simmilarPerson(image) {
   await menu.enumerate();
   folderHandlers();
   list.scroll();
-  busy(false);
+  busy();
 }
 
 async function simmilarClasses(image) {
-  busy(true);
+  busy('Searching for<br>simmilar classes');
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
   const object = window.filtered.find((a) => a.image === decodeURI(image));
@@ -228,7 +233,7 @@ async function simmilarClasses(image) {
   await menu.enumerate();
   folderHandlers();
   list.scroll();
-  busy(false);
+  busy();
 }
 
 // sorts images based on given sort order
@@ -236,7 +241,6 @@ let loadTried = false;
 async function sortResults(sort) {
   $('#optionslist').toggle(false);
   if (!window.user.user) return;
-  busy(true);
 
   // refresh records
   // eslint-disable-next-line no-use-before-define
@@ -250,6 +254,7 @@ async function sortResults(sort) {
   }
   list.previous = null;
   // sort by
+  busy('Sorting images');
   if (sort.includes('alpha-down')) window.filtered = await db.all('name', true, 1, window.options.listItemCount);
   if (sort.includes('alpha-up')) window.filtered = await db.all('name', false, 1, window.options.listItemCount);
   if (sort.includes('numeric-down')) window.filtered = await db.all('date', false, 1, window.options.listItemCount);
@@ -268,6 +273,7 @@ async function sortResults(sort) {
   log.debug(t0, `Cached images: ${window.filtered.length} fetched initial`);
   const t1 = window.performance.now();
   $('#all').focus();
+  busy('Loading remaining<br>images in background');
   if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await db.all('name', true, window.options.listItemCount + 1));
   if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await db.all('name', false, window.options.listItemCount + 1));
   if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await db.all('date', false, window.options.listItemCount + 1));
@@ -275,22 +281,23 @@ async function sortResults(sort) {
   if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, window.options.listItemCount + 1));
   if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, window.options.listItemCount + 1));
   log.debug(t1, `Cached images: ${window.filtered.length} fetched remaining`);
-  if (window.filtered.length > 0) log.result(`Retrieved ${window.filtered.length} images from cache`);
+  if (window.filtered.length > 0) log.result(`Loaded ${window.filtered.length} images from cache`);
   else log.result('Image cache empty');
   if (!loadTried && window.filtered.length === 0) {
     loadTried = true;
     // eslint-disable-next-line no-use-before-define
     await loadGallery(window.options.listLimit);
   }
+  busy('Enumerating images');
   await menu.enumerate();
   folderHandlers();
   list.scroll();
-  busy(false);
+  busy();
 }
 
 // find duplicate images based on pre-computed sha-256 hash
 async function findDuplicates() {
-  busy(true);
+  busy('Searching for<br>duplicate images');
 
   log.result('Analyzing images for simmilarity ...');
   const t0 = window.performance.now();
@@ -349,7 +356,7 @@ async function loadGallery(limit, refresh = false) {
     log.result('Application access with share credentials and no direct share');
     return;
   }
-  busy(true);
+  busy('Loading images<br>in background');
   const t0 = window.performance.now();
   if (!refresh) {
     log.result('Downloading image cache ...');

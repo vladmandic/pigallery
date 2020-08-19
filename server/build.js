@@ -21,7 +21,7 @@ async function compile() {
       bundle: true,
       sourcemap: true,
       external: ['fs', 'crypto', 'util'],
-      logLevel: 'warn',
+      logLevel: 'error',
       platform: 'browser',
       target: 'es2020',
       // format: 'iife',
@@ -29,7 +29,7 @@ async function compile() {
     });
     log.state('Client application rebuild ready');
   } catch (err) {
-    log.error('Client application build error', err.errors);
+    log.error('Client application build error', err.errors || err);
   }
 }
 
