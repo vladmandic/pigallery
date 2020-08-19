@@ -61,7 +61,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "^1.7.4",
     "@vladmandic/face-api": "^0.3.2",
-    "@vladmandic/pilogger": "^0.1.10",
+    "@vladmandic/pilogger": "^0.1.11",
     "chokidar": "^3.4.2",
     "esbuild": "^0.6.26",
     "exif-parser": "^0.1.12",

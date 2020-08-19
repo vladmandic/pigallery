@@ -5,7 +5,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 18922,
+      "bytes": 19222,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
@@ -34,7 +34,7 @@
       ]
     },
     "client/config.js": {
-      "bytes": 11730,
+      "bytes": 11946,
       "imports": [
         {
           "path": "client/log.js"
@@ -13342,7 +13342,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4742487
+      "bytes": 4742815
     },
     "dist/gallery.js": {
       "imports": [],
@@ -13426,7 +13426,7 @@
           "bytesInOutput": 2509
         },
         "client/config.js": {
-          "bytesInOutput": 6623
+          "bytesInOutput": 6812
         },
         "client/init.js": {
           "bytesInOutput": 959
@@ -15103,12 +15103,12 @@
           "bytesInOutput": 51670
         }
       },
-      "bytes": 1406170
+      "bytes": 1406359
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4520217
+      "bytes": 4520545
     },
     "dist/video.js": {
       "imports": [],
@@ -15135,7 +15135,7 @@
           "bytesInOutput": 2508
         },
         "client/config.js": {
-          "bytesInOutput": 6622
+          "bytesInOutput": 6811
         },
         "node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 995
@@ -16839,12 +16839,12 @@
           "bytesInOutput": 450
         }
       },
-      "bytes": 1321218
+      "bytes": 1321407
     },
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4530138
+      "bytes": 4530466
     },
     "dist/process.js": {
       "imports": [],
@@ -16871,7 +16871,7 @@
           "bytesInOutput": 2508
         },
         "client/config.js": {
-          "bytesInOutput": 6622
+          "bytesInOutput": 6811
         },
         "node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 995
@@ -18578,12 +18578,12 @@
           "bytesInOutput": 2161
         }
       },
-      "bytes": 1323309
+      "bytes": 1323498
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4568476
+      "bytes": 4569115
     },
     "dist/compare.js": {
       "imports": [],
@@ -18664,7 +18664,7 @@
           "bytesInOutput": 2508
         },
         "client/config.js": {
-          "bytesInOutput": 6622
+          "bytesInOutput": 6811
         },
         "client/modelYolo.js": {
           "bytesInOutput": 5264
@@ -20317,10 +20317,10 @@
           "bytesInOutput": 450
         },
         "client/compare.js": {
-          "bytesInOutput": 8616
+          "bytesInOutput": 8621
         }
       },
-      "bytes": 1335176
+      "bytes": 1335370
     },
     "dist/worker.js.map": {
       "imports": [],

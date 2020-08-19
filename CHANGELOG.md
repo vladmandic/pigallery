@@ -2,12 +2,14 @@
 
 ### **origin/HEAD** 2020/08/19 cyan00@gmail.com
 
+- added nsfw model
+- 1.3.1
+- simplified dependencies
+- improved logging
 - added asset-manifest
 - build optimization
 - updated changelog
-
-### **v1.2.5** 2020/08/18 cyan00@gmail.com
-
+- 1.2.5
 - tinkering with tfjs@2.3.0 vs tfjs@1.7.4
 - removed shrink-ray
 - import branched face-api
@@ -16,9 +18,7 @@
 - added taglines
 - added transparency effect
 - updated logger
-
-### **v1.2.4** 2020/08/16 cyan00@gmail.com
-
+- 1.2.4
 - added swipe and color palette
 - updated dependencies
 - webgl background
@@ -27,22 +27,16 @@
 - assets path fix
 - updated
 - removed
-
-### **v1.2.3** 2020/08/13 cyan00@gmail.com
-
+- 1.2.3
 - touch optimizations
 - updated
-
-### **v1.2.2** 2020/08/11 cyan00@gmail.com
-
+- 1.2.2
 - caching optimizations
 - fix
 - updated changelog
 - updated dependencies
 - updated changelog
-
-### **v1.2.1** 2020/08/09 cyan00@gmail.com
-
+- 1.2.1
 - touch optimizations
 - updated dependencies
 - server metadata
@@ -50,44 +44,32 @@
 - added dummy endpoint
 - uri simplification
 - update
-
-### **v1.1.13** 2020/08/01 cyan00@gmail.com
-
+- 1.1.13
 - lighthouse optimizations
 - visual fixes
 - updated
-
-### **v1.1.12** 2020/07/29 cyan00@gmail.com
-
+- 1.1.12
 - updated npm scripts
 - updated lint rules
 - added style lining
 - update
-
-### **v1.1.11** 2020/07/29 cyan00@gmail.com
-
+- 1.1.11
 - busy fix
 - cosmetic fixes
 - updated
-
-### **v1.1.10** 2020/07/28 cyan00@gmail.com
-
+- 1.1.10
 - cosmetic fixes
 - typo
 - fixed permissions
 - changelog
-
-### **v1.1.9** 2020/07/28 cyan00@gmail.com
-
+- 1.1.9
 - updated icons
 - visual tweaks
 - cosmetic tweaks
 - splash screen
 - added loader
 - changelog
-
-### **v1.1.8** 2020/07/26 cyan00@gmail.com
-
+- 1.1.8
 - theme animations
 
 ### **v1.1.7** 2020/07/25 cyan00@gmail.com
@@ -97,151 +79,95 @@
 - delete
 - added themes
 - updated changelog
-
-### **v1.1.5** 2020/07/23 cyan00@gmail.com
-
+- 1.1.5
 - ui improvements
 - fixed slow loading artifacts
-
-### **v1.1.4** 2020/07/22 cyan00@gmail.com
-
-
-### **v1.1.3** 2020/07/21 cyan00@gmail.com
-
+- 1.1.4
+- 1.1.3
 - find images with simmilar classes
 - version bumb
-
-### **v1.1.2** 2020/07/16 cyan00@gmail.com
-
-
-### **v1.1.1** 2020/07/16 cyan00@gmail.com
-
+- 1.1.2
+- 1.1.1
 - implemented user configuration
-
-### **v1.0.10** 2020/07/15 cyan00@gmail.com
-
+- 1.0.10
 - updated packages
 - increased server limits
 - changelog
-
-### **v1.0.9** 2020/07/09 cyan00@gmail.com
-
+- 1.0.9
 - secured share urls
 - secured share access
-
-### **v1.0.8** 2020/07/08 cyan00@gmail.com
-
+- 1.0.8
 - logging update
 - first pass of sharing feature
 - package version update
-
-### **v1.0.7** 2020/07/06 cyan00@gmail.com
-
+- 1.0.7
 - updated packages
 - adding lineawesome
 - update
-
-### **v1.0.6** 2020/07/04 cyan00@gmail.com
-
+- 1.0.6
 - navigation improvements
 - enhanced error handling during processing
 - modified service worker
-
-### **v1.0.5** 2020/07/03 cyan00@gmail.com
-
+- 1.0.5
 - parallel processing
 - updated packages
 - updated
-
-### **v1.0.4** 2020/07/02 cyan00@gmail.com
-
+- 1.0.4
 - redone logging
 - updated changelog
 - implemented person simmilarity
-
-### **v1.0.3** 2020/07/01 cyan00@gmail.com
-
+- 1.0.3
 - prototype face compare
 - print additional details
-
-### **v1.0.2** 2020/06/30 cyan00@gmail.com
-
+- 1.0.2
 - db refresh since last update
 - major release
-
-### **v1.0.1** 2020/06/30 cyan00@gmail.com
-
+- 1.0.1
 - css formatting
 - implemented multi-engine processing
 - tuning models
-
-### **v0.9.15** 2020/06/28 cyan00@gmail.com
-
+- 0.9.15
 - model tuning
 - started on inaturalist models
-
-### **v0.9.14** 2020/06/27 cyan00@gmail.com
-
+- 0.9.14
 - remapped http serve
 - expanding video use cases
-
-### **v0.9.13** 2020/06/24 cyan00@gmail.com
-
+- 0.9.13
 - optimized for piproxy
 - updated pwa
 - fixed map layout
-
-### **v0.9.12** 2020/06/24 cyan00@gmail.com
-
+- 0.9.12
 - fixed service worker
-
-### **v0.9.11** 2020/06/24 cyan00@gmail.com
-
+- 0.9.11
 - video detect with selectable options
 - updated packages to work with esbuild
-
-### **v0.9.10** 2020/06/23 cyan00@gmail.com
-
+- 0.9.10
 - swtiched to esbuild and implemented file watcher
 - file enum fix
 - updated config
 - mobile navigation optimizations
 - adding hash to url to monitor hashchange
 - updated todo list
-
-### **v0.9.9** 2020/06/22 cyan00@gmail.com
-
+- 0.9.9
 - added auto-generated changelog
 - implemented gallery infinite scroll
-
-### **v0.9.8** 2020/06/21 cyan00@gmail.com
-
+- 0.9.8
 - gallery load optimizations
 - moved long processing to web worker
-
-### **v0.9.7** 2020/06/20 cyan00@gmail.com
-
+- 0.9.7
 - changed default look
 - initial work on web workers
 - indexdb optimizations
-
-### **v0.9.6** 2020/06/20 cyan00@gmail.com
-
+- 0.9.6
 - added image map interface
-
-### **v0.9.5** 2020/06/19 cyan00@gmail.com
-
+- 0.9.5
 - implemented indexdb for client-side caching
 - auto-restart on hung processing
 - added auto-restart on stuck processing
 - added mapquest
-
-### **v0.9.4** 2020/06/17 cyan00@gmail.com
-
+- 0.9.4
 - ctime and mtime compare
-
-### **v0.9.3** 2020/06/17 cyan00@gmail.com
-
+- 0.9.3
 - updated logging
 - added Inception v4 and DeepDetect 6k models
 - initial map work
@@ -252,125 +178,85 @@
 - error handling
 - switched video detection to openimages
 - fixed labels
-
-### **v0.9.2** 2020/06/15 cyan00@gmail.com
-
+- 0.9.2
 - added larger openimages detection engine
 - read stream exception handling
 - enhanced metadata processing
 - fix exif gps to location
 - gps location fix
 - lint corrections
-
-### **v0.9.1** 2020/06/14 cyan00@gmail.com
-
+- 0.9.1
 - enhanced metadata processing
 - updated server-side validation
 - added internal profiler
-
-### **v0.8.5** 2020/06/13 cyan00@gmail.com
-
+- 0.8.5
 - updated details handling
 - optimized gallery bulk load
 - auto restart processing on error
-
-### **v0.8.4** 2020/06/09 cyan00@gmail.com
-
+- 0.8.4
 - updated list of models and benchmarks
 - added multiple models
 - added model compare
 - refactored for es202
-
-### **v0.8.3** 2020/06/06 cyan00@gmail.com
-
+- 0.8.3
 - updated dependencies
 - right click intercept
 - video processing bugfix
 - optimized simmilarity checks
-
-### **v0.8.2** 2020/05/31 cyan00@gmail.com
-
+- 0.8.2
 - fixed phash sorting
 - increaasing image limit
-
-### **v0.8.1** 2020/05/30 cyan00@gmail.com
-
+- 0.8.1
 - implemented simmilarity based on perception hash
 - improvements to responsive design
 - top classes reimplementation
-
-### **v0.7.4** 2020/05/29 cyan00@gmail.com
-
+- 0.7.4
 - bugfixes
 - fix time/date parsing
 - refectored details view
-
-### **v0.7.3** 2020/05/29 cyan00@gmail.com
-
+- 0.7.3
 - added location and classes views
 - implemented slideshow
-
-### **v0.7.2** 2020/05/28 cyan00@gmail.com
-
+- 0.7.2
 - bugfixes
 - fix folder list update during load
 - improved loading
-
-### **v0.7.1** 2020/05/28 cyan00@gmail.com
-
+- 0.7.1
 - async loading of large image set
 - updated screenshots
 - updated dependencies
-
-### **v0.6.4** 2020/05/27 cyan00@gmail.com
-
+- 0.6.4
 - updated readme
 - converted to png
 - added examples
-
-### **v0.6.3** 2020/05/26 cyan00@gmail.com
-
+- 0.6.3
 - fixed redirect on logout
 - optimized large image loading
 - simplified menus
-
-### **v0.6.2** 2020/05/25 cyan00@gmail.com
-
+- 0.6.2
 - optimized video processing
-
-### **v0.6.1** 2020/05/25 cyan00@gmail.com
-
+- 0.6.1
 - documented keyboard shortcuts
 - css fixes
-
-### **v0.5.4** 2020/05/24 cyan00@gmail.com
-
+- 0.5.4
 - implemented image pan&zoom
-
-### **v0.5.3** 2020/05/24 cyan00@gmail.com
-
+- 0.5.3
 - user-configurable image list size
 - formatting fixes
 - PWA disabled by default
-
-### **v0.5.2** 2020/05/23 cyan00@gmail.com
-
+- 0.5.2
 - pwa enabled
 - added gif and png processing
 - bugfixes
 - deleted dist
 - persistent user config
 - pwa caching
-
-### **v0.5.1** 2020/05/22 cyan00@gmail.com
-
+- 0.5.1
 - implemented pwa mode
 - updated license
 - added in-app docs
 - updated docs
-
-### **v0.4.2** 2020/05/22 cyan00@gmail.com
-
+- 0.4.2
 - added nedb data store
 - parametrized gallery options
 - formatting fixes
@@ -378,6 +264,175 @@
 - responsive design
 - responsive design
 - renamed repository
-
-### **grafted** 2020/05/21 cyan00@gmail.com
-
+- 0.4.1
+- Merge branch 'master'
+- Merge branch 'master' of https://github.com/vladmandic/pigallery
+- markdown linter
+- markdown linter
+- git smudge
+- git smudge
+- git smudge
+- git smudge
+- git smudge
+- git smudge
+- locations moved server-side
+- locations moved server-side
+- locations moved server-side
+- locations moved server-side
+- updated documentation
+- updated documentation
+- updated documentation
+- updated documentation
+- 0.3.2
+- 0.3.2
+- bugfixes
+- bugfixes
+- 0.3.1
+- 0.3.1
+- major update
+- major update
+- major update
+- major update
+- per-user configuration
+- per-user configuration
+- 0.2.7
+- 0.2.7
+- improved gallery view
+- improved gallery view
+- added folder view
+- added folder view
+- error handling in processing
+- error handling in processing
+- fixed live video
+- fixed live video
+- 0.2.6
+- 0.2.6
+- implemented user authentication
+- implemented user authentication
+- 0.2.5
+- 0.2.5
+- improved scrolling
+- improved scrolling
+- resizable thumbnails
+- resizable thumbnails
+- multi-face detection
+- multi-face detection
+- 0.2.4
+- 0.2.4
+- added alternative classification
+- added alternative classification
+- 0.2.3
+- 0.2.3
+- added file hashing using sha256
+- added file hashing using sha256
+- 0.2.2
+- 0.2.2
+- updated todo list
+- updated todo list
+- implemented gallery view
+- implemented gallery view
+- search improvements
+- search improvements
+- updated dependencies
+- updated dependencies
+- updated readme and screenshots
+- updated readme and screenshots
+- 0.2.1
+- 0.2.1
+- major work
+- major work
+- post to server
+- post to server
+- 0.1.3
+- 0.1.3
+- implemented resultset filtering
+- implemented resultset filtering
+- optimizations
+- optimizations
+- 0.1.2
+- 0.1.2
+- implemented real-time video processing
+- implemented real-time video processing
+- included screenshots
+- included screenshots
+- 0.1.1
+- 0.1.1
+- comitted dist
+- comitted dist
+- refactored to separate server and client code
+- refactored to separate server and client code
+- refactoring
+- refactoring
+- 0.0.10
+- 0.0.10
+- exif and geodata
+- exif and geodata
+- added exif parsing
+- added exif parsing
+- 0.0.9
+- 0.0.9
+- tuning
+- tuning
+- 0.0.8
+- 0.0.8
+- update
+- update
+- updated
+- updated
+- 0.0.7
+- 0.0.7
+- update
+- update
+- 0.0.6
+- 0.0.6
+- updated
+- updated
+- update
+- update
+- update
+- update
+- updated diagnostics
+- updated diagnostics
+- 0.0.5
+- 0.0.5
+- updated models and samples
+- updated models and samples
+- cleaned up dependencies
+- cleaned up dependencies
+- batch processing
+- batch processing
+- 0.0.4
+- 0.0.4
+- implemented server-side
+- implemented server-side
+- implemented server-side
+- update image resampling
+- update image resampling
+- 0.0.3
+- 0.0.3
+- updated dependencies
+- updated dependencies
+- stable models
+- stable models
+- enabled all models
+- enabled all models
+- switched from native browser to npm with parceljs
+- switched from native browser to npm with parceljs
+- update
+- update
+- update
+- update
+- major changes
+- major changes
+- updated samples
+- updated samples
+- error handling
+- error handling
+- updated samples
+- updated samples
+- implemented yolo and mobilenet
+- implemented yolo and mobilenet
+- initial commit
+- initial commit
+- Initial commit
+- Initial commit
