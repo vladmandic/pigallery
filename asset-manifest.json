@@ -59,7 +59,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 30934,
+      "bytes": 30909,
       "imports": [
         {
           "path": "node_modules/@vladmandic/face-api/build/index.js"
@@ -13342,7 +13342,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4743113
+      "bytes": 4743071
     },
     "dist/gallery.js": {
       "imports": [],
@@ -15100,10 +15100,10 @@
           "bytesInOutput": 51677
         },
         "client/gallery.js": {
-          "bytesInOutput": 19911
+          "bytesInOutput": 19891
         }
       },
-      "bytes": 1406529
+      "bytes": 1406509
     },
     "dist/video.js.map": {
       "imports": [],
