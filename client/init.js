@@ -15,7 +15,7 @@ async function initUser() {
   if (window.user && window.user.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user.split('@')[0]);
-    log.result(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
+    log.div('log', true, `Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
     if (!window.user.admin) $('#btn-update').css('color', 'gray');
   } else {
     window.location = '/client/auth.html';

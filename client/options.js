@@ -1,4 +1,10 @@
 const tf = require('@tensorflow/tfjs');
+// const tf = require('@tensorflow/tfjs-core');
+// require('@tensorflow/tfjs-data');
+// require('@tensorflow/tfjs-layers');
+// require('@tensorflow/tfjs-backend-cpu');
+// require('@tensorflow/tfjs-backend-webgl');
+// require('@tensorflow/tfjs-converter');
 
 const log = require('./log.js');
 const list = require('./list.js');

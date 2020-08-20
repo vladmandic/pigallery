@@ -1,8 +1,3 @@
-const tf = require('@tensorflow/tfjs');
-// const tf = require('/home/vlado/dev/tensorflow@1.7.4/tfjs-core');
-// const tf = require('/home/vlado/dev/tensorflow@2.3.0/tfjs-core/dist/index.js');
-// const tf = faceapi.tf;
-const faceapi = require('@vladmandic/face-api');
 const log = require('./log.js');
 const config = require('./config.js').default;
 const modelClassify = require('./modelClassify.js');
@@ -10,31 +5,33 @@ const modelDetect = require('./modelDetect.js');
 const modelYolo = require('./modelYolo.js');
 const processImage = require('./processImage.js');
 
+let tf = window.tf;
+let faceapi = window.faceapi;
+
 const models = [];
 window.cache = [];
 
 async function init() {
   const res = await fetch('/api/user');
+  tf = window.tf;
+  faceapi = window.faceapi;
   if (res.ok) window.user = await res.json();
   if (window.user && window.user.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user.split('@')[0]);
-    log.state(`Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
+    log.div('log', true, `Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
     if (!window.user.admin) $('#btn-update').css('color', 'gray');
   } else {
     window.location = '/client/auth.html';
   }
-  log.state(`TensorFlow/JS Version: ${tf.version_core}`);
-  // eslint-disable-next-line no-console
+  log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
   if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
   const f = `float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`;
-  log.state(`Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.batchProcessing} image resize: ${config.maxSize}px shape: ${config.squareImage ? 'square' : 'native'} ${f}`);
-  log.state(`Features: ${JSON.stringify(tf.ENV.features)}`);
-  // eslint-disable-next-line no-console
-  console.log(tf.ENV.features);
+  log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.batchProcessing} image resize: ${config.maxSize}px shape: ${config.squareImage ? 'square' : 'native'} ${f}`);
+  log.div('log', true, 'Features:', tf.ENV.features);
 }
 
 async function loadClassify(options) {
@@ -55,7 +52,7 @@ async function loadClassify(options) {
   stats.tensors = Math.round(stats.tensors1 - stats.tensors0);
   stats.time = Math.round(stats.time1 - stats.time0);
   models.push({ name: options.name, stats, model });
-  log.state(`Loaded model: ${options.name}  in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
+  log.div('log', true, `Loaded model: ${options.name}  in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 }
 
 async function loadDetect(options) {
@@ -76,22 +73,7 @@ async function loadDetect(options) {
   stats.tensors = Math.round(stats.tensors1 - stats.tensors0);
   stats.time = Math.round(stats.time1 - stats.time0);
   models.push({ name: options.name, stats, model });
-  log.state(`Loaded model: ${options.name}  in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
-}
-
-async function match(file) {
-  const image = window.cache.find((a) => a.file === file);
-  log.state('Building face descriptors');
-  const sorted = window.cache
-    .map((a) => {
-      a.descriptor = (a.results[0] && a.results[0].data[0] && a.results[0].data[0].descriptor) ? a.results[0].data[0].descriptor : null;
-      a.match = a.descriptor ? 1 - faceapi.euclideanDistance(image.results[0].data[0].descriptor, a.descriptor) : 0;
-      return a;
-    })
-    .filter((a) => a.match > 0.46)
-    .sort((a, b) => b.match - a.match);
-  // eslint-disable-next-line no-console
-  for (const item of sorted) console.log(`${item.file} ${Math.round(100 * item.match)} % ${JSON.stringify(item.descriptor || {}).length}`);
+  log.div('log', true, `Loaded model: ${options.name}  in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 }
 
 async function print(file, image, results) {
@@ -144,7 +126,7 @@ async function redraw() {
 }
 
 async function classify() {
-  log.state('Loading models ...');
+  log.div('log', true, 'Loading models ...');
   // console.table('Clean', tf.memory());
   // await loadClassify({ name: 'ImageNet MobileNet v1', modelPath: '/models/mobilenet-v1/model.json', score: 0.2, topK: 3 });
   await loadClassify({ name: 'ImageNet MobileNet v2', modelPath: '/models/mobilenet-v2/model.json', score: 0.2, topK: 3 });
@@ -170,7 +152,7 @@ async function classify() {
   await loadClassify({ name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' });
   // console.table('Loaded', tf.memory());
 
-  log.state('Warming up ...');
+  log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   await modelClassify.classify(models[0].model, warmup.canvas);
   // console.table('Warmed up', tf.memory());
@@ -178,7 +160,7 @@ async function classify() {
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   // const api = await fetch('/api/dir?folder=Samples/NSFW/');
   const files = await api.json();
-  log.state(`Received list from server: ${files.length} images`);
+  log.div('log', true, `Received list from server: ${files.length} images`);
 
   const stats = [];
   // eslint-disable-next-line no-unused-vars
@@ -190,26 +172,25 @@ async function classify() {
     const results = [];
     const image = await processImage.getImage(file);
     for (const m in models) {
-      log.dot();
       const t0 = window.performance.now();
       const data = await modelClassify.classify(models[m].model, image.canvas);
       const t1 = window.performance.now();
       stats[m] += (t1 - t0);
       results.push({ model: models[m], data });
+      log.debug('Classify', file, models[m], data);
     }
     print(file, image, results);
   }
-  log.state('');
   // eslint-disable-next-line no-console
   console.table('Finished', tf.memory());
   for (const m in models) {
-    log.state(`${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+    log.div('log', true, `${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
   }
 }
 
 // eslint-disable-next-line no-unused-vars
 async function yolo() {
-  log.state('Loading models ...');
+  log.div('log', true, 'Loading models ...');
   const yolov1tiny = await modelYolo.v1tiny();
   const yolov2tiny = await modelYolo.v2tiny();
   const yolov3tiny = await modelYolo.v3tiny();
@@ -217,7 +198,7 @@ async function yolo() {
 
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   const files = await api.json();
-  log.state(`Received list from server: ${files.length} images`);
+  log.div('log', true, `Received list from server: ${files.length} images`);
 
   const stats = [];
   // eslint-disable-next-line no-unused-vars
@@ -228,7 +209,6 @@ async function yolo() {
   for (const file of files) {
     const results = [];
     const image = await processImage.getImage(file);
-    log.dot();
     data = await yolov1tiny.predict(image.canvas);
     results.push({ model: 'CoCo DarkNet/Yolo v1 Tiny', data });
     data = await yolov2tiny.predict(image.canvas);
@@ -239,13 +219,13 @@ async function yolo() {
     results.push({ model: 'CoCo DarkNet/Yolo v1 Full', data });
     print(file, image, results);
   }
-  log.state('');
+  log.div('log', true, '');
 }
 
 // eslint-disable-next-line no-unused-vars
 async function person() {
-  log.state(`FaceAPI version: ${faceapi.tf.version_core}`);
-  log.state('Loading models ...');
+  log.div('log', true, `FaceAPI version: ${faceapi.tf.version_core}`);
+  log.div('log', true, 'Loading models ...');
 
   let engine;
   let stats = {};
@@ -283,11 +263,11 @@ async function person() {
   stats.size = Math.round((stats.bytes1 - stats.bytes0) / 1024 / 1024);
   stats.tensors = Math.round(stats.tensors1 - stats.tensors0);
   stats.time = Math.round(stats.time1 - stats.time0);
-  log.state(`Loaded model: FaceAPI in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
+  log.div('log', true, `Loaded model: FaceAPI in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 
   const api = await fetch('/api/dir?folder=Samples/Persons/');
   const files = await api.json();
-  log.state(`Received list from server: ${files.length} images`);
+  log.div('log', true, `Received list from server: ${files.length} images`);
 
   stats = [];
   // eslint-disable-next-line no-unused-vars
@@ -305,19 +285,19 @@ async function person() {
         .withAgeAndGender();
       const t1 = window.performance.now();
       stats[m] += t1 - t0;
+      log.debug('Person', file, options[m], data);
       results.push({ model: options[m], data });
     }
     print(file, image, results);
   }
   for (const m in options) {
-    log.state(`${options[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+    log.div('log', true, `${options[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
   }
-  $('.thumbnail').click((evt) => match(evt.target.getAttribute('tag')));
 }
 
 // eslint-disable-next-line no-unused-vars
 async function detect() {
-  log.state('Loading models ...');
+  log.div('log', true, 'Loading models ...');
   // await loadDetect({ name: 'CoCo SSD v1', modelPath: 'models/cocossd-v1/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
   await loadDetect({ name: 'CoCo SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
   // await loadDetect({ name: 'CoCo DarkNet/Yolo v1 Tiny', modelPath: 'models/yolo-v1-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
@@ -327,13 +307,13 @@ async function detect() {
   await loadDetect({ name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD });
   // await loadDetect({ name: 'OpenImages RCNN/Inception-ResNet v2', modelPath: 'models/rcnn-inception-resnet-v2/model.json', score: 0.2, topK: 6, useFloat: true, classes: 'assets/OpenImage-Labels.json', exec: modelDetect.detectSSD });
 
-  log.state('Warming up ...');
+  log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   // await modelDetect.detect(models[0].model, warmup.canvas);
   await modelDetect.exec(models[0].model, warmup.canvas);
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   const files = await api.json();
-  log.state(`Received list from server: ${files.length} images`);
+  log.div('log', true, `Received list from server: ${files.length} images`);
 
   const stats = [];
   // eslint-disable-next-line no-unused-vars
@@ -344,18 +324,17 @@ async function detect() {
     const results = [];
     const image = await processImage.getImage(file);
     for (const m in models) {
-      log.dot();
       const t0 = window.performance.now();
       const data = await modelDetect.exec(models[m].model, image.canvas);
       const t1 = window.performance.now();
       stats[m] += (t1 - t0);
       results.push({ model: models[m], data });
+      log.debug('Detect', file, models[m], data);
     }
     print(file, image, results);
   }
-  log.state('');
   for (const m in models) {
-    log.state(`${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+    log.div('log', true, `${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
   }
 }
 

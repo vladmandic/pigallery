@@ -33,7 +33,7 @@ function storeObject(data) {
   const json = data;
   json.processed = new Date();
   global.db.update({ image: json.image }, json, { upsert: true });
-  log.data(`Insert: "${json.image}"`, JSON.stringify(json).length, 'bytes');
+  log.data(`DB Insert "${json.image}"`, JSON.stringify(json).length, 'bytes');
 }
 
 function buildTags(object) {
@@ -251,7 +251,7 @@ async function getExif(url) {
           resolve(json);
         })
         .on('error', (err) => {
-          log.warn('EXIF', JSON.stringify(err));
+          log.warn('EXIF Error', err);
           resolve(json);
         });
     }
@@ -300,7 +300,7 @@ function readDir(folder, match = null, recursive = false) {
       }
     }
   } catch (err) {
-    log.warn('Filesystem:', folder, 'error:', err);
+    log.warn('FS Error', folder, err);
   }
   return files;
 }
@@ -324,11 +324,11 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
       if (image && image[0]) {
         const stat = fs.statSync(a);
         if (stat.ctime.getTime() !== image[0].exif.ctime.getTime()) {
-          log.data(`Updated ctime: ${a} ${image[0].exif.ctime} ${stat.ctime}`);
+          log.data(`FS ctime updated ${a} ${image[0].exif.ctime} ${stat.ctime}`);
           process.push(a);
           updated++;
         } else if (stat.mtime.getTime() !== image[0].exif.mtime.getTime()) {
-          log.data(`Updated mtime: ${a} ${image[0].exif.mtime} ${stat.mtime}`);
+          log.data(`FS mtime updated ${a} ${image[0].exif.mtime} ${stat.mtime}`);
           process.push(a);
           updated++;
         } else processed++;
@@ -337,7 +337,7 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
       }
     }
   }
-  log.info(`Lookup files:${folder} matching:${match || '*'} recursive: ${recursive} force: ${force} results: ${files.length} processed: ${processed} updated: ${updated} queued: ${process.length}`);
+  log.info(`FS Lookup ${folder} matching:${match || '*'} recursive: ${recursive} force: ${force} results: ${files.length} processed: ${processed} updated: ${updated} queued: ${process.length}`);
   return { files, process };
 }
 
@@ -351,7 +351,7 @@ async function checkRecords(list) {
   }
   const before = all.length;
   const after = await global.db.count({});
-  log.info(`Remove: ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
+  if (deleted.length > 0) log.info(`DB Remove ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
 }
 
 async function testExif(dir) {

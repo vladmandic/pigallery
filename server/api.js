@@ -3,6 +3,12 @@ const path = require('path');
 const log = require('@vladmandic/pilogger');
 const metadata = require('./metadata.js');
 
+function sign(req) {
+  const ip = (req.headers['forwarded'] || '').match(/for="\[(.*)\]:/)[1] || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
+  const user = req.session.share ? '' : req.session.user;
+  return `${user}@${ip}`;
+}
+
 function api(app) {
   log.state('RESTful API ready');
   metadata.init();
@@ -10,7 +16,7 @@ function api(app) {
   app.get('/api/log', (req, res) => {
     res.status(200).send('true');
     const msg = decodeURI(req.query.msg || '').replace(/\s+/g, ' ');
-    log.info(`Client ${req.session.user}@${req.ip}`, msg);
+    log.info('API Log', sign(req), msg);
   });
 
   app.get('/api/shares', async (req, res) => {
@@ -19,6 +25,7 @@ function api(app) {
       let shares = await global.db.find({ images: { $exists: true } });
       if (!shares) shares = [];
       const data = shares.map((a) => ({ key: a.share, processed: a.processed, name: a.name, creator: a.creator, size: a.images.length }));
+      log.info('API Shares', sign(req), 'shares:', data.length);
       res.json(data);
     }
   });
@@ -30,11 +37,11 @@ function api(app) {
       for (const image of data.images) {
         images.push(await global.db.findOne({ image }));
       }
-      log.info(`API Share Get ${req.ip} creator: ${data.creator} name: "${data.name}" key: ${data.share} images: ${images.length}`);
+      log.info(`API Share Get ${sign(req)} creator: ${data.creator} name: "${data.name}" key: ${data.share} images:`, images.length);
       res.json(images);
     } else if (req.query.rm) {
       const data = await global.db.findOne({ share: req.query.rm });
-      log.info(`API Share Remove ${req.ip} ${data.creator} name: "${data.name}" key: ${data.share} images: ${data.images.length}`);
+      log.info(`API Share Remove ${sign(req)} ${data.creator} name: "${data.name}" key: ${data.share} images:`, data.images.length);
       global.db.remove({ share: data.share }, { multi: false });
       res.status(200).send('true');
     } else {
@@ -52,7 +59,7 @@ function api(app) {
       obj.images = data['images[]'];
       obj.share = parseInt(obj.processed.getTime() / 1000, 10).toString(36);
       global.db.update({ share: obj.share }, obj, { upsert: true });
-      log.info(`API Share Create: "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images.length);
+      log.info(`API Share Create ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images.length);
       res.status(200).json({ key: obj.share });
     } else {
       res.status(401).json({});
@@ -70,6 +77,7 @@ function api(app) {
       }
       res.json(list);
       metadata.check(filesAll);
+      log.info(`API List ${sign(req)} locations:`, list.length, 'files:', filesAll.length);
     } else {
       res.status(401).json([]);
     }
@@ -83,6 +91,7 @@ function api(app) {
       }
       const folder = await metadata.list(req.query.folder, '', true, true);
       res.json(folder.process);
+      log.info(`API Dir ${sign(req)} folder: ${req.query.folder} process:`, folder.process.length);
     } else {
       res.status(401).json([]);
     }
@@ -103,13 +112,13 @@ function api(app) {
         .sort({ processed: -1 })
         .limit(limit);
       for (const record of records) data.push(record);
-      log.info(`API Get ${req.session.user}@${req.ip} root: ${req.session.root} data:`, data.length, 'limit:', limit, 'since:', new Date(time));
+      log.info(`API Get ${sign(req)} root: ${req.session.root} data:`, data.length, 'limit:', limit, 'since:', new Date(time));
     } else {
       const records = await global.db.findOne({ share: req.session.share });
       for (const image of records.images) {
         data.push(await global.db.findOne({ image }));
       }
-      log.info(`API Share Get ${req.ip} creator: ${data.creator} name: "${data.name}" key: ${data.share} images: ${data.length}`);
+      log.info(`API Share Get ${sign(req)} creator: ${data.creator} name: "${data.name}" key: ${data.share} images: ${data.length}`);
     }
     res.set('content-Size', JSON.stringify(data).length);
     res.json(data);
@@ -127,13 +136,16 @@ function api(app) {
       result.tags = tags;
       res.status(200).json(result);
       metadata.store(result);
+      log.info('API Metadata', sign(req), data.image);
     } else {
       res.status(401).json({});
     }
   });
 
   app.get('/api/user', (req, res) => {
-    res.json({ user: req.session.user, admin: req.session.admin, root: req.session.root });
+    const rec = { user: req.session.user, admin: req.session.admin, root: req.session.root };
+    res.json(rec);
+    log.info('API User', sign(req), rec);
   });
 
   app.get(`${global.config.server.mediaRoot}/*`, async (req, res) => {
@@ -152,7 +164,7 @@ function api(app) {
     const splitName = fileName.split('.');
     const fileExt = splitName[splitName.length - 1].toLowerCase();
     const share = req.session.share ? 'Share: ' + req.session.share : '';
-    log.info(`API File: ${share} ${req.session.share ? '' : req.session.user}@${req.ip} ${fileName} ${fileSize} bytes`);
+    log.info(`API File ${sign(req)} ${share} ${fileName} ${fileSize} bytes`);
     let contentType;
     if (fileExt === 'jpeg' || fileExt === 'jpg') contentType = 'image/jpeg';
     if (fileExt === 'mp4') contentType = 'video/mp4';
@@ -200,7 +212,7 @@ function api(app) {
       req.session.root = found.mediaRoot;
       req.session.share = req.body.authShare;
     }
-    log.info(`API Login: ${email} from ${req.ip} ${req.session.user ? 'success' : 'fail'}`);
+    log.info('API Auth', sign(req), email, req.session.user !== undefined);
     res.redirect('/');
   });
 }

@@ -7,6 +7,8 @@ const modelClassify = require('./modelClassify.js');
 const modelDetect = require('./modelDetect.js');
 
 window.debug = true;
+window.tf = require('@tensorflow/tfjs');
+window.faceapi = require('@vladmandic/face-api');
 
 function colorHex(str) {
   const ctx = document.createElement('canvas').getContext('2d');

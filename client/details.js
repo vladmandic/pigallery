@@ -6,10 +6,6 @@ const log = require('./log.js');
 let viewer;
 let thief;
 
-function JSONtoStr(json) {
-  if (json) return JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ');
-}
-
 // combine results from multiple model results
 function combineResults(object) {
   const res = [];
@@ -280,7 +276,7 @@ async function showDetails(img) {
       <h2>${person} ${nsfw}</h2>
       ${desc}
       <h2>Tags</h2>
-        <i>${JSONtoStr(object.tags)}</i>
+        <i>${log.str(object.tags)}</i>
       </div>
     `;
   if (window.options.viewDetails) $('#popup-details').html(html);
