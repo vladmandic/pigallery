@@ -1,4 +1,9 @@
 # PiGallery Change Log
+
+### **v1.3.2** 2020/08/20 cyan00@gmail.com
+
+- major logging refactoring
+- update
 - update build
 - cleanup
 
