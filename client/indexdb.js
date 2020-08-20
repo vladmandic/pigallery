@@ -12,7 +12,7 @@ async function open() {
   return new Promise((resolve) => {
     const request = indexedDB.open(database, 1);
     request.onerror = (evt) => {
-      log.result(`IndexDB request error: ${evt}`);
+      log.div('log', true, `IndexDB request error: ${evt}`);
       resolve(false);
     };
     request.onupgradeneeded = (evt) => {
@@ -26,9 +26,9 @@ async function open() {
     request.onsuccess = (evt) => {
       log.debug(t0, 'IndexDB request open');
       db = evt.target.result;
-      db.onerror = (event) => log.result(`IndexDB DB error: ${event}`);
-      db.onsuccess = (event) => log.result(`IndexDB DB open: ${event}`);
-      db.onblocked = (event) => log.result(`IndexDB DB blocked: ${event}`);
+      db.onerror = (event) => log.div('log', true, `IndexDB DB error: ${event}`);
+      db.onsuccess = (event) => log.div('log', true, `IndexDB DB open: ${event}`);
+      db.onblocked = (event) => log.div('log', true, `IndexDB DB blocked: ${event}`);
       resolve(true);
     };
     request.onblocked = () => {
@@ -78,7 +78,7 @@ async function share() {
   let json = {};
   if (res.ok) json = await res.json();
   log.debug(t0, `Selected share: ${window.share} received ${json.length} images`);
-  log.result(`Loaded ${window.filtered.length} images from server for share ${window.share}`);
+  log.div('log', true, `Loaded ${window.filtered.length} images from server for share ${window.share}`);
   return json;
 }
 
@@ -137,12 +137,12 @@ async function store(objects) {
 
 async function test() {
   await open();
-  log.result(`IndexDB count on open ${await count()} records`);
+  log.div('log', true, `IndexDB count on open ${await count()} records`);
   await reset();
-  log.result(`IndexDB count on reset ${await count()} records`);
+  log.div('log', true, `IndexDB count on reset ${await count()} records`);
   for (const result of window.results) put(result);
   const t0 = window.performance.now();
-  log.result(`IndexDB count on put ${await count()} records`);
+  log.div('log', true, `IndexDB count on put ${await count()} records`);
   const t1 = window.performance.now();
   log.debug(t0, `IndexDB insert ${window.results.length} records`);
   window.results = await all();

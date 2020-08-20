@@ -1,7 +1,6 @@
 /* global Popper */
 
 // const oboe = require('oboe');
-const faceapi = require('@vladmandic/face-api');
 const marked = require('marked');
 const moment = require('moment');
 const config = require('./config.js');
@@ -196,6 +195,7 @@ async function simmilarPerson(image) {
     busy();
     return;
   }
+  const faceapi = window.faceapi;
   for (const i in window.filtered) {
     const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
     window.filtered[i].simmilarity = target ? Math.round(100 * faceapi.euclideanDistance(target, descriptor)) : 100;
@@ -281,13 +281,14 @@ async function sortResults(sort) {
   if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, window.options.listItemCount + 1));
   if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, window.options.listItemCount + 1));
   log.debug(t1, `Cached images: ${window.filtered.length} fetched remaining`);
-  if (window.filtered.length > 0) log.result(`Loaded ${window.filtered.length} images from cache`);
-  else log.result('Image cache empty');
+  if (window.filtered.length > 0) log.div('log', true, `Loaded ${window.filtered.length} images from cache`);
+  else log.div('log', true, 'Image cache empty');
   if (!loadTried && window.filtered.length === 0) {
     loadTried = true;
     // eslint-disable-next-line no-use-before-define
     await loadGallery(window.options.listLimit);
   }
+  log.server(`Loaded ${window.filtered.length} images`);
   busy('Enumerating images');
   await menu.enumerate();
   folderHandlers();
@@ -299,7 +300,7 @@ async function sortResults(sort) {
 async function findDuplicates() {
   busy('Searching for<br>duplicate images');
 
-  log.result('Analyzing images for simmilarity ...');
+  log.div('log', true, 'Analyzing images for simmilarity ...');
   const t0 = window.performance.now();
   list.previous = null;
 
@@ -309,7 +310,7 @@ async function findDuplicates() {
     // console.log('Miain received message', msg.data);
     window.filtered = msg.data;
     const t1 = window.performance.now();
-    log.result(`Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    log.div('log', true, `Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
     sortResults('simmilarity');
     busy(false);
   });
@@ -353,13 +354,13 @@ async function loadGallery(limit, refresh = false) {
   if (!window.user.user) return;
   $('#progress').text('Requesting');
   if (window.user.user.startsWith('share')) {
-    log.result('Application access with share credentials and no direct share');
+    log.div('log', true, 'Application access with share credentials and no direct share');
     return;
   }
   busy('Loading images<br>in background');
   const t0 = window.performance.now();
   if (!refresh) {
-    log.result('Downloading image cache ...');
+    log.div('log', true, 'Downloading image cache ...');
     await db.reset();
     await db.open();
   }
@@ -379,11 +380,11 @@ async function loadGallery(limit, refresh = false) {
     log.debug(t0, `Cache download: ${json.length} images ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
   } else {
     // eslint-disable-next-line no-lonely-if
-    if (!refresh) log.result(`Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
+    if (!refresh) log.div('log', true, `Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
   }
   if (refresh && (json.length > 0)) {
     const dt = window.options.lastUpdated === 0 ? 'start' : moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss');
-    log.result(`Refreshed cache: ${json.length} images updated since ${dt} in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    log.div('log', true, `Refreshed cache: ${json.length} images updated since ${dt} in ${Math.round(t1 - t0).toLocaleString()} ms`);
   }
   // window.filtered = await db.all();
   window.options.lastUpdated = updated;
@@ -514,7 +515,7 @@ async function initHotkeys() {
         $('#popup').toggle(false);
         details.slideshow(false);
         break;
-      default: // log.result('Unhandled keydown event', event.keyCode);
+      default: // log.div('log', true, 'Unhandled keydown event', event.keyCode);
     }
   });
 }
@@ -560,11 +561,12 @@ async function initListHandlers() {
   // starts image processing in a separate window
   $('#btn-update').click(() => {
     if (window.user.admin) {
-      log.result('Image database update requested ...');
+      log.div('log', true, 'Image database update requested ...');
+      log.server('Image DB Update');
       showNavbar();
       window.open('/process', '_blank');
     } else {
-      log.result('Image database update not authorized');
+      log.div('log', true, 'Image database update not authorized');
     }
   });
 
@@ -684,7 +686,7 @@ async function initListHandlers() {
   // navbar livevideo
   // starts live video detection in a separate window
   $('#btn-video').click(() => {
-    log.result('Starting Live Video interface ...');
+    log.div('log', true, 'Starting Live Video interface ...');
     window.open('/video', '_blank');
   });
 

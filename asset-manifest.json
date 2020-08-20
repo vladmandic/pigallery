@@ -5,14 +5,8 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 19222,
+      "bytes": 18445,
       "imports": [
-        {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
-        },
-        {
-          "path": "node_modules/@vladmandic/face-api/build/index.js"
-        },
         {
           "path": "client/log.js"
         },
@@ -34,7 +28,7 @@
       ]
     },
     "client/config.js": {
-      "bytes": 11946,
+      "bytes": 12037,
       "imports": [
         {
           "path": "client/log.js"
@@ -44,11 +38,17 @@
         },
         {
           "path": "client/modelDetect.js"
+        },
+        {
+          "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
+        },
+        {
+          "path": "node_modules/@vladmandic/face-api/build/index.js"
         }
       ]
     },
     "client/details.js": {
-      "bytes": 17114,
+      "bytes": 16993,
       "imports": [
         {
           "path": "node_modules/moment/moment.js"
@@ -59,11 +59,8 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 30909,
+      "bytes": 31108,
       "imports": [
-        {
-          "path": "node_modules/@vladmandic/face-api/build/index.js"
-        },
         {
           "path": "node_modules/marked/lib/marked.js"
         },
@@ -106,7 +103,7 @@
       ]
     },
     "client/indexdb.js": {
-      "bytes": 5015,
+      "bytes": 5095,
       "imports": [
         {
           "path": "client/log.js"
@@ -114,7 +111,7 @@
       ]
     },
     "client/init.js": {
-      "bytes": 1261,
+      "bytes": 1271,
       "imports": [
         {
           "path": "client/log.js"
@@ -136,7 +133,7 @@
       ]
     },
     "client/log.js": {
-      "bytes": 1809,
+      "bytes": 1280,
       "imports": [
         {
           "path": "node_modules/moment/moment.js"
@@ -172,35 +169,23 @@
       ]
     },
     "client/modelClassify.js": {
-      "bytes": 3231,
-      "imports": [
-        {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
-        }
-      ]
+      "bytes": 3228,
+      "imports": []
     },
     "client/modelDetect.js": {
-      "bytes": 5375,
-      "imports": [
-        {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
-        }
-      ]
+      "bytes": 5372,
+      "imports": []
     },
     "client/modelYolo.js": {
-      "bytes": 11137,
-      "imports": [
-        {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
-        }
-      ]
+      "bytes": 11135,
+      "imports": []
     },
     "client/nearest.js": {
       "bytes": 3046,
       "imports": []
     },
     "client/options.js": {
-      "bytes": 6850,
+      "bytes": 7106,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
@@ -217,11 +202,8 @@
       ]
     },
     "client/process.js": {
-      "bytes": 3315,
+      "bytes": 3424,
       "imports": [
-        {
-          "path": "node_modules/moment/moment.js"
-        },
         {
           "path": "client/log.js"
         },
@@ -234,14 +216,8 @@
       ]
     },
     "client/processImage.js": {
-      "bytes": 11723,
+      "bytes": 11509,
       "imports": [
-        {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
-        },
-        {
-          "path": "node_modules/@vladmandic/face-api/build/index.js"
-        },
         {
           "path": "client/modelClassify.js"
         },
@@ -260,14 +236,8 @@
       ]
     },
     "client/processVideo.js": {
-      "bytes": 4950,
+      "bytes": 5038,
       "imports": [
-        {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
-        },
-        {
-          "path": "node_modules/@vladmandic/face-api/build/index.js"
-        },
         {
           "path": "client/modelDetect.js"
         },
@@ -280,7 +250,7 @@
       ]
     },
     "client/pwa-register.js": {
-      "bytes": 932,
+      "bytes": 942,
       "imports": [
         {
           "path": "client/log.js"
@@ -288,7 +258,7 @@
       ]
     },
     "client/video.js": {
-      "bytes": 8934,
+      "bytes": 9157,
       "imports": [
         {
           "path": "client/config.js"
@@ -13342,11 +13312,35 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4743071
+      "bytes": 4743097
     },
     "dist/gallery.js": {
       "imports": [],
       "inputs": {
+        "node_modules/marked/lib/marked.js": {
+          "bytesInOutput": 36253
+        },
+        "node_modules/moment/moment.js": {
+          "bytesInOutput": 60844
+        },
+        "client/log.js": {
+          "bytesInOutput": 835
+        },
+        "client/modelClassify.js": {
+          "bytesInOutput": 1696
+        },
+        "client/modelDetect.js": {
+          "bytesInOutput": 2520
+        },
+        "disabled:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
+          "bytesInOutput": 18
+        },
+        "disabled:/home/vlado/dev/pigallery/node_modules/string_decoder/lib/string_decoder.js": {
+          "bytesInOutput": 18
+        },
+        "node_modules/@tensorflow/tfjs/dist/tf.esm.js": {
+          "bytesInOutput": 5569
+        },
         "node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 995
         },
@@ -13401,44 +13395,20 @@
         "node_modules/@vladmandic/face-api/build/index.js": {
           "bytesInOutput": 1228
         },
-        "node_modules/marked/lib/marked.js": {
-          "bytesInOutput": 36253
-        },
-        "node_modules/moment/moment.js": {
-          "bytesInOutput": 60844
-        },
-        "client/log.js": {
-          "bytesInOutput": 1092
-        },
-        "disabled:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 18
-        },
-        "disabled:/home/vlado/dev/pigallery/node_modules/string_decoder/lib/string_decoder.js": {
-          "bytesInOutput": 18
-        },
-        "node_modules/@tensorflow/tfjs/dist/tf.esm.js": {
-          "bytesInOutput": 5569
-        },
-        "client/modelClassify.js": {
-          "bytesInOutput": 1685
-        },
-        "client/modelDetect.js": {
-          "bytesInOutput": 2509
-        },
         "client/config.js": {
-          "bytesInOutput": 6812
+          "bytesInOutput": 6847
         },
         "client/indexdb.js": {
-          "bytesInOutput": 3196
+          "bytesInOutput": 3244
         },
         "client/details.js": {
-          "bytesInOutput": 10512
+          "bytesInOutput": 10425
         },
         "client/blockhash.js": {
           "bytesInOutput": 1967
         },
         "client/init.js": {
-          "bytesInOutput": 959
+          "bytesInOutput": 965
         },
         "client/list.js": {
           "bytesInOutput": 5670
@@ -13456,7 +13426,19 @@
           "bytesInOutput": 5707
         },
         "client/pwa-register.js": {
-          "bytesInOutput": 658
+          "bytesInOutput": 664
+        },
+        "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
+          "bytesInOutput": 546397
+        },
+        "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
+          "bytesInOutput": 232156
+        },
+        "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
+          "bytesInOutput": 86836
+        },
+        "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
+          "bytesInOutput": 51677
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/environment.js": {
           "bytesInOutput": 2159
@@ -15087,28 +15069,16 @@
         "node_modules/@vladmandic/face-api/build/resizeResults.js": {
           "bytesInOutput": 450
         },
-        "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
-          "bytesInOutput": 546397
-        },
-        "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
-          "bytesInOutput": 232156
-        },
-        "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
-          "bytesInOutput": 86836
-        },
-        "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
-          "bytesInOutput": 51677
-        },
         "client/gallery.js": {
-          "bytesInOutput": 19891
+          "bytesInOutput": 20053
         }
       },
-      "bytes": 1406509
+      "bytes": 1406444
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4520820
+      "bytes": 4519933
     },
     "dist/video.js": {
       "imports": [],
@@ -15117,7 +15087,13 @@
           "bytesInOutput": 60862
         },
         "client/log.js": {
-          "bytesInOutput": 1091
+          "bytesInOutput": 835
+        },
+        "client/modelClassify.js": {
+          "bytesInOutput": 1696
+        },
+        "client/modelDetect.js": {
+          "bytesInOutput": 2520
         },
         "disabled:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
           "bytesInOutput": 18
@@ -15127,15 +15103,6 @@
         },
         "node_modules/@tensorflow/tfjs/dist/tf.esm.js": {
           "bytesInOutput": 5568
-        },
-        "client/modelClassify.js": {
-          "bytesInOutput": 1684
-        },
-        "client/modelDetect.js": {
-          "bytesInOutput": 2508
-        },
-        "client/config.js": {
-          "bytesInOutput": 6811
         },
         "node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 995
@@ -15191,11 +15158,11 @@
         "node_modules/@vladmandic/face-api/build/index.js": {
           "bytesInOutput": 1228
         },
-        "client/processVideo.js": {
-          "bytesInOutput": 3227
+        "client/config.js": {
+          "bytesInOutput": 6846
         },
-        "client/video.js": {
-          "bytesInOutput": 4906
+        "client/processVideo.js": {
+          "bytesInOutput": 3325
         },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
           "bytesInOutput": 545828
@@ -16837,14 +16804,17 @@
         },
         "node_modules/@vladmandic/face-api/build/resizeResults.js": {
           "bytesInOutput": 450
+        },
+        "client/video.js": {
+          "bytesInOutput": 4034
         }
       },
-      "bytes": 1321605
+      "bytes": 1320614
     },
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4530741
+      "bytes": 4530383
     },
     "dist/process.js": {
       "imports": [],
@@ -16853,7 +16823,13 @@
           "bytesInOutput": 60862
         },
         "client/log.js": {
-          "bytesInOutput": 1091
+          "bytesInOutput": 835
+        },
+        "client/modelClassify.js": {
+          "bytesInOutput": 1696
+        },
+        "client/modelDetect.js": {
+          "bytesInOutput": 2520
         },
         "disabled:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
           "bytesInOutput": 18
@@ -16863,15 +16839,6 @@
         },
         "node_modules/@tensorflow/tfjs/dist/tf.esm.js": {
           "bytesInOutput": 5568
-        },
-        "client/modelClassify.js": {
-          "bytesInOutput": 1684
-        },
-        "client/modelDetect.js": {
-          "bytesInOutput": 2508
-        },
-        "client/config.js": {
-          "bytesInOutput": 6811
         },
         "node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 995
@@ -16927,11 +16894,14 @@
         "node_modules/@vladmandic/face-api/build/index.js": {
           "bytesInOutput": 1228
         },
+        "client/config.js": {
+          "bytesInOutput": 6846
+        },
         "client/blockhash.js": {
           "bytesInOutput": 1966
         },
         "client/processImage.js": {
-          "bytesInOutput": 6248
+          "bytesInOutput": 6420
         },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
           "bytesInOutput": 545680
@@ -18575,19 +18545,31 @@
           "bytesInOutput": 450
         },
         "client/process.js": {
-          "bytesInOutput": 2161
+          "bytesInOutput": 2225
         }
       },
-      "bytes": 1323681
+      "bytes": 1323720
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4569390
+      "bytes": 4567767
     },
     "dist/compare.js": {
       "imports": [],
       "inputs": {
+        "node_modules/moment/moment.js": {
+          "bytesInOutput": 60862
+        },
+        "client/log.js": {
+          "bytesInOutput": 835
+        },
+        "client/modelClassify.js": {
+          "bytesInOutput": 1696
+        },
+        "client/modelDetect.js": {
+          "bytesInOutput": 2520
+        },
         "disabled:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
           "bytesInOutput": 18
         },
@@ -18651,29 +18633,17 @@
         "node_modules/@vladmandic/face-api/build/index.js": {
           "bytesInOutput": 1228
         },
-        "node_modules/moment/moment.js": {
-          "bytesInOutput": 60862
-        },
-        "client/log.js": {
-          "bytesInOutput": 1091
-        },
-        "client/modelClassify.js": {
-          "bytesInOutput": 1684
-        },
-        "client/modelDetect.js": {
-          "bytesInOutput": 2508
-        },
         "client/config.js": {
-          "bytesInOutput": 6811
+          "bytesInOutput": 6846
         },
         "client/modelYolo.js": {
-          "bytesInOutput": 5264
+          "bytesInOutput": 5286
         },
         "client/blockhash.js": {
           "bytesInOutput": 1966
         },
         "client/processImage.js": {
-          "bytesInOutput": 6248
+          "bytesInOutput": 6420
         },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
           "bytesInOutput": 545828
@@ -20317,10 +20287,10 @@
           "bytesInOutput": 450
         },
         "client/compare.js": {
-          "bytesInOutput": 8621
+          "bytesInOutput": 8238
         }
       },
-      "bytes": 1335553
+      "bytes": 1335167
     },
     "dist/worker.js.map": {
       "imports": [],

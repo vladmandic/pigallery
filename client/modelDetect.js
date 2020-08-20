@@ -1,5 +1,4 @@
-const tf = require('@tensorflow/tfjs');
-
+let tf = window.tf;
 let config = {
   modelPath: null,
   modelType: 'graph',
@@ -16,6 +15,7 @@ let config = {
 };
 
 async function load(cfg) {
+  tf = window.tf;
   let model;
   config = { ...config, ...cfg };
   const loadOpts = {

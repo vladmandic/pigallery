@@ -1,5 +1,5 @@
 const config = require('./config.js').default;
-const tf = require('./processVideo.js');
+const process = require('./processVideo.js');
 
 window.config = config;
 const ghost = 500;
@@ -102,7 +102,7 @@ async function loadModels() {
   $('#detected').text('');
   $('#face').text('');
   const t0 = window.performance.now();
-  const state = await tf.load();
+  const state = await process.load();
   $('#active').text(`Ready in ${time(t0)} ms: Loaded ${state.tensors.toLocaleString()} tensors in ${state.bytes.toLocaleString()} bytes`);
 }
 
@@ -121,7 +121,7 @@ async function startProcessing() {
 
   while (!video.paused && !video.ended) {
     const t0 = window.performance.now();
-    const object = video.readyState > 1 ? await tf.process(video) : null;
+    const object = video.readyState > 1 ? await process.process(video) : null;
     const t1 = window.performance.now();
     const fps = 1000 / (t1 - t0);
     $('#active').text(`Performance: ${fps.toFixed(1)} FPS detect ${object.timeDetect.toFixed(0)} ms face ${object.timeFace.toFixed(0)} ms`);
@@ -144,7 +144,7 @@ async function startWebcam() {
     const t0 = window.performance.now();
     // const uri = video.src;
     // video.src = uri;
-    const object = await tf.process(video);
+    const object = await process.process(video);
     const t1 = window.performance.now();
     const fps = 1000 / (t1 - t0);
     $('#active').text(`Performance: ${fps.toFixed(1)} FPS detect ${object.timeDetect.toFixed(0)} ms face ${object.timeFace.toFixed(0)} ms`);
@@ -161,9 +161,10 @@ async function stopProcessing() {
   if (tracks) tracks.forEach((track) => track.stop());
 }
 
+// eslint-disable-next-line no-unused-vars
 async function getCameraStream() {
   // console.log(tf.models);
-  if (!tf.models.detect) {
+  if (!process.models.detect) {
     $('#active').text('Models not loaded ...');
     return;
   }
@@ -188,6 +189,7 @@ async function getCameraStream() {
   await video.play();
 }
 
+// eslint-disable-next-line no-unused-vars
 async function getVideoStream(url) {
   if (!url) return;
   $('#video').toggle(true);
@@ -199,6 +201,7 @@ async function getVideoStream(url) {
   $('#text-resolution').text(`${video.videoWidth} x ${video.videoHeight}`);
 }
 
+// eslint-disable-next-line no-unused-vars
 async function getWebcamStream(url) {
   if (!url) return;
   $('#video').toggle(false);
@@ -219,6 +222,7 @@ async function handlers() {
     $('#btn-play').toggleClass('fa-play-circle fa-pause-circle');
     if ($('#btn-play').hasClass('fa-play-circle')) {
       $('#text-play').text('Live Video');
+      if (!video) video = document.getElementById('image');
       video.pause();
       stopProcessing();
     } else {
@@ -259,6 +263,6 @@ async function main() {
 
 window.onload = main;
 
-exports.camera = getCameraStream;
-exports.webcam = getWebcamStream;
-exports.video = getVideoStream;
+// exports.camera = getCameraStream;
+// exports.webcam = getWebcamStream;
+// exports.video = getVideoStream;

@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- update build
 - cleanup
 
 ### **origin/HEAD** 2020/08/19 cyan00@gmail.com

@@ -7,7 +7,8 @@ N/A
 ## Future Features
 
 - Server-side processing using TFJS-Node: nVidia CUDA on WSL2 requires kernel 4.19.121 current 4.19.104
-- Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0: Face-API Incompatibility
+- Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0
+- Move video and process to main window
 
 ## Convert
 
