@@ -1,14 +1,15 @@
 # PiGallery Change Log
 
+### **origin/HEAD** 2020/08/20 cyan00@gmail.com
+
+
 ### **v1.3.2** 2020/08/20 cyan00@gmail.com
 
 - major logging refactoring
 - update
 - update build
 - cleanup
-
-### **origin/HEAD** 2020/08/19 cyan00@gmail.com
-
+- cleanup
 - added nsfw model
 - 1.3.1
 - simplified dependencies

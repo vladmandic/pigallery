@@ -5,7 +5,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 18445,
+      "bytes": 18468,
       "imports": [
         {
           "path": "client/log.js"
@@ -28,7 +28,7 @@
       ]
     },
     "client/config.js": {
-      "bytes": 12037,
+      "bytes": 12293,
       "imports": [
         {
           "path": "client/log.js"
@@ -185,11 +185,8 @@
       "imports": []
     },
     "client/options.js": {
-      "bytes": 7106,
+      "bytes": 6833,
       "imports": [
-        {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esm.js"
-        },
         {
           "path": "client/log.js"
         },
@@ -276,15 +273,44 @@
         }
       ]
     },
-    "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
-      "bytes": 96606,
+    "node_modules/@tensorflow/tfjs/dist/tf.esm.js": {
+      "bytes": 656,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
+        },
+        {
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
+        },
+        {
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js"
+        },
+        {
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js"
+        },
+        {
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js"
+        },
+        {
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js"
+        },
+        {
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js"
+        },
+        {
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js"
         }
       ]
     },
-    "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
+    "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
+      "bytes": 96606,
+      "imports": [
+        {
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
+        }
+      ]
+    },
+    "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
       "bytes": 556827,
       "imports": [
         {
@@ -292,51 +318,22 @@
         }
       ]
     },
-    "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
+    "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
       "bytes": 56983,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
         },
         {
           "path": "disabled:/home/vlado/dev/pigallery/node_modules/string_decoder/lib/string_decoder.js"
         }
       ]
     },
-    "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
+    "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
       "bytes": 263280,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
-        }
-      ]
-    },
-    "node_modules/@tensorflow/tfjs/dist/tf.esm.js": {
-      "bytes": 656,
-      "imports": [
-        {
-          "path": "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
-        },
-        {
-          "path": "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
-        },
-        {
-          "path": "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js"
-        },
-        {
-          "path": "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js"
-        },
-        {
-          "path": "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js"
-        },
-        {
-          "path": "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js"
-        },
-        {
-          "path": "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js"
-        },
-        {
-          "path": "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js"
+          "path": "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js"
         }
       ]
     },
@@ -13312,7 +13309,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4743097
+      "bytes": 4755180
     },
     "dist/gallery.js": {
       "imports": [],
@@ -13423,21 +13420,21 @@
           "bytesInOutput": 3957
         },
         "client/options.js": {
-          "bytesInOutput": 5707
+          "bytesInOutput": 5715
         },
         "client/pwa-register.js": {
           "bytesInOutput": 664
         },
-        "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
           "bytesInOutput": 546397
         },
-        "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
           "bytesInOutput": 232156
         },
-        "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
           "bytesInOutput": 86836
         },
-        "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
           "bytesInOutput": 51677
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/environment.js": {
@@ -15073,12 +15070,12 @@
           "bytesInOutput": 20053
         }
       },
-      "bytes": 1406444
+      "bytes": 1406452
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4519933
+      "bytes": 4532285
     },
     "dist/video.js": {
       "imports": [],
@@ -15164,16 +15161,16 @@
         "client/processVideo.js": {
           "bytesInOutput": 3325
         },
-        "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
           "bytesInOutput": 545828
         },
-        "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
           "bytesInOutput": 231869
         },
-        "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
           "bytesInOutput": 86791
         },
-        "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
           "bytesInOutput": 51651
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/environment.js": {
@@ -16814,7 +16811,7 @@
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4530383
+      "bytes": 4542735
     },
     "dist/process.js": {
       "imports": [],
@@ -16903,16 +16900,16 @@
         "client/processImage.js": {
           "bytesInOutput": 6420
         },
-        "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
           "bytesInOutput": 545680
         },
-        "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
           "bytesInOutput": 231869
         },
-        "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
           "bytesInOutput": 86791
         },
-        "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
           "bytesInOutput": 51651
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/environment.js": {
@@ -18553,7 +18550,7 @@
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4567767
+      "bytes": 4580666
     },
     "dist/compare.js": {
       "imports": [],
@@ -18645,16 +18642,16 @@
         "client/processImage.js": {
           "bytesInOutput": 6420
         },
-        "node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-core/dist/tf-core.esm.js": {
           "bytesInOutput": 545828
         },
-        "node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.esm.js": {
           "bytesInOutput": 231869
         },
-        "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.esm.js": {
           "bytesInOutput": 86791
         },
-        "node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
+        "node_modules/@tensorflow/tfjs/node_modules/@tensorflow/tfjs-data/dist/tf-data.esm.js": {
           "bytesInOutput": 51651
         },
         "node_modules/@vladmandic/face-api/node_modules/@tensorflow/tfjs-core/dist/environment.js": {
@@ -20287,10 +20284,10 @@
           "bytesInOutput": 450
         },
         "client/compare.js": {
-          "bytesInOutput": 8238
+          "bytesInOutput": 9247
         }
       },
-      "bytes": 1335167
+      "bytes": 1336176
     },
     "dist/worker.js.map": {
       "imports": [],

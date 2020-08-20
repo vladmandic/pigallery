@@ -8,6 +8,12 @@ const modelDetect = require('./modelDetect.js');
 
 window.debug = true;
 window.tf = require('@tensorflow/tfjs');
+// const tf = require('@tensorflow/tfjs-core');
+// require('@tensorflow/tfjs-layers');
+// require('@tensorflow/tfjs-data');
+// require('@tensorflow/tfjs-converter');
+// require('@tensorflow/tfjs-backend-cpu');
+// require('@tensorflow/tfjs-backend-webgl');
 window.faceapi = require('@vladmandic/face-api');
 
 function colorHex(str) {

@@ -1,11 +1,3 @@
-const tf = require('@tensorflow/tfjs');
-// const tf = require('@tensorflow/tfjs-core');
-// require('@tensorflow/tfjs-data');
-// require('@tensorflow/tfjs-layers');
-// require('@tensorflow/tfjs-backend-cpu');
-// require('@tensorflow/tfjs-backend-webgl');
-// require('@tensorflow/tfjs-converter');
-
 const log = require('./log.js');
 const list = require('./list.js');
 const config = require('./config.js');
@@ -21,6 +13,7 @@ function JSONtoStr(json) {
 }
 
 function globalOptions() {
+  const tf = window.tf;
   let classify = '<b>&nbsp Image Classification:</b><br>';
   for (const obj of config.default.classify) classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
   let detect = '<b>&nbsp Object Detection:</b><br>';
