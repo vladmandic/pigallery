@@ -1,20 +1,16 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-multi-spaces */
 
 const log = require('./log.js');
-// eslint-disable-next-line no-unused-vars
 const modelClassify = require('./modelClassify.js');
-// eslint-disable-next-line no-unused-vars
 const modelDetect = require('./modelDetect.js');
 
 window.debug = true;
-window.tf = require('@tensorflow/tfjs');
-// const tf = require('@tensorflow/tfjs-core');
-// require('@tensorflow/tfjs-layers');
-// require('@tensorflow/tfjs-data');
-// require('@tensorflow/tfjs-converter');
-// require('@tensorflow/tfjs-backend-cpu');
-// require('@tensorflow/tfjs-backend-webgl');
-window.faceapi = require('@vladmandic/face-api');
+window.tf = require('@tensorflow/tfjs'); // loads tfjs@1.7.4
+window.faceapi = require('@vladmandic/face-api'); // load published npm version
+// window.faceapi = require('/home/vlado/dev/face-api'); // load dev version
+
+// window.tf = window.faceapi.tf; // overrides loaded tfjs with tfjs@2.30
 
 function colorHex(str) {
   const ctx = document.createElement('canvas').getContext('2d');
@@ -188,7 +184,7 @@ const config = {
     { name: 'ImageNet Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.22, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200, classes: 'assets/ImageNet-Labels1000.json' },
     { name: 'ImageNet EfficientNet B4', modelPath: 'models/efficientnet-b4/model.json', score: 0.1, topK: 3, slice: 0, tensorSize: 380, offset: 0, scoreScale: 1, classes: 'assets/ImageNet-Labels1000.json' },
     { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-6k/model.json', score: 0.1, topK: 5, useFloat: false, tensorSize: 299, scoreScale: 1000, offset: 0, classes: 'assets/DeepDetect-Labels.json' },
-    { name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' },
+    { name: 'NSFW Inception v3 Quant', modelPath: 'models/nsfw-inception-v3-quant/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, useFloat: false, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' },
   ],
   detect: [
     { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO, classes: 'assets/Coco-Labels.json' },

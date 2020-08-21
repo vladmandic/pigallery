@@ -1,12 +1,13 @@
 const log = require('./log.js');
 const config = require('./config.js').default;
+
+let faceapi = window.faceapi;
 const modelClassify = require('./modelClassify.js');
 const modelDetect = require('./modelDetect.js');
 const modelYolo = require('./modelYolo.js');
 const processImage = require('./processImage.js');
 
 let tf = window.tf;
-let faceapi = window.faceapi;
 
 const models = [];
 window.cache = [];
@@ -37,8 +38,8 @@ async function init() {
 async function loadClassify(options) {
   let engine;
   const stats = {};
-  stats.time0 = window.performance.now();
   engine = await tf.engine();
+  stats.time0 = window.performance.now();
   stats.bytes0 = engine.state.numBytes;
   stats.tensors0 = engine.state.numTensors;
 
@@ -128,28 +129,30 @@ async function redraw() {
 async function classify() {
   log.div('log', true, 'Loading models ...');
   // console.table('Clean', tf.memory());
-  // await loadClassify({ name: 'ImageNet MobileNet v1', modelPath: '/models/mobilenet-v1/model.json', score: 0.2, topK: 3 });
-  await loadClassify({ name: 'ImageNet MobileNet v2', modelPath: '/models/mobilenet-v2/model.json', score: 0.2, topK: 3 });
+  // await loadClassify({ name: 'ImageNet MobileNet v1', modelPath: 'models/mobilenet-v1/model.json', score: 0.2, topK: 3 });
+  await loadClassify({ name: 'ImageNet MobileNet v2', modelPath: 'models/mobilenet-v2/model.json', score: 0.2, topK: 3 });
   // await loadClassify({ name: 'ImageNet Inception v1', modelPath: 'models/inception-v1/model.json', score: 0.2, topK: 3 });
   // await loadClassify({ name: 'ImageNet Inception v2', modelPath: 'models/inception-v2/model.json', score: 0.2, topK: 3 });
   await loadClassify({ name: 'ImageNet Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 });
   await loadClassify({ name: 'ImageNet Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.22, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200 });
-  // await loadClassify({ name: 'ImageNet ResNet v2-50', modelPath: '/models/resnet-v2-50/model.json', score: 0.2, topK: 3, tensorSize: 224 });
-  // await loadClassify({ name: 'ImageNet ResNet v2-101', modelPath: '/models/resnet-v2-101/model.json', score: 0.2, topK: 3 });
+  // await loadClassify({ name: 'ImageNet ResNet v2-50', modelPath: 'models/resnet-v2-50/model.json', score: 0.2, topK: 3, tensorSize: 224 });
+  // await loadClassify({ name: 'ImageNet ResNet v2-101', modelPath: 'models/resnet-v2-101/model.json', score: 0.2, topK: 3 });
   // await loadClassify({ name: 'ImageNet Inception-ResNet v2', modelPath: '/models/inception-resnet-v2/model.json', score: 0.2, topK: 3, tensorSize: 224 });
   // await loadClassify({ name: 'ImageNet NASNet-A Mobile', modelPath: 'models/nasnet-mobile/model.json', score: 0.2, topK: 3, slice: 0 });
   // await loadClassify({ name: 'ImageNet EfficientNet B0', modelPath: 'models/efficientnet-b0/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 0 });
   await loadClassify({ name: 'ImageNet EfficientNet B4', modelPath: 'models/efficientnet-b4/model.json', score: 0.1, topK: 3, slice: 0, tensorSize: 380, offset: 0, scoreScale: 1 });
-  // await loadClassify({ name: 'ImageNet EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 456, offset: 0 });
+  await loadClassify({ name: 'ImageNet EfficientNet B5', modelPath: 'models/efficientnet-b5/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 456, offset: 0 });
   // await loadClassify({ name: 'ImageNet EfficientNet B7', modelPath: 'models/efficientnet-b7/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 600, offset: 0 });
   // await loadClassify({ name: 'ImageNet-21k BiT-S R101x1', modelPath: 'models/bit-s-r101x1/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 1, classes: 'assets/ImageNet-Labels21k.json' });
   // await loadClassify({ name: 'ImageNet-21k BiT-M R101x1', modelPath: 'models/bit-m-r101x1/model.json', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 1, classes: 'assets/ImageNet-Labels21k.json' });
   await loadClassify({ name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-6k/model.json', score: 0.1, topK: 5, useFloat: false, tensorSize: 299, scoreScale: 1000, classes: 'assets/DeepDetect-Labels.json', offset: 0 });
-  await loadClassify({ name: 'iNaturalist Food MobileNet v1', modelPath: 'models/inaturalist/food/model.json', score: 0.38, scoreScale: 500, topK: 1, useFloat: false, tensorSize: 192, classes: 'assets/iNaturalist-Food-Labels.json', offset: 0 });
-  await loadClassify({ name: 'iNaturalist Plants MobileNet v2', modelPath: 'models/inaturalist/plants/model.json', score: 0.2, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Plants-Labels.json', offset: 0, background: 2101 });
-  await loadClassify({ name: 'iNaturalist Birds MobileNet v2', modelPath: 'models/inaturalist/birds/model.json', score: 0.25, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Birds-Labels.json', offset: 0, background: 964 });
-  await loadClassify({ name: 'iNaturalist Insects MobileNet v2', modelPath: 'models/inaturalist/insects/model.json', score: 0.3, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Insects-Labels.json', offset: 0, background: 1021 });
-  await loadClassify({ name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' });
+  // await loadClassify({ name: 'iNaturalist Food MobileNet v1', modelPath: 'models/inaturalist/food/model.json', score: 0.38, scoreScale: 500, topK: 1, useFloat: false, tensorSize: 192, classes: 'assets/iNaturalist-Food-Labels.json', offset: 0 });
+  // await loadClassify({ name: 'iNaturalist Plants MobileNet v2', modelPath: 'models/inaturalist/plants/model.json', score: 0.2, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Plants-Labels.json', offset: 0, background: 2101 });
+  // await loadClassify({ name: 'iNaturalist Birds MobileNet v2', modelPath: 'models/inaturalist/birds/model.json', score: 0.25, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Birds-Labels.json', offset: 0, background: 964 });
+  // await loadClassify({ name: 'iNaturalist Insects MobileNet v2', modelPath: 'models/inaturalist/insects/model.json', score: 0.3, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Insects-Labels.json', offset: 0, background: 1021 });
+  // await loadClassify({ name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' });
+  await loadClassify({ name: 'NSFW Inception v3 Quant', modelPath: 'models/nsfw-inception-v3-quant/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, useFloat: false, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' });
+  // await loadClassify({ name: 'NSFW Mini', modelPath: 'models/nsfw-mini/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, useFloat: false, tensorSize: 244, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' });
   // console.table('Loaded', tf.memory());
 
   log.div('log', true, 'Warming up ...');
@@ -266,6 +269,7 @@ async function person() {
   log.div('log', true, `Loaded model: FaceAPI in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 
   const api = await fetch('/api/dir?folder=Samples/Persons/');
+  // const api = await fetch('/api/dir?folder=Samples/NSFW/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
@@ -299,7 +303,7 @@ async function person() {
 async function detect() {
   log.div('log', true, 'Loading models ...');
   // await loadDetect({ name: 'CoCo SSD v1', modelPath: 'models/cocossd-v1/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
-  // await loadDetect({ name: 'CoCo SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
+  await loadDetect({ name: 'CoCo SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
   // await loadDetect({ name: 'CoCo DarkNet/Yolo v1 Tiny', modelPath: 'models/yolo-v1-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
   // await loadDetect({ name: 'CoCo DarkNet/Yolo v2 Tiny', modelPath: 'models/yolo-v2-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
   // await loadDetect({ name: 'CoCo DarkNet/Yolo v3 Tiny', modelPath: 'models/yolo-v3-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
@@ -312,6 +316,7 @@ async function detect() {
   // await modelDetect.detect(models[0].model, warmup.canvas);
   await modelDetect.exec(models[0].model, warmup.canvas);
   const api = await fetch('/api/dir?folder=Samples/Objects/');
+  // const api = await fetch('/api/dir?folder=Samples/NSFW/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
