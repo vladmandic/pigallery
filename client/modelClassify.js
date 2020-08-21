@@ -65,7 +65,6 @@ async function classify(model, image) {
       batched = tf.mul(cast, [1.0 / 255.0]);
       tf.dispose(cast);
     }
-    // console.log(model.config.name);
     const predictions = model.predict(batched);
     const prediction = Array.isArray(predictions) ? predictions[0] : predictions; // some models return prediction for multiple objects in array, some return single prediction
     const softmax = prediction.softmax();

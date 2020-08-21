@@ -150,9 +150,10 @@ async function classify() {
   // await loadClassify({ name: 'iNaturalist Plants MobileNet v2', modelPath: 'models/inaturalist/plants/model.json', score: 0.2, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Plants-Labels.json', offset: 0, background: 2101 });
   // await loadClassify({ name: 'iNaturalist Birds MobileNet v2', modelPath: 'models/inaturalist/birds/model.json', score: 0.25, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Birds-Labels.json', offset: 0, background: 964 });
   // await loadClassify({ name: 'iNaturalist Insects MobileNet v2', modelPath: 'models/inaturalist/insects/model.json', score: 0.3, scoreScale: 200, topK: 1, useFloat: false, tensorSize: 224, classes: 'assets/iNaturalist-Insects-Labels.json', offset: 0, background: 1021 });
-  // await loadClassify({ name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' });
+  await loadClassify({ name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' });
   await loadClassify({ name: 'NSFW Inception v3 Quant', modelPath: 'models/nsfw-inception-v3-quant/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, useFloat: false, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' });
   // await loadClassify({ name: 'NSFW Mini', modelPath: 'models/nsfw-mini/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, useFloat: false, tensorSize: 244, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' });
+  // await loadClassify({ name: 'Places365 VGG16 Standard', modelPath: 'models/places365-vgg16-notop/model.json', modelType: 'layers', scoreScale: 100, useFloat: false, classes: 'assets/Places365-Standard-Labels.json' });
   // console.table('Loaded', tf.memory());
 
   log.div('log', true, 'Warming up ...');
