@@ -192,7 +192,7 @@ async function getImage(url) {
 
 async function processImage(name) {
   if (config.batchProcessing === 1) tf.engine().startScope();
-  log.div('state', true, `Engine state: ${tf.memory().numBytes.toLocaleString()} bytes ${tf.memory().numTensors.toLocaleString()} 
+  log.div('state', false, `Engine state: ${tf.memory().numBytes.toLocaleString()} bytes ${tf.memory().numTensors.toLocaleString()} 
     tensors ${tf.memory().numDataBuffers.toLocaleString()} buffers ${tf.memory().numBytesInGPU ? tf.memory().numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj = {};
   obj.image = name;
