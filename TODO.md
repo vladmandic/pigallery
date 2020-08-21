@@ -83,3 +83,25 @@ ImageNet 21k: <https://tfhub.dev/google/collections/bit/1>
   0159MB r101x1 1k 0308MB 21k
   1340MB r101x3 1k 1780MB 21k
   2733MB r152x4 1k 4179MB 21k
+
+## Places365
+
+notop models do not have activation above base5 features layer
+
+x = Flatten(name='flatten')(x)
+x = Dense(4096, activation='relu', name='fc1')(x)
+x = Dropout(0.5, name='drop_fc1')(x)
+x = Dense(4096, activation='relu', name='fc2')(x)
+x = Dropout(0.5, name='drop_fc2')(x)
+x = Dense(365, activation='softmax', name="predictions")(x)
+
+const predictions = model.predict(batched);
+const flatten = tf.layers.flatten().apply(predictions);
+const dense1 = tf.layers.dense({ units: 4096, activation: 'relu' }).apply(flatten);
+const dropout1 = tf.layers.dropout({ rate: 0.5 }).apply(dense1);
+const dense2 = tf.layers.dense({ units: 4096, activation: 'relu' }).apply(dropout1);
+const dropout2 = tf.layers.dropout({ rate: 0.5 }).apply(dense2);
+const dense = tf.layers.dense({ units: 365, activation: 'softmax' }).apply(dropout2);
+const soft = dense.softmax();
+console.log('sizes', predictions.size, flatten.size, dense1.size, dropout1.size, dense2.size, dropout2.size, dense.size, soft.size);
+const data = soft.dataSync();

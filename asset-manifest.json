@@ -5,7 +5,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 19101,
+      "bytes": 19320,
       "imports": [
         {
           "path": "client/log.js"
@@ -169,7 +169,7 @@
       ]
     },
     "client/modelClassify.js": {
-      "bytes": 3228,
+      "bytes": 3189,
       "imports": []
     },
     "client/modelDetect.js": {
@@ -16897,7 +16897,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5252095
+      "bytes": 5252055
     },
     "dist/gallery.js": {
       "imports": [],
@@ -19446,7 +19446,7 @@
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5029198
+      "bytes": 5029158
     },
     "dist/video.js": {
       "imports": [],
@@ -21965,7 +21965,7 @@
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5039649
+      "bytes": 5039609
     },
     "dist/process.js": {
       "imports": [],
@@ -24487,7 +24487,7 @@
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5077934
+      "bytes": 5078235
     },
     "dist/compare.js": {
       "imports": [],
@@ -27004,10 +27004,10 @@
           "bytesInOutput": 450
         },
         "client/compare.js": {
-          "bytesInOutput": 8645
+          "bytesInOutput": 8844
         }
       },
-      "bytes": 1948320
+      "bytes": 1948519
     },
     "dist/worker.js.map": {
       "imports": [],
