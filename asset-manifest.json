@@ -59,7 +59,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 31108,
+      "bytes": 31094,
       "imports": [
         {
           "path": "node_modules/marked/lib/marked.js"
@@ -16897,7 +16897,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5252055
+      "bytes": 5252029
     },
     "dist/gallery.js": {
       "imports": [],
@@ -19438,10 +19438,10 @@
           "bytesInOutput": 450
         },
         "client/gallery.js": {
-          "bytesInOutput": 20099
+          "bytesInOutput": 20087
         }
       },
-      "bytes": 2019561
+      "bytes": 2019549
     },
     "dist/video.js.map": {
       "imports": [],
