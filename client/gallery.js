@@ -21,9 +21,9 @@ window.filtered = [];
 async function busy(text) {
   if (text) {
     $('#busy-text').html(text);
-    $('.busy').toggle(true);
+    $('.busy').show();
   } else {
-    $('.busy').toggle('slow');
+    $('.busy').hide();
   }
 }
 

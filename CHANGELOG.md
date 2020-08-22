@@ -1,7 +1,10 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/08/20 cyan00@gmail.com
+### **origin/HEAD** 2020/08/21 cyan00@gmail.com
 
+- tinkering with tfjs@2.3.0 vs tfjs@1.7.4
+- tinkering with tfjs 2.30
+- updated
 
 ### **v1.3.2** 2020/08/20 cyan00@gmail.com
 
