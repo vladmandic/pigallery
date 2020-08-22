@@ -4,7 +4,8 @@ const log = require('@vladmandic/pilogger');
 const metadata = require('./metadata.js');
 
 function sign(req) {
-  const ip = (req.headers['forwarded'] || '').match(/for="\[(.*)\]:/)[1] || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
+  const forwarded = (req.headers['forwarded'] || '').match(/for="\[(.*)\]:/);
+  const ip = (Array.isArray(forwarded) ? forwarded[1] : null) || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
   const user = req.session.share ? '' : req.session.user;
   return `${user}@${ip}`;
 }
