@@ -29,10 +29,26 @@ async function init() {
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
+
+  // tf.ENV.set('WEBGL_BUFFER_SUPPORTED', false);
+  // tf.ENV.set('WEBGL_CONV_IM2COL', false);
+  // tf.ENV.set('WEBGL_CPU_FORWARD', false);
+  // tf.ENV.set('WEBGL_FENCE_API_ENABLED', false);
+  // tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', false);
+  // tf.ENV.set('WEBGL_LAZILY_UNPACK', false);
+  // tf.ENV.set('WEBGL_PACK', false);
+  // tf.ENV.set('WEBGL_PACK_ARRAY_OPERATIONS', false);
+  // tf.ENV.set('WEBGL_PACK_BINARY_OPERATIONS', false);
+  // tf.ENV.set('WEBGL_PACK_CLIP', false);
+  // tf.ENV.set('WEBGL_PACK_DEPTHWISECONV', false);
+  // tf.ENV.set('WEBGL_PACK_IMAGE_OPERATIONS', false);
+  // tf.ENV.set('WEBGL_PACK_UNARY_OPERATIONS', false);
+
   if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
   const f = `float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`;
   log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.batchProcessing} image resize: ${config.maxSize}px shape: ${config.squareImage ? 'square' : 'native'} ${f}`);
   log.div('log', true, 'Features:', tf.ENV.features);
+  log.div('log', true, 'Flags:', tf.ENV.flags);
 }
 
 async function loadClassify(options) {
@@ -303,7 +319,7 @@ async function person() {
 // eslint-disable-next-line no-unused-vars
 async function detect() {
   log.div('log', true, 'Loading models ...');
-  // await loadDetect({ name: 'CoCo SSD v1', modelPath: 'models/cocossd-v1/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
+  await loadDetect({ name: 'CoCo SSD v1', modelPath: 'models/cocossd-v1/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
   await loadDetect({ name: 'CoCo SSD v2', modelPath: 'models/cocossd-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO });
   // await loadDetect({ name: 'CoCo DarkNet/Yolo v1 Tiny', modelPath: 'models/yolo-v1-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
   // await loadDetect({ name: 'CoCo DarkNet/Yolo v2 Tiny', modelPath: 'models/yolo-v2-tiny/model.json', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' });
@@ -346,9 +362,6 @@ async function detect() {
 
 async function main() {
   await init();
-  // tf.ENV.set('WEBGL_PACK', false);
-  // tf.ENV.set('WEBGL_CONV_IM2COL', false);
-
   $('#btn-classify').click(() => classify());
   $('#btn-detect').click(() => detect());
   $('#btn-person').click(() => person());

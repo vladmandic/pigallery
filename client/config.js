@@ -10,7 +10,7 @@ window.tf = require('@tensorflow/tfjs'); // loads tfjs@1.7.4
 window.faceapi = require('@vladmandic/face-api'); // load published npm version
 // window.faceapi = require('/home/vlado/dev/face-api'); // load dev version
 
-// window.tf = window.faceapi.tf; // overrides loaded tfjs with tfjs@2.30
+window.tf = window.faceapi.tf; // overrides loaded tfjs with tfjs@2.30
 
 function colorHex(str) {
   const ctx = document.createElement('canvas').getContext('2d');

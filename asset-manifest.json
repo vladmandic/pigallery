@@ -5,7 +5,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 19320,
+      "bytes": 19927,
       "imports": [
         {
           "path": "client/log.js"
@@ -28,7 +28,7 @@
       ]
     },
     "client/config.js": {
-      "bytes": 12218,
+      "bytes": 12215,
       "imports": [
         {
           "path": "client/log.js"
@@ -173,7 +173,7 @@
       "imports": []
     },
     "client/modelDetect.js": {
-      "bytes": 5372,
+      "bytes": 5468,
       "imports": []
     },
     "client/modelYolo.js": {
@@ -16897,7 +16897,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5252029
+      "bytes": 5252212
     },
     "dist/gallery.js": {
       "imports": [],
@@ -16915,7 +16915,7 @@
           "bytesInOutput": 1697
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2521
+          "bytesInOutput": 2577
         },
         "disabled:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
           "bytesInOutput": 18
@@ -16957,7 +16957,7 @@
           "bytesInOutput": 2603
         },
         "client/config.js": {
-          "bytesInOutput": 6871
+          "bytesInOutput": 6899
         },
         "client/indexdb.js": {
           "bytesInOutput": 3244
@@ -19441,12 +19441,12 @@
           "bytesInOutput": 20087
         }
       },
-      "bytes": 2019549
+      "bytes": 2019633
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5029158
+      "bytes": 5029341
     },
     "dist/video.js": {
       "imports": [],
@@ -19461,7 +19461,7 @@
           "bytesInOutput": 1697
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2521
+          "bytesInOutput": 2577
         },
         "disabled:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
           "bytesInOutput": 18
@@ -19503,7 +19503,7 @@
           "bytesInOutput": 2603
         },
         "client/config.js": {
-          "bytesInOutput": 6871
+          "bytesInOutput": 6899
         },
         "client/processVideo.js": {
           "bytesInOutput": 3325
@@ -21960,12 +21960,12 @@
           "bytesInOutput": 4052
         }
       },
-      "bytes": 1933287
+      "bytes": 1933371
     },
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5039609
+      "bytes": 5039792
     },
     "dist/process.js": {
       "imports": [],
@@ -21980,7 +21980,7 @@
           "bytesInOutput": 1697
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2521
+          "bytesInOutput": 2577
         },
         "disabled:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
           "bytesInOutput": 18
@@ -22022,7 +22022,7 @@
           "bytesInOutput": 2603
         },
         "client/config.js": {
-          "bytesInOutput": 6871
+          "bytesInOutput": 6899
         },
         "client/blockhash.js": {
           "bytesInOutput": 1967
@@ -24482,12 +24482,12 @@
           "bytesInOutput": 2233
         }
       },
-      "bytes": 1936332
+      "bytes": 1936416
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5078235
+      "bytes": 5079163
     },
     "dist/compare.js": {
       "imports": [],
@@ -24502,7 +24502,7 @@
           "bytesInOutput": 1697
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2521
+          "bytesInOutput": 2577
         },
         "disabled:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
           "bytesInOutput": 18
@@ -24544,7 +24544,7 @@
           "bytesInOutput": 2603
         },
         "client/config.js": {
-          "bytesInOutput": 6871
+          "bytesInOutput": 6899
         },
         "client/modelYolo.js": {
           "bytesInOutput": 5286
@@ -27004,10 +27004,10 @@
           "bytesInOutput": 450
         },
         "client/compare.js": {
-          "bytesInOutput": 8844
+          "bytesInOutput": 9001
         }
       },
-      "bytes": 1948519
+      "bytes": 1948760
     },
     "dist/worker.js.map": {
       "imports": [],
