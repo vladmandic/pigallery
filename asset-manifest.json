@@ -28,7 +28,7 @@
       ]
     },
     "client/config.js": {
-      "bytes": 12215,
+      "bytes": 12218,
       "imports": [
         {
           "path": "client/log.js"
@@ -16897,7 +16897,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5252212
+      "bytes": 5252189
     },
     "dist/gallery.js": {
       "imports": [],
@@ -16957,7 +16957,7 @@
           "bytesInOutput": 2603
         },
         "client/config.js": {
-          "bytesInOutput": 6899
+          "bytesInOutput": 6871
         },
         "client/indexdb.js": {
           "bytesInOutput": 3244
@@ -19441,12 +19441,12 @@
           "bytesInOutput": 20087
         }
       },
-      "bytes": 2019633
+      "bytes": 2019605
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5029341
+      "bytes": 5029318
     },
     "dist/video.js": {
       "imports": [],
@@ -19503,7 +19503,7 @@
           "bytesInOutput": 2603
         },
         "client/config.js": {
-          "bytesInOutput": 6899
+          "bytesInOutput": 6871
         },
         "client/processVideo.js": {
           "bytesInOutput": 3325
@@ -21960,12 +21960,12 @@
           "bytesInOutput": 4052
         }
       },
-      "bytes": 1933371
+      "bytes": 1933343
     },
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5039792
+      "bytes": 5039769
     },
     "dist/process.js": {
       "imports": [],
@@ -22022,7 +22022,7 @@
           "bytesInOutput": 2603
         },
         "client/config.js": {
-          "bytesInOutput": 6899
+          "bytesInOutput": 6871
         },
         "client/blockhash.js": {
           "bytesInOutput": 1967
@@ -24482,12 +24482,12 @@
           "bytesInOutput": 2233
         }
       },
-      "bytes": 1936416
+      "bytes": 1936388
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5079163
+      "bytes": 5079140
     },
     "dist/compare.js": {
       "imports": [],
@@ -24544,7 +24544,7 @@
           "bytesInOutput": 2603
         },
         "client/config.js": {
-          "bytesInOutput": 6899
+          "bytesInOutput": 6871
         },
         "client/modelYolo.js": {
           "bytesInOutput": 5286
@@ -27007,7 +27007,7 @@
           "bytesInOutput": 9001
         }
       },
-      "bytes": 1948760
+      "bytes": 1948732
     },
     "dist/worker.js.map": {
       "imports": [],
