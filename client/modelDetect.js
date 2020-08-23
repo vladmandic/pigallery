@@ -88,6 +88,8 @@ async function detectCOCO(model, image) {
   } else {
     const cast = tf.cast(expanded, 'float32');
     batched = tf.mul(cast, [1.0 / 255.0]);
+    tf.dispose(expanded);
+    tf.dispose(cast);
   }
   const result = await model.executeAsync(batched);
   const [scores, classes] = calculateMaxScores(result);
@@ -109,6 +111,8 @@ async function detectSSD(model, image) {
   } else {
     const cast = tf.cast(expanded, 'float32');
     batched = tf.mul(cast, [1.0 / 255.0]);
+    tf.dispose(cast);
+    tf.dispose(expanded);
     tf.dispose(cast);
   }
   // console.log('execute start', model); look at model.inputs and model.outputs on how to execute a model
