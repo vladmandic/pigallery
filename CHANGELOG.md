@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- switch to tfjs@2.3.0
 
 ### **origin/HEAD** 2020/08/22 cyan00@gmail.com
 
