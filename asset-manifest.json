@@ -53,7 +53,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 31123,
+      "bytes": 31053,
       "imports": [
         {
           "path": "client/config.js"
@@ -270,7 +270,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 411212
+      "bytes": 411095
     },
     "dist/gallery.js": {
       "imports": [],
@@ -321,10 +321,10 @@
           "bytesInOutput": 663
         },
         "client/gallery.js": {
-          "bytesInOutput": 19950
+          "bytesInOutput": 19888
         }
       },
-      "bytes": 128242
+      "bytes": 128180
     },
     "dist/video.js.map": {
       "imports": [],

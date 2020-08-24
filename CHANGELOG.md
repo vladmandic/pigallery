@@ -1,8 +1,13 @@
 # PiGallery Change Log
+
+### **origin/HEAD** 2020/08/24 cyan00@gmail.com
+
+
+### **v2.0.1** 2020/08/24 cyan00@gmail.com
+
+- updated dependencies
 - switch to tfjs@2.3.0
-
-### **origin/HEAD** 2020/08/22 cyan00@gmail.com
-
+- tinkering with openimages model
 - tinkering with openimages model
 - ip lookup fix
 - shares loading progress fix
