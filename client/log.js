@@ -1,5 +1,3 @@
-const moment = require('moment');
-
 function str(...msg) {
   if (!Array.isArray(msg)) return msg;
   let line = '';
@@ -11,7 +9,9 @@ function str(...msg) {
 }
 
 async function debug(...msg) {
-  const ts = `${moment().format('HH:mm:ss.SS')}:`;
+  // const ts = `${moment().format('HH:mm:ss.SS')}:`;
+  const dt = new Date();
+  const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
   if (typeof msg[0] === 'number') {
     const t0 = msg[0];
     const t1 = window.performance.now();

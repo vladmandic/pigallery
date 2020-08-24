@@ -121,12 +121,8 @@
       ]
     },
     "client/log.js": {
-      "bytes": 1280,
-      "imports": [
-        {
-          "path": "node_modules/moment/moment.js"
-        }
-      ]
+      "bytes": 1480,
+      "imports": []
     },
     "client/map.js": {
       "bytes": 2856,
@@ -270,16 +266,13 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 411095
+      "bytes": 411401
     },
     "dist/gallery.js": {
       "imports": [],
       "inputs": {
-        "node_modules/moment/moment.js": {
-          "bytesInOutput": 60158
-        },
         "client/log.js": {
-          "bytesInOutput": 834
+          "bytesInOutput": 985
         },
         "client/modelClassify.js": {
           "bytesInOutput": 1720
@@ -292,6 +285,9 @@
         },
         "client/indexdb.js": {
           "bytesInOutput": 3222
+        },
+        "node_modules/moment/moment.js": {
+          "bytesInOutput": 60158
         },
         "client/details.js": {
           "bytesInOutput": 10424
@@ -324,112 +320,103 @@
           "bytesInOutput": 19888
         }
       },
-      "bytes": 128180
+      "bytes": 128331
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 296919
+      "bytes": 54115
     },
     "dist/video.js": {
       "imports": [],
       "inputs": {
-        "node_modules/moment/moment.js": {
-          "bytesInOutput": 60113
-        },
         "client/log.js": {
-          "bytesInOutput": 835
+          "bytesInOutput": 974
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1707
+          "bytesInOutput": 1692
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2564
+          "bytesInOutput": 2531
         },
         "client/config.js": {
-          "bytesInOutput": 6896
+          "bytesInOutput": 6885
         },
         "client/processVideo.js": {
-          "bytesInOutput": 3272
+          "bytesInOutput": 3229
         },
         "client/video.js": {
-          "bytesInOutput": 4013
+          "bytesInOutput": 3990
         }
       },
-      "bytes": 79633
+      "bytes": 19400
     },
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 307370
+      "bytes": 64566
     },
     "dist/process.js": {
       "imports": [],
       "inputs": {
-        "node_modules/moment/moment.js": {
-          "bytesInOutput": 60155
-        },
         "client/log.js": {
-          "bytesInOutput": 835
+          "bytesInOutput": 974
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1721
+          "bytesInOutput": 1692
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2553
+          "bytesInOutput": 2531
         },
         "client/config.js": {
-          "bytesInOutput": 6896
+          "bytesInOutput": 6888
         },
         "client/blockhash.js": {
-          "bytesInOutput": 1993
+          "bytesInOutput": 1967
         },
         "client/processImage.js": {
-          "bytesInOutput": 6290
+          "bytesInOutput": 6265
         },
         "client/process.js": {
-          "bytesInOutput": 2210
+          "bytesInOutput": 2195
         }
       },
-      "bytes": 82888
+      "bytes": 22613
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 346944
+      "bytes": 104140
     },
     "dist/compare.js": {
       "imports": [],
       "inputs": {
-        "node_modules/moment/moment.js": {
-          "bytesInOutput": 60202
-        },
         "client/log.js": {
-          "bytesInOutput": 835
+          "bytesInOutput": 984
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1721
+          "bytesInOutput": 1694
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2553
+          "bytesInOutput": 2536
         },
         "client/config.js": {
-          "bytesInOutput": 6896
+          "bytesInOutput": 6892
         },
         "client/modelYolo.js": {
-          "bytesInOutput": 5254
+          "bytesInOutput": 5220
         },
         "client/blockhash.js": {
-          "bytesInOutput": 1986
+          "bytesInOutput": 1967
         },
         "client/processImage.js": {
-          "bytesInOutput": 6323
+          "bytesInOutput": 6271
         },
         "client/compare.js": {
-          "bytesInOutput": 8472
+          "bytesInOutput": 8426
         }
       },
-      "bytes": 94604
+      "bytes": 34218
     },
     "dist/worker.js.map": {
       "imports": [],
