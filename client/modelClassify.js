@@ -9,6 +9,7 @@ let config = {
   alignCorners: true,
   tensorSize: 224,
   tensorShape: 3,
+  reshape: -1,
   offset: 1,
   scoreScale: 1,
   background: -1,
@@ -56,7 +57,7 @@ async function classify(model, image) {
     const mul = tf.mul(bufFloat, (model.config.inputMax - model.config.inputMin) / 255.0); // bufFloat.mul((model.config.inputMax - model.config.inputMin) / 255.0);
     const add = tf.add(mul, model.config.inputMin); // mul.add(model.config.inputMin);
     const resized = tf.image.resizeBilinear(add, [model.config.tensorSize, model.config.tensorSize], model.config.alignCorners);
-    const reshaped = tf.reshape(resized, [-1, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]); // resized.reshape([-1, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]);
+    const reshaped = tf.reshape(resized, [model.config.reshape, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]); // resized.reshape([-1, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]);
     let batched;
     if (!model.config.useFloat) {
       batched = reshaped;
@@ -80,3 +81,9 @@ module.exports = {
   load,
   classify,
 };
+
+/*
+      const normalized1 = img.toFloat().div(this.normalizationOffset);
+      const resized1 = tf.image.resizeBilinear(normalized1, [model.config.tensorSize, model.config.tensorSize], model.config.alignCorners);
+      const batched1 = resized1.reshape([1, model.config.tensorSize, model.config.tensorSize, 3]);
+*/

@@ -2,6 +2,8 @@
 
 ### **origin/HEAD** 2020/08/22 cyan00@gmail.com
 
+- tinkering with openimages model
+- ip lookup fix
 - shares loading progress fix
 - tinkering with places365 converted model
 - tinkering with tfjs@2.3.0 vs tfjs@1.7.4

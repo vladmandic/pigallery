@@ -1305,13 +1305,14 @@
                 outputs = f();
             };
             const timer = this.backendTimer.time(holdResultWrapperFn);
-            outputs.map(r => {
+            for (let i = 0; i < outputs.length; i++) {
+                const output = outputs[i];
                 // Dangling promise here because we don't want to propagate up
                 // asynchronicity.
-                r.data().then(tensorVals => {
-                    checkComputationForErrors(tensorVals, r.dtype, kernelName);
+                output.data().then(tensorVals => {
+                    checkComputationForErrors(tensorVals, output.dtype, kernelName);
                 });
-            });
+            }
             const kernelProfile = {
                 kernelName,
                 outputs,
@@ -1807,6 +1808,12 @@
     let trackerFn = null;
     // Used by chaining methods to call into ops.
     let opHandler = null;
+    // Used to warn about deprecated methods.
+    let deprecationWarningFn = null;
+    // This here so that we can use this method on dev branches and keep the
+    // functionality at master.
+    // tslint:disable-next-line:no-unused-expression
+    [deprecationWarningFn];
     /**
      * An external consumer can register itself as the tensor tracker. This way
      * the Tensor class can notify the tracker for every tensor created and
@@ -1822,6 +1829,13 @@
      */
     function setOpHandler(handler) {
         opHandler = handler;
+    }
+    /**
+     * Sets the deprecation warning function to be used by this file. This way the
+     * Tensor class can be a leaf but still use the environment.
+     */
+    function setDeprecationWarningFn(fn) {
+        deprecationWarningFn = fn;
     }
     /**
      * A `tf.Tensor` object represents an immutable, multidimensional array of
@@ -2441,7 +2455,7 @@
                 `failed.`);
         }
         moveData(backend, dataId) {
-            let info = this.state.tensorInfo.get(dataId);
+            const info = this.state.tensorInfo.get(dataId);
             const srcBackend = info.backend;
             const values = this.readSync(dataId);
             // Delete the tensor from the old backend and move it to the new
@@ -3278,6 +3292,17 @@
         importFetch: () => require('node-fetch')
     };
     let systemFetch;
+    // These getters and setters are for testing so we don't export a mutable
+    // variable.
+    function resetSystemFetch() {
+        systemFetch = null;
+    }
+    function setSystemFetch(fetchFn) {
+        systemFetch = fetchFn;
+    }
+    function getSystemFetch() {
+        return systemFetch;
+    }
     class PlatformNode {
         constructor() {
             // tslint:disable-next-line:no-require-imports
@@ -4929,6 +4954,7 @@
                 'tf.disableDeprecationWarnings().');
         }
     }
+    setDeprecationWarningFn(deprecationWarn);
     /**
      * Dispose all variables kept in backend engine.
      */
@@ -11963,8 +11989,20 @@
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
+    function unwrapExports (x) {
+    	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+    }
+
     function createCommonjsModule(fn, module) {
     	return module = { exports: {} }, fn(module, module.exports), module.exports;
+    }
+
+    function getCjsExportFromNamespace (n) {
+    	return n && n['default'] || n;
+    }
+
+    function commonjsRequire () {
+    	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
     }
 
     var alea = createCommonjsModule(function (module) {
@@ -12077,8 +12115,8 @@
 
     })(
       commonjsGlobal,
-       module,    // present in node.js
-      (typeof undefined) == 'function'    // present with an AMD loader
+      ('object') == 'object' && module,    // present in node.js
+      (typeof undefined) == 'function' && undefined   // present with an AMD loader
     );
     });
 
@@ -12159,8 +12197,8 @@
 
     })(
       commonjsGlobal,
-       module,    // present in node.js
-      (typeof undefined) == 'function'    // present with an AMD loader
+      ('object') == 'object' && module,    // present in node.js
+      (typeof undefined) == 'function' && undefined   // present with an AMD loader
     );
     });
 
@@ -12246,8 +12284,8 @@
 
     })(
       commonjsGlobal,
-       module,    // present in node.js
-      (typeof undefined) == 'function'    // present with an AMD loader
+      ('object') == 'object' && module,    // present in node.js
+      (typeof undefined) == 'function' && undefined   // present with an AMD loader
     );
     });
 
@@ -12265,7 +12303,7 @@
       // Set up generator function.
       me.next = function() {
         // Update xor generator.
-        var X = me.x, i = me.i, t, v;
+        var X = me.x, i = me.i, t, v, w;
         t = X[i]; t ^= (t >>> 7); v = t ^ (t << 24);
         t = X[(i + 1) & 7]; v ^= t ^ (t >>> 10);
         t = X[(i + 3) & 7]; v ^= t ^ (t >>> 3);
@@ -12345,8 +12383,8 @@
 
     })(
       commonjsGlobal,
-       module,    // present in node.js
-      (typeof undefined) == 'function'    // present with an AMD loader
+      ('object') == 'object' && module,    // present in node.js
+      (typeof undefined) == 'function' && undefined   // present with an AMD loader
     );
     });
 
@@ -12460,7 +12498,8 @@
       t.w = f.w;
       t.X = f.X.slice();
       return t;
-    }
+    };
+
     function impl(seed, opts) {
       if (seed == null) seed = +(new Date);
       var xg = new XorGen(seed),
@@ -12493,8 +12532,8 @@
 
     })(
       commonjsGlobal,                                     // window object or global
-       module,    // present in node.js
-      (typeof undefined) == 'function'    // present with an AMD loader
+      ('object') == 'object' && module,    // present in node.js
+      (typeof undefined) == 'function' && undefined   // present with an AMD loader
     );
     });
 
@@ -12564,7 +12603,8 @@
       t.c = f.c;
       t.d = f.d;
       return t;
-    }
+    };
+
     function impl(seed, opts) {
       var xg = new XorGen(seed),
           state = opts && opts.state,
@@ -12596,8 +12636,8 @@
 
     })(
       commonjsGlobal,
-       module,    // present in node.js
-      (typeof undefined) == 'function'    // present with an AMD loader
+      ('object') == 'object' && module,    // present in node.js
+      (typeof undefined) == 'function' && undefined   // present with an AMD loader
     );
     });
 
@@ -12760,7 +12800,8 @@
       t.j = f.j;
       t.S = f.S.slice();
       return t;
-    }
+    };
+
     //
     // flatten()
     // Converts an object tree to nested arrays of strings.
@@ -12833,12 +12874,14 @@
     // Nodejs and AMD support: export the implementation as a module using
     // either convention.
     //
-    if ( module.exports) {
+    if (('object') == 'object' && module.exports) {
       module.exports = seedrandom;
       // When in node.js, try using crypto package for autoseeding.
       try {
         nodecrypto = require('crypto');
       } catch (ex) {}
+    } else if ((typeof undefined) == 'function' && undefined.amd) {
+      undefined(function() { return seedrandom; });
     }
 
     // End anonymous scope, and pass initial values.
@@ -13186,6 +13229,68 @@
         nextValue() {
             return this.convertValue(this.min + this.range * this.random());
         }
+    }
+    function jarqueBeraNormalityTest(values) {
+        // https://en.wikipedia.org/wiki/Jarque%E2%80%93Bera_test
+        const n = values.length;
+        const s = skewness(values);
+        const k = kurtosis(values);
+        const jb = n / 6 * (Math.pow(s, 2) + 0.25 * Math.pow(k - 3, 2));
+        // JB test requires 2-degress of freedom from Chi-Square @ 0.95:
+        // http://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm
+        const CHI_SQUARE_2DEG = 5.991;
+        if (jb > CHI_SQUARE_2DEG) {
+            throw new Error(`Invalid p-value for JB: ${jb}`);
+        }
+    }
+    function expectArrayInMeanStdRange(actual, expectedMean, expectedStdDev, epsilon) {
+        if (epsilon == null) {
+            epsilon = testEpsilon();
+        }
+        const actualMean = mean$1(actual);
+        expectNumbersClose(actualMean, expectedMean, epsilon);
+        expectNumbersClose(standardDeviation(actual, actualMean), expectedStdDev, epsilon);
+    }
+    function mean$1(values) {
+        let sum = 0;
+        for (let i = 0; i < values.length; i++) {
+            sum += values[i];
+        }
+        return sum / values.length;
+    }
+    function standardDeviation(values, mean) {
+        let squareDiffSum = 0;
+        for (let i = 0; i < values.length; i++) {
+            const diff = values[i] - mean;
+            squareDiffSum += diff * diff;
+        }
+        return Math.sqrt(squareDiffSum / values.length);
+    }
+    function kurtosis(values) {
+        // https://en.wikipedia.org/wiki/Kurtosis
+        const valuesMean = mean$1(values);
+        const n = values.length;
+        let sum2 = 0;
+        let sum4 = 0;
+        for (let i = 0; i < n; i++) {
+            const v = values[i] - valuesMean;
+            sum2 += Math.pow(v, 2);
+            sum4 += Math.pow(v, 4);
+        }
+        return (1 / n) * sum4 / Math.pow((1 / n) * sum2, 2);
+    }
+    function skewness(values) {
+        // https://en.wikipedia.org/wiki/Skewness
+        const valuesMean = mean$1(values);
+        const n = values.length;
+        let sum2 = 0;
+        let sum3 = 0;
+        for (let i = 0; i < n; i++) {
+            const v = values[i] - valuesMean;
+            sum2 += Math.pow(v, 2);
+            sum3 += Math.pow(v, 3);
+        }
+        return (1 / n) * sum3 / Math.pow((1 / (n - 1)) * sum2, 3 / 2);
     }
 
     /**
@@ -19535,6 +19640,41 @@
         return new Blob([str]).size;
     }
     /**
+     * Encode an ArrayBuffer as a base64 encoded string.
+     *
+     * @param buffer `ArrayBuffer` to be converted.
+     * @returns A string that base64-encodes `buffer`.
+     */
+    function arrayBufferToBase64String(buffer) {
+        if (useNodeBuffer) {
+            return Buffer.from(buffer).toString('base64');
+        }
+        const buf = new Uint8Array(buffer);
+        let s = '';
+        for (let i = 0, l = buf.length; i < l; i++) {
+            s += String.fromCharCode(buf[i]);
+        }
+        return btoa(s);
+    }
+    /**
+     * Decode a base64 string as an ArrayBuffer.
+     *
+     * @param str Base64 string.
+     * @returns Decoded `ArrayBuffer`.
+     */
+    function base64StringToArrayBuffer(str) {
+        if (useNodeBuffer) {
+            const buf = Buffer.from(str, 'base64');
+            return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+        }
+        const s = atob(str);
+        const buffer = new Uint8Array(s.length);
+        for (let i = 0; i < s.length; ++i) {
+            buffer.set([s.charCodeAt(i)], i);
+        }
+        return buffer.buffer;
+    }
+    /**
      * Concatenate a number of ArrayBuffers into one.
      *
      * @param buffers A number of array buffers to concatenate.
@@ -20066,6 +20206,610 @@
     async function moveModel(sourceURL, destURL) {
         const deleteSource = true;
         return cloneModelInternal(sourceURL, destURL, deleteSource);
+    }
+
+    /**
+     * @license
+     * Copyright 2018 Google LLC. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
+    const DATABASE_NAME = 'tensorflowjs';
+    const DATABASE_VERSION = 1;
+    // Model data and ModelArtifactsInfo (metadata) are stored in two separate
+    // stores for efficient access of the list of stored models and their metadata.
+    // 1. The object store for model data: topology, weights and weight manifests.
+    const MODEL_STORE_NAME = 'models_store';
+    // 2. The object store for ModelArtifactsInfo, including meta-information such
+    //    as the type of topology (JSON vs binary), byte size of the topology, byte
+    //    size of the weights, etc.
+    const INFO_STORE_NAME = 'model_info_store';
+    /**
+     * Delete the entire database for tensorflow.js, including the models store.
+     */
+    async function deleteDatabase() {
+        const idbFactory = getIndexedDBFactory();
+        return new Promise((resolve, reject) => {
+            const deleteRequest = idbFactory.deleteDatabase(DATABASE_NAME);
+            deleteRequest.onsuccess = () => resolve();
+            deleteRequest.onerror = error => reject(error);
+        });
+    }
+    function getIndexedDBFactory() {
+        if (!env().getBool('IS_BROWSER')) {
+            // TODO(cais): Add more info about what IOHandler subtypes are available.
+            //   Maybe point to a doc page on the web and/or automatically determine
+            //   the available IOHandlers and print them in the error message.
+            throw new Error('Failed to obtain IndexedDB factory because the current environment' +
+                'is not a web browser.');
+        }
+        // tslint:disable-next-line:no-any
+        const theWindow = typeof window === 'undefined' ? self : window;
+        const factory = theWindow.indexedDB || theWindow.mozIndexedDB ||
+            theWindow.webkitIndexedDB || theWindow.msIndexedDB ||
+            theWindow.shimIndexedDB;
+        if (factory == null) {
+            throw new Error('The current browser does not appear to support IndexedDB.');
+        }
+        return factory;
+    }
+    function setUpDatabase(openRequest) {
+        const db = openRequest.result;
+        db.createObjectStore(MODEL_STORE_NAME, { keyPath: 'modelPath' });
+        db.createObjectStore(INFO_STORE_NAME, { keyPath: 'modelPath' });
+    }
+    /**
+     * IOHandler subclass: Browser IndexedDB.
+     *
+     * See the doc string of `browserIndexedDB` for more details.
+     */
+    class BrowserIndexedDB {
+        constructor(modelPath) {
+            this.indexedDB = getIndexedDBFactory();
+            if (modelPath == null || !modelPath) {
+                throw new Error('For IndexedDB, modelPath must not be null, undefined or empty.');
+            }
+            this.modelPath = modelPath;
+        }
+        async save(modelArtifacts) {
+            // TODO(cais): Support saving GraphDef models.
+            if (modelArtifacts.modelTopology instanceof ArrayBuffer) {
+                throw new Error('BrowserLocalStorage.save() does not support saving model topology ' +
+                    'in binary formats yet.');
+            }
+            return this.databaseAction(this.modelPath, modelArtifacts);
+        }
+        async load() {
+            return this.databaseAction(this.modelPath);
+        }
+        /**
+         * Perform database action to put model artifacts into or read model artifacts
+         * from IndexedDB object store.
+         *
+         * Whether the action is put or get depends on whether `modelArtifacts` is
+         * specified. If it is specified, the action will be put; otherwise the action
+         * will be get.
+         *
+         * @param modelPath A unique string path for the model.
+         * @param modelArtifacts If specified, it will be the model artifacts to be
+         *   stored in IndexedDB.
+         * @returns A `Promise` of `SaveResult`, if the action is put, or a `Promise`
+         *   of `ModelArtifacts`, if the action is get.
+         */
+        databaseAction(modelPath, modelArtifacts) {
+            return new Promise((resolve, reject) => {
+                const openRequest = this.indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
+                openRequest.onupgradeneeded = () => setUpDatabase(openRequest);
+                openRequest.onsuccess = () => {
+                    const db = openRequest.result;
+                    if (modelArtifacts == null) {
+                        // Read model out from object store.
+                        const modelTx = db.transaction(MODEL_STORE_NAME, 'readonly');
+                        const modelStore = modelTx.objectStore(MODEL_STORE_NAME);
+                        const getRequest = modelStore.get(this.modelPath);
+                        getRequest.onsuccess = () => {
+                            if (getRequest.result == null) {
+                                db.close();
+                                return reject(new Error(`Cannot find model with path '${this.modelPath}' ` +
+                                    `in IndexedDB.`));
+                            }
+                            else {
+                                resolve(getRequest.result.modelArtifacts);
+                            }
+                        };
+                        getRequest.onerror = error => {
+                            db.close();
+                            return reject(getRequest.error);
+                        };
+                        modelTx.oncomplete = () => db.close();
+                    }
+                    else {
+                        // Put model into object store.
+                        const modelArtifactsInfo = getModelArtifactsInfoForJSON(modelArtifacts);
+                        // First, put ModelArtifactsInfo into info store.
+                        const infoTx = db.transaction(INFO_STORE_NAME, 'readwrite');
+                        let infoStore = infoTx.objectStore(INFO_STORE_NAME);
+                        const putInfoRequest = infoStore.put({ modelPath: this.modelPath, modelArtifactsInfo });
+                        let modelTx;
+                        putInfoRequest.onsuccess = () => {
+                            // Second, put model data into model store.
+                            modelTx = db.transaction(MODEL_STORE_NAME, 'readwrite');
+                            const modelStore = modelTx.objectStore(MODEL_STORE_NAME);
+                            const putModelRequest = modelStore.put({
+                                modelPath: this.modelPath,
+                                modelArtifacts,
+                                modelArtifactsInfo
+                            });
+                            putModelRequest.onsuccess = () => resolve({ modelArtifactsInfo });
+                            putModelRequest.onerror = error => {
+                                // If the put-model request fails, roll back the info entry as
+                                // well.
+                                infoStore = infoTx.objectStore(INFO_STORE_NAME);
+                                const deleteInfoRequest = infoStore.delete(this.modelPath);
+                                deleteInfoRequest.onsuccess = () => {
+                                    db.close();
+                                    return reject(putModelRequest.error);
+                                };
+                                deleteInfoRequest.onerror = error => {
+                                    db.close();
+                                    return reject(putModelRequest.error);
+                                };
+                            };
+                        };
+                        putInfoRequest.onerror = error => {
+                            db.close();
+                            return reject(putInfoRequest.error);
+                        };
+                        infoTx.oncomplete = () => {
+                            if (modelTx == null) {
+                                db.close();
+                            }
+                            else {
+                                modelTx.oncomplete = () => db.close();
+                            }
+                        };
+                    }
+                };
+                openRequest.onerror = error => reject(openRequest.error);
+            });
+        }
+    }
+    BrowserIndexedDB.URL_SCHEME = 'indexeddb://';
+    const indexedDBRouter = (url) => {
+        if (!env().getBool('IS_BROWSER')) {
+            return null;
+        }
+        else {
+            if (!Array.isArray(url) && url.startsWith(BrowserIndexedDB.URL_SCHEME)) {
+                return browserIndexedDB(url.slice(BrowserIndexedDB.URL_SCHEME.length));
+            }
+            else {
+                return null;
+            }
+        }
+    };
+    IORouterRegistry.registerSaveRouter(indexedDBRouter);
+    IORouterRegistry.registerLoadRouter(indexedDBRouter);
+    /**
+     * Creates a browser IndexedDB IOHandler for saving and loading models.
+     *
+     * ```js
+     * const model = tf.sequential();
+     * model.add(
+     *     tf.layers.dense({units: 1, inputShape: [100], activation: 'sigmoid'}));
+     *
+     * const saveResult = await model.save('indexeddb://MyModel'));
+     * console.log(saveResult);
+     * ```
+     *
+     * @param modelPath A unique identifier for the model to be saved. Must be a
+     *   non-empty string.
+     * @returns An instance of `BrowserIndexedDB` (sublcass of `IOHandler`),
+     *   which can be used with, e.g., `tf.Model.save`.
+     */
+    function browserIndexedDB(modelPath) {
+        return new BrowserIndexedDB(modelPath);
+    }
+    function maybeStripScheme(key) {
+        return key.startsWith(BrowserIndexedDB.URL_SCHEME) ?
+            key.slice(BrowserIndexedDB.URL_SCHEME.length) :
+            key;
+    }
+    class BrowserIndexedDBManager {
+        constructor() {
+            this.indexedDB = getIndexedDBFactory();
+        }
+        async listModels() {
+            return new Promise((resolve, reject) => {
+                const openRequest = this.indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
+                openRequest.onupgradeneeded = () => setUpDatabase(openRequest);
+                openRequest.onsuccess = () => {
+                    const db = openRequest.result;
+                    const tx = db.transaction(INFO_STORE_NAME, 'readonly');
+                    const store = tx.objectStore(INFO_STORE_NAME);
+                    // tslint:disable:max-line-length
+                    // Need to cast `store` as `any` here because TypeScript's DOM
+                    // library does not have the `getAll()` method even though the
+                    // method is supported in the latest version of most mainstream
+                    // browsers:
+                    // https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/getAll
+                    // tslint:enable:max-line-length
+                    // tslint:disable-next-line:no-any
+                    const getAllInfoRequest = store.getAll();
+                    getAllInfoRequest.onsuccess = () => {
+                        const out = {};
+                        for (const item of getAllInfoRequest.result) {
+                            out[item.modelPath] = item.modelArtifactsInfo;
+                        }
+                        resolve(out);
+                    };
+                    getAllInfoRequest.onerror = error => {
+                        db.close();
+                        return reject(getAllInfoRequest.error);
+                    };
+                    tx.oncomplete = () => db.close();
+                };
+                openRequest.onerror = error => reject(openRequest.error);
+            });
+        }
+        async removeModel(path) {
+            path = maybeStripScheme(path);
+            return new Promise((resolve, reject) => {
+                const openRequest = this.indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
+                openRequest.onupgradeneeded = () => setUpDatabase(openRequest);
+                openRequest.onsuccess = () => {
+                    const db = openRequest.result;
+                    const infoTx = db.transaction(INFO_STORE_NAME, 'readwrite');
+                    const infoStore = infoTx.objectStore(INFO_STORE_NAME);
+                    const getInfoRequest = infoStore.get(path);
+                    let modelTx;
+                    getInfoRequest.onsuccess = () => {
+                        if (getInfoRequest.result == null) {
+                            db.close();
+                            return reject(new Error(`Cannot find model with path '${path}' ` +
+                                `in IndexedDB.`));
+                        }
+                        else {
+                            // First, delete the entry in the info store.
+                            const deleteInfoRequest = infoStore.delete(path);
+                            const deleteModelData = () => {
+                                // Second, delete the entry in the model store.
+                                modelTx = db.transaction(MODEL_STORE_NAME, 'readwrite');
+                                const modelStore = modelTx.objectStore(MODEL_STORE_NAME);
+                                const deleteModelRequest = modelStore.delete(path);
+                                deleteModelRequest.onsuccess = () => resolve(getInfoRequest.result.modelArtifactsInfo);
+                                deleteModelRequest.onerror = error => reject(getInfoRequest.error);
+                            };
+                            // Proceed with deleting model data regardless of whether deletion
+                            // of info data succeeds or not.
+                            deleteInfoRequest.onsuccess = deleteModelData;
+                            deleteInfoRequest.onerror = error => {
+                                deleteModelData();
+                                db.close();
+                                return reject(getInfoRequest.error);
+                            };
+                        }
+                    };
+                    getInfoRequest.onerror = error => {
+                        db.close();
+                        return reject(getInfoRequest.error);
+                    };
+                    infoTx.oncomplete = () => {
+                        if (modelTx == null) {
+                            db.close();
+                        }
+                        else {
+                            modelTx.oncomplete = () => db.close();
+                        }
+                    };
+                };
+                openRequest.onerror = error => reject(openRequest.error);
+            });
+        }
+    }
+    if (env().getBool('IS_BROWSER')) {
+        // Wrap the construction and registration, to guard against browsers that
+        // don't support Local Storage.
+        try {
+            ModelStoreManagerRegistry.registerManager(BrowserIndexedDB.URL_SCHEME, new BrowserIndexedDBManager());
+        }
+        catch (err) {
+        }
+    }
+
+    /**
+     * @license
+     * Copyright 2018 Google LLC. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
+    const PATH_SEPARATOR = '/';
+    const PATH_PREFIX = 'tensorflowjs_models';
+    const INFO_SUFFIX = 'info';
+    const MODEL_TOPOLOGY_SUFFIX = 'model_topology';
+    const WEIGHT_SPECS_SUFFIX = 'weight_specs';
+    const WEIGHT_DATA_SUFFIX = 'weight_data';
+    const MODEL_METADATA_SUFFIX = 'model_metadata';
+    /**
+     * Purge all tensorflow.js-saved model artifacts from local storage.
+     *
+     * @returns Paths of the models purged.
+     */
+    function purgeLocalStorageArtifacts() {
+        if (!env().getBool('IS_BROWSER') ||
+            typeof window === 'undefined' ||
+            typeof window.localStorage === 'undefined') {
+            throw new Error('purgeLocalStorageModels() cannot proceed because local storage is ' +
+                'unavailable in the current environment.');
+        }
+        const LS = window.localStorage;
+        const purgedModelPaths = [];
+        for (let i = 0; i < LS.length; ++i) {
+            const key = LS.key(i);
+            const prefix = PATH_PREFIX + PATH_SEPARATOR;
+            if (key.startsWith(prefix) && key.length > prefix.length) {
+                LS.removeItem(key);
+                const modelName = getModelPathFromKey(key);
+                if (purgedModelPaths.indexOf(modelName) === -1) {
+                    purgedModelPaths.push(modelName);
+                }
+            }
+        }
+        return purgedModelPaths;
+    }
+    function getModelKeys(path) {
+        return {
+            info: [PATH_PREFIX, path, INFO_SUFFIX].join(PATH_SEPARATOR),
+            topology: [PATH_PREFIX, path, MODEL_TOPOLOGY_SUFFIX].join(PATH_SEPARATOR),
+            weightSpecs: [PATH_PREFIX, path, WEIGHT_SPECS_SUFFIX].join(PATH_SEPARATOR),
+            weightData: [PATH_PREFIX, path, WEIGHT_DATA_SUFFIX].join(PATH_SEPARATOR),
+            modelMetadata: [PATH_PREFIX, path, MODEL_METADATA_SUFFIX].join(PATH_SEPARATOR)
+        };
+    }
+    /**
+     * Get model path from a local-storage key.
+     *
+     * E.g., 'tensorflowjs_models/my/model/1/info' --> 'my/model/1'
+     *
+     * @param key
+     */
+    function getModelPathFromKey(key) {
+        const items = key.split(PATH_SEPARATOR);
+        if (items.length < 3) {
+            throw new Error(`Invalid key format: ${key}`);
+        }
+        return items.slice(1, items.length - 1).join(PATH_SEPARATOR);
+    }
+    function maybeStripScheme$1(key) {
+        return key.startsWith(BrowserLocalStorage.URL_SCHEME) ?
+            key.slice(BrowserLocalStorage.URL_SCHEME.length) :
+            key;
+    }
+    /**
+     * IOHandler subclass: Browser Local Storage.
+     *
+     * See the doc string to `browserLocalStorage` for more details.
+     */
+    class BrowserLocalStorage {
+        constructor(modelPath) {
+            if (!env().getBool('IS_BROWSER') ||
+                typeof window === 'undefined' ||
+                typeof window.localStorage === 'undefined') {
+                // TODO(cais): Add more info about what IOHandler subtypes are
+                // available.
+                //   Maybe point to a doc page on the web and/or automatically determine
+                //   the available IOHandlers and print them in the error message.
+                throw new Error('The current environment does not support local storage.');
+            }
+            this.LS = window.localStorage;
+            if (modelPath == null || !modelPath) {
+                throw new Error('For local storage, modelPath must not be null, undefined or empty.');
+            }
+            this.modelPath = modelPath;
+            this.keys = getModelKeys(this.modelPath);
+        }
+        /**
+         * Save model artifacts to browser local storage.
+         *
+         * See the documentation to `browserLocalStorage` for details on the saved
+         * artifacts.
+         *
+         * @param modelArtifacts The model artifacts to be stored.
+         * @returns An instance of SaveResult.
+         */
+        async save(modelArtifacts) {
+            if (modelArtifacts.modelTopology instanceof ArrayBuffer) {
+                throw new Error('BrowserLocalStorage.save() does not support saving model topology ' +
+                    'in binary formats yet.');
+            }
+            else {
+                const topology = JSON.stringify(modelArtifacts.modelTopology);
+                const weightSpecs = JSON.stringify(modelArtifacts.weightSpecs);
+                const modelArtifactsInfo = getModelArtifactsInfoForJSON(modelArtifacts);
+                try {
+                    this.LS.setItem(this.keys.info, JSON.stringify(modelArtifactsInfo));
+                    this.LS.setItem(this.keys.topology, topology);
+                    this.LS.setItem(this.keys.weightSpecs, weightSpecs);
+                    this.LS.setItem(this.keys.weightData, arrayBufferToBase64String(modelArtifacts.weightData));
+                    this.LS.setItem(this.keys.modelMetadata, JSON.stringify({
+                        format: modelArtifacts.format,
+                        generatedBy: modelArtifacts.generatedBy,
+                        convertedBy: modelArtifacts.convertedBy,
+                        userDefinedMetadata: modelArtifacts.userDefinedMetadata
+                    }));
+                    return { modelArtifactsInfo };
+                }
+                catch (err) {
+                    // If saving failed, clean up all items saved so far.
+                    this.LS.removeItem(this.keys.info);
+                    this.LS.removeItem(this.keys.topology);
+                    this.LS.removeItem(this.keys.weightSpecs);
+                    this.LS.removeItem(this.keys.weightData);
+                    this.LS.removeItem(this.keys.modelMetadata);
+                    throw new Error(`Failed to save model '${this.modelPath}' to local storage: ` +
+                        `size quota being exceeded is a possible cause of this failure: ` +
+                        `modelTopologyBytes=${modelArtifactsInfo.modelTopologyBytes}, ` +
+                        `weightSpecsBytes=${modelArtifactsInfo.weightSpecsBytes}, ` +
+                        `weightDataBytes=${modelArtifactsInfo.weightDataBytes}.`);
+                }
+            }
+        }
+        /**
+         * Load a model from local storage.
+         *
+         * See the documentation to `browserLocalStorage` for details on the saved
+         * artifacts.
+         *
+         * @returns The loaded model (if loading succeeds).
+         */
+        async load() {
+            const info = JSON.parse(this.LS.getItem(this.keys.info));
+            if (info == null) {
+                throw new Error(`In local storage, there is no model with name '${this.modelPath}'`);
+            }
+            if (info.modelTopologyType !== 'JSON') {
+                throw new Error('BrowserLocalStorage does not support loading non-JSON model ' +
+                    'topology yet.');
+            }
+            const out = {};
+            // Load topology.
+            const topology = JSON.parse(this.LS.getItem(this.keys.topology));
+            if (topology == null) {
+                throw new Error(`In local storage, the topology of model '${this.modelPath}' ` +
+                    `is missing.`);
+            }
+            out.modelTopology = topology;
+            // Load weight specs.
+            const weightSpecs = JSON.parse(this.LS.getItem(this.keys.weightSpecs));
+            if (weightSpecs == null) {
+                throw new Error(`In local storage, the weight specs of model '${this.modelPath}' ` +
+                    `are missing.`);
+            }
+            out.weightSpecs = weightSpecs;
+            // Load meta-data fields.
+            const metadataString = this.LS.getItem(this.keys.modelMetadata);
+            if (metadataString != null) {
+                const metadata = JSON.parse(metadataString);
+                out.format = metadata['format'];
+                out.generatedBy = metadata['generatedBy'];
+                out.convertedBy = metadata['convertedBy'];
+                out.userDefinedMetadata = metadata['userDefinedMetadata'];
+            }
+            // Load weight data.
+            const weightDataBase64 = this.LS.getItem(this.keys.weightData);
+            if (weightDataBase64 == null) {
+                throw new Error(`In local storage, the binary weight values of model ` +
+                    `'${this.modelPath}' are missing.`);
+            }
+            out.weightData = base64StringToArrayBuffer(weightDataBase64);
+            return out;
+        }
+    }
+    BrowserLocalStorage.URL_SCHEME = 'localstorage://';
+    const localStorageRouter = (url) => {
+        if (!env().getBool('IS_BROWSER')) {
+            return null;
+        }
+        else {
+            if (!Array.isArray(url) && url.startsWith(BrowserLocalStorage.URL_SCHEME)) {
+                return browserLocalStorage(url.slice(BrowserLocalStorage.URL_SCHEME.length));
+            }
+            else {
+                return null;
+            }
+        }
+    };
+    IORouterRegistry.registerSaveRouter(localStorageRouter);
+    IORouterRegistry.registerLoadRouter(localStorageRouter);
+    /**
+     * Factory function for local storage IOHandler.
+     *
+     * This `IOHandler` supports both `save` and `load`.
+     *
+     * For each model's saved artifacts, four items are saved to local storage.
+     *   - `${PATH_SEPARATOR}/${modelPath}/info`: Contains meta-info about the
+     *     model, such as date saved, type of the topology, size in bytes, etc.
+     *   - `${PATH_SEPARATOR}/${modelPath}/topology`: Model topology. For Keras-
+     *     style models, this is a stringized JSON.
+     *   - `${PATH_SEPARATOR}/${modelPath}/weight_specs`: Weight specs of the
+     *     model, can be used to decode the saved binary weight values (see
+     *     item below).
+     *   - `${PATH_SEPARATOR}/${modelPath}/weight_data`: Concatenated binary
+     *     weight values, stored as a base64-encoded string.
+     *
+     * Saving may throw an `Error` if the total size of the artifacts exceed the
+     * browser-specific quota.
+     *
+     * @param modelPath A unique identifier for the model to be saved. Must be a
+     *   non-empty string.
+     * @returns An instance of `IOHandler`, which can be used with, e.g.,
+     *   `tf.Model.save`.
+     */
+    function browserLocalStorage(modelPath) {
+        return new BrowserLocalStorage(modelPath);
+    }
+    class BrowserLocalStorageManager {
+        constructor() {
+            assert(env().getBool('IS_BROWSER'), () => 'Current environment is not a web browser');
+            assert(typeof window === 'undefined' ||
+                typeof window.localStorage !== 'undefined', () => 'Current browser does not appear to support localStorage');
+            this.LS = window.localStorage;
+        }
+        async listModels() {
+            const out = {};
+            const prefix = PATH_PREFIX + PATH_SEPARATOR;
+            const suffix = PATH_SEPARATOR + INFO_SUFFIX;
+            for (let i = 0; i < this.LS.length; ++i) {
+                const key = this.LS.key(i);
+                if (key.startsWith(prefix) && key.endsWith(suffix)) {
+                    const modelPath = getModelPathFromKey(key);
+                    out[modelPath] = JSON.parse(this.LS.getItem(key));
+                }
+            }
+            return out;
+        }
+        async removeModel(path) {
+            path = maybeStripScheme$1(path);
+            const keys = getModelKeys(path);
+            if (this.LS.getItem(keys.info) == null) {
+                throw new Error(`Cannot find model at path '${path}'`);
+            }
+            const info = JSON.parse(this.LS.getItem(keys.info));
+            this.LS.removeItem(keys.info);
+            this.LS.removeItem(keys.topology);
+            this.LS.removeItem(keys.weightSpecs);
+            this.LS.removeItem(keys.weightData);
+            return info;
+        }
+    }
+    if (env().getBool('IS_BROWSER')) {
+        // Wrap the construction and registration, to guard against browsers that
+        // don't support Local Storage.
+        try {
+            ModelStoreManagerRegistry.registerManager(BrowserLocalStorage.URL_SCHEME, new BrowserLocalStorageManager());
+        }
+        catch (err) {
+        }
     }
 
     /**
@@ -20635,6 +21379,7 @@
             }
             this.weightPathPrefix = loadOptions.weightPathPrefix;
             this.onProgress = loadOptions.onProgress;
+            this.weightUrlConverter = loadOptions.weightUrlConverter;
             if (loadOptions.fetchFunc != null) {
                 assert(typeof loadOptions.fetchFunc === 'function', () => 'Must pass a function that matches the signature of ' +
                     '`fetch` (see ' +
@@ -20765,11 +21510,20 @@
                 weightSpecs.push(...entry.weights);
             }
             const fetchURLs = [];
-            weightsManifest.forEach(weightsGroup => {
-                weightsGroup.paths.forEach(path => {
-                    fetchURLs.push(pathPrefix + path + suffix);
-                });
-            });
+            const urlPromises = [];
+            for (const weightsGroup of weightsManifest) {
+                for (const path of weightsGroup.paths) {
+                    if (this.weightUrlConverter != null) {
+                        urlPromises.push(this.weightUrlConverter(path));
+                    }
+                    else {
+                        fetchURLs.push(pathPrefix + path + suffix);
+                    }
+                }
+            }
+            if (this.weightUrlConverter) {
+                fetchURLs.push(...await Promise.all(urlPromises));
+            }
             const buffers = await loadWeightsAsArrayBuffer(fetchURLs, {
                 requestInit: this.requestInit,
                 fetchFunc: this.fetch,
@@ -21309,59 +22063,43 @@
             throw new Error(`toPixels only supports depth of size ` +
                 `1, 3 or 4 but got ${depth}`);
         }
-        const data = await $img.data();
-        const minTensor = min($img);
-        const maxTensor = max($img);
-        const vals = await Promise.all([minTensor.data(), maxTensor.data()]);
-        const minVals = vals[0];
-        const maxVals = vals[1];
-        const minVal = minVals[0];
-        const maxVal = maxVals[0];
-        minTensor.dispose();
-        maxTensor.dispose();
-        if ($img.dtype === 'float32') {
-            if (minVal < 0 || maxVal > 1) {
-                throw new Error(`Tensor values for a float32 Tensor must be in the ` +
-                    `range [0 - 1] but got range [${minVal} - ${maxVal}].`);
-            }
-        }
-        else if ($img.dtype === 'int32') {
-            if (minVal < 0 || maxVal > 255) {
-                throw new Error(`Tensor values for a int32 Tensor must be in the ` +
-                    `range [0 - 255] but got range [${minVal} - ${maxVal}].`);
-            }
-        }
-        else {
+        if ($img.dtype !== 'float32' && $img.dtype !== 'int32') {
             throw new Error(`Unsupported type for toPixels: ${$img.dtype}.` +
                 ` Please use float32 or int32 tensors.`);
         }
+        const data = await $img.data();
         const multiplier = $img.dtype === 'float32' ? 255 : 1;
         const bytes = new Uint8ClampedArray(width * height * 4);
         for (let i = 0; i < height * width; ++i) {
-            let r, g, b, a;
-            if (depth === 1) {
-                r = data[i] * multiplier;
-                g = data[i] * multiplier;
-                b = data[i] * multiplier;
-                a = 255;
-            }
-            else if (depth === 3) {
-                r = data[i * 3] * multiplier;
-                g = data[i * 3 + 1] * multiplier;
-                b = data[i * 3 + 2] * multiplier;
-                a = 255;
-            }
-            else if (depth === 4) {
-                r = data[i * 4] * multiplier;
-                g = data[i * 4 + 1] * multiplier;
-                b = data[i * 4 + 2] * multiplier;
-                a = data[i * 4 + 3] * multiplier;
+            const rgba = [0, 0, 0, 255];
+            for (let d = 0; d < depth; d++) {
+                const value = data[i * depth + d];
+                if ($img.dtype === 'float32') {
+                    if (value < 0 || value > 1) {
+                        throw new Error(`Tensor values for a float32 Tensor must be in the ` +
+                            `range [0 - 1] but encountered ${value}.`);
+                    }
+                }
+                else if ($img.dtype === 'int32') {
+                    if (value < 0 || value > 255) {
+                        throw new Error(`Tensor values for a int32 Tensor must be in the ` +
+                            `range [0 - 255] but encountered ${value}.`);
+                    }
+                }
+                if (depth === 1) {
+                    rgba[0] = value * multiplier;
+                    rgba[1] = value * multiplier;
+                    rgba[2] = value * multiplier;
+                }
+                else {
+                    rgba[d] = value * multiplier;
+                }
             }
             const j = i * 4;
-            bytes[j + 0] = Math.round(r);
-            bytes[j + 1] = Math.round(g);
-            bytes[j + 2] = Math.round(b);
-            bytes[j + 3] = Math.round(a);
+            bytes[j + 0] = Math.round(rgba[0]);
+            bytes[j + 1] = Math.round(rgba[1]);
+            bytes[j + 2] = Math.round(rgba[2]);
+            bytes[j + 3] = Math.round(rgba[3]);
         }
         if (canvas != null) {
             canvas.width = width;
@@ -21559,7 +22297,7 @@
 
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    const version = '2.3.0';
+    const version = '0.0.0';
 
     /**
      * @license
@@ -22638,6 +23376,9 @@
      * limitations under the License.
      * =============================================================================
      */
+    // tslint:disable-next-line:no-unused-expression
+    [MomentumOptimizer, SGDOptimizer, AdadeltaOptimizer, AdagradOptimizer,
+        RMSPropOptimizer, AdamaxOptimizer, AdamOptimizer];
     const train = {
         sgd: OptimizerConstructors.sgd,
         momentum: OptimizerConstructors.momentum,
@@ -23837,6 +24578,23 @@
         throw new Error(`'${kernelName}' not yet implemented or not found in the registry. ` +
             `Did you forget to import the kernel?`);
     }
+
+    /**
+     * @license
+     * Copyright 2020 Google Inc. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
 
     /**
      * @license
@@ -30511,6 +31269,40 @@
 
     /**
      * @license
+     * Copyright 2020 Google LLC. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
+
+    /**
+     * @license
+     * Copyright 2017 Google LLC. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
+
+    /**
+     * @license
      * Copyright 2018 Google LLC
      *
      * Use of this source code is governed by an MIT-style
@@ -30527,6 +31319,13 @@
             _epsilon = backend().epsilon();
         }
         return _epsilon;
+    }
+    /**
+     * Sets the value of the fuzz factor used in numeric expressions.
+     * @param e New value of epsilon.
+     */
+    function setEpsilon(e) {
+        _epsilon = e;
     }
     /**
      * Returns the default image data format convention.
@@ -30603,6 +31402,16 @@
             Object.setPrototypeOf(this, AssertionError.prototype);
         }
     }
+    /**
+     * Equivalent of Python's IndexError.
+     */
+    class IndexError extends Error {
+        constructor(message) {
+            super(message);
+            // Set the prototype explicitly.
+            Object.setPrototypeOf(this, IndexError.prototype);
+        }
+    }
 
     /**
      * @license
@@ -30676,6 +31485,24 @@
             return x;
         }
         return [x];
+    }
+    /**
+     * Generate a UID for a list
+     */
+    // tslint:disable-next-line:no-any
+    function objectListUid(objs) {
+        const objectList = toList(objs);
+        let retVal = '';
+        for (const obj of objectList) {
+            if (obj.id == null) {
+                throw new ValueError(`Object ${obj} passed to objectListUid without an id`);
+            }
+            if (retVal !== '') {
+                retVal = retVal + ', ';
+            }
+            retVal = `${retVal}${Math.abs(obj.id)}`;
+        }
+        return retVal;
     }
     /**
      * Converts string to snake-case.
@@ -30876,6 +31703,39 @@
      */
     function reverseNumberCompare(a, b) {
         return -1 * numberCompare(a, b);
+    }
+    /**
+     * Convert a string into the corresponding DType.
+     * @param dtype
+     * @returns An instance of DType.
+     */
+    function stringToDType(dtype) {
+        switch (dtype) {
+            case 'float32':
+                return 'float32';
+            default:
+                throw new ValueError(`Invalid dtype: ${dtype}`);
+        }
+    }
+    /**
+     * Test the element-by-element equality of two Arrays of strings.
+     * @param xs First array of strings.
+     * @param ys Second array of strings.
+     * @returns Wether the two arrays are all equal, element by element.
+     */
+    function stringsEqual(xs, ys) {
+        if (xs == null || ys == null) {
+            return xs === ys;
+        }
+        if (xs.length !== ys.length) {
+            return false;
+        }
+        for (let i = 0; i < xs.length; ++i) {
+            if (xs[i] !== ys[i]) {
+                return false;
+            }
+        }
+        return true;
     }
     /**
      * Get the unique elements of an array.
@@ -31240,6 +32100,7 @@
     const VALID_PADDING_MODE_VALUES = ['valid', 'same', 'causal'];
     const VALID_POOL_MODE_VALUES = ['max', 'avg'];
     const VALID_BIDIRECTIONAL_MERGE_MODES = ['sum', 'mul', 'concat', 'ave'];
+    const VALID_SAMPLE_WEIGHT_MODES = ['temporal'];
 
     /**
      * @license
@@ -31403,6 +32264,46 @@
         return max(toArray1D(array)).dataSync()[0];
     }
     /**
+     * Compute sum of array.
+     * @param array
+     * @return The sum.
+     */
+    function sum$2(array) {
+        return sum$1(toArray1D(array)).dataSync()[0];
+    }
+    /**
+     * Compute mean of array.
+     * @param array
+     * @return The mean.
+     */
+    function mean$2(array) {
+        return sum$2(array) / array.length;
+    }
+    /**
+     * Compute variance of array.
+     * @param array
+     * @return The variance.
+     */
+    function variance(array) {
+        const demeaned = sub(toArray1D(array), scalar(mean$2(array)));
+        const sumSquare = sum$1(mul(demeaned, demeaned)).dataSync()[0];
+        return sumSquare / array.length;
+    }
+    /**
+     * Compute median of array.
+     * @param array
+     * @return The median value.
+     */
+    function median(array) {
+        const arraySorted = array.slice().sort((a, b) => a - b);
+        const lowIdx = Math.floor((arraySorted.length - 1) / 2);
+        const highIdx = Math.ceil((arraySorted.length - 1) / 2);
+        if (lowIdx === highIdx) {
+            return arraySorted[lowIdx];
+        }
+        return (arraySorted[lowIdx] + arraySorted[highIdx]) / 2;
+    }
+    /**
      * Generate an array of integers in [begin, end).
      * @param begin Beginning integer, inclusive.
      * @param end Ending integer, exclusive.
@@ -31429,6 +32330,42 @@
      * https://opensource.org/licenses/MIT.
      * =============================================================================
      */
+    // tslint:enable
+    /* Setting and getting backend from deeplearn.js. */
+    // Default deeplearn.js backend is WebGL (GPU).
+    let backend$1 = 'webgl';
+    function setBackend$1(requestedBackend) {
+        setBackend(requestedBackend);
+        backend$1 = requestedBackend;
+    }
+    function getBackend$1() {
+        return backend$1;
+    }
+    /**
+     * Indicates whether the backend is operating symbolically.
+     *
+     * This function will be used to determine how to interpret user code. If
+     * it returns true, calls to the backend construct a symbolic graph; if
+     * it returns false, calls to the backend execute immediately.
+     */
+    function isBackendSymbolic() {
+        return false;
+    }
+    /**
+     * Get the number of elements in a Tensor.
+     * @param x The Tensor.
+     * @return Number of elements in `x`.
+     */
+    function countParams(x) {
+        const shape = x.shape;
+        if (shape.length > 0) {
+            return shape.reduce((a, b) => a * b);
+        }
+        else {
+            // Scalar.
+            return 1;
+        }
+    }
     /**
      * Casts a tensor to a different dtype and returns it.
      * @param x Input tensor.
@@ -31775,6 +32712,42 @@
                 .reshape(outputShape);
         }
     }
+    /**
+     * Compute the sign Tensor of an input Tensor.
+     *
+     * Elements of the input `tf.Tensor` that are === 0 are mapped to 0.
+     * Elements of the input `tf.Tensor` that are > 0 are mapped to 1.
+     * Elements of the input `tf.Tensor` that are < 0 are mapped to -1.
+     *
+     * @param x Input `tf.Tensor`.
+     * @return The sign `tf.Tensor`.
+     */
+    function sign$1(x) {
+        // TODO(cais): Move to the core.
+        return tidy(() => {
+            const zerosLikeX = zerosLike(x);
+            const onesLikeX = onesLike(x);
+            return where(equal(x, zerosLikeX), zerosLikeX, where(greater(x, zerosLike(x)), onesLikeX, mul(-1, onesLikeX)));
+        });
+    }
+    /**
+     * Computes the one-hot representation of an integer tensor.
+     * @param indices nD integer tensor of shape
+     *   `(batch_size, dim1, dim2, ... dim(n-1))`
+     * @param numClasses Integer, number of classes to consider.
+     * @returns (n + 1)D one hot representation of the input
+     *   with shape `(batch_size, dim1, dim2, ... dim(n-1), num_classes)`
+     */
+    function oneHot$1(indices, numClasses) {
+        return tidy(() => {
+            if (indices.rank !== 1) {
+                throw new Error('Only 1D one-hot tensors are supported in the ' +
+                    'deeplearn backend, at present.');
+            }
+            indices = indices.toInt();
+            return oneHot(indices, numClasses).toFloat();
+        });
+    }
     /* Elementary math functions. */
     /**
      * Retrieves the elements of indices `indices` in the tensor `reference`.
@@ -31801,6 +32774,29 @@
      */
     function square$1(x) {
         return mul(x, x);
+    }
+    /**
+     * Element-wise exponentiation.
+     *
+     * Porting Note: In PyKeras, `a` (the exponent) is a Python integer, which
+     *   takes advatnage of the backend's (e.g., TensorFlow's) automatic
+     * conversion to tensor. Here we allow `a` to be either a number or a tensor.
+     *
+     * @param x The base tensor.
+     * @param a The exponent, tensor or number. If a number, it is rounded to the
+     *   nearest integer and converted to a tensor.
+     * @returns A tensor of the same shape as `x`.
+     */
+    function pow$1(x, a) {
+        return tidy(() => {
+            if (typeof (a) === 'number') {
+                a = scalar(Math.round(a), 'int32');
+            }
+            if (a.dtype !== 'int32') {
+                throw new NotImplementedError(`Non-int32 dtype (${a.dtype}) is not supported by pow() yet`);
+            }
+            return pow(x, a);
+        });
     }
     /**
      * Reshapes bias tensor according to rank of x.
@@ -31969,6 +32965,18 @@
      */
     const VALID_FAN_MODE_VALUES = ['fanIn', 'fanOut', 'fanAvg'];
     const VALID_DISTRIBUTION_VALUES = ['normal', 'uniform', 'truncatedNormal'];
+    // We can't easily extract a string[] from the string union type, but we can
+    // recapitulate the list, enforcing at compile time that the values are valid
+    // and that we have the right number of them.
+    /**
+     * A string array of valid Initializer class names.
+     *
+     * This is guaranteed to match the `InitializerClassName` union type.
+     */
+    const initializerClassNames = [
+        'Zeros', 'Ones', 'Constant', 'RandomNormal', 'RandomUniform',
+        'TruncatedNormal', 'VarianceScaling', 'Orthogonal', 'Identity'
+    ];
 
     /**
      * @license
@@ -32889,6 +33897,153 @@
         }
     }
     /**
+     * Create a Variable.
+     * @param x The initial value of the `Variable`.
+     * @param dtype optional, the type of the variable.
+     * @param name optional, the name of the variable, default provided by
+     * Variable.
+     * @param constraint optional, a constraint to be applied after every update.
+     * @return The newly instantiated `Variable`.
+     */
+    function variable$1(x, dtype, name, constraint) {
+        return new LayerVariable(x, dtype, name, true, constraint);
+    }
+    /**
+     * Instantiates an all-zeros Variable and returns it.
+     *
+     * @param shape Shape of the tensor.
+     * @param dtype DType of the tensor.
+     * @param name Name of the tensor.
+     * @return An all-zero Variable.
+     */
+    function zerosVariable(shape, dtype, name) {
+        // TODO(cais): Implement logic for dtype.
+        return new LayerVariable(zeros(shape), dtype, name);
+    }
+    /**
+     * Instantiates an all-zeros tensor of the same shape as another tensor.
+     *
+     * @param x The other tensor.
+     * @param dtype DType of the tensor.
+     * @param name Name of the tensor.
+     * @return A newly instantiated Variable.
+     */
+    function zerosLike$1(x, dtype, name) {
+        return new LayerVariable(zerosLike(x), dtype, name);
+    }
+    /**
+     * Instantiates an all-ones tensor and returns it.
+     *
+     * @param shape Shape of the tensor.
+     * @param dtype DType of the tensor.
+     * @param name Name of the tensor.
+     * @return An all-ones Variable.
+     */
+    function onesVariable(shape, dtype, name) {
+        // TODO(cais): Implement logic for dtype.
+        const allocated = ones$1(shape);
+        return new LayerVariable(allocated, dtype, name);
+    }
+    /**
+     * Instantiates an all-ones tensor of the same shape as another tensor.
+     *
+     * @param x The other tensor.
+     * @param dtype DType of the tensor.
+     * @param name Name of the tensor.
+     * @return A newly instantiated Variable.
+     */
+    function onesLike$1(x, dtype, name) {
+        const allocated = onesLike(x);
+        return new LayerVariable(allocated, dtype, name);
+    }
+    /**
+     * Instantiate an identity matrix and returns it, as a Variable
+     *
+     * @param size Number of rows/columns.
+     * @param dtype Data type of returned Variable.
+     * @param name Name of returned Variable.
+     * @return A Variable, an identity matrix.
+     */
+    function eyeVariable(size, dtype, name) {
+        return new LayerVariable(eye(size), dtype, name);
+    }
+    /**
+     * Get a Variable with uniform distribution of values.
+     * @param shape Shape of the tensor.
+     * @param minval Lower bound of the uniform distribution.
+     * @param maxval Upper bound of the uniform distribution.
+     * @param dtype
+     * @param seed
+     * @param name Optional name.
+     * @return The uniform-random Variable.
+     */
+    function randomUniformVariable(shape, minval, maxval, dtype, seed, name = 'randomUniform') {
+        return new LayerVariable(randomUniform(shape, minval, maxval, dtype), dtype, name);
+    }
+    /**
+     * Get a Variable with truncated-normal distribution of values.
+     * @param shape Shape of the tensor.
+     * @param mean mean value of the normal distribution.
+     * @param stddev standard deviation of the normal distribution.
+     * @param dtype
+     * @param seed
+     * @param name Optional name.
+     * @return The truncated-normal-random Variable.
+     */
+    function truncatedNormalVariable(shape, mean = 0.0, stddev = 1.0, dtype, seed, name = 'truncatedNormal') {
+        // TODO(cais): Implement logic for dtype and seed once they are supported
+        // by deeplearn.js.
+        dtype = dtype || 'float32';
+        if (dtype !== 'float32' && dtype !== 'int32') {
+            throw new NotImplementedError(`randomNormal does not support dType ${dtype}.`);
+        }
+        return new LayerVariable(truncatedNormal(shape, mean, stddev, dtype, seed), dtype, name);
+    }
+    /**
+     * Get a Variable with normal distribution of values.
+     * @param shape Shape of the tensor.
+     * @param mean mean value of the normal distribution.
+     * @param stddev standard deviation of the normal distribution.
+     * @param dtype
+     * @param seed
+     * @param name Optional name.
+     * @return The truncated-normal-random Variable.
+     */
+    function randomNormalVariable(shape, mean = 0.0, stddev = 1.0, dtype, seed, name = 'randomNormal') {
+        dtype = dtype || 'float32';
+        if (dtype !== 'float32' && dtype !== 'int32') {
+            throw new NotImplementedError(`randomNormalVariable does not support dType ${dtype}.`);
+        }
+        return new LayerVariable(randomNormal(shape, mean, stddev, dtype, seed), dtype, name);
+    }
+    /**
+     * Update the value of a Variable.
+     * @param x The Variable to be updated.
+     * @param xNew The new value to update to.
+     * @return The Variable updated.
+     */
+    function update(x, xNew) {
+        return x.write(xNew);
+    }
+    /**
+     * Update the value of a Variable by adding an increment.
+     * @param x The Variable to be updated.
+     * @param increment The incrment to add to `x`.
+     * @return The Variable updated.
+     */
+    function updateAdd(x, increment) {
+        return x.write(add$1(x.read(), increment));
+    }
+    /**
+     * Update the value of a Variable by subtracting a decrement.
+     * @param x The Variable to be updated.
+     * @param decrement The decrement to subtract from `x`.
+     * @return The Variable updated.
+     */
+    function updateSub(x, decrement) {
+        return x.write(sub(x.read(), decrement));
+    }
+    /**
      * Get the values of an array of Variables.
      *
      * @param tensors An `Array` of `Variable`s to get the values of.
@@ -32910,6 +34065,21 @@
             const variable = variableAndValue[0];
             variable.write(variableAndValue[1]);
         });
+    }
+    /**
+     * Returns the gradients of `variables` w.r.t. the return value of `lossFn`.
+     * @param lossFn A function which returns a Scalar to be used as the function
+     *   value (i.e., numerator) for differentiation.
+     * @param variables List of variables to be used as the independent variables
+     *   (i.e., denominator) for differentiation.
+     * @returns An Array of gradients tensors.
+     */
+    function gradients(lossFn, variables) {
+        // TODO(cais): The return type signature can be simplified if deeplearn makes
+        //   the corresponding type public.
+        const variableList = variables.map(variable => variable.read());
+        const valudAndGrads = variableGrads(lossFn, variableList);
+        return variables.map(variable => valudAndGrads.grads[variable.name]);
     }
 
     /**
@@ -35002,6 +36172,17 @@
             return neg(sum$1(trueXPred, -1));
         });
     }
+    const mse = meanSquaredError$1;
+    const MSE = meanSquaredError$1;
+    const mae = meanAbsoluteError;
+    const MAE = meanAbsoluteError;
+    const mape = meanAbsolutePercentageError;
+    const MAPE = meanAbsolutePercentageError;
+    const msle = meanSquaredLogarithmicError;
+    const MSLE = meanSquaredLogarithmicError;
+    const kld = kullbackLeiblerDivergence;
+    const KLD = kullbackLeiblerDivergence;
+    const cosine = cosineProximity;
     // TODO(michaelterry): Add deserialize() function.
     const lossesMap = {
         meanSquaredError: meanSquaredError$1,
@@ -35104,15 +36285,21 @@
         }
         return equal(yTrue, yPred).asType('float32');
     }
+    function topKCategoricalAccuracy(yTrue, yPred) {
+        throw new NotImplementedError();
+    }
+    function sparseTopKCategoricalAccuracy(yTrue, yPred) {
+        throw new NotImplementedError();
+    }
     // Aliases.
-    const mse = meanSquaredError$1;
-    const MSE = meanSquaredError$1;
-    const mae = meanAbsoluteError;
-    const MAE = meanAbsoluteError;
-    const mape = meanAbsolutePercentageError;
-    const MAPE = meanAbsolutePercentageError;
+    const mse$1 = meanSquaredError$1;
+    const MSE$1 = meanSquaredError$1;
+    const mae$1 = meanAbsoluteError;
+    const MAE$1 = meanAbsoluteError;
+    const mape$1 = meanAbsolutePercentageError;
+    const MAPE$1 = meanAbsolutePercentageError;
     const categoricalCrossentropy$1 = categoricalCrossentropy;
-    const cosine = cosineProximity;
+    const cosine$1 = cosineProximity;
     const sparseCategoricalCrossentropy$1 = sparseCategoricalCrossentropy;
     // TODO(cais, nielsene): Add serialize().
     const metricsMap = {
@@ -35121,13 +36308,13 @@
         precision,
         categoricalCrossentropy: categoricalCrossentropy$1,
         sparseCategoricalCrossentropy: sparseCategoricalCrossentropy$1,
-        mse,
-        MSE,
-        mae,
-        MAE,
-        mape,
-        MAPE,
-        cosine
+        mse: mse$1,
+        MSE: MSE$1,
+        mae: mae$1,
+        MAE: MAE$1,
+        mape: mape$1,
+        MAPE: MAPE$1,
+        cosine: cosine$1
     };
     function get$1(identifier) {
         if (typeof identifier === 'string' && identifier in metricsMap) {
@@ -35641,7 +36828,7 @@
 
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    const version$1 = '2.3.0';
+    const version$1 = '0.0.0';
 
     /**
      * @license
@@ -37276,6 +38463,9 @@
      */
     function standardizeClassWeights(classWeight, outputNames) {
         return standardizeSampleOrClassWeights(classWeight, outputNames, 'classWeight');
+    }
+    function standardizeSampleWeights(classWeight, outputNames) {
+        return standardizeSampleOrClassWeights(classWeight, outputNames, 'sampleWeight');
     }
     /**
      * Standardize by-sample and/or by-class weights for training.
@@ -39054,7 +40244,7 @@
             x = standardizeInputData(x, this.feedInputNames, this.feedInputShapes, false, 'input');
             y = standardizeInputData(y, this.feedOutputNames, outputShapes, false, 'target');
             // TODO(cais): Standardize sampleWeights & classWeights.
-            checkArrayLengths(x, y);
+            checkArrayLengths(x, y, null);
             // TODO(cais): Check sampleWeights as well.
             checkLossAndTargetCompatibility(y, this.feedLossFns, this.feedOutputShapes);
             if (this.stateful && batchSize != null && batchSize > 0) {
@@ -41573,6 +42763,40 @@
         });
     }
     /**
+     * 1D-convolution.
+     *
+     * @param x Input tensor, rank-3, of shape `[batchSize, width, inChannels]`.
+     * @param kernel Kernel, rank-3, of shape `[filterWidth, inDepth, outDepth]`.s
+     * @param strides
+     * @param padding Padding mode.
+     * @param dataFormat Data format.
+     * @param dilationRate
+     * @returns The result of the 1D convolution.
+     * @throws ValueError, if `x`, `kernel` or `bias` is not of the correct rank.
+     */
+    function conv1d$1(x, kernel, strides = 1, padding = 'valid', dataFormat, dilationRate = 1) {
+        return tidy(() => {
+            checkDataFormat(dataFormat);
+            return conv1dWithBias(x, kernel, null, strides, padding, dataFormat, dilationRate);
+        });
+    }
+    /**
+     * 2D Convolution
+     * @param x
+     * @param kernel kernel of the convolution.
+     * @param strides strides array.
+     * @param padding padding mode. Default to 'valid'.
+     * @param dataFormat data format. Defaults to 'channelsLast'.
+     * @param dilationRate dilation rate array.
+     * @returns Result of the 2D pooling.
+     */
+    function conv2d$2(x, kernel, strides = [1, 1], padding = 'valid', dataFormat, dilationRate) {
+        return tidy(() => {
+            checkDataFormat(dataFormat);
+            return conv2dWithBiasActivation(x, kernel, null, strides, padding, dataFormat, dilationRate);
+        });
+    }
+    /**
      * 2D Convolution with an added bias and optional activation.
      * Note: This function does not exist in the Python Keras Backend. This function
      * is exactly the same as `conv2d`, except the added `bias`.
@@ -41610,6 +42834,22 @@
                 y = transpose(y, [0, 3, 1, 2]);
             }
             return y;
+        });
+    }
+    /**
+     * 3D Convolution.
+     * @param x
+     * @param kernel kernel of the convolution.
+     * @param strides strides array.
+     * @param padding padding mode. Default to 'valid'.
+     * @param dataFormat data format. Defaults to 'channelsLast'.
+     * @param dilationRate dilation rate array.
+     * @returns Result of the 3D convolution.
+     */
+    function conv3d$1(x, kernel, strides = [1, 1, 1], padding = 'valid', dataFormat, dilationRate) {
+        return tidy(() => {
+            checkDataFormat(dataFormat);
+            return conv3dWithBias(x, kernel, null, strides, padding, dataFormat, dilationRate);
         });
     }
     /**
@@ -43199,6 +44439,61 @@
     /** @nocollapse */
     Add$1.className = 'Add';
     registerClass(Add$1);
+    /**
+     * Calculate the element-wise sum of inputs, which all have the same shape.
+     *
+     * This function can be invoked in three ways.
+     *
+     * 1. Construct an instance of `Add` layer, by using no input argument
+     *    or a single configuration argument. The resultant `Add` layer can then
+     *    be used on `tf.SymbolicTensor`s or `tf.Tensor`s. For example:
+     *
+     * ```js
+     * const addLayer = tf.layers.add();
+     *
+     * // The layer can be applied to inputs.
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = addLayer.apply([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 2. Invoke directly on an `Array` of `tf.SymbolicTensor`s. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.SymbolicTensor`. For example:
+     *
+     * ```js
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = tf.layers.add([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 3. Invoke directly on `tf.Tensor`s, i.e., concrete values. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.Tensor` as the result of the computation. For
+     * example:
+     *
+     * ```js
+     * const input1 = tf.tensor2d([1, 2, 3, 4], [2, 2]);
+     * const input2 = tf.tensor2d([10, 20, 30, 40], [2, 2]);
+     * tf.layers.add([input1, input2]).print();
+     * // Gives [[11, 22], [33, 44]].
+     *
+     */
+    function add$2(config) {
+        if (Array.isArray(config)) {
+            const layer = new Add$1({});
+            return layer.apply(config);
+        }
+        else {
+            return new Add$1(config);
+        }
+    }
     class Multiply$1 extends Merge {
         constructor(args) {
             super(args);
@@ -43216,6 +44511,61 @@
     /** @nocollapse */
     Multiply$1.className = 'Multiply';
     registerClass(Multiply$1);
+    /**
+     * Calculate the element-wise product of inputs, which all have the same shape.
+     *
+     * This function can be invoked in three ways.
+     *
+     * 1. Construct an instance of `Multiply` layer, by using no input argument
+     *    or a single configuration argument. The resultant `Multiply` layer can
+     *    then be used on `tf.SymbolicTensor`s or `tf.Tensor`s. For example:
+     *
+     * ```js
+     * const multiplyLayer = tf.layers.multiply();
+     *
+     * // The layer can be applied to inputs.
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = multiplyLayer.apply([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 2. Invoke directly on an `Array` of `tf.SymbolicTensor`s. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.SymbolicTensor`. For example:
+     *
+     * ```js
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = tf.layers.multiply([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 3. Invoke directly on `tf.Tensor`s, i.e., concrete values. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.Tensor` as the result of the computation. For
+     * example:
+     *
+     * ```js
+     * const input1 = tf.tensor2d([1, 2, 3, 4], [2, 2]);
+     * const input2 = tf.tensor2d([10, 20, 30, 40], [2, 2]);
+     * tf.layers.multiply([input1, input2]).print();
+     * // Gives [[10, 40], [90, 160]].
+     *
+     */
+    function multiply(config) {
+        if (Array.isArray(config)) {
+            const layer = new Multiply$1({});
+            return layer.apply(config);
+        }
+        else {
+            return new Multiply$1(config);
+        }
+    }
     class Average extends Merge {
         constructor(args) {
             super(args);
@@ -43233,6 +44583,62 @@
     /** @nocollapse */
     Average.className = 'Average';
     registerClass(Average);
+    /**
+     * Calculate the element-wise arithmetic mean of inputs, which all have the same
+     * shape.
+     *
+     * This function can be invoked in three ways.
+     *
+     * 1. Construct an instance of `Average` layer, by using no input argument
+     *    or a single configuration argument. The resultant `Average` layer can then
+     *    be used on `tf.SymbolicTensor`s or `tf.Tensor`s. For example:
+     *
+     * ```js
+     * const averageLayer = tf.layers.average();
+     *
+     * // The layer can be applied to inputs.
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = averageLayer.apply([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 2. Invoke directly on an `Array` of `tf.SymbolicTensor`s. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.SymbolicTensor`. For example:
+     *
+     * ```js
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = tf.layers.average([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 3. Invoke directly on `tf.Tensor`s, i.e., concrete values. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.Tensor` as the result of the computation. For
+     * example:
+     *
+     * ```js
+     * const input1 = tf.tensor2d([1, 2, 3, 4], [2, 2]);
+     * const input2 = tf.tensor2d([10, 20, 30, 40], [2, 2]);
+     * tf.layers.average([input1, input2]).print();
+     * // Gives [[5.5, 11], [16.5, 22]].
+     *
+     */
+    function average(config) {
+        if (Array.isArray(config)) {
+            const layer = new Average({});
+            return layer.apply(config);
+        }
+        else {
+            return new Average(config);
+        }
+    }
     class Maximum$1 extends Merge {
         constructor(args) {
             super(args);
@@ -43250,6 +44656,61 @@
     /** @nocollapse */
     Maximum$1.className = 'Maximum';
     registerClass(Maximum$1);
+    /**
+     * Calculate the element-wise maximum of inputs, which all have the same shape.
+     *
+     * This function can be invoked in three ways.
+     *
+     * 1. Construct an instance of `Maximum` layer, by using no input argument
+     *    or a single configuration argument. The resultant `Maximum` layer can then
+     *    be used on `tf.SymbolicTensor`s or `tf.Tensor`s. For example:
+     *
+     * ```js
+     * const maximumLayer = tf.layers.maximum();
+     *
+     * // The layer can be applied to inputs.
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = maximumLayer.apply([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 2. Invoke directly on an `Array` of `tf.SymbolicTensor`s. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.SymbolicTensor`. For example:
+     *
+     * ```js
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = tf.layers.maximum([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 3. Invoke directly on `tf.Tensor`s, i.e., concrete values. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.Tensor` as the result of the computation. For
+     * example:
+     *
+     * ```js
+     * const input1 = tf.tensor2d([1, 20, 3, 40], [2, 2]);
+     * const input2 = tf.tensor2d([10, 2, 30, 4], [2, 2]);
+     * tf.layers.maximum([input1, input2]).print();
+     * // Gives [[10, 20], [30, 40]].
+     *
+     */
+    function maximum$1(config) {
+        if (Array.isArray(config)) {
+            const layer = new Maximum$1({});
+            return layer.apply(config);
+        }
+        else {
+            return new Maximum$1(config);
+        }
+    }
     class Minimum$1 extends Merge {
         constructor(args) {
             super(args);
@@ -43267,6 +44728,61 @@
     /** @nocollapse */
     Minimum$1.className = 'Minimum';
     registerClass(Minimum$1);
+    /**
+     * Calculate the element-wise minimum of inputs, which all have the same shape.
+     *
+     * This function can be invoked in three ways.
+     *
+     * 1. Construct an instance of `Minimum` layer, by using no input argument
+     *    or a single configuration argument. The resultant `Minimum` layer can then
+     *    be used on `tf.SymbolicTensor`s or `tf.Tensor`s. For example:
+     *
+     * ```js
+     * const minimumLayer = tf.layers.minimum();
+     *
+     * // The layer can be applied to inputs.
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = minimumLayer.apply([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 2. Invoke directly on an `Array` of `tf.SymbolicTensor`s. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.SymbolicTensor`. For example:
+     *
+     * ```js
+     * const input1 = tf.input({shape: [2, 2]});
+     * const input2 = tf.input({shape: [2, 2]});
+     * const output = tf.layers.minimum([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension.
+     * ```
+     *
+     * 3. Invoke directly on `tf.Tensor`s, i.e., concrete values. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.Tensor` as the result of the computation. For
+     * example:
+     *
+     * ```js
+     * const input1 = tf.tensor2d([1, 20, 3, 40], [2, 2]);
+     * const input2 = tf.tensor2d([10, 2, 30, 4], [2, 2]);
+     * tf.layers.minimum([input1, input2]).print();
+     * // Gives [[1, 2], [3, 4]].
+     *
+     */
+    function minimum$1(config) {
+        if (Array.isArray(config)) {
+            const layer = new Minimum$1({});
+            return layer.apply(config);
+        }
+        else {
+            return new Minimum$1(config);
+        }
+    }
     class Concatenate extends Merge {
         constructor(args) {
             super(args);
@@ -43395,6 +44911,63 @@
     /** @nocollapse */
     Concatenate.className = 'Concatenate';
     registerClass(Concatenate);
+    /**
+     * Concatenate an `Array` of inputs.
+     *
+     * This function can be invoked in three ways.
+     *
+     * 1. Construct an instance of `Concatenate` layer, by using no input argument
+     *    or a single configuration argument. The resultant `Concatenate` layer can
+     *    then be used on `tf.SymbolicTensor`s or `tf.Tensor`s. For example:
+     *
+     * ```js
+     * const concatLayer = tf.layers.concatenate();
+     *
+     * // The layer can be applied to inputs.
+     * const input1 = tf.input({shape: [2, 3]});
+     * const input2 = tf.input({shape: [2, 4]});
+     * const output = concatLayer.apply([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 7], with the first dimension as the undetermined batch
+     * // dimension and the last dimension as the result of concatenating the
+     * // last dimensions of the two inputs.
+     * ```
+     *
+     * 2. Invoke directly on an `Array` of `tf.SymbolicTensor`s. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.SymbolicTensor`. For example:
+     *
+     * ```js
+     * const input1 = tf.input({shape: [2, 3]});
+     * const input2 = tf.input({shape: [2, 4]});
+     * const output = tf.layers.concatenate([input1, input2]);
+     * console.log(output.shape);
+     * // You get [null, 2, 2], with the first dimension as the undetermined batch
+     * // dimension and the last dimension as the result of concatenating the
+     * // last dimensions of the two inputs.
+     * ```
+     *
+     * 3. Invoke directly on `tf.Tensor`s, i.e., concrete values. This constructs
+     *    an `Layer` object internally and calls its `apply` method on the inputs,
+     *    generating a new `tf.Tensor` as the result of the computation. For
+     * example:
+     *
+     * ```js
+     * const input1 = tf.tensor2d([[1, 2], [3, 4]], [2, 2]);
+     * const input2 = tf.tensor2d([[10, 20], [30, 40]], [2, 2]);
+     * tf.layers.concatenate([input1, input2]).print();
+     * // Gives [[1, 2, 10, 20], [3, 4, 30, 40]].
+     *
+     */
+    function concatenate$1(config) {
+        if (Array.isArray(config)) {
+            const layer = new Concatenate({});
+            return layer.apply(config);
+        }
+        else {
+            return new Concatenate(config);
+        }
+    }
     /**
      * Interpretable potentially negative axis index.
      *
@@ -44120,6 +45693,31 @@
      * https://opensource.org/licenses/MIT.
      * =============================================================================
      */
+    /**
+     * Pads the middle dimension of a 3D tensor.
+     *
+     * @param x Input `tf.Tensor` to be padded.
+     * @param padding `Array` of 2 integers, how many zeros to add at the start and
+     *   end of the middle dimension (i.e., dimension 1).
+     * @return A padded 3D `tf.Tensor`.
+     */
+    function temporalPadding(x, padding) {
+        return tidy(() => {
+            if (x.rank !== 3) {
+                throw new ValueError(`temporalPadding expects input tensor to be 3-D, but received a ` +
+                    `${x.rank}-D tensor.`);
+            }
+            if (padding == null) {
+                padding = [1, 1];
+            }
+            if (padding.length !== 2) {
+                throw new ValueError(`temporalPadding expects input padding pattern to be a length-2 ` +
+                    `array, but received a length-${padding.length} array.`);
+            }
+            const pattern = [[0, 0], padding, [0, 0]];
+            return pad(x, pattern);
+        });
+    }
     /**
      * Pads the 2nd and 3rd dimensions of a 4D tensor.
      *
@@ -45063,6 +46661,9 @@
             this.states_ = s;
         }
         build(inputShape) {
+            // Note inputShape will be an Array of Shapes of initial states and
+            // constants if these are passed in apply().
+            const constantShape = null;
             if (this.numConstants != null) {
                 throw new NotImplementedError('Constants support is not implemented in RNN yet.');
             }
@@ -45076,7 +46677,10 @@
             // Allow cell (if RNNCell Layer) to build before we set or validate
             // stateSpec.
             const stepInputShape = [inputShape[0]].concat(inputShape.slice(2));
-            {
+            if (constantShape != null) {
+                throw new NotImplementedError('Constants support is not implemented in RNN yet.');
+            }
+            else {
                 this.cell.build(stepInputShape);
             }
             // Set or validate stateSpec.
@@ -46616,6 +48220,8 @@
                     if (Array.isArray(y)) {
                         states = y.slice(1).concat(yRev.slice(1));
                     }
+                    else {
+                    }
                     y = y[0];
                     yRev = yRev[0];
                 }
@@ -46958,7 +48564,7 @@
     /**
      * @doc {heading: 'Layers', subheading: 'Convolutional',  namespace: 'layers'}
      */
-    function conv1d$1(args) {
+    function conv1d$2(args) {
         return new Conv1D(args);
     }
     /**
@@ -46980,7 +48586,7 @@
     /**
      * @doc {heading: 'Layers', subheading: 'Convolutional', namespace: 'layers'}
      */
-    function conv2d$2(args) {
+    function conv2d$3(args) {
         return new Conv2D$1(args);
     }
     /**
@@ -47041,7 +48647,7 @@
     /**
      * @doc {heading: 'Layers', subheading: 'Convolutional', namespace: 'layers'}
      */
-    function conv3d$1(args) {
+    function conv3d$2(args) {
         return new Conv3D$1(args);
     }
     /**
@@ -47397,7 +49003,7 @@
      * ```
      */
     /** @doc {heading: 'Layers', subheading: 'Merge', namespace: 'layers'} */
-    function add$2(args) {
+    function add$3(args) {
         return new Add$1(args);
     }
     /**
@@ -47417,7 +49023,7 @@
      * ```
      */
     /** @doc {heading: 'Layers', subheading: 'Merge', namespace: 'layers'} */
-    function average(args) {
+    function average$1(args) {
         return new Average(args);
     }
     /**
@@ -47439,7 +49045,7 @@
      * ```
      */
     /** @doc {heading: 'Layers', subheading: 'Merge', namespace: 'layers'} */
-    function concatenate$1(args) {
+    function concatenate$2(args) {
         return new Concatenate(args);
     }
     /**
@@ -47459,7 +49065,7 @@
      * ```
      */
     /** @doc {heading: 'Layers', subheading: 'Merge', namespace: 'layers'} */
-    function maximum$1(args) {
+    function maximum$2(args) {
         return new Maximum$1(args);
     }
     /**
@@ -47479,7 +49085,7 @@
      * ```
      */
     /** @doc {heading: 'Layers', subheading: 'Merge', namespace: 'layers'} */
-    function minimum$1(args) {
+    function minimum$2(args) {
         return new Minimum$1(args);
     }
     /**
@@ -47500,7 +49106,7 @@
      * // dimension.
      */
     /** @doc {heading: 'Layers', subheading: 'Merge', namespace: 'layers'} */
-    function multiply(args) {
+    function multiply$1(args) {
         return new Multiply$1(args);
     }
     /**
@@ -48266,10 +49872,10 @@
         prelu: prelu$1,
         softmax: softmax$1,
         thresholdedReLU: thresholdedReLU,
-        conv1d: conv1d$1,
-        conv2d: conv2d$2,
+        conv1d: conv1d$2,
+        conv2d: conv2d$3,
         conv2dTranspose: conv2dTranspose$1,
-        conv3d: conv3d$1,
+        conv3d: conv3d$2,
         separableConv2d: separableConv2d$1,
         cropping2D: cropping2D,
         upSampling2d: upSampling2d,
@@ -48283,12 +49889,12 @@
         reshape: reshape$1,
         permute: permute,
         embedding: embedding,
-        add: add$2,
-        average: average,
-        concatenate: concatenate$1,
-        maximum: maximum$1,
-        minimum: minimum$1,
-        multiply: multiply,
+        add: add$3,
+        average: average$1,
+        concatenate: concatenate$2,
+        maximum: maximum$2,
+        minimum: minimum$2,
+        multiply: multiply$1,
         dot: dot$2,
         batchNormalization: batchNormalization$1,
         layerNormalization: layerNormalization,
@@ -48576,10 +50182,10 @@
     function meanAbsolutePercentageError$1(yTrue, yPred) {
         return meanAbsolutePercentageError(yTrue, yPred);
     }
-    function MAPE$1(yTrue, yPred) {
+    function MAPE$2(yTrue, yPred) {
         return meanAbsolutePercentageError(yTrue, yPred);
     }
-    function mape$1(yTrue, yPred) {
+    function mape$2(yTrue, yPred) {
         return meanAbsolutePercentageError(yTrue, yPred);
     }
     /**
@@ -48602,10 +50208,10 @@
     function meanSquaredError$2(yTrue, yPred) {
         return meanSquaredError$1(yTrue, yPred);
     }
-    function MSE$1(yTrue, yPred) {
+    function MSE$2(yTrue, yPred) {
         return meanSquaredError$1(yTrue, yPred);
     }
-    function mse$1(yTrue, yPred) {
+    function mse$2(yTrue, yPred) {
         return meanSquaredError$1(yTrue, yPred);
     }
 
@@ -48621,11 +50227,11 @@
         cosineProximity: cosineProximity$1,
         meanAbsoluteError: meanAbsoluteError$1,
         meanAbsolutePercentageError: meanAbsolutePercentageError$1,
-        MAPE: MAPE$1,
-        mape: mape$1,
+        MAPE: MAPE$2,
+        mape: mape$2,
         meanSquaredError: meanSquaredError$2,
-        MSE: MSE$1,
-        mse: mse$1
+        MSE: MSE$2,
+        mse: mse$2
     });
 
     /**
@@ -48861,6 +50467,16 @@
 
     /**
      * @license
+     * Copyright 2018 Google LLC
+     *
+     * Use of this source code is governed by an MIT-style
+     * license that can be found in the LICENSE file or at
+     * https://opensource.org/licenses/MIT.
+     * =============================================================================
+     */
+
+    /**
+     * @license
      * Copyright 2019 Google LLC. All Rights Reserved.
      * Licensed under the Apache License, Version 2.0 (the "License");
      * you may not use this file except in compliance with the License.
@@ -49076,6 +50692,13 @@
         }
         const nodeName = parts[0];
         return [nodeName, Number(parts[parts.length - 1])];
+    }
+    function split$2(arr, size) {
+        const res = [];
+        for (let i = 0; i < arr.length; i += size) {
+            res.push(arr.slice(i, i + size));
+        }
+        return res;
     }
     function getPadding(node, tensorMap, context) {
         let pad = getParamValue('pad', node, tensorMap, context);
@@ -52545,6 +54168,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY = 'arithmetic';
 
     /**
      * @license
@@ -52660,6 +54284,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$1 = 'basic_math';
 
     /**
      * @license
@@ -52735,8 +54360,12 @@
         /**
          * Dispose the tensors and idTensor and mark the TensoryArray as closed.
          */
-        clearAndClose() {
-            this.tensors.forEach(tensor => tensor.tensor.dispose());
+        clearAndClose(keepIds) {
+            this.tensors.forEach(tensor => {
+                if (keepIds == null || !keepIds.has(tensor.tensor.id)) {
+                    tensor.tensor.dispose();
+                }
+            });
             this.tensors = [];
             this.closed_ = true;
             this.idTensor.dispose();
@@ -52911,12 +54540,12 @@
             const elementPerRow = totalLength === 0 ? 0 : tensor.size / totalLength;
             const tensors = [];
             tidy(() => {
-                tensor = tensor.reshape([1, totalLength, elementPerRow]);
+                tensor = reshape(tensor, [1, totalLength, elementPerRow]);
                 for (let i = 0; i < length.length; ++i) {
                     const previousLength = (i === 0) ? 0 : cumulativeLengths[i - 1];
                     const indices = [0, previousLength, 0];
                     const sizes = [1, length[i], elementPerRow];
-                    tensors[i] = slice(tensor, indices, sizes).reshape(this.elementShape);
+                    tensors[i] = reshape(slice(tensor, indices, sizes), this.elementShape);
                 }
                 return tensors;
             });
@@ -52996,8 +54625,12 @@
         /**
          * Dispose the tensors and idTensor and clear the tensor list.
          */
-        clearAndClose() {
-            this.tensors.forEach(tensor => tensor.dispose());
+        clearAndClose(keepIds) {
+            this.tensors.forEach(tensor => {
+                if (keepIds == null || !keepIds.has(tensor.id)) {
+                    tensor.dispose();
+                }
+            });
             this.tensors.length = 0;
             this.idTensor.dispose();
         }
@@ -53023,7 +54656,7 @@
             }
             assertShapesMatchAllowUndefinedSize(elementShape, this.elementShape, 'TensorList shape mismatch: ');
             return tidy(() => {
-                const reshapedTensors = this.tensors.map(tensor => tensor.reshape(elementShape));
+                const reshapedTensors = this.tensors.map(tensor => reshape(tensor, elementShape));
                 return stack(reshapedTensors, 0);
             });
         }
@@ -53041,7 +54674,7 @@
             }
             const tensor = this.tensors.pop();
             assertShapesMatchAllowUndefinedSize(tensor.shape, elementShape, 'TensorList shape mismatch: ');
-            return tensor.reshape(elementShape);
+            return reshape(tensor, elementShape);
         }
         /**
          * Push a tensor to the end of the list.
@@ -53126,7 +54759,7 @@
                 return tensor([], [0].concat(this.elementShape));
             }
             return tidy(() => {
-                const tensors = indices.map(i => this.tensors[i].reshape(elementShape));
+                const tensors = indices.map(i => reshape(this.tensors[i], elementShape));
                 return stack(tensors, 0);
             });
         }
@@ -53144,7 +54777,7 @@
                 return tensor([], [0].concat(this.elementShape));
             }
             return tidy(() => {
-                const tensors = this.tensors.map(t => t.reshape(elementShape));
+                const tensors = this.tensors.map(t => reshape(t, elementShape));
                 return concat(tensors, 0);
             });
         }
@@ -53164,7 +54797,7 @@
         }
         const outputShape = tensor.shape.slice(1);
         assertShapesMatchAllowUndefinedSize(outputShape, elementShape, 'TensorList shape mismatch: ');
-        const tensorList = tensor.unstack();
+        const tensorList = unstack(tensor);
         return new TensorList(tensorList, elementShape, dtype);
     }
     /**
@@ -53205,7 +54838,7 @@
      * @param tensor the tensor to split.
      * @param elementShape the shape of the future elements of the list
      */
-    function split$2(tensor, length, elementShape) {
+    function split$3(tensor, length, elementShape) {
         let totalLength = 0;
         const cumulativeLengths = length.map(len => {
             totalLength += len;
@@ -53219,12 +54852,12 @@
         const elementPerRow = totalLength === 0 ? 0 : tensor.size / totalLength;
         const tensors = tidy(() => {
             const tensors = [];
-            tensor = tensor.reshape([1, totalLength, elementPerRow]);
+            tensor = reshape(tensor, [1, totalLength, elementPerRow]);
             for (let i = 0; i < length.length; ++i) {
                 const previousLength = (i === 0) ? 0 : cumulativeLengths[i - 1];
                 const indices = [0, previousLength, 0];
                 const sizes = [1, length[i], elementPerRow];
-                tensors[i] = slice(tensor, indices, sizes).reshape(elementShape);
+                tensors[i] = reshape(slice(tensor, indices, sizes), elementShape);
             }
             tensor.dispose();
             return tensors;
@@ -53497,7 +55130,7 @@
                 const splitTensor = getParamValue('tensor', node, tensorMap, context);
                 const elementShape = getParamValue('elementShape', node, tensorMap, context);
                 const lengths = getParamValue('lengths', node, tensorMap, context);
-                const tensorList = split$2(splitTensor, lengths, elementShape);
+                const tensorList = split$3(splitTensor, lengths, elementShape);
                 context.addTensorList(tensorList);
                 return [tensorList.idTensor];
             }
@@ -53505,6 +55138,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$2 = 'control';
 
     /**
      * @license
@@ -53675,6 +55309,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$3 = 'convolution';
 
     /**
      * @license
@@ -53753,6 +55388,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$4 = 'creation';
 
     /**
      * @license
@@ -53805,8 +55441,7 @@
                 return [await image.nonMaxSuppressionAsync(boxes, scores, maxOutputSize, iouThreshold, scoreThreshold)];
             }
             case 'Where': {
-                const condition = getParamValue('condition', node, tensorMap, context)
-                    .asType('bool');
+                const condition = cast(getParamValue('condition', node, tensorMap, context), 'bool');
                 const result = [await whereAsync(condition)];
                 condition.dispose();
                 return result;
@@ -53818,6 +55453,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$5 = 'dynamic';
 
     /**
      * @license
@@ -53848,6 +55484,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$6 = 'evaluation';
 
     /**
      * @license
@@ -53914,6 +55551,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$7 = 'graph';
 
     /**
      * @license
@@ -53958,6 +55596,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$8 = 'image';
 
     /**
      * @license
@@ -54012,6 +55651,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$9 = 'logical';
 
     /**
      * @license
@@ -54065,6 +55705,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$a = 'matrices';
 
     /**
      * @license
@@ -54107,6 +55748,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$b = 'normalization';
 
     /**
      * @license
@@ -54179,6 +55821,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$c = 'reduction';
 
     /**
      * @license
@@ -54211,7 +55854,7 @@
                 const axis = getParamValue('axis', node, tensorMap, context);
                 const input = getParamValue('x', node, tensorMap, context);
                 const indices = getParamValue('indices', node, tensorMap, context);
-                return [gather(input, indices.asType('int32'), axis)];
+                return [gather(input, cast(indices, 'int32'), axis)];
             }
             case 'ReverseV2':
             case 'Reverse': {
@@ -54244,14 +55887,14 @@
                     const tensors = getParamValue('tensors', node, tensorMap, context);
                     // Reshape the tensors to the first tensor's shape if they don't match.
                     const shape = tensors[0].shape;
-                    const squeezedShape = tensors[0].squeeze().shape;
+                    const squeezedShape = squeeze(tensors[0]).shape;
                     const mapped = tensors.map(tensor => {
                         const sameShape = arraysEqual(tensor.shape, shape);
                         if (!sameShape &&
-                            !arraysEqual(tensor.squeeze().shape, squeezedShape)) {
+                            !arraysEqual(squeeze(tensor).shape, squeezedShape)) {
                             throw new Error('the input tensors shape does not match');
                         }
-                        return sameShape ? tensor : tensor.reshape(shape);
+                        return sameShape ? tensor : reshape(tensor, shape);
                     });
                     return [stack(mapped, axis)];
                 });
@@ -54290,12 +55933,13 @@
                 const defaultValue = getParamValue('defaultValue', node, tensorMap, context);
                 return [sparseToDense(indices, sparseValues, shape, sparseValues.dtype === defaultValue.dtype ?
                         defaultValue :
-                        defaultValue.asType(sparseValues.dtype))];
+                        cast(defaultValue, sparseValues.dtype))];
             }
             default:
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$d = 'slice_join';
 
     /**
      * @license
@@ -54331,6 +55975,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$e = 'spectral';
 
     /**
      * @license
@@ -54390,6 +56035,7 @@
                 throw TypeError(`Node type ${node.op} is not implemented`);
         }
     };
+    const CATEGORY$f = 'transformation';
 
     /**
      * @license
@@ -54594,12 +56240,12 @@
         getTensorList(id) {
             return this.tensorListMap[id];
         }
-        dispose() {
+        dispose(keepIds) {
             for (const key in this.tensorArrayMap) {
-                this.tensorArrayMap[key].clearAndClose();
+                this.tensorArrayMap[key].clearAndClose(keepIds);
             }
             for (const key in this.tensorListMap) {
-                this.tensorListMap[key].clearAndClose();
+                this.tensorListMap[key].clearAndClose(keepIds);
             }
         }
     }
@@ -54902,7 +56548,7 @@
                 }
                 // dispose the context for the root executor
                 if (this.parent == null) {
-                    context.dispose();
+                    context.dispose(tensorsToKeep);
                 }
                 return outputs.map(name => getTensor(name, tensorsMap, context));
             });
@@ -54991,21 +56637,20 @@
             const tensorMap = await this.executeWithControlFlow(inputs, context, outputs, isFunctionExecution);
             const results = outputs.map(name => getTensor(name, tensorMap, context));
             // dispose all the intermediate tensors
-            const outputIds = new Set(results.map(t => t.id));
-            const inputIds = new Set(Object.keys(inputs).map(name => inputs[name].id));
+            const outputIds = results.map(t => t.id);
+            const inputIds = Object.keys(inputs).map(name => inputs[name].id);
+            const keepIds = new Set([...outputIds, ...inputIds, ...this.weightIds]);
             Object.keys(tensorMap).forEach(key => {
                 const tensorArray = tensorMap[key];
                 tensorArray.forEach(tensor => {
-                    if (tensor && !tensor.isDisposed && !outputIds.has(tensor.id) &&
-                        !inputIds.has(tensor.id) &&
-                        this.weightIds.indexOf(tensor.id) === -1) {
+                    if (tensor && !tensor.isDisposed && !keepIds.has(tensor.id)) {
                         tensor.dispose();
                     }
                 });
             });
             // dispose the context for the root executor
             if (this.parent == null) {
-                context.dispose();
+                context.dispose(keepIds);
             }
             return results;
         }
@@ -55552,7 +57197,24 @@
 
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    const version$2 = '2.3.0';
+    const version$2 = '0.0.0';
+
+    /**
+     * @license
+     * Copyright 2018 Google LLC. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
 
     /**
      * @license
@@ -56063,6 +57725,13 @@
         return new ArrayIterator(items);
     }
     /**
+     * Create a `LazyIterator` of incrementing integers.
+     */
+    function iteratorFromIncrementing(start) {
+        let i = start;
+        return iteratorFromFunction(() => ({ value: i++, done: false }));
+    }
+    /**
      * Create a `LazyIterator` from a function.
      *
      * ```js
@@ -56092,6 +57761,25 @@
      */
     function iteratorFromConcatenated(baseIterators, baseErrorHandler) {
         return new ChainedIterator(baseIterators, baseErrorHandler);
+    }
+    /**
+     * Create a `LazyIterator` by concatenating streams produced by calling a
+     * stream-generating function a given number of times.
+     *
+     * Since a `LazyIterator` is read-once, it cannot be repeated, but this
+     * function can be used to achieve a similar effect:
+     *
+     *   LazyIterator.ofConcatenatedFunction(() => new MyIterator(), 6);
+     *
+     * @param iteratorFunc: A function that produces a new stream on each call.
+     * @param count: The number of times to call the function.
+     * @param baseErrorHandler An optional function that can intercept `Error`s
+     *   raised during a `next()` call on the base stream.  This function can decide
+     *   whether the error should be propagated, whether the error should be
+     *   ignored, or whether the base stream should be terminated.
+     */
+    function iteratorFromConcatenatedFunction(iteratorFunc, count, baseErrorHandler) {
+        return iteratorFromConcatenated(iteratorFromFunction(iteratorFunc).take(count), baseErrorHandler);
     }
     /**
      * Create a `LazyIterator` by zipping together an array, dict, or nested
@@ -56911,6 +58599,7 @@
                     case ZipMismatchMode.SHORTEST:
                         return { value: null, done: true };
                     case ZipMismatchMode.LONGEST:
+                    default:
                     // Continue.  The exhausted streams already produced value: null.
                 }
             }
@@ -58007,6 +59696,7 @@
                                 currentState = STATE_OUT;
                                 readOffset = i + 1;
                                 break;
+                            default:
                         }
                         break;
                     // In a quoted field
@@ -58016,6 +59706,7 @@
                             case CODE_QUOTE:
                                 currentState = STATE_QUOTE_AFTER_QUOTE;
                                 break;
+                            default:
                         }
                         break;
                     // This state means it's right after a second quote in a field
@@ -58043,8 +59734,10 @@
                             case CODE_QUOTE:
                                 currentState = STATE_QUOTE;
                                 break;
+                            default:
                         }
                         break;
+                    default:
                 }
             }
             // Adds last item based on if it is quoted.
@@ -59218,7 +60911,7 @@
 
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    const version$3 = '2.3.0';
+    const version$3 = '0.0.0';
 
     /**
      * @license
@@ -59430,7 +61123,7 @@
      * =============================================================================
      */
     const nonMaxSuppressionV3Impl$1 = nonMaxSuppressionV3Impl;
-    const split$3 = split$1;
+    const split$4 = split$1;
     const tile$3 = tile$1;
     const topkImpl$1 = topkImpl;
     const whereImpl$1 = whereImpl;
@@ -60013,7 +61706,7 @@
         topk(x, k, sorted) {
             assertNotComplex(x, 'topk');
             const xVals = this.readSync(x.dataId);
-            return topkImpl$1(xVals, x.shape, x.dtype, k);
+            return topkImpl$1(xVals, x.shape, x.dtype, k, sorted);
         }
         min(x, axes) {
             assertNotComplex(x, 'min');
@@ -60345,7 +62038,7 @@
                 const v = values[i];
                 resultValues[i] = v > max ? max : (v < min ? min : v);
             }
-            return this.makeOutput(resultValues, x.shape, 'float32');
+            return this.makeOutput(resultValues, x.shape, x.dtype);
         }
         abs(x) {
             const resultValues = new Float32Array(x.size);
@@ -62102,7 +63795,7 @@
             return this.complex(realResult.toTensor(), imagResult.toTensor());
         }
         split(x, sizeSplits, axis) {
-            return split$3(x, sizeSplits, axis);
+            return split$4(x, sizeSplits, axis);
         }
         dispose() { }
         floatPrecision() {
@@ -62403,7 +64096,7 @@
 
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    const version$4 = '2.3.0';
+    const version$4 = '0.0.0';
 
     /**
      * @license
@@ -63165,6 +64858,23 @@
 
     /**
      * @license
+     * Copyright 2020 Google LLC. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
+
+    /**
+     * @license
      * Copyright 2018 Google LLC. All Rights Reserved.
      * Licensed under the Apache License, Version 2.0 (the "License");
      * you may not use this file except in compliance with the License.
@@ -63312,6 +65022,9 @@
     function getUnpackedArraySizeFromMatrixSize(matrixSize, channelsPerTexture) {
         return matrixSize * channelsPerTexture;
     }
+    function getColorMatrixTextureShapeWidthHeight(rows, columns) {
+        return [columns * 4, rows];
+    }
     /**
      * Get shape for densely packed RGBA texture.
      */
@@ -63319,6 +65032,25 @@
         const size = sizeFromShape(shape);
         const texelsNeeded = Math.ceil(size / 4);
         return sizeToSquarishShape(texelsNeeded);
+    }
+    function getMatrixSizeFromUnpackedArraySize(unpackedSize, channelsPerTexture) {
+        if (unpackedSize % channelsPerTexture !== 0) {
+            throw new Error(`unpackedSize (${unpackedSize}) must be a multiple of ` +
+                `${channelsPerTexture}`);
+        }
+        return unpackedSize / channelsPerTexture;
+    }
+    function decodeMatrixFromUnpackedColorRGBAArray(unpackedArray, matrix, channels) {
+        const requiredSize = unpackedArray.length * channels / 4;
+        if (matrix.length < requiredSize) {
+            throw new Error(`matrix length (${matrix.length}) must be >= ${requiredSize}`);
+        }
+        let dst = 0;
+        for (let src = 0; src < unpackedArray.length; src += 4) {
+            for (let c = 0; c < channels; c++) {
+                matrix[dst++] = unpackedArray[src + c];
+            }
+        }
     }
     function getPackedMatrixTextureShapeWidthHeight(rows, columns) {
         return [
@@ -63518,6 +65250,12 @@
         callAndCheck(gl, () => gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW));
         return buffer;
     }
+    function getNumChannels() {
+        if (env().getNumber('WEBGL_VERSION') === 2) {
+            return 1;
+        }
+        return 4;
+    }
     function createTexture(gl) {
         return throwIfNull(gl, () => gl.createTexture(), 'Unable to create WebGLTexture.');
     }
@@ -63554,6 +65292,11 @@
         callAndCheck(gl, () => gl.activeTexture(gl.TEXTURE0 + textureUnit));
         callAndCheck(gl, () => gl.bindTexture(gl.TEXTURE_2D, texture));
     }
+    function unbindTextureUnit(gl, textureUnit) {
+        validateTextureUnit(gl, textureUnit);
+        callAndCheck(gl, () => gl.activeTexture(gl.TEXTURE0 + textureUnit));
+        callAndCheck(gl, () => gl.bindTexture(gl.TEXTURE_2D, null));
+    }
     function getProgramUniformLocationOrThrow(gl, program, uniformName) {
         return throwIfNull(gl, () => gl.getUniformLocation(program, uniformName), 'uniform "' + uniformName + '" not present in program.');
     }
@@ -63563,6 +65306,11 @@
     function bindTextureToProgramUniformSampler(gl, texture, uniformSamplerLocation, textureUnit) {
         callAndCheck(gl, () => bindTextureUnit(gl, texture, textureUnit));
         callAndCheck(gl, () => gl.uniform1i(uniformSamplerLocation, textureUnit));
+    }
+    function bindCanvasToFramebuffer(gl) {
+        callAndCheck(gl, () => gl.bindFramebuffer(gl.FRAMEBUFFER, null));
+        callAndCheck(gl, () => gl.viewport(0, 0, gl.canvas.width, gl.canvas.height));
+        callAndCheck(gl, () => gl.scissor(0, 0, gl.canvas.width, gl.canvas.height));
     }
     function bindColorTextureToFramebuffer(gl, texture, framebuffer) {
         callAndCheck(gl, () => gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer));
@@ -63737,6 +65485,12 @@
             MAX_TEXTURE_SIZE = gl.getParameter(gl.MAX_TEXTURE_SIZE);
         }
         return MAX_TEXTURE_SIZE;
+    }
+    function resetMaxTextureSize() {
+        MAX_TEXTURE_SIZE = null;
+    }
+    function resetMaxTexturesInShader() {
+        MAX_TEXTURES_IN_SHADER = null;
     }
     function getMaxTexturesInShader(webGLVersion) {
         if (MAX_TEXTURES_IN_SHADER == null) {
@@ -64347,6 +66101,40 @@
             return `${line1}; ${line2};`;
         })
             .join('');
+    }
+    function buildVec(x) {
+        if (x.length === 1) {
+            return `${x[0]}`;
+        }
+        return `vec${x.length}(${x.join(',')})`;
+    }
+    /**
+     * Produces GLSL code that computes the dot product of the input x and y
+     * vectors. Handles splitting inputs into increments of vec4s when necessary.
+     */
+    function dotify(x, y) {
+        if (x.length !== y.length) {
+            throw new Error(`Vectors to be dotted must be of the same length -` +
+                `got ${x.length} and ${y.length}`);
+        }
+        const slices = [];
+        const nearestVec4 = Math.floor(x.length / 4);
+        const nearestVec4Remainder = x.length % 4;
+        for (let i = 0; i < nearestVec4; i++) {
+            const xSlice = x.slice(i * 4, i * 4 + 4);
+            const ySlice = y.slice(i * 4, i * 4 + 4);
+            slices.push(`${buildVec(xSlice)}, ${buildVec(ySlice)}`);
+        }
+        if (nearestVec4Remainder !== 0) {
+            let xSlice = x.slice(nearestVec4 * 4);
+            let ySlice = y.slice(nearestVec4 * 4);
+            if (xSlice.length === 1) {
+                xSlice = xSlice.map(d => `float(${d})`);
+                ySlice = ySlice.map(d => `float(${d})`);
+            }
+            slices.push(`${buildVec(xSlice)}, ${buildVec(ySlice)}`);
+        }
+        return slices.map((d, i) => `dot(${d})`).join('+');
     }
     /**
      * Produces GLSL that computes the flat index from 3D coordinates.
@@ -66109,6 +67897,7 @@ if (b == 0.0) {
 return (round(mod(b, 2.0)) != 1) ?
     pow(abs(a), b) : sign(a) * pow(abs(a), b);
 `;
+    const SQUARED_DIFFERENCE = 'return (a - b) * (a - b);';
     const EQUAL = `return float(a == b);`;
     const NOT_EQUAL = `return float(a != b);`;
     const LESS = `return float(a < b);`;
@@ -72614,7 +74403,7 @@ return (round(mod(b, 2.0)) != 1) ?
      * =============================================================================
      */
     const { segment_util: segment_util$1 } = backend_util;
-    const split$4 = split$1;
+    const split$5 = split$1;
     const tile$4 = tile$1;
     const topkImpl$2 = topkImpl;
     const whereImpl$2 = whereImpl;
@@ -73555,7 +75344,7 @@ return (round(mod(b, 2.0)) != 1) ?
         }
         topk(x, k, sorted) {
             const xVals = x.dataSync();
-            return topkImpl$2(xVals, x.shape, x.dtype, k);
+            return topkImpl$2(xVals, x.shape, x.dtype, k, sorted);
         }
         min(x, axes) {
             assertAxesAreInnerMostDims('min', axes, x.rank);
@@ -74304,7 +76093,7 @@ return (round(mod(b, 2.0)) != 1) ?
             return this.compileAndRun(program, [x]);
         }
         split(x, sizeSplits, axis) {
-            return split$4(x, sizeSplits, axis);
+            return split$5(x, sizeSplits, axis);
         }
         scatterND(indices, updates, shape) {
             const { sliceRank, numUpdates, sliceSize, strides, outputSize } = calculateShapes(updates, indices, shape);
@@ -74717,7 +76506,31 @@ return (round(mod(b, 2.0)) != 1) ?
 
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    const version$5 = '2.3.0';
+    const version$5 = '0.0.0';
+
+    /**
+     * @license
+     * Copyright 2019 Google LLC. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
+    /**
+     * Enforce use of half precision textures if available on the platform.
+     */
+    /** @doc {heading: 'Environment', namespace: 'webgl'} */
+    function forceHalfFloat() {
+        env().set('WEBGL_FORCE_F16_TEXTURES', true);
+    }
 
     /**
      * @license
@@ -74738,6 +76551,7 @@ return (round(mod(b, 2.0)) != 1) ?
     if (isBrowser()) {
         registerBackend('webgl', () => new MathBackendWebGL(), 2 /* priority */);
     }
+    const webgl = { forceHalfFloat };
 
     /**
      * @license
@@ -75722,9 +77536,26 @@ return (round(mod(b, 2.0)) != 1) ?
         registerKernel(kernelConfig);
     }
 
+    /**
+     * @license
+     * Copyright 2020 Google LLC. All Rights Reserved.
+     * Licensed under the Apache License, Version 2.0 (the "License");
+     * you may not use this file except in compliance with the License.
+     * You may obtain a copy of the License at
+     *
+     * http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     * =============================================================================
+     */
+
     /** @license See the LICENSE file. */
     // This code is auto-generated, do not modify this file!
-    const version$6 = '2.3.0';
+    const version$6 = '0.0.0';
 
     /**
      * @license
