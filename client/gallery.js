@@ -1,8 +1,5 @@
-/* global Popper */
+/* global Popper, marked */
 
-// const oboe = require('oboe');
-const marked = require('marked');
-const moment = require('moment');
 const config = require('./config.js');
 const db = require('./indexdb.js');
 const details = require('./details.js');
@@ -383,7 +380,8 @@ async function loadGallery(limit, refresh = false) {
     if (!refresh) log.div('log', true, `Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
   }
   if (refresh && (json.length > 0)) {
-    const dt = window.options.lastUpdated === 0 ? 'start' : moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss');
+    // const dt = window.options.lastUpdated === 0 ? 'start' : moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss');
+    const dt = window.options.lastUpdated === 0 ? 'start' : new Date(window.options.lastUpdated).toLocaleDateString();
     log.div('log', true, `Refreshed cache: ${json.length} images updated since ${dt} in ${Math.round(t1 - t0).toLocaleString()} ms`);
   }
   // window.filtered = await db.all();

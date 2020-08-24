@@ -1,3 +1,5 @@
+/* eslint-disable import/newline-after-import */
+/* eslint-disable node/no-unpublished-require */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-multi-spaces */
 
@@ -5,12 +7,17 @@ const log = require('./log.js');
 const modelClassify = require('./modelClassify.js');
 const modelDetect = require('./modelDetect.js');
 
-window.debug = true;
-window.tf = require('@tensorflow/tfjs'); // loads tfjs@1.7.4
-window.faceapi = require('@vladmandic/face-api'); // load published npm version
-// window.faceapi = require('/home/vlado/dev/face-api'); // load dev version
+// load tfjs and face-api via npm module or esm script
+// window.tf = require('@tensorflow/tfjs');
+// window.faceapi = require('@vladmandic/face-api');
+/* global tf, faceapi */
+if (typeof tf !== 'undefined') window.tf = tf;
+if (typeof faceapi !== 'undefined') window.faceapi = faceapi;
+// make them use same instance of tfjs one way or the other
+// if (window.tf) window.faceapi.tf = window.tf;
+// if (window.faceapi.tf) window.tf = window.faceapi.tf;
 
-// window.tf = window.faceapi.tf; // overrides loaded tfjs with tfjs@2.30
+window.debug = true;
 
 function colorHex(str) {
   const ctx = document.createElement('canvas').getContext('2d');
