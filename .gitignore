@@ -1,6 +1,7 @@
 node_modules/*
 sessions/*
 models/*
+inactive/*
 media/*
 dist/*
 pigallery.db
