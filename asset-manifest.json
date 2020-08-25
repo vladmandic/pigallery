@@ -5,7 +5,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 20422,
+      "bytes": 15058,
       "imports": [
         {
           "path": "client/log.js"
@@ -28,7 +28,7 @@
       ]
     },
     "client/config.js": {
-      "bytes": 12476,
+      "bytes": 11681,
       "imports": [
         {
           "path": "client/log.js"
@@ -266,7 +266,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 411401
+      "bytes": 410600
     },
     "dist/gallery.js": {
       "imports": [],
@@ -281,7 +281,7 @@
           "bytesInOutput": 2559
         },
         "client/config.js": {
-          "bytesInOutput": 6895
+          "bytesInOutput": 6917
         },
         "client/indexdb.js": {
           "bytesInOutput": 3222
@@ -320,12 +320,12 @@
           "bytesInOutput": 19888
         }
       },
-      "bytes": 128331
+      "bytes": 128353
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 54115
+      "bytes": 53314
     },
     "dist/video.js": {
       "imports": [],
@@ -340,7 +340,7 @@
           "bytesInOutput": 2531
         },
         "client/config.js": {
-          "bytesInOutput": 6885
+          "bytesInOutput": 6907
         },
         "client/processVideo.js": {
           "bytesInOutput": 3229
@@ -349,12 +349,12 @@
           "bytesInOutput": 3990
         }
       },
-      "bytes": 19400
+      "bytes": 19422
     },
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 64566
+      "bytes": 63765
     },
     "dist/process.js": {
       "imports": [],
@@ -369,7 +369,7 @@
           "bytesInOutput": 2531
         },
         "client/config.js": {
-          "bytesInOutput": 6888
+          "bytesInOutput": 6910
         },
         "client/blockhash.js": {
           "bytesInOutput": 1967
@@ -381,12 +381,12 @@
           "bytesInOutput": 2195
         }
       },
-      "bytes": 22613
+      "bytes": 22635
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 104140
+      "bytes": 97828
     },
     "dist/compare.js": {
       "imports": [],
@@ -401,10 +401,10 @@
           "bytesInOutput": 2536
         },
         "client/config.js": {
-          "bytesInOutput": 6892
+          "bytesInOutput": 6914
         },
         "client/modelYolo.js": {
-          "bytesInOutput": 5220
+          "bytesInOutput": 5215
         },
         "client/blockhash.js": {
           "bytesInOutput": 1967
@@ -413,10 +413,10 @@
           "bytesInOutput": 6271
         },
         "client/compare.js": {
-          "bytesInOutput": 8426
+          "bytesInOutput": 8285
         }
       },
-      "bytes": 34218
+      "bytes": 34094
     },
     "dist/worker.js.map": {
       "imports": [],
