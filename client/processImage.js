@@ -3,6 +3,7 @@ const modelDetect = require('./modelDetect.js');
 const log = require('./log.js');
 const config = require('./config.js').default;
 const hash = require('./blockhash.js');
+const definitions = require('./models.js').models;
 
 let faceapi = window.faceapi;
 let tf = window.tf;
@@ -40,57 +41,40 @@ async function loadModels() {
   log.div('log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
   log.div('log', true, `  Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);
   log.div('log', true, 'Image Classification models:');
-  for (const model of config.classify) {
+  for (const model of definitions.classify) {
     log.div('log', true, `  ${JSONtoStr(model)}`);
   }
   log.div('log', true, 'Object Detection models:');
-  for (const model of config.detect) {
+  for (const model of definitions.detect) {
     log.div('log', true, `  ${JSONtoStr(model)}`);
   }
   log.div('log', true, 'Face Detection model:');
-  log.div('log', true, `  ${JSONtoStr(config.person)}`);
+  log.div('log', true, `  ${JSONtoStr(definitions.person)}`);
   const t0 = window.performance.now();
 
   models.classify = [];
-  if (config.classify && config.classify.length > 0) {
-    for (const cfg of config.classify) {
+  if (definitions.classify && definitions.classify.length > 0) {
+    for (const cfg of definitions.classify) {
       const res = await modelClassify.load(cfg);
       models.classify.push(res);
     }
   }
 
   models.detect = [];
-  if (config.detect && config.detect.length > 0) {
-    for (const cfg of config.detect) {
+  if (definitions.detect && definitions.detect.length > 0) {
+    for (const cfg of definitions.detect) {
       const res = await modelDetect.load(cfg);
       models.detect.push(res);
     }
   }
 
-  if (config.person) {
-    switch (config.person.type) {
-      case 'tinyFaceDetector':
-        await faceapi.nets.tinyFaceDetector.load(config.person.modelPath);
-        faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: config.person.score, inputSize: config.person.size });
-        break;
-      case 'ssdMobilenetv1':
-        await faceapi.nets.ssdMobilenetv1.load(config.person.modelPath);
-        faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: config.person.score, maxResults: config.person.topK });
-        break;
-      case 'tinyYolov2':
-        await faceapi.nets.tinyYolov2.load(config.person.modelPath);
-        faceapi.options = new faceapi.TinyYolov2Options({ scoreThreshold: config.person.score, inputSize: config.person.size });
-        break;
-      case 'mtcnn':
-        await faceapi.nets.mtcnn.load(config.person.modelPath);
-        faceapi.options = new faceapi.MtcnnOptions({ minFaceSize: 100, scaleFactor: 0.8 });
-        break;
-      default:
-    }
-    await faceapi.nets.ageGenderNet.load(config.person.modelPath);
-    await faceapi.nets.faceLandmark68Net.load(config.person.modelPath);
-    await faceapi.nets.faceRecognitionNet.load(config.person.modelPath);
-    await faceapi.nets.faceExpressionNet.load(config.person.modelPath);
+  if (definitions.person[0]) {
+    await faceapi.nets.tinyFaceDetector.load(definitions.person[0].modelPath);
+    faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: definitions.person[0].score, inputSize: definitions.person[0].size });
+    await faceapi.nets.ageGenderNet.load(definitions.person[0].modelPath);
+    await faceapi.nets.faceLandmark68Net.load(definitions.person[0].modelPath);
+    await faceapi.nets.faceRecognitionNet.load(definitions.person[0].modelPath);
+    await faceapi.nets.faceExpressionNet.load(definitions.person[0].modelPath);
     models.faceapi = faceapi;
   }
 
@@ -100,12 +84,6 @@ async function loadModels() {
   models.yolo = await yolo.v2tiny('/models/yolo-v2-tiny/model.json');
   models.yolo = await yolo.v3tiny('/models/yolo-v3-tiny/model.json');
   models.yolo = await yolo.v3('/models/yolo-v3-full/model.json');
-  */
-
-  /* working but unreliable
-  log.div('log', true, '  Model: NSFW');
-  models.nsfw = await nsfwjs.load('/models/nsfw-mini/', { size: 224, type: 'layers' });
-  models.nsfw = await nsfwjs.load('/models/nsfw-inception-v3/', { size: 299, type: 'layers' });
   */
 
   const t1 = window.performance.now();
@@ -251,7 +229,7 @@ async function processImage(name) {
     }
     for (const i in resClassify) {
       if (resClassify[i]) {
-        for (const j in resClassify[i]) resClassify[i][j].model = config.classify[i].name;
+        for (const j in resClassify[i]) resClassify[i][j].model = definitions.classify[i].name;
         obj.classify.push(...resClassify[i]);
       }
     }
@@ -266,7 +244,7 @@ async function processImage(name) {
     }
     for (const i in resDetect) {
       if (resDetect[i]) {
-        for (const j in resDetect[i]) resDetect[i][j].model = config.detect[i].name;
+        for (const j in resDetect[i]) resDetect[i][j].model = definitions.detect[i].name;
         obj.detect.push(...resDetect[i]);
       }
     }

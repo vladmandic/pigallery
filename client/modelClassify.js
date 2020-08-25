@@ -6,13 +6,12 @@ let config = {
   topK: 3,
   inputMin: 0,
   inputMax: 1,
-  alignCorners: true,
+  alignCorners: false,
   tensorSize: 224,
-  tensorShape: 3,
-  reshape: -1,
   offset: 1,
   scoreScale: 1,
   background: -1,
+  useFloat: true,
   classes: 'assets/ImageNet-Labels1000.json',
 };
 
@@ -36,14 +35,12 @@ async function decodeValues(model, values) {
   const pairs = [];
   for (const i in values) pairs.push({ score: values[i], index: i });
   const results = pairs
-    .filter((a) => (a.score * model.config.scoreScale > model.config.score) && (parseInt(a.index, 10) !== model.config.background))
+    .filter((a) => (a.score * model.config.scoreScale > model.config.score) && (a.index !== model.config.background))
     .sort((a, b) => b.score - a.score)
-    // .filter((a) => a.index !== model.config.background)
     .map((a) => {
       const id = a.index - model.config.offset; // offset indexes for some models
       const wnid = model.labels[id] ? model.labels[id][0] : a.index;
       const label = model.labels[id] ? model.labels[id][1] : `unknown id:${a.index}`;
-      // console.log(id, wnid, label);
       return { wnid, id, class: label.toLowerCase(), score: a.score * model.config.scoreScale };
     });
   if (results && results.length > model.config.topK) results.length = model.config.topK;
@@ -52,24 +49,29 @@ async function decodeValues(model, values) {
 
 async function classify(model, image) {
   const values = tf.tidy(() => {
-    const imgBuf = tf.browser.fromPixels(image, 3);
-    const bufFloat = tf.cast(imgBuf, 'float32'); // imgBuf.toFloat();
-    const mul = tf.mul(bufFloat, (model.config.inputMax - model.config.inputMin) / 255.0); // bufFloat.mul((model.config.inputMax - model.config.inputMin) / 255.0);
-    const add = tf.add(mul, model.config.inputMin); // mul.add(model.config.inputMin);
-    const resized = tf.image.resizeBilinear(add, [model.config.tensorSize, model.config.tensorSize], model.config.alignCorners);
-    const reshaped = tf.reshape(resized, [model.config.reshape, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]); // resized.reshape([-1, model.config.tensorSize, model.config.tensorSize, model.config.tensorShape]);
-    let batched;
+    const buffer = tf.browser.fromPixels(image, 3);
+    let cast;
     if (!model.config.useFloat) {
-      batched = reshaped;
+      cast = buffer;
     } else {
-      const cast = tf.cast(reshaped, 'float32');
-      batched = tf.mul(cast, [1.0 / 255.0]);
-      tf.dispose(cast);
+      const bufftmp = tf.cast(buffer, 'float32');
+      cast = tf.mul(bufftmp, [(model.config.inputMax - model.config.inputMin) / 255.0]);
+      tf.dispose(bufftmp);
     }
-    const predictions = model.predict(batched);
+    const offset = model.config.inputMin > 0 ? tf.add(cast, model.config.inputMin) : cast;
+    const resized = tf.image.resizeBilinear(offset, [model.config.tensorSize, model.config.tensorSize], model.config.alignCorners);
+    const reshaped = tf.reshape(resized, [-1, model.config.tensorSize, model.config.tensorSize, 3]);
+    const predictions = model.predict(reshaped);
     const prediction = Array.isArray(predictions) ? predictions[0] : predictions; // some models return prediction for multiple objects in array, some return single prediction
     const softmax = prediction.softmax();
     const data = softmax.dataSync();
+    tf.dispose(buffer);
+    tf.dispose(cast);
+    tf.dispose(offset);
+    tf.dispose(resized);
+    tf.dispose(reshaped);
+    tf.dispose(predictions);
+    tf.dispose(softmax);
     return data;
   });
   const decoded = await decodeValues(model, values);

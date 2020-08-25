@@ -429,8 +429,8 @@
           if (step < 16) _this._frames.zoomFrame = requestAnimationFrame(zoom);
           const tickZoom = easeOutQuart(step, curPerc, perc - curPerc, 16);
           const ratio = tickZoom / curPerc;
-          const imgWidth = imageDim.w * tickZoom / 500;
-          const imgHeight = imageDim.h * tickZoom / 500;
+          const imgWidth = imageDim.w ? imageDim.w * tickZoom / 500 : 0;
+          const imgHeight = imageDim.h ? imageDim.h * tickZoom / 500 : 0;
           let newLeft = -((point.x - curLeft) * ratio - point.x);
           let newTop = -((point.y - curTop) * ratio - point.y); // fix for left and top
           newLeft = Math.min(newLeft, baseLeft);
