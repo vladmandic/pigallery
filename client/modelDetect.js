@@ -11,7 +11,7 @@ let config = {
   useFloat: false,
   classes: 'assets/Coco-Labels.json',
   // eslint-disable-next-line no-use-before-define
-  exec: detectCOCO,
+  exec: detectSSD,
 };
 
 async function load(cfg) {
@@ -115,12 +115,9 @@ async function detectSSD(model, image) {
     tf.dispose(expanded);
     tf.dispose(cast);
   }
-  // console.log('execute start', model); look at model.inputs and model.outputs on how to execute a model
+  // console.log('execute start', model); // look at model.inputs and model.outputs on how to execute a model
   const result = await model.executeAsync({ images: batched }, ['module_apply_default/hub_input/strided_slice_1', 'module_apply_default/hub_input/strided_slice_2', 'module_apply_default/hub_input/strided_slice']); // scores, classes, boxes
-  // model.executeAsync({'inputs': tf.zeros([1, 16], 'int32'), 'softmax_temperature': tf.scalar(0.6)}, ["decoder/decode_sample/decoder/transpose_1"])
-
   // console.log('execute end', model, result); model.outputs map to result
-  // for (const data of result) console.log(data, data.dataSync());
   const scores = result[0].dataSync();
   const classes = result[1].dataSync();
   const boxes = result[2].dataSync();
@@ -151,7 +148,9 @@ async function detectSSD(model, image) {
 }
 
 async function exec(model, image) {
-  const result = await model.config.exec(model, image);
+  let result;
+  if (model.config.exec === 'coco') result = await detectCOCO(model, image);
+  if (model.config.exec === 'ssd') result = await detectSSD(model, image);
   return result;
 }
 

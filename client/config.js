@@ -186,19 +186,6 @@ const config = {
   squareImage: false,      // resize proportional to the original image or to a square image
   registerPWA: true,       // register PWA service worker?
 
-  // Default models
-  classify: [
-    { name: 'ImageNet Inception v4', modelPath: 'models/inception-v4/model.json', score: 0.22, topK: 3, useFloat: false, tensorSize: 299, scoreScale: 200, classes: 'assets/ImageNet-Labels1000.json' },
-    { name: 'ImageNet EfficientNet B4', modelPath: 'models/efficientnet-b4/model.json', score: 0.1, topK: 3, slice: 0, tensorSize: 380, offset: 0, scoreScale: 1, classes: 'assets/ImageNet-Labels1000.json' },
-    { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-6k/model.json', score: 0.1, topK: 5, useFloat: false, tensorSize: 299, scoreScale: 1000, offset: 0, classes: 'assets/DeepDetect-Labels.json' },
-    { name: 'NSFW Inception v3 Quant', modelPath: 'models/nsfw-inception-v3-quant/model.json', score: 0.7, topK: 4, scoreScale: 2, slice: 0, useFloat: false, tensorSize: 299, offset: 0, modelType: 'layers', classes: 'assets/NSFW-Labels.json' },
-  ],
-  detect: [
-    { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-coco-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, exec: modelDetect.detectCOCO, classes: 'assets/Coco-Labels.json' },
-    { name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-openimages-v4/model.json', score: 0.2, topK: 6, useFloat: true, exec: modelDetect.detectSSD, classes: 'assets/OpenImage-Labels.json' },
-  ],
-  person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', type: 'tinyFaceDetector', score: 0.3, size: 416 },
-
   /*
   models that can be used for "classify" can be found at
     https://tfhub.dev/s?deployment-format=tfjs&module-type=image-classification&tf-version=tf2

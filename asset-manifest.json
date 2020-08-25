@@ -5,7 +5,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 15058,
+      "bytes": 12356,
       "imports": [
         {
           "path": "client/log.js"
@@ -24,11 +24,14 @@
         },
         {
           "path": "client/processImage.js"
+        },
+        {
+          "path": "client/models.js"
         }
       ]
     },
     "client/config.js": {
-      "bytes": 11681,
+      "bytes": 10232,
       "imports": [
         {
           "path": "client/log.js"
@@ -153,15 +156,19 @@
       ]
     },
     "client/modelClassify.js": {
-      "bytes": 3539,
+      "bytes": 3258,
       "imports": []
     },
     "client/modelDetect.js": {
-      "bytes": 5468,
+      "bytes": 5361,
       "imports": []
     },
     "client/modelYolo.js": {
       "bytes": 11135,
+      "imports": []
+    },
+    "client/models.js": {
+      "bytes": 6269,
       "imports": []
     },
     "client/nearest.js": {
@@ -197,7 +204,7 @@
       ]
     },
     "client/processImage.js": {
-      "bytes": 11510,
+      "bytes": 10633,
       "imports": [
         {
           "path": "client/modelClassify.js"
@@ -213,6 +220,9 @@
         },
         {
           "path": "client/blockhash.js"
+        },
+        {
+          "path": "client/models.js"
         }
       ]
     },
@@ -266,66 +276,66 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 410600
+      "bytes": 408170
     },
     "dist/gallery.js": {
       "imports": [],
       "inputs": {
         "client/log.js": {
-          "bytesInOutput": 985
+          "bytesInOutput": 986
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1720
+          "bytesInOutput": 1722
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2559
+          "bytesInOutput": 2616
         },
         "client/config.js": {
-          "bytesInOutput": 6917
+          "bytesInOutput": 5697
         },
         "client/indexdb.js": {
-          "bytesInOutput": 3222
+          "bytesInOutput": 3223
         },
         "node_modules/moment/moment.js": {
-          "bytesInOutput": 60158
+          "bytesInOutput": 60159
         },
         "client/details.js": {
-          "bytesInOutput": 10424
+          "bytesInOutput": 10425
         },
         "client/blockhash.js": {
-          "bytesInOutput": 1995
+          "bytesInOutput": 1996
         },
         "client/init.js": {
-          "bytesInOutput": 964
+          "bytesInOutput": 965
         },
         "client/list.js": {
-          "bytesInOutput": 5669
+          "bytesInOutput": 5670
         },
         "client/nearest.js": {
-          "bytesInOutput": 1507
+          "bytesInOutput": 1508
         },
         "client/map.js": {
-          "bytesInOutput": 1778
+          "bytesInOutput": 1779
         },
         "client/menu.js": {
-          "bytesInOutput": 3956
+          "bytesInOutput": 3957
         },
         "client/options.js": {
-          "bytesInOutput": 5714
+          "bytesInOutput": 5715
         },
         "client/pwa-register.js": {
-          "bytesInOutput": 663
+          "bytesInOutput": 664
         },
         "client/gallery.js": {
           "bytesInOutput": 19888
         }
       },
-      "bytes": 128353
+      "bytes": 127205
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 53314
+      "bytes": 50883
     },
     "dist/video.js": {
       "imports": [],
@@ -334,13 +344,13 @@
           "bytesInOutput": 974
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1692
+          "bytesInOutput": 1707
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2531
+          "bytesInOutput": 2583
         },
         "client/config.js": {
-          "bytesInOutput": 6907
+          "bytesInOutput": 5689
         },
         "client/processVideo.js": {
           "bytesInOutput": 3229
@@ -349,12 +359,12 @@
           "bytesInOutput": 3990
         }
       },
-      "bytes": 19422
+      "bytes": 18271
     },
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 63765
+      "bytes": 69480
     },
     "dist/process.js": {
       "imports": [],
@@ -363,30 +373,33 @@
           "bytesInOutput": 974
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1692
+          "bytesInOutput": 1709
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2531
+          "bytesInOutput": 2588
         },
         "client/config.js": {
-          "bytesInOutput": 6910
+          "bytesInOutput": 5689
         },
         "client/blockhash.js": {
           "bytesInOutput": 1967
         },
+        "client/models.js": {
+          "bytesInOutput": 5434
+        },
         "client/processImage.js": {
-          "bytesInOutput": 6265
+          "bytesInOutput": 5779
         },
         "client/process.js": {
           "bytesInOutput": 2195
         }
       },
-      "bytes": 22635
+      "bytes": 26436
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 97828
+      "bytes": 99597
     },
     "dist/compare.js": {
       "imports": [],
@@ -395,28 +408,31 @@
           "bytesInOutput": 984
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1694
+          "bytesInOutput": 1709
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2536
+          "bytesInOutput": 2592
         },
         "client/config.js": {
-          "bytesInOutput": 6914
+          "bytesInOutput": 5693
         },
         "client/modelYolo.js": {
-          "bytesInOutput": 5215
+          "bytesInOutput": 5220
         },
         "client/blockhash.js": {
           "bytesInOutput": 1967
         },
+        "client/models.js": {
+          "bytesInOutput": 5434
+        },
         "client/processImage.js": {
-          "bytesInOutput": 6271
+          "bytesInOutput": 5785
         },
         "client/compare.js": {
-          "bytesInOutput": 8285
+          "bytesInOutput": 6626
         }
       },
-      "bytes": 34094
+      "bytes": 36238
     },
     "dist/worker.js.map": {
       "imports": [],
