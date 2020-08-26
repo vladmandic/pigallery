@@ -17,7 +17,8 @@ models.detect = [
 ];
 
 models.person = [
-  { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', score: 0.3, topK: 1, size: 416 },
+  { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 1, size: 416 },
+  // { name: 'FaceAPI SSD/MobileNet', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 1, size: 416 },
 ];
 
 models.classify_inactive = [
