@@ -2,116 +2,13 @@
 
 ## Open Bugs
 
-N/A
+- FaceAPI SSD/MobileNet model not compatible with TFJS@2.0+  
+  <https://github.com/justadudewhohacks/face-api.js/issues/633>
 
 ## Future Features
 
-- Server-side processing using TFJS-Node: nVidia CUDA on WSL2 requires kernel 4.19.121 current 4.19.104
-- Upgrade from @tensorflow/tfjs@1.7.4 to @tensorflow/tfjs@2.0.0
+- Server-side processing using TFJS-Node: nVidia CUDA on WSL2 requires kernel 4.19.121 current 4.19.104  
+  <https://ubuntu.com/blog/getting-started-with-cuda-on-ubuntu-on-wsl-2>  
+  <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>  
+  
 - Move video and process to main window
-
-## Convert
-
-TF-Hub to TFJS:
-
-    tensorflowjs_converter --input_format tf_hub --output_format tfjs_graph_model --strip_debug_ops=True --signature_name serving_default --skip_op_check --weight_shard_size_bytes 4194304 <url> .
-
-TF-Saved to TFJS:
-Requires that model has tags
-
-    saved_model_cli show --dir . --all
-    tensorflowjs_converter --input_format tf_saved_model --output_format tfjs_graph_model --skip_op_check --strip_debug_ops=True --weight_shard_size_bytes 4194304 . ./tfjs/
-
-TF-Frozen to TFJS:
-Requires --output_node_names
-
-
-    pip3 install tensorflow
-    git clone https://github.com/tensorflow/tensorflow
-    cd tensorflow
-    wget https://github.com/bazelbuild/bazel/releases/download/3.1.0/bazel-3.1.0-installer-linux-x86_64.sh
-    sudo ./bazel-3.1.0-installer-linux-x86_64.sh
-    bazel build tensorflow/tools/graph_transforms:summarize_graph
-    bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="/home/vlado/dev/tf-saved-models/inception-v4/saved-f32/inceptionv4_fp32_pretrained_model.pb"
-      Found 1 possible inputs: (name=input, type=float(1), shape=[?,299,299,3])
-      Found 1 possible outputs: (name=InceptionV4/Logits/Predictions, op=Softmax)
-    tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 --output_node_names "InceptionV4/Logits/Predictions" "/home/vlado/dev/tf-saved-models/inception-v4/saved-f32/inceptionv4_fp32_pretrained_model.pb" ./tfjs/
-
-tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 --output_node_names "detection_boxes, detection_scores, num_detections" ./frozen_inference_graph_face.pb ./tfjs/
-tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --strip_debug_ops=True --weight_shard_size_bytes 4194304 --output_node_names detection_boxes,detection_scores,num_detections ./frozen_inference_graph_face.pb ./tfjs/
-
-    bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="/home/vlado/dev/tf-saved-models/deepdetect-6k/saved_model.pb"
-    Found 1 possible inputs: (name=InputImage, type=float(1), shape=[1,299,299,3])
-    Found 1 possible outputs: (name=multi_predictions, op=Sigmoid)
-
-/home/vlado/.cache/bazel/_bazel_vlado/3e3d625c9ab3f78b7f018d7a5ac72a6d/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="./frozen_inference_graph_face.pb" --print_structure=false
-> summarize_graph --in_graph="./frozen_inference_graph_face.pb" --print_structure=false
-Found 4 possible outputs: (name=detection_boxes, op=Identity) (name=detection_scores, op=Identity) (name=detection_classes, op=Identity) (name=num_detections, op=Identity)
-> tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --strip_debug_ops=True --weight_shard_size_bytes 4194304 --output_node_names detection_boxes,detection_scores,num_detections ./frozen_inference_graph_face.pb ./tfjs/
-
-TF-Lite to TFJS:
-Not possible.
-
-## Datasets
-
-<https://lionbridge.ai/datasets/tensorflow-datasets-machine-learning/>
-
-## Open Models
-
-PlaNet: <https://tfhub.dev/google/planet/vision/classifier/planet_v2/1>
-PoseNet: <https://github.com/tensorflow/tfjs-models/tree/master/posenet>
-BodyPix: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
-TensorFlow zoo: <https://docs.openvinotoolkit.org/latest/_docs_MO_DG_prepare_model_convert_model_Convert_Model_From_TensorFlow.html>
-OpenImages challenge: 500 classes from 9M images in 534GB <https://www.tensorflow.org/datasets/catalog/open_images_v4> <https://storage.googleapis.com/openimages/web/index.html>
-
-## Hosted Models
-
-<https://www.clarifai.com/> <https://github.com/Clarifai/clarifai-javascript> Exposed as RestAPI
-<https://www.mediapipe.dev/> project by Google, models are TFLite
-<https://www.microsoft.com/en-us/ai/ai-for-earth-tech-resources>
-
-iNaturalist
-
-  iNaturalist: 2017 dataset 5089 classs from 0.6M images in 237GB
-  Note: competition uses obfucated taxonomy since 2018, so categories must be downloaded separately after the competition
-  iNaturalist: <https://tfhub.dev/s?q=inaturalist> <https://github.com/richardaecn/cvpr18-inaturalist-transfer>
-  Competitions: <https://github.com/visipedia/inat_comp>
-  Dataset: <https://www.kaggle.com/c/inaturalist-2019-fgvc6/data> <https://github.com/visipedia/inat_comp/tree/master/2017>
-  Model Small: <https://www.kaggle.com/sujoykg/xception-keras/>
-  Model Large: <https://www.kaggle.com/cedriclacrambe/inaturalist-xception-512/>
-  Lexicon Latin: <https://www.gbif.org/dataset/search>
-  Lexicon Government: <https://www.itis.gov/>
-  Lookup: <http://www.gbif.org/species/{gbid}> <https://api.gbif.org/v1/species?name={name}>
-  Hierarchy: categogy -> kingdom -> phylum -> class -> order -> family -> genus -> name
-
-## Google BiT
-
-ImageNet 21k: <https://tfhub.dev/google/collections/bit/1>
-  0091MB r050x1 1k 0240MB 21k
-  0770MB r050x3 1k 1190MB 21k
-  0159MB r101x1 1k 0308MB 21k
-  1340MB r101x3 1k 1780MB 21k
-  2733MB r152x4 1k 4179MB 21k
-
-## Places365
-
-notop models do not have activation above base5 features layer
-
-x = Flatten(name='flatten')(x)
-x = Dense(4096, activation='relu', name='fc1')(x)
-x = Dropout(0.5, name='drop_fc1')(x)
-x = Dense(4096, activation='relu', name='fc2')(x)
-x = Dropout(0.5, name='drop_fc2')(x)
-x = Dense(365, activation='softmax', name="predictions")(x)
-
-const predictions = model.predict(batched);
-const flatten = tf.layers.flatten().apply(predictions);
-const dense1 = tf.layers.dense({ units: 4096, activation: 'relu' }).apply(flatten);
-const dropout1 = tf.layers.dropout({ rate: 0.5 }).apply(dense1);
-const dense2 = tf.layers.dense({ units: 4096, activation: 'relu' }).apply(dropout1);
-const dropout2 = tf.layers.dropout({ rate: 0.5 }).apply(dense2);
-const dense = tf.layers.dense({ units: 365, activation: 'softmax' }).apply(dropout2);
-const soft = dense.softmax();
-console.log('sizes', predictions.size, flatten.size, dense1.size, dropout1.size, dense2.size, dropout2.size, dense.size, soft.size);
-const data = soft.dataSync();
-
