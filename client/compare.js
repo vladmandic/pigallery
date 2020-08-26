@@ -229,12 +229,15 @@ async function person() {
   stats.tensors0 = engine.state.numTensors;
 
   const options = definitions.models.person[0];
+  if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
+  if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
   await faceapi.nets.tinyFaceDetector.load(options.modelPath);
   await faceapi.nets.ageGenderNet.load(options.modelPath);
   await faceapi.nets.faceLandmark68Net.load(options.modelPath);
   await faceapi.nets.faceRecognitionNet.load(options.modelPath);
   await faceapi.nets.faceExpressionNet.load(options.modelPath);
-  options.face = new faceapi.TinyFaceDetectorOptions(options);
+  if (options.exec === 'yolo') options.face = new faceapi.TinyFaceDetectorOptions(options);
+  if (options.exec === 'ssd') options.face = new faceapi.SsdMobilenetv1Options(options);
 
   engine = await tf.engine();
   stats.time1 = window.performance.now();

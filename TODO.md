@@ -25,6 +25,7 @@ Requires that model has tags
 TF-Frozen to TFJS:
 Requires --output_node_names
 
+
     pip3 install tensorflow
     git clone https://github.com/tensorflow/tensorflow
     cd tensorflow
@@ -36,9 +37,17 @@ Requires --output_node_names
       Found 1 possible outputs: (name=InceptionV4/Logits/Predictions, op=Softmax)
     tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 --output_node_names "InceptionV4/Logits/Predictions" "/home/vlado/dev/tf-saved-models/inception-v4/saved-f32/inceptionv4_fp32_pretrained_model.pb" ./tfjs/
 
+tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --weight_shard_size_bytes 4194304 --output_node_names "detection_boxes, detection_scores, num_detections" ./frozen_inference_graph_face.pb ./tfjs/
+tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --strip_debug_ops=True --weight_shard_size_bytes 4194304 --output_node_names detection_boxes,detection_scores,num_detections ./frozen_inference_graph_face.pb ./tfjs/
+
     bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="/home/vlado/dev/tf-saved-models/deepdetect-6k/saved_model.pb"
     Found 1 possible inputs: (name=InputImage, type=float(1), shape=[1,299,299,3])
     Found 1 possible outputs: (name=multi_predictions, op=Sigmoid)
+
+/home/vlado/.cache/bazel/_bazel_vlado/3e3d625c9ab3f78b7f018d7a5ac72a6d/execroot/org_tensorflow/bazel-out/k8-opt/bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="./frozen_inference_graph_face.pb" --print_structure=false
+> summarize_graph --in_graph="./frozen_inference_graph_face.pb" --print_structure=false
+Found 4 possible outputs: (name=detection_boxes, op=Identity) (name=detection_scores, op=Identity) (name=detection_classes, op=Identity) (name=num_detections, op=Identity)
+> tensorflowjs_converter --input_format tf_frozen_model --output_format tfjs_graph_model --skip_op_check --strip_debug_ops=True --weight_shard_size_bytes 4194304 --output_node_names detection_boxes,detection_scores,num_detections ./frozen_inference_graph_face.pb ./tfjs/
 
 TF-Lite to TFJS:
 Not possible.
@@ -105,3 +114,4 @@ const dense = tf.layers.dense({ units: 365, activation: 'softmax' }).apply(dropo
 const soft = dense.softmax();
 console.log('sizes', predictions.size, flatten.size, dense1.size, dropout1.size, dense2.size, dropout2.size, dense.size, soft.size);
 const data = soft.dataSync();
+

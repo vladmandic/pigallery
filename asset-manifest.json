@@ -5,7 +5,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 12356,
+      "bytes": 12655,
       "imports": [
         {
           "path": "client/log.js"
@@ -168,7 +168,7 @@
       "imports": []
     },
     "client/models.js": {
-      "bytes": 6269,
+      "bytes": 6398,
       "imports": []
     },
     "client/nearest.js": {
@@ -364,7 +364,7 @@
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 69480
+      "bytes": 69620
     },
     "dist/process.js": {
       "imports": [],
@@ -385,7 +385,7 @@
           "bytesInOutput": 1967
         },
         "client/models.js": {
-          "bytesInOutput": 5434
+          "bytesInOutput": 5446
         },
         "client/processImage.js": {
           "bytesInOutput": 5779
@@ -394,12 +394,12 @@
           "bytesInOutput": 2195
         }
       },
-      "bytes": 26436
+      "bytes": 26448
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 99597
+      "bytes": 100226
     },
     "dist/compare.js": {
       "imports": [],
@@ -423,16 +423,16 @@
           "bytesInOutput": 1967
         },
         "client/models.js": {
-          "bytesInOutput": 5434
+          "bytesInOutput": 5446
         },
         "client/processImage.js": {
           "bytesInOutput": 5785
         },
         "client/compare.js": {
-          "bytesInOutput": 6626
+          "bytesInOutput": 6828
         }
       },
-      "bytes": 36238
+      "bytes": 36452
     },
     "dist/worker.js.map": {
       "imports": [],
