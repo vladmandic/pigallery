@@ -168,7 +168,7 @@
       "imports": []
     },
     "client/models.js": {
-      "bytes": 6398,
+      "bytes": 6404,
       "imports": []
     },
     "client/nearest.js": {
@@ -364,7 +364,7 @@
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 69620
+      "bytes": 69626
     },
     "dist/process.js": {
       "imports": [],
@@ -385,7 +385,7 @@
           "bytesInOutput": 1967
         },
         "client/models.js": {
-          "bytesInOutput": 5446
+          "bytesInOutput": 5456
         },
         "client/processImage.js": {
           "bytesInOutput": 5779
@@ -394,12 +394,12 @@
           "bytesInOutput": 2195
         }
       },
-      "bytes": 26448
+      "bytes": 26458
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 100226
+      "bytes": 100232
     },
     "dist/compare.js": {
       "imports": [],
@@ -423,7 +423,7 @@
           "bytesInOutput": 1967
         },
         "client/models.js": {
-          "bytesInOutput": 5446
+          "bytesInOutput": 5456
         },
         "client/processImage.js": {
           "bytesInOutput": 5785
@@ -432,7 +432,7 @@
           "bytesInOutput": 6828
         }
       },
-      "bytes": 36452
+      "bytes": 36462
     },
     "dist/worker.js.map": {
       "imports": [],

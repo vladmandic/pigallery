@@ -2,7 +2,10 @@
 
 ## Multi-user image galley with TensorFlow/JS image processing and full EXIF data extraction and analysis
 
-**Repository: <https://github.com/vladmandic/pigallery>**
+**Repository: <https://github.com/vladmandic/pigallery>**  
+**Changelog: <CHANGELOG.md>**  
+**Todo List: <TODO.md>**  
+**Notes on Models: <MODELS.md> and <MODELS.xlsx>**
 
 ## Screenshots
 
@@ -32,23 +35,17 @@
 
 ### Install
 
-#### Quick
-
-      git clone --depth 1 https://github.com/vladmandic/pigallery
-      ./setup.js
-
-#### Manual
-
 - Install NodeJS: <https://nodejs.org/en/>
-- Download application: <https://github.com/vladmandic/pigallery/archive/master.zip>
-- Unpack it
-- Install dependencies: `npm run upgrade`
+- Download PiGallery: `git clone --depth 1 https://github.com/vladmandic/pigallery`
+- Install PiGallery: `./setup.js`
 
 ### Configure
 
 - Edit `data/config.json` for general settings
   - `server.mediaRoot` must point to a valid folder containing your images, can be a symbolic link
-  - `users.*.mediaRoot` is a starting point for a user, can be same as `server.mediaRoot` if you want user to have access to all media files, otherwise it should be the subfolder within `server.mediaRoot`
+  - `users.*.mediaRoot` is a starting point for a user,  
+  can be same as `server.mediaRoot` if you want user to have access to all media files,  
+  otherwise it should be the subfolder within `server.mediaRoot`
   - If you want to run HTTPS server, provide your private key and certificate, otherwise disable by setting port to 0
 - Edit `client/config.js` for image processing settings.
   - TensorFlow pretrained models can be loaded from a local storage or use provided HTTP locations
@@ -57,7 +54,7 @@
 ### Run
 
 - Run server application using `npm start`
-  - Server uses ParcelJS to build distribution in `./dist` and starts ExpressJS HTTP and HTTPS servers
+  - Server uses ESBuild to build distribution in `./dist` and starts ExpressJS HTTP server
 - Use your browser to connect to server
   - By default, web access requires authentication, see `data/config.json` for user configuration
   - Default view is image gallery. If there are no processed images, it's blank

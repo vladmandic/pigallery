@@ -12,13 +12,13 @@ models.classify = [
 ];
 
 models.detect = [
-  { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-coco-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, useFloat: false, exec: 'coco', classes: 'assets/Coco-Labels.json' },
+  { name: 'CoCo #1 SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-coco-v2/model.json', score: 0.4, topK: 6, overlap: 0.5, useFloat: false, exec: 'coco', classes: 'assets/Coco-Labels.json' },
   { name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/ssd-mobilenet-openimages-v4/model.json', score: 0.2, topK: 6, useFloat: true, exec: 'ssd', classes: 'assets/OpenImage-Labels.json' },
 ];
 
 models.person = [
-  { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 1, size: 416 },
-  // { name: 'FaceAPI SSD/MobileNet', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 1, size: 416 },
+  // { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 1, size: 416 },
+  { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 1, size: 416 },
 ];
 
 models.classify_inactive = [
