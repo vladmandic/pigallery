@@ -41,24 +41,43 @@
 
 ### Configure
 
-- Edit `data/config.json` for general settings
-  - `server.mediaRoot` must point to a valid folder containing your images, can be a symbolic link
-  - `users.*.mediaRoot` is a starting point for a user,  
-  can be same as `server.mediaRoot` if you want user to have access to all media files,  
-  otherwise it should be the subfolder within `server.mediaRoot`
-  - If you want to run HTTPS server, provide your private key and certificate, otherwise disable by setting port to 0
-- Edit `client/config.js` for image processing settings.
-  - TensorFlow pretrained models can be loaded from a local storage or use provided HTTP locations
-- Populate your `server.mediaRoot` folder with images you want analyzed and cataloged
+Create `config.json` using `config.json.sample` as a reference
+
+    users: must contain at least one valid user to be able to login into application  
+      Note: users.*.mediaRoot is a starting point for a user,  
+      can be same as server.mediaRoot if you want user to have access to all media files,  
+      otherwise it should be the subfolder within server.mediaRoot
+    locations: must contain at least one valid location containing images to be analyzed  
+      Note: folder is relative to server.mediaRoot
+    server: general section containing following key options:
+      httpPort, httpsPort, http2Port: ports on which to run web server,  
+        set to 0 if you want to disable a specific server  
+        note that https and http2 require valid SSLKey and SSLCrt  
+      allowPWA: should application be installable as progressive web application?
+      authForce: force user authentication or allow anonymous users
+      mediaRoot: must be set to a valid folder. used as a root for any location to be analyzed.
+      defaultLimit: size of initial set of images to set to client before rest is downloaded as a background task
+      forceHTTPS: should any http request be redirected to https?
+
+Optionally edit `client/config.js` for image processing settings  
+Key options are:
+
+    backEnd: 'webgl',        // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
+    floatPrecision: true,    // use 32bit or 16bit float precision
+    maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
+    renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
+    batchProcessing: 1,      // how many images to process in parallel
+
+Optionally edit `client/model.js` to select active models  
+Note that models can be loaded from either local storage or directly from an external http location such as <tfhub.com>
 
 ### Run
 
 - Run server application using `npm start`
-  - Server uses ESBuild to build distribution in `./dist` and starts ExpressJS HTTP server
+  - Server uses ESBuild to build client distribution in `./dist` and starts HTTP/HTTPS2/HTTP2 server
 - Use your browser to connect to server
-  - By default, web access requires authentication, see `data/config.json` for user configuration
   - Default view is image gallery. If there are no processed images, it's blank
-  - Select `Update Database` to start image processing (opens separate browesr window)
+  - Select `User`->`Update DB` to start image processing (opens separate browesr window)
   - Select `Live Video` to play with your webcam or provide mp4 video file
 
 ## General Notes
@@ -67,24 +86,21 @@
 
 Processing builds tags from all available image metadata:
 
-- Image size in MP
-- Image timestamp determined from EXIF data if present or using FS stat if not
-- Each part of the image path
-- TensofFlow
-  - Primary and alternate image classification as defined by ImageNet 1,000 classes <http://image-net.org/>
-  - Object detection as defined by Coco 90 classes <http://cocodataset.org/>
-  - Face, age and gender analysis using <https://github.com/justadudewhohacks/face-api.js>
-- Definition lookup for any term detected by TensorFlow
-  - Definition lookup is done using WordNet Lexical Database <https://wordnet.princeton.edu/>
+- Image Metadata:
+  - Size, Creation and Modification timestamps
+  - Camera & lens details and settings used for image capture
+  - Software used for editing, etc.
+  - GPS Coordinates
+    Matched to location database for place description and location of nearest larger center for purpose of groupping
+- Image Analysis
+  - Multiple iamge classification models
+  - Multiple object detection models
+  - Face age/gender/emotion detection
+  - NSFW detection
+  - Perception hash calculation
+    Used to compare image simmilarity between any images or to find simmilar images
+- Lexicon lookups for any detected terms
   - This includes hierarchical lookups - for example, *gown* will also include *dress, clothing, etc.*
-- EXIF data extracted from image:
-  - Location with lookup of geographic location and nearest large city
-  - Location database includes 195,175 places from <geonames.org>
-  - Camera make, model and lens
-  - Camera settings used to take the photo
-  - Software used to edit the photo
-- Perception hash for image:
-  - Used to compare image simmilarity
 
 Collected metadata is additionally analyzed to render human-readable search terms
 
@@ -118,45 +134,18 @@ Result of all metadata processing is a very flexbile search engine - take a look
 
 ### TensorFlow Processing
 
-- On errors:
-  - If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory. Just restart processing and it will continue from the last known good result.
-- On images:
-  - Large images can cause random WebGL processing errors, recommended resize to max 1000px, configurable in `client/config.js`
-  - There is no increased accuracy in image sizes larger than 800 pixels as individual classification samples are even smaller
-  - Increase of resolution from 800px to 1000px doubles processing time
-- On batch processing:
-  - If performing specific performance tests, limit batch size to 1 as batch processing skews performance measurements
-  - Batch sizes above 10 do not further increase performance.
-  - Can lead to out of memory errors in your GPU
-- On pretrained models
-  - Size of pretrained model is not related to performance as larger models can sometimes predict objects easier.
-  - If model is depth-based, testing is provided with depth factor 1.0. Lower depth decreases accuracy and higher depth rarely increases it.
-  - Typcal resolution for selected pretrained models is 224px resolution although it can vary
-  - Model load time can be from few seconds to over a minute depending on model size (in MB)
-  - Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
+- If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory.  
+  Just restart processing and it will continue from the last known good result.
+- Model load time can be from few seconds to over a minute depending on model size (in MB)
+- Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
 
-Details on tested models (sizes, number of tensors, performance, etc.) can be seen in attached `MODELS` spreadsheet  
-<https://github.com/vladmandic/pigallery/MODELS.xlsx>
+Details on tested models (sizes, number of tensors, performance, etc.) can be seen in attached `MODELS` spreadsheet <MODELS.xlsx>
 
 ### Model Benchmarks
 
 - Using Intel i7 with nVidia GTX-1050
 - Sample is of 1,000 random images with processing size normalized to 780px
 - Testing is performed using 32bit float precision configured in `client/config.js`.
-- Switching to 16bit precission can increase performance by additional 5-10%.
-
-### Model Notes
-
-- Best column marks hit when model has produces significantly better result than other models
-- Classification: RESNet bassed models try to guess while Inception and MobileNet based models are willing to leave result out on no match
-- Classification: As seen with EfficientNet, accuracy increases drastically with model resolution, but it also significantly increases processing time
-- Classification: RESNet based models have long load times due to size, but only have sightly higher accurancy than small MobileNet or Inception models
-- Classification: Models with high class number have low accuracy unless you go all-in with large models
-
-### Model Recommendations
-
-- Classification: For mobile and/or high performance, go with either MobileNet v2 or EfficientNet B0. Below 20MB and 140ms/image.
-- Classification: For high accuracy go with high resolution EfficientNet model and optionally augment results with Inception v3.
 
 ## Links
 
