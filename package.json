@@ -8,7 +8,8 @@
     "start": "node server/pigallery.js",
     "version": "node server/changelog.js",
     "setup": "node ./setup.js",
-    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && depcheck --ignores='eslint-plugin-*,npm-check-updates,stylelint-config-standard,node-fetch,seedrandom,@tensorflow/tfjs-core'"
+    "update": "npm update --depth 10 && ncu --greatest -u",
+    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && depcheck --ignores='seedrandom,node-fetch,@tensorflow/tfjs-core'"
   },
   "engines": {
     "node": ">=14.0.0"
