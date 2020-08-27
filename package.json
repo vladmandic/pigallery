@@ -8,7 +8,7 @@
     "start": "node server/pigallery.js",
     "version": "node server/changelog.js",
     "setup": "node ./setup.js",
-    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && && depcheck --ignores='eslint-plugin-*,npm-check-updates,stylelint-config-standard' --ignore-dirs='dist'"
+    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && depcheck --ignores='eslint-plugin-*,npm-check-updates,stylelint-config-standard,node-fetch,seedrandom,@tensorflow/tfjs-core'"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -62,7 +62,7 @@
   "dependencies": {
     "@vladmandic/pilogger": "^0.1.11",
     "chokidar": "^3.4.2",
-    "esbuild": "^0.6.27",
+    "esbuild": "^0.6.28",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",

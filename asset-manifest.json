@@ -5,7 +5,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 12655,
+      "bytes": 12592,
       "imports": [
         {
           "path": "client/log.js"
@@ -399,7 +399,7 @@
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 100232
+      "bytes": 100130
     },
     "dist/compare.js": {
       "imports": [],
@@ -429,10 +429,10 @@
           "bytesInOutput": 5785
         },
         "client/compare.js": {
-          "bytesInOutput": 6828
+          "bytesInOutput": 6780
         }
       },
-      "bytes": 36462
+      "bytes": 36414
     },
     "dist/worker.js.map": {
       "imports": [],

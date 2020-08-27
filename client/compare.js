@@ -231,7 +231,6 @@ async function person() {
   const options = definitions.models.person[0];
   if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
   if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
-  await faceapi.nets.tinyFaceDetector.load(options.modelPath);
   await faceapi.nets.ageGenderNet.load(options.modelPath);
   await faceapi.nets.faceLandmark68Net.load(options.modelPath);
   await faceapi.nets.faceRecognitionNet.load(options.modelPath);

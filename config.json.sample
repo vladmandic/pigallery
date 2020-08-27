@@ -13,7 +13,6 @@
     "httpPort": 10010,
     "httpsPort": 10011,
     "http2Port": 10012,
-    "allowCORS": true,
     "allowPWA": true,
     "logFile": "pigallery.log",
     "authForce": true,
