@@ -5,7 +5,7 @@
 **Repository: <https://github.com/vladmandic/pigallery>**  
 **Changelog: <CHANGELOG.md>**  
 **Todo List: <TODO.md>**  
-**Notes on Models: <MODELS.md> and <MODELS.xlsx>**
+**Notes on Models: <MODELS.md>**
 
 ## Screenshots
 
@@ -18,8 +18,6 @@
 ### Detailed View
 
 ![alt text](assets/screenshot-details.png)
-
-![alt text](assets/screenshot-mobile.png)
 
 ### Complex Search Results
 
@@ -138,14 +136,7 @@ Result of all metadata processing is a very flexbile search engine - take a look
   Just restart processing and it will continue from the last known good result.
 - Model load time can be from few seconds to over a minute depending on model size (in MB)
 - Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
-
-Details on tested models (sizes, number of tensors, performance, etc.) can be seen in attached `MODELS` spreadsheet <MODELS.xlsx>
-
-### Model Benchmarks
-
-- Using Intel i7 with nVidia GTX-1050
-- Sample is of 1,000 random images with processing size normalized to 780px
-- Testing is performed using 32bit float precision configured in `client/config.js`.
+- Actual processing is ~1sec per image
 
 ## Links
 
