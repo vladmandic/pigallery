@@ -7,4 +7,3 @@ dist/*
 pigallery.db
 pigallery.log
 setup.json
-config.json

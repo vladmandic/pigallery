@@ -1,7 +1,10 @@
 {
   "users": [
-    { "email": "user@example.com", "passwd": "test", "admin": true, "mediaRoot": "media/" },
-    { "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" }
+    { "email": "mandic00@live.com", "passwd": "p3i14", "admin": true, "mediaRoot": "media/" },
+    { "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" },
+    { "email": "cyan00@gmail.com", "passwd": "p3i14", "admin": false, "mediaRoot": "media/" },
+    { "email": "igor.domancic@ri.t-com.hr", "passwd": "pEr0", "admin": false, "mediaRoot": "media/Photos/Croatia" },
+    { "email": "drozmanic@gmail.com", "passwd": "whAT3v3r!", "admin": false, "mediaRoot": "media/Photos/Croatia" }
   ],
   "locations": [
     { "folder": "Pictures/Snapseed/", "match": "" },
@@ -13,19 +16,20 @@
     "httpPort": 10010,
     "httpsPort": 10011,
     "http2Port": 10012,
+    "allowCORS": true,
     "allowPWA": true,
     "logFile": "pigallery.log",
     "authForce": true,
     "allowedImageFileTypes": [ ".jpeg", ".jpg" ],
     "mediaRoot": "media/",
     "defaultLimit": 500,
-    "db": "pigallerydb.nedb",
+    "db": "pigallery.db",
     "descriptionsDB": "assets/wordnet-synset.json",
     "citiesDB": "assets/cities.json",
     "warmupImage": "assets/warmup.jpg",
     "forceHTTPS": false,
-    "SSLKey": "cert/private.pem",
-    "SSLCrt": "cert/fullchain.pem"
+    "SSLKey": "/home/vlado/dev/piproxy/cert/private.pem",
+    "SSLCrt": "/home/vlado/dev/piproxy/cert/fullchain.pem"
   },
   "cookie": {
     "path": "./sessions",
