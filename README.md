@@ -55,7 +55,9 @@ If you'd like to include any additional image analysis (additional machine model
 
 ### Detailed View
 
-![alt text](assets/screenshot-details.png)
+![alt text](assets/screenshot-details1.png)
+
+![alt text](assets/screenshot-details2.png)
 
 ### Complex Search Results
 
@@ -64,6 +66,10 @@ If you'd like to include any additional image analysis (additional machine model
 ### Live Video
 
 ![alt text](assets/screenshot-video.png)
+
+### Image Processing
+
+![alt text](assets/screenshot-processing.png)
 
 </center>
 
