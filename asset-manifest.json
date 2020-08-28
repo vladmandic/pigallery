@@ -50,7 +50,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 30892,
+      "bytes": 30934,
       "imports": [
         {
           "path": "client/config.js"
@@ -142,7 +142,7 @@
       ]
     },
     "client/menu.js": {
-      "bytes": 6160,
+      "bytes": 6159,
       "imports": [
         {
           "path": "client/log.js"
@@ -270,7 +270,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 392066
+      "bytes": 392119
     },
     "dist/gallery.js": {
       "imports": [],
@@ -306,7 +306,7 @@
           "bytesInOutput": 1779
         },
         "client/menu.js": {
-          "bytesInOutput": 3957
+          "bytesInOutput": 3948
         },
         "client/options.js": {
           "bytesInOutput": 5712
@@ -315,10 +315,10 @@
           "bytesInOutput": 664
         },
         "client/gallery.js": {
-          "bytesInOutput": 19854
+          "bytesInOutput": 19880
         }
       },
-      "bytes": 122766
+      "bytes": 122783
     },
     "dist/video.js.map": {
       "imports": [],

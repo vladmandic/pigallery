@@ -4,14 +4,17 @@
 
 PiGallery uses private branches of following public distributions due to following issues:
 
-- FaceAPI SSD/MobileNet model not compatible with TFJS@2.0+  
+- FaceAPI: SSD/MobileNet model not compatible with TFJS@2.0+  
   <https://github.com/justadudewhohacks/face-api.js/issues/633>
-- TensorFlow/JS bug with WeakMap deallocation  
+- TensorFlow/JS: bug with WeakMap deallocation  
   <https://github.com/tensorflow/tfjs/issues/3823>
 
 ## Future Features
 
-- Move video and process to main window for a full SPA
+- Move video to main window
+- Move process to main window
+- User DB management client-side
+- User DB check server-side
 - Server-side processing using TFJS-Node: nVidia CUDA on WSL2 requires kernel 4.19.121 current 4.19.104  
   <https://ubuntu.com/blog/getting-started-with-cuda-on-ubuntu-on-wsl-2>  
   <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>  
