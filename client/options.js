@@ -26,8 +26,8 @@ function globalOptions() {
     &nbsp Image thumbnail size: ${config.default.renderThumbnail}px<br>
     Server added metadata:<br>
     &nbsp Image EXIF processing: true<br>
-    &nbsp Image location processing: true, DB: assets/Cities.json<br>
-    &nbsp Image tag processing: true, DB: assets/WordNet-Synset.json<br>
+    &nbsp Image location processing: true, DB: assets/cities.json<br>
+    &nbsp Image tag processing: true, DB: assets/wordnet-synset.json<br>
     <h1>TensorFlow Configuration:</h1>
     &nbsp Version: ${tf.version_core} &nbsp Platform: ${tf.ENV.platformName} &nbsp Engine: ${config.default.backEnd} &nbsp Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}<br>
     &nbsp Image resize: ${config.default.maxSize}px &nbsp Image square: ${config.default.squareImage}<br>

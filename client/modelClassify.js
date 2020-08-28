@@ -12,7 +12,6 @@ let config = {
   scoreScale: 1,
   background: -1,
   useFloat: true,
-  classes: 'assets/ImageNet-Labels1000.json',
 };
 
 async function load(cfg) {
@@ -23,9 +22,10 @@ async function load(cfg) {
     fetchFunc: (...args) => fetch(...args),
     fromTFHub: config.modelPath.includes('tfhub.dev'),
   };
-  if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath, loadOpts);
-  if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath, loadOpts);
-  const res = await fetch(config.classes);
+  const modelPath = config.modelPath.endsWith('.json') ? config.modelPath : config.modelPath + '/model.json';
+  if (config.modelType === 'graph') model = await tf.loadGraphModel(modelPath, loadOpts);
+  if (config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
+  const res = config.classes ? await fetch(config.classes) : await fetch(config.modelPath + '/classes.json');
   model.labels = await res.json();
   model.config = config;
   return model;
@@ -35,10 +35,10 @@ async function decodeValues(model, values) {
   const pairs = [];
   for (const i in values) pairs.push({ score: values[i], index: i });
   const results = pairs
-    .filter((a) => (a.score * model.config.scoreScale > model.config.score) && (a.index !== model.config.background))
+    .filter((a) => ((a.score * model.config.scoreScale) > model.config.score) && (model.config.background !== parseInt(a.index, 10)))
     .sort((a, b) => b.score - a.score)
     .map((a) => {
-      const id = a.index - model.config.offset; // offset indexes for some models
+      const id = parseInt(a.index, 10) - model.config.offset; // offset indexes for some models
       const wnid = model.labels[id] ? model.labels[id][0] : a.index;
       const label = model.labels[id] ? model.labels[id][1] : `unknown id:${a.index}`;
       return { wnid, id, class: label.toLowerCase(), score: a.score * model.config.scoreScale };

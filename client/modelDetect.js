@@ -9,9 +9,6 @@ let config = {
   overlap: 0.1,
   softNmsSigma: 0,
   useFloat: false,
-  classes: 'assets/Coco-Labels.json',
-  // eslint-disable-next-line no-use-before-define
-  exec: detectSSD,
 };
 
 async function load(cfg) {
@@ -22,9 +19,10 @@ async function load(cfg) {
     fetchFunc: (...args) => fetch(...args),
     fromTFHub: config.modelPath.includes('tfhub.dev'),
   };
-  if (config.modelType === 'graph') model = await tf.loadGraphModel(config.modelPath, loadOpts);
-  if (config.modelType === 'layers') model = await tf.loadLayersModel(config.modelPath, loadOpts);
-  const res = await fetch(config.classes);
+  const modelPath = config.modelPath.endsWith('.json') ? config.modelPath : config.modelPath + '/model.json';
+  if (config.modelType === 'graph') model = await tf.loadGraphModel(modelPath, loadOpts);
+  if (config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
+  const res = config.classes ? await fetch(config.classes) : await fetch(config.modelPath + '/classes.json');
   model.labels = await res.json();
   model.config = config;
   return model;
