@@ -180,13 +180,40 @@ Result of all metadata processing is a very flexbile search engine - take a look
 - Swipe down will refresh image database
 - Swipe left and right are previous and next image in details view
 
-### Image Processing
+<br>
+<br>
+<br>
+
+## Image Processing
 
 - If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory.  
   Just restart processing and it will continue from the last known good result.
 - Model load time can be from few seconds to over a minute depending on model size (in MB)
 - Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
 - Once models are loaded and ready, actual processing is ~1sec per image
+- Image analysis is maximized out-of-the-box for a GPU-accelerated system using WebGL acceleration and GPU with minimum of 4GB of memory  
+- For high-end systems with 8GB or higher, you can further enable ImageNet 21k models  
+- For low-end systems with 2GB or less, enable analysis based on MobileNet v2 and EfficientNet B0  
+- Usage without GPU acceleration is not recommended  
+- Note that GPU is not required for image gallery, only for initial processing  
+
+### Recommended machine learning models
+
+- **Image classification**:
+  - Inception v4 trained on ImageNet 1000 dataset
+  - EfficientNet B5 trained on ImageNet 1000 dataset
+  - Inception v3 trained on DeepDetect 6000 dataset
+  - MobileNet v1 trained on AIY 2000 dataset
+  - Inception v3 trained on NSFW dataset
+- **Object detection**:
+  - SSD/MobileNet v2 trained on CoCo 90 dataset
+  - SSD/MobileNet v2 trained on OpenImages 600 dataset
+- **Age/Gender**:
+  - SSD/MobileNet v1 from Face-API
+
+<br>
+<br>
+<br>
 
 ### Links
 
@@ -194,3 +221,7 @@ Result of all metadata processing is a very flexbile search engine - take a look
 - **Changelog**: <https://github.com/vladmandic/pigallery/CHANGELOG.md>  
 - **Todo List**: <https://github.com/vladmandic/pigallery/TODO.md>  
 - **Notes on Models**: <https://github.com/vladmandic/pigallery/MODELS.md>  
+
+<br>
+<br>
+<br>

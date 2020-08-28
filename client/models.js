@@ -1,8 +1,4 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
-
 const models = {};
-exports.models = models;
 
 models.classify = [
   // { name: 'ImageNet MobileNet v1', modelPath: 'models/mobilenet-v1', score: 0.2, topK: 3 },
@@ -15,10 +11,10 @@ models.classify = [
   // { name: 'ImageNet Inception v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v2/classification/3/default/1' },
   // { name: 'ImageNet Inception v3', modelPath: 'models/inception-v3', score: 0.2, topK: 3 },
   // { name: 'ImageNet Inception v3', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v3/classification/3/default/1' },
-//  { name: 'ImageNet Inception v4', modelPath: 'models/imagenet-inception-v4', score: 0.22, topK: 3, tensorSize: 299, scoreScale: 200, offset: 1 },
+  { name: 'ImageNet Inception v4', modelPath: 'models/imagenet-inception-v4', score: 0.22, topK: 3, tensorSize: 299, scoreScale: 200, offset: 1 },
   // { name: 'ImageNet EfficientNet B0', modelPath: 'models/efficientnet-b0', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 0 },
   // { name: 'ImageNet EfficientNet B4', modelPath: 'models/efficientnet-b4', score: 0.1, topK: 3, slice: 0, tensorSize: 380, offset: 0 },
-//  { name: 'ImageNet EfficientNet B5', modelPath: 'models/imagenet-efficientnet-b5', score: 0.2, topK: 3, tensorSize: 456, scoreScale: 1, offset: 0 },
+  { name: 'ImageNet EfficientNet B5', modelPath: 'models/imagenet-efficientnet-b5', score: 0.2, topK: 3, tensorSize: 456, scoreScale: 1, offset: 0 },
   // { name: 'ImageNet EfficientNet B7', modelPath: 'models/efficientnet-b7', score: 0.2, topK: 3, slice: 0, tensorSize: 600, offset: 0 },
   // { name: 'ImageNet ResNet v2-50', modelPath: 'models/resnet-v2-50', score: 0.2, topK: 3 },
   // { name: 'ImageNet ResNet v2-101', modelPath: 'models/resnet-v2-101', score: 0.2, topK: 3 },
@@ -26,7 +22,7 @@ models.classify = [
   // { name: 'ImageNet NASNet-A Mobile', modelPath: 'models/nasnet-mobile', score: 0.2, topK: 3, slice: 0 },
   // { name: 'ImageNet-21k BiT-S R101x1', modelPath: 'models/bit-s-r101x1', score: 0.2, topK: 3, slice: 0, offset: 1 },
   // { name: 'ImageNet-21k BiT-M R101x1', modelPath: 'models/bit-m-r101x1', score: 0.2, topK: 3, slice: 0, offset: 1 },
-//  { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
+  { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
   { name: 'AIY MobileNet Food', modelPath: 'models/aiy-mobilenet-food', score: 0.35, topK: 1, tensorSize: 192, scoreScale: 500, offset: 0 },
   // { name: 'iNaturalist Plants MobileNet v2', modelPath: 'models/inaturalist/plants', score: 0.2, scoreScale: 200, topK: 1, classes: 'assets/iNaturalist-Plants-Labels.json', offset: 0, background: 2101 },
   // { name: 'iNaturalist Birds MobileNet v2', modelPath: 'models/inaturalist/birds', score: 0.25, scoreScale: 200, topK: 1, classes: 'assets/iNaturalist-Birds-Labels.json', offset: 0, background: 964 },
@@ -51,3 +47,5 @@ models.person = [
   // { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 1, size: 416 },
   { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 1, size: 416 },
 ];
+
+exports.models = models;
