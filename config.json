@@ -1,16 +1,31 @@
 {
   "users": [
-    { "email": "mandic00@live.com", "passwd": "p3i14", "admin": true, "mediaRoot": "media/" },
-    { "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" },
-    { "email": "cyan00@gmail.com", "passwd": "p3i14", "admin": false, "mediaRoot": "media/" },
-    { "email": "igor.domancic@ri.t-com.hr", "passwd": "pEr0", "admin": false, "mediaRoot": "media/Photos/Croatia" },
-    { "email": "drozmanic@gmail.com", "passwd": "whAT3v3r!", "admin": false, "mediaRoot": "media/Photos/Croatia" }
+    {
+      "email": "share@pigallery.ddns.net",
+      "passwd": "d1ff1cuTpa33w0RD",
+      "admin": false,
+      "mediaRoot": "share/"
+    }
   ],
   "locations": [
-    { "folder": "Pictures/Snapseed/", "match": "" },
-    { "folder": "Pictures/Camera Roll/", "match": "-01.jp" },
-    { "folder": "People/", "match": "", "recursive": true },
-    { "folder": "Photos/", "match": "", "recursive": true }
+    {
+      "folder": "Pictures/Snapseed/",
+      "match": ""
+    },
+    {
+      "folder": "Pictures/Camera Roll/",
+      "match": "-01.jp"
+    },
+    {
+      "folder": "People/",
+      "match": "",
+      "recursive": true
+    },
+    {
+      "folder": "Photos/",
+      "match": "",
+      "recursive": true
+    }
   ],
   "server": {
     "httpPort": 10010,
@@ -20,7 +35,10 @@
     "allowPWA": true,
     "logFile": "pigallery.log",
     "authForce": true,
-    "allowedImageFileTypes": [ ".jpeg", ".jpg" ],
+    "allowedImageFileTypes": [
+      ".jpeg",
+      ".jpg"
+    ],
     "mediaRoot": "media/",
     "defaultLimit": 500,
     "db": "pigallery.db",
@@ -33,7 +51,16 @@
   },
   "cookie": {
     "path": "./sessions",
-    "secret": "whaTEvEr!42", "proxy": false, "resave": false, "rolling": true, "saveUninitialized": false,
-    "cookie": { "httpOnly": false, "sameSite": true, "secure": false, "maxAge": 6048000001000 }
+    "secret": "whaTEvEr!42",
+    "proxy": false,
+    "resave": false,
+    "rolling": true,
+    "saveUninitialized": false,
+    "cookie": {
+      "httpOnly": false,
+      "sameSite": true,
+      "secure": false,
+      "maxAge": 6048000001000
+    }
   }
 }
