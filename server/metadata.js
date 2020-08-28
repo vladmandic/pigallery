@@ -181,10 +181,9 @@ function getTime(time) {
     if (!t.isValid()) t = new Date(time);
     else t = t.toDate();
   } else {
-    t = new Date(parseInt(time, 10));
+    t = new Date(parseInt(time));
   }
-  // let t = time.toString().match(/[^\d]/) ? moment(time) || moment(time, 'YYYY:MM:DD HH:mm:ss') : new Date(parseInt(time, 10));
-  if (t.getFullYear() < 1971) t = new Date(1000 * parseInt(time, 10));
+  if (t.getFullYear() < 1971) t = new Date(1000 * parseInt(time));
   return t.getTime();
 }
 

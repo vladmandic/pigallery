@@ -319,7 +319,7 @@ async function fetchChunks(response) {
   const t0 = window.performance.now();
   const reader = response.body.getReader();
   // for (const header of response.headers.entries()) console.log('header', header);
-  const size = parseInt(response.headers.get('content-Size') || response.headers.get('content-Length'), 10);
+  const size = parseInt(response.headers.get('content-Size') || response.headers.get('content-Length'));
   let received = 0;
   const chunks = [];
   // eslint-disable-next-line no-constant-condition
@@ -402,9 +402,9 @@ function resizeViewport() {
   if ($('#popup').css('display') !== 'none') details.show();
 
   $('#popup').css('top', $('#optionsview').css('height'));
-  $('#popup').height($('body').height() - parseInt($('#optionsview').css('height'), 10));
+  $('#popup').height($('body').height() - parseInt($('#optionsview').css('height')));
   $('#docs').css('top', $('#optionsview').css('height'));
-  $('#docs').height($('body').height() - parseInt($('#optionsview').css('height'), 10));
+  $('#docs').height($('body').height() - parseInt($('#optionsview').css('height')));
 }
 
 // show/hide navigation bar elements
@@ -694,18 +694,16 @@ async function initListHandlers() {
     log.debug(t0, 'Reset filtered results');
   });
 
-  $('#btn-number').mouseover(async () => {
-    // showTip(evt.target, `Currently displaying: ${(parseInt(list.current - 1, 10) + 1)}<br><br>Total images: ${window.filtered.length}`);
-  });
+  $('#btn-number').mouseover(async () => { /**/ });
 }
 
 async function hashChange(evt) {
   const t0 = window.performance.now();
   log.debug(t0, `URL Hash change: ${evt.newURL}`);
-  const target = parseInt(evt.newURL.substr(evt.newURL.indexOf('#') + 1), 10);
-  const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1), 10);
+  const target = parseInt(evt.newURL.substr(evt.newURL.indexOf('#') + 1));
+  const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1));
   if (source > target) {
-    const top = parseInt($('#all').scrollTop(), 10) === 0;
+    const top = parseInt($('#all').scrollTop()) === 0;
     const all = await db.count() - window.filtered.length;
     if (top && all === 0) {
       log.debug(t0, 'Exiting ...');

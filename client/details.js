@@ -105,7 +105,7 @@ function drawBoxes(object) {
         ctx.stroke();
         ctx.globalAlpha = 1;
         ctx.font = 'small-caps 1rem Lato';
-        ctx.fillText(`face#${1 + parseInt(i, 10)}`, x + 2, y + 18);
+        ctx.fillText(`face#${1 + parseInt(i)}`, x + 2, y + 18);
 
         // draw face points
         ctx.fillStyle = 'lightblue';
@@ -221,7 +221,7 @@ async function showDetails(img) {
   let nsfw = '';
   for (const i in object.person) {
     if (object.person[i].age) {
-      person += `Person ${1 + parseInt(i, 10)} | 
+      person += `Person ${1 + parseInt(i)} | 
           <font color="${window.theme.link}">gender: ${(100 * object.person[i].scoreGender).toFixed(0)}% ${object.person[i].gender}</font> | 
           <font color="${window.theme.link}">age: ${object.person[i].age.toFixed(1)}</font> | 
           <font color="${window.theme.link}">emotion: ${(100 * object.person[i].scoreEmotion).toFixed(0)}% ${object.person[i].emotion}<br></font>`;

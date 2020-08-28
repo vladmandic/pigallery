@@ -63,7 +63,7 @@ async function drawFaces(object) {
     ctx.beginPath();
     ctx.rect(x, y, width, height);
     ctx.stroke();
-    ctx.fillText(`face#${1 + parseInt(i, 10)}`, x + 2, y + 18);
+    ctx.fillText(`face#${1 + parseInt(i)}`, x + 2, y + 18);
     ctx.fillStyle = 'lightblue';
     const pointSize = 2;
     for (const pt of object.face[i].landmarks.positions) {

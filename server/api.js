@@ -58,7 +58,7 @@ function api(app) {
       obj.name = data.name;
       obj.processed = new Date();
       obj.images = data['images[]'];
-      obj.share = parseInt(obj.processed.getTime() / 1000, 10).toString(36);
+      obj.share = parseInt(obj.processed.getTime() / 1000).toString(36);
       global.db.update({ share: obj.share }, obj, { upsert: true });
       log.info(`API Share Create ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images.length);
       res.status(200).json({ key: obj.share });
@@ -107,7 +107,7 @@ function api(app) {
     if (!req.session.share || req.session.share === '') {
       const root = new RegExp(`^${req.session.root || 'media/'}`);
       const limit = req.query.limit || global.config.server.resultsLimit;
-      const time = req.query.time ? new Date(parseInt(req.query.time, 10)) : new Date(0);
+      const time = req.query.time ? new Date(parseInt(req.query.time)) : new Date(0);
       const records = await global.db
         .find({ image: root, processed: { $gte: time } })
         .sort({ processed: -1 })
@@ -171,8 +171,8 @@ function api(app) {
     if (fileExt === 'mp4') contentType = 'video/mp4';
     if (contentType && req.headers.range) {
       const parts = req.headers.range.replace(/bytes=/, '').split('-');
-      const start = parseInt(parts[0], 10);
-      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const start = parseInt(parts[0]);
+      const end = parts[1] ? parseInt(parts[1]) : fileSize - 1;
       const chunksize = (end - start) + 1;
       const head = {
         'Content-Range': `bytes ${start}-${end}/${fileSize}`,

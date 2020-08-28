@@ -47,6 +47,7 @@
     "promise/catch-or-return": "off",
     "promise/no-nesting": "off",
     "import/no-absolute-path": "off",
-    "no-regex-spaces": "off"
+    "no-regex-spaces": "off",
+    "radix": "off"
   }
 }
