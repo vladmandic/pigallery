@@ -69,7 +69,7 @@ Once TF tools are compiled, use them to get details on the model before conversi
 
 #### Find input and output node names
 
-    bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="saved.pb"
+    ~/tensorflow/bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="saved_model.pb"
 
       Found 1 possible inputs: (name=input, type=float(1), shape=[?,299,299,3])
       Found 1 possible outputs: (name=InceptionV4/Logits/Predictions, op=Softmax)
@@ -79,8 +79,6 @@ Once TF tools are compiled, use them to get details on the model before conversi
     tensorflowjs_converter \
       --input_format <tfjs_layers_model,tf_saved_model,tf_hub,keras,tf_frozen_model,keras_saved_model> \
       --output_format tfjs_graph_model \
-      --strip_debug_ops=True \
-      --signature_name serving_default \
       --skip_op_check \
       --strip_debug_ops True \
       --control_flow_v2 True \
@@ -94,6 +92,10 @@ Once TF tools are compiled, use them to get details on the model before conversi
   - `--signature_name <name`
   - `--saved_model_tags <tags>`
   - `--output_node_names <names>`
+- Reduce model size by quantizing it:
+  - `--quantize_float16 True`
+  - `--quantize_uint8 True`
+  - `--quantize_uint16 True`
 - Models that output features (e.g. notop models) do not have activations above base layers so output is not directly usable
 - TF-Keras to TFJS  
   <https://www.tensorflow.org/js/tutorials/conversion/import_keras>

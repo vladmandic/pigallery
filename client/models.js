@@ -9,6 +9,7 @@ models.classify = [
   { name: 'ImageNet EfficientNet B5', modelPath: 'models/openimages-efficientnet-b5/model.json', score: 0.2, topK: 3, tensorSize: 456, scoreScale: 1, offset: 0, classes: 'assets/ImageNet-Labels1000.json' },
   { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3/model.json', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0, classes: 'assets/DeepDetect-Labels.json' },
   { name: 'NSFW Inception v3 Quant', modelPath: 'models/nsfw-inception-v3-quant/model.json', score: 0.7, topK: 4, tensorSize: 299, scoreScale: 2, offset: 0, background: 2, modelType: 'layers', classes: 'assets/NSFW-Labels.json' },
+  { name: 'AIY MobileNet Food', modelPath: 'models/aiy-mobilenet-food/model.json', score: 0.35, topK: 1, tensorSize: 192, scoreScale: 500, offset: 0, classes: 'assets/AIY-Food-Labels.json' },
 ];
 
 models.detect = [
@@ -32,7 +33,6 @@ models.classify_inactive = [
   { name: 'ImageNet Inception-ResNet v2', modelPath: '/models/inception-resnet-v2/model.json', score: 0.2, topK: 3, tensorSize: 224 },
   { name: 'ImageNet NASNet-A Mobile', modelPath: 'models/nasnet-mobile/model.json', score: 0.2, topK: 3, slice: 0 },
   { name: 'ImageNet Inception v3', modelPath: 'models/inception-v3/model.json', score: 0.2, topK: 3 },
-  { name: 'iNaturalist Food MobileNet v1', modelPath: 'models/inaturalist/food/model.json', score: 0.38, scoreScale: 500, topK: 1, tensorSize: 192, classes: 'assets/iNaturalist-Food-Labels.json', offset: 0 },
   { name: 'iNaturalist Plants MobileNet v2', modelPath: 'models/inaturalist/plants/model.json', score: 0.2, scoreScale: 200, topK: 1, tensorSize: 224, classes: 'assets/iNaturalist-Plants-Labels.json', offset: 0, background: 2101 },
   { name: 'iNaturalist Birds MobileNet v2', modelPath: 'models/inaturalist/birds/model.json', score: 0.25, scoreScale: 200, topK: 1, tensorSize: 224, classes: 'assets/iNaturalist-Birds-Labels.json', offset: 0, background: 964 },
   { name: 'iNaturalist Insects MobileNet v2', modelPath: 'models/inaturalist/insects/model.json', score: 0.3, scoreScale: 200, topK: 1, tensorSize: 224, classes: 'assets/iNaturalist-Insects-Labels.json', offset: 0, background: 1021 },

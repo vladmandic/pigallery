@@ -5,11 +5,11 @@
   ],
   "1": [
     "n1",
-    "airplane_cabin"
+    "airplane cabin"
   ],
   "2": [
     "n2",
-    "airport_terminal"
+    "airport terminal"
   ],
   "3": [
     "n3",
@@ -25,15 +25,15 @@
   ],
   "6": [
     "n6",
-    "amusement_arcade"
+    "amusement arcade"
   ],
   "7": [
     "n7",
-    "amusement_park"
+    "amusement park"
   ],
   "8": [
     "n8",
-    "apartment_building/outdoor"
+    "apartment building/outdoor"
   ],
   "9": [
     "n9",
@@ -53,7 +53,7 @@
   ],
   "13": [
     "n13",
-    "archaelogical_excavation"
+    "archaelogical excavation"
   ],
   "14": [
     "n14",
@@ -73,31 +73,31 @@
   ],
   "18": [
     "n18",
-    "army_base"
+    "army base"
   ],
   "19": [
     "n19",
-    "art_gallery"
+    "art gallery"
   ],
   "20": [
     "n20",
-    "art_school"
+    "art school"
   ],
   "21": [
     "n21",
-    "art_studio"
+    "art studio"
   ],
   "22": [
     "n22",
-    "artists_loft"
+    "artists loft"
   ],
   "23": [
     "n23",
-    "assembly_line"
+    "assembly line"
   ],
   "24": [
     "n24",
-    "athletic_field/outdoor"
+    "athletic field/outdoor"
   ],
   "25": [
     "n25",
@@ -113,11 +113,11 @@
   ],
   "28": [
     "n28",
-    "auto_factory"
+    "auto factory"
   ],
   "29": [
     "n29",
-    "auto_showroom"
+    "auto showroom"
   ],
   "30": [
     "n30",
@@ -137,7 +137,7 @@
   ],
   "34": [
     "n34",
-    "ball_pit"
+    "ball pit"
   ],
   "35": [
     "n35",
@@ -145,15 +145,15 @@
   ],
   "36": [
     "n36",
-    "bamboo_forest"
+    "bamboo forest"
   ],
   "37": [
     "n37",
-    "bank_vault"
+    "bank vault"
   ],
   "38": [
     "n38",
-    "banquet_hall"
+    "banquet hall"
   ],
   "39": [
     "n39",
@@ -169,7 +169,7 @@
   ],
   "42": [
     "n42",
-    "baseball_field"
+    "baseball field"
   ],
   "43": [
     "n43",
@@ -177,7 +177,7 @@
   ],
   "44": [
     "n44",
-    "basketball_court/indoor"
+    "basketball court/indoor"
   ],
   "45": [
     "n45",
@@ -197,11 +197,11 @@
   ],
   "49": [
     "n49",
-    "beach_house"
+    "beach house"
   ],
   "50": [
     "n50",
-    "beauty_salon"
+    "beauty salon"
   ],
   "51": [
     "n51",
@@ -213,11 +213,11 @@
   ],
   "53": [
     "n53",
-    "beer_garden"
+    "beer garden"
   ],
   "54": [
     "n54",
-    "beer_hall"
+    "beer hall"
   ],
   "55": [
     "n55",
@@ -225,7 +225,7 @@
   ],
   "56": [
     "n56",
-    "biology_laboratory"
+    "biology laboratory"
   ],
   "57": [
     "n57",
@@ -233,7 +233,7 @@
   ],
   "58": [
     "n58",
-    "boat_deck"
+    "boat deck"
   ],
   "59": [
     "n59",
@@ -249,19 +249,19 @@
   ],
   "62": [
     "n62",
-    "botanical_garden"
+    "botanical garden"
   ],
   "63": [
     "n63",
-    "bow_window/indoor"
+    "bow window/indoor"
   ],
   "64": [
     "n64",
-    "bowling_alley"
+    "bowling alley"
   ],
   "65": [
     "n65",
-    "boxing_ring"
+    "boxing ring"
   ],
   "66": [
     "n66",
@@ -269,7 +269,7 @@
   ],
   "67": [
     "n67",
-    "building_facade"
+    "building facade"
   ],
   "68": [
     "n68",
@@ -277,19 +277,19 @@
   ],
   "69": [
     "n69",
-    "burial_chamber"
+    "burial chamber"
   ],
   "70": [
     "n70",
-    "bus_interior"
+    "bus interior"
   ],
   "71": [
     "n71",
-    "bus_station/indoor"
+    "bus station/indoor"
   ],
   "72": [
     "n72",
-    "butchers_shop"
+    "butchers shop"
   ],
   "73": [
     "n73",
@@ -321,7 +321,7 @@
   ],
   "80": [
     "n80",
-    "candy_store"
+    "candy store"
   ],
   "81": [
     "n81",
@@ -329,7 +329,7 @@
   ],
   "82": [
     "n82",
-    "car_interior"
+    "car interior"
   ],
   "83": [
     "n83",
@@ -353,11 +353,11 @@
   ],
   "88": [
     "n88",
-    "chemistry_lab"
+    "chemistry lab"
   ],
   "89": [
     "n89",
-    "childs_room"
+    "childs room"
   ],
   "90": [
     "n90",
@@ -373,7 +373,7 @@
   ],
   "93": [
     "n93",
-    "clean_room"
+    "clean room"
   ],
   "94": [
     "n94",
@@ -385,7 +385,7 @@
   ],
   "96": [
     "n96",
-    "clothing_store"
+    "clothing store"
   ],
   "97": [
     "n97",
@@ -397,27 +397,27 @@
   ],
   "99": [
     "n99",
-    "coffee_shop"
+    "coffee shop"
   ],
   "100": [
     "n100",
-    "computer_room"
+    "computer room"
   ],
   "101": [
     "n101",
-    "conference_center"
+    "conference center"
   ],
   "102": [
     "n102",
-    "conference_room"
+    "conference room"
   ],
   "103": [
     "n103",
-    "construction_site"
+    "construction site"
   ],
   "104": [
     "n104",
-    "corn_field"
+    "corn field"
   ],
   "105": [
     "n105",
@@ -461,7 +461,7 @@
   ],
   "115": [
     "n115",
-    "department_store"
+    "department store"
   ],
   "116": [
     "n116",
@@ -473,7 +473,7 @@
   ],
   "118": [
     "n118",
-    "desert_road"
+    "desert road"
   ],
   "119": [
     "n119",
@@ -481,11 +481,11 @@
   ],
   "120": [
     "n120",
-    "dining_hall"
+    "dining hall"
   ],
   "121": [
     "n121",
-    "dining_room"
+    "dining room"
   ],
   "122": [
     "n122",
@@ -497,7 +497,7 @@
   ],
   "124": [
     "n124",
-    "dorm_room"
+    "dorm room"
   ],
   "125": [
     "n125",
@@ -505,7 +505,7 @@
   ],
   "126": [
     "n126",
-    "dressing_room"
+    "dressing room"
   ],
   "127": [
     "n127",
@@ -521,11 +521,11 @@
   ],
   "130": [
     "n130",
-    "elevator_lobby"
+    "elevator lobby"
   ],
   "131": [
     "n131",
-    "elevator_shaft"
+    "elevator shaft"
   ],
   "132": [
     "n132",
@@ -533,11 +533,11 @@
   ],
   "133": [
     "n133",
-    "engine_room"
+    "engine room"
   ],
   "134": [
     "n134",
-    "entrance_hall"
+    "entrance hall"
   ],
   "135": [
     "n135",
@@ -549,7 +549,7 @@
   ],
   "137": [
     "n137",
-    "fabric_store"
+    "fabric store"
   ],
   "138": [
     "n138",
@@ -557,7 +557,7 @@
   ],
   "139": [
     "n139",
-    "fastfood_restaurant"
+    "fastfood restaurant"
   ],
   "140": [
     "n140",
@@ -569,15 +569,15 @@
   ],
   "142": [
     "n142",
-    "field_road"
+    "field road"
   ],
   "143": [
     "n143",
-    "fire_escape"
+    "fire escape"
   ],
   "144": [
     "n144",
-    "fire_station"
+    "fire station"
   ],
   "145": [
     "n145",
@@ -585,19 +585,19 @@
   ],
   "146": [
     "n146",
-    "flea_market/indoor"
+    "flea market/indoor"
   ],
   "147": [
     "n147",
-    "florist_shop/indoor"
+    "florist shop/indoor"
   ],
   "148": [
     "n148",
-    "food_court"
+    "food court"
   ],
   "149": [
     "n149",
-    "football_field"
+    "football field"
   ],
   "150": [
     "n150",
@@ -605,15 +605,15 @@
   ],
   "151": [
     "n151",
-    "forest_path"
+    "forest path"
   ],
   "152": [
     "n152",
-    "forest_road"
+    "forest road"
   ],
   "153": [
     "n153",
-    "formal_garden"
+    "formal garden"
   ],
   "154": [
     "n154",
@@ -633,7 +633,7 @@
   ],
   "158": [
     "n158",
-    "gas_station"
+    "gas station"
   ],
   "159": [
     "n159",
@@ -641,15 +641,15 @@
   ],
   "160": [
     "n160",
-    "general_store/indoor"
+    "general store/indoor"
   ],
   "161": [
     "n161",
-    "general_store/outdoor"
+    "general store/outdoor"
   ],
   "162": [
     "n162",
-    "gift_shop"
+    "gift shop"
   ],
   "163": [
     "n163",
@@ -657,7 +657,7 @@
   ],
   "164": [
     "n164",
-    "golf_course"
+    "golf course"
   ],
   "165": [
     "n165",
@@ -689,7 +689,7 @@
   ],
   "172": [
     "n172",
-    "hardware_store"
+    "hardware store"
   ],
   "173": [
     "n173",
@@ -705,11 +705,11 @@
   ],
   "176": [
     "n176",
-    "home_office"
+    "home office"
   ],
   "177": [
     "n177",
-    "home_theater"
+    "home theater"
   ],
   "178": [
     "n178",
@@ -717,11 +717,11 @@
   ],
   "179": [
     "n179",
-    "hospital_room"
+    "hospital room"
   ],
   "180": [
     "n180",
-    "hot_spring"
+    "hot spring"
   ],
   "181": [
     "n181",
@@ -729,7 +729,7 @@
   ],
   "182": [
     "n182",
-    "hotel_room"
+    "hotel room"
   ],
   "183": [
     "n183",
@@ -737,27 +737,27 @@
   ],
   "184": [
     "n184",
-    "hunting_lodge/outdoor"
+    "hunting lodge/outdoor"
   ],
   "185": [
     "n185",
-    "ice_cream_parlor"
+    "ice cream parlor"
   ],
   "186": [
     "n186",
-    "ice_floe"
+    "ice floe"
   ],
   "187": [
     "n187",
-    "ice_shelf"
+    "ice shelf"
   ],
   "188": [
     "n188",
-    "ice_skating_rink/indoor"
+    "ice skating rink/indoor"
   ],
   "189": [
     "n189",
-    "ice_skating_rink/outdoor"
+    "ice skating rink/outdoor"
   ],
   "190": [
     "n190",
@@ -769,7 +769,7 @@
   ],
   "192": [
     "n192",
-    "industrial_area"
+    "industrial area"
   ],
   "193": [
     "n193",
@@ -785,15 +785,15 @@
   ],
   "196": [
     "n196",
-    "jail_cell"
+    "jail cell"
   ],
   "197": [
     "n197",
-    "japanese_garden"
+    "japanese garden"
   ],
   "198": [
     "n198",
-    "jewelry_shop"
+    "jewelry shop"
   ],
   "199": [
     "n199",
@@ -809,7 +809,7 @@
   ],
   "202": [
     "n202",
-    "kindergarden_classroom"
+    "kindergarden classroom"
   ],
   "203": [
     "n203",
@@ -829,7 +829,7 @@
   ],
   "207": [
     "n207",
-    "landing_deck"
+    "landing deck"
   ],
   "208": [
     "n208",
@@ -841,11 +841,11 @@
   ],
   "210": [
     "n210",
-    "lecture_room"
+    "lecture room"
   ],
   "211": [
     "n211",
-    "legislative_chamber"
+    "legislative chamber"
   ],
   "212": [
     "n212",
@@ -861,11 +861,11 @@
   ],
   "215": [
     "n215",
-    "living_room"
+    "living room"
   ],
   "216": [
     "n216",
-    "loading_dock"
+    "loading dock"
   ],
   "217": [
     "n217",
@@ -873,11 +873,11 @@
   ],
   "218": [
     "n218",
-    "lock_chamber"
+    "lock chamber"
   ],
   "219": [
     "n219",
-    "locker_room"
+    "locker room"
   ],
   "220": [
     "n220",
@@ -885,7 +885,7 @@
   ],
   "221": [
     "n221",
-    "manufactured_home"
+    "manufactured home"
   ],
   "222": [
     "n222",
@@ -901,7 +901,7 @@
   ],
   "225": [
     "n225",
-    "martial_arts_gym"
+    "martial arts gym"
   ],
   "226": [
     "n226",
@@ -933,15 +933,15 @@
   ],
   "233": [
     "n233",
-    "mountain_path"
+    "mountain path"
   ],
   "234": [
     "n234",
-    "mountain_snowy"
+    "mountain snowy"
   ],
   "235": [
     "n235",
-    "movie_theater/indoor"
+    "movie theater/indoor"
   ],
   "236": [
     "n236",
@@ -953,11 +953,11 @@
   ],
   "238": [
     "n238",
-    "music_studio"
+    "music studio"
   ],
   "239": [
     "n239",
-    "natural_history_museum"
+    "natural history museum"
   ],
   "240": [
     "n240",
@@ -965,11 +965,11 @@
   ],
   "241": [
     "n241",
-    "nursing_home"
+    "nursing home"
   ],
   "242": [
     "n242",
-    "oast_house"
+    "oast house"
   ],
   "243": [
     "n243",
@@ -981,11 +981,11 @@
   ],
   "245": [
     "n245",
-    "office_building"
+    "office building"
   ],
   "246": [
     "n246",
-    "office_cubicles"
+    "office cubicles"
   ],
   "247": [
     "n247",
@@ -993,7 +993,7 @@
   ],
   "248": [
     "n248",
-    "operating_room"
+    "operating room"
   ],
   "249": [
     "n249",
@@ -1001,7 +1001,7 @@
   ],
   "250": [
     "n250",
-    "orchestra_pit"
+    "orchestra pit"
   ],
   "251": [
     "n251",
@@ -1021,15 +1021,15 @@
   ],
   "255": [
     "n255",
-    "parking_garage/indoor"
+    "parking garage/indoor"
   ],
   "256": [
     "n256",
-    "parking_garage/outdoor"
+    "parking garage/outdoor"
   ],
   "257": [
     "n257",
-    "parking_lot"
+    "parking lot"
   ],
   "258": [
     "n258",
@@ -1045,7 +1045,7 @@
   ],
   "261": [
     "n261",
-    "pet_shop"
+    "pet shop"
   ],
   "262": [
     "n262",
@@ -1053,15 +1053,15 @@
   ],
   "263": [
     "n263",
-    "phone_booth"
+    "phone booth"
   ],
   "264": [
     "n264",
-    "physics_laboratory"
+    "physics laboratory"
   ],
   "265": [
     "n265",
-    "picnic_area"
+    "picnic area"
   ],
   "266": [
     "n266",
@@ -1113,7 +1113,7 @@
   ],
   "278": [
     "n278",
-    "railroad_track"
+    "railroad track"
   ],
   "279": [
     "n279",
@@ -1125,15 +1125,15 @@
   ],
   "281": [
     "n281",
-    "recreation_room"
+    "recreation room"
   ],
   "282": [
     "n282",
-    "repair_shop"
+    "repair shop"
   ],
   "283": [
     "n283",
-    "residential_neighborhood"
+    "residential neighborhood"
   ],
   "284": [
     "n284",
@@ -1141,15 +1141,15 @@
   ],
   "285": [
     "n285",
-    "restaurant_kitchen"
+    "restaurant kitchen"
   ],
   "286": [
     "n286",
-    "restaurant_patio"
+    "restaurant patio"
   ],
   "287": [
     "n287",
-    "rice_paddy"
+    "rice paddy"
   ],
   "288": [
     "n288",
@@ -1157,15 +1157,15 @@
   ],
   "289": [
     "n289",
-    "rock_arch"
+    "rock arch"
   ],
   "290": [
     "n290",
-    "roof_garden"
+    "roof garden"
   ],
   "291": [
     "n291",
-    "rope_bridge"
+    "rope bridge"
   ],
   "292": [
     "n292",
@@ -1189,11 +1189,11 @@
   ],
   "297": [
     "n297",
-    "science_museum"
+    "science museum"
   ],
   "298": [
     "n298",
-    "server_room"
+    "server room"
   ],
   "299": [
     "n299",
@@ -1201,7 +1201,7 @@
   ],
   "300": [
     "n300",
-    "shoe_shop"
+    "shoe shop"
   ],
   "301": [
     "n301",
@@ -1209,7 +1209,7 @@
   ],
   "302": [
     "n302",
-    "shopping_mall/indoor"
+    "shopping mall/indoor"
   ],
   "303": [
     "n303",
@@ -1217,11 +1217,11 @@
   ],
   "304": [
     "n304",
-    "ski_resort"
+    "ski resort"
   ],
   "305": [
     "n305",
-    "ski_slope"
+    "ski slope"
   ],
   "306": [
     "n306",
@@ -1241,7 +1241,7 @@
   ],
   "310": [
     "n310",
-    "soccer_field"
+    "soccer field"
   ],
   "311": [
     "n311",
@@ -1273,7 +1273,7 @@
   ],
   "318": [
     "n318",
-    "storage_room"
+    "storage room"
   ],
   "319": [
     "n319",
@@ -1281,7 +1281,7 @@
   ],
   "320": [
     "n320",
-    "subway_station/platform"
+    "subway station/platform"
   ],
   "321": [
     "n321",
@@ -1289,7 +1289,7 @@
   ],
   "322": [
     "n322",
-    "sushi_bar"
+    "sushi bar"
   ],
   "323": [
     "n323",
@@ -1297,15 +1297,15 @@
   ],
   "324": [
     "n324",
-    "swimming_hole"
+    "swimming hole"
   ],
   "325": [
     "n325",
-    "swimming_pool/indoor"
+    "swimming pool/indoor"
   ],
   "326": [
     "n326",
-    "swimming_pool/outdoor"
+    "swimming pool/outdoor"
   ],
   "327": [
     "n327",
@@ -1313,11 +1313,11 @@
   ],
   "328": [
     "n328",
-    "television_room"
+    "television room"
   ],
   "329": [
     "n329",
-    "television_studio"
+    "television studio"
   ],
   "330": [
     "n330",
@@ -1325,15 +1325,15 @@
   ],
   "331": [
     "n331",
-    "throne_room"
+    "throne room"
   ],
   "332": [
     "n332",
-    "ticket_booth"
+    "ticket booth"
   ],
   "333": [
     "n333",
-    "topiary_garden"
+    "topiary garden"
   ],
   "334": [
     "n334",
@@ -1345,19 +1345,19 @@
   ],
   "336": [
     "n336",
-    "train_interior"
+    "train interior"
   ],
   "337": [
     "n337",
-    "train_station/platform"
+    "train station/platform"
   ],
   "338": [
     "n338",
-    "tree_farm"
+    "tree farm"
   ],
   "339": [
     "n339",
-    "tree_house"
+    "tree house"
   ],
   "340": [
     "n340",
@@ -1369,11 +1369,11 @@
   ],
   "342": [
     "n342",
-    "underwater/ocean_deep"
+    "underwater/ocean deep"
   ],
   "343": [
     "n343",
-    "utility_room"
+    "utility room"
   ],
   "344": [
     "n344",
@@ -1381,11 +1381,11 @@
   ],
   "345": [
     "n345",
-    "vegetable_garden"
+    "vegetable garden"
   ],
   "346": [
     "n346",
-    "veterinarians_office"
+    "veterinarians office"
   ],
   "347": [
     "n347",
@@ -1405,19 +1405,19 @@
   ],
   "351": [
     "n351",
-    "volleyball_court/outdoor"
+    "volleyball court/outdoor"
   ],
   "352": [
     "n352",
-    "waiting_room"
+    "waiting room"
   ],
   "353": [
     "n353",
-    "water_park"
+    "water park"
   ],
   "354": [
     "n354",
-    "water_tower"
+    "water tower"
   ],
   "355": [
     "n355",
@@ -1425,7 +1425,7 @@
   ],
   "356": [
     "n356",
-    "watering_hole"
+    "watering hole"
   ],
   "357": [
     "n357",
@@ -1433,15 +1433,15 @@
   ],
   "358": [
     "n358",
-    "wet_bar"
+    "wet bar"
   ],
   "359": [
     "n359",
-    "wheat_field"
+    "wheat field"
   ],
   "360": [
     "n360",
-    "wind_farm"
+    "wind farm"
   ],
   "361": [
     "n361",
@@ -1453,10 +1453,10 @@
   ],
   "363": [
     "n363",
-    "youth_hostel"
+    "youth hostel"
   ],
   "364": [
     "n364",
-    "zen_garden"
+    "zen garden"
   ]
 }
