@@ -1,11 +1,49 @@
 # PiGallery
 
-## Multi-user image galley with TensorFlow/JS image processing and full EXIF data extraction and analysis
+## Secure & fast multi-user image gallery with machine learning image processing and analysis
 
-**Repository: <https://github.com/vladmandic/pigallery>**  
-**Changelog: <CHANGELOG.md>**  
-**Todo List: <TODO.md>**  
-**Notes on Models: <MODELS.md>**
+<br>
+
+## Key features
+
+### At it's core, **PiGallery** builds a database of images which includes
+
+- Image thumbnails for fast display
+- Image analysis using machine learning using multiple image classification and object detection models
+- Image perception hash to quickly locate duplicate image regardless of size or to search for simmilar images
+- Image conditions using analysis of camera settings
+- Person age, gender & emotion modelling and NSFW classification
+- Image geo-location
+- Lexicon definitions for complete image description
+- Analysis is always incremental so only new or modified images will be analyzed
+- All data is stored in a server-side database and original image is never modified
+
+### As an image gallery viewer, **PiGallery** provides
+
+- Secure, multi-user access to image database
+- Fully responsive design for desktop & mobile usage
+- Installable as an application (PWA) or can be used as a web page
+- Client-side caching with incremental updates
+- Flexible sorting and navigation using folders, locations or classes
+- Flexible natural language search
+- Quickly share generated albums with public users
+- Locate and select images on a world map
+- Find duplicate and/or simmilar images
+- View image slideshow
+- Multiple display themes (light & dark) and fully configurable user interface
+- Play with machine learning detection of live video using your camera
+
+### And it's **FAST**
+
+- Initial access (no cache) of database with 10,000 images completes in less than 1 minute  
+  (if your internet link is not a bottleneck)
+- Subsequent access (cached) with incremental database updates: less than 5 seconds for application startup and gallery load
+
+If you'd like to include any additional image analysis (additional machine models or static analysis), drop a note!
+
+<br>
+<br>
+<br>
 
 ## Screenshots
 
@@ -29,22 +67,30 @@
 
 </center>
 
+<br>
+<br>
+<br>
+
 ## Install, Configure & Run
 
 ### Install
 
 - Install NodeJS: <https://nodejs.org/en/>
-- Download PiGallery: `git clone --depth 1 https://github.com/vladmandic/pigallery`
-- Install PiGallery: `./setup.js`
+- Download PiGallery:
+  using Git: `git clone --depth 1 https://github.com/vladmandic/pigallery`  
+  or download archive from <https://github.com/vladmandic/pigallery/releases/>
+- Install PiGallery:  
+  run `./setup.js`
 
 ### Configure
 
-Create `config.json` using `config.json.sample` as a reference
+Edit `config.json`:
 
     users: must contain at least one valid user to be able to login into application  
       Note: users.*.mediaRoot is a starting point for a user,  
       can be same as server.mediaRoot if you want user to have access to all media files,  
-      otherwise it should be the subfolder within server.mediaRoot
+      otherwise it should be the subfolder within server.mediaRoot  
+      Note: users includes one predefined user `share` used for anonymous album sharing
     locations: must contain at least one valid location containing images to be analyzed  
       Note: folder is relative to server.mediaRoot
     server: general section containing following key options:
@@ -52,10 +98,10 @@ Create `config.json` using `config.json.sample` as a reference
         set to 0 if you want to disable a specific server  
         note that https and http2 require valid SSLKey and SSLCrt  
       allowPWA: should application be installable as progressive web application?
-      authForce: force user authentication or allow anonymous users
-      mediaRoot: must be set to a valid folder. used as a root for any location to be analyzed.
+      authForce: force user authentication or allow anonymous users?
+      mediaRoot: used as a root for any location to be analyzed - must be set to a valid folder on a local storage
       defaultLimit: size of initial set of images to set to client before rest is downloaded as a background task
-      forceHTTPS: should any http request be redirected to https?
+      forceHTTPS: should any unsecure http request be redirected to https?
 
 Optionally edit `client/config.js` for image processing settings  
 Key options are:
@@ -67,7 +113,7 @@ Key options are:
     batchProcessing: 1,      // how many images to process in parallel
 
 Optionally edit `client/model.js` to select active models  
-Note that models can be loaded from either local storage or directly from an external http location such as <tfhub.com>
+Note that models can be loaded from either local storage or directly from an external http location
 
 ### Run
 
@@ -77,6 +123,10 @@ Note that models can be loaded from either local storage or directly from an ext
   - Default view is image gallery. If there are no processed images, it's blank
   - Select `User`->`Update DB` to start image processing (opens separate browesr window)
   - Select `Live Video` to play with your webcam or provide mp4 video file
+
+<br>
+<br>
+<br>
 
 ## General Notes
 
@@ -109,13 +159,8 @@ Collected metadata is additionally analyzed to render human-readable search term
 
 ### Search
 
-Result of all metadata processing is a very flexbile search engine - take a look at this example:
-
-<center>
-
+Result of all metadata processing is a very flexbile search engine - take a look at this example:  
 `"Happy female in 20ies in Miami wearing dress and dining outdoors"`
-
-</center>
 
 ### Keyboard shortcuts
 
@@ -130,26 +175,22 @@ Result of all metadata processing is a very flexbile search engine - take a look
       Page Up & Down: Scroll up & down by one page when in gallery view
       Home & End: Scroll to start & end when in gallery view
 
-### TensorFlow Processing
+### Swipe controls
+
+- Swipe down will refresh image database
+- Swipe left and right are previous and next image in details view
+
+### Image Processing
 
 - If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory.  
   Just restart processing and it will continue from the last known good result.
 - Model load time can be from few seconds to over a minute depending on model size (in MB)
 - Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
-- Actual processing is ~1sec per image
+- Once models are loaded and ready, actual processing is ~1sec per image
 
-## Links
+### Links
 
-- TensorFlowJS: <https://www.tensorflow.org/js/>
-- Datasets: <https://www.tensorflow.org/resources/models-datasets>
-- MobileNet: <https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/README.md>
-- Inception: <https://towardsdatascience.com/review-inception-v4-evolved-from-googlenet-merged-with-resnet-idea-image-classification-5e8c339d18bc>
-- DarkNet Yolo: <https://pjreddie.com/darknet/yolo/>
-- Face/Gender/Age: <https://github.com/justadudewhohacks/face-api.js>
-- EfficientNet: <https://github.com/tensorflow/tpu/tree/master/models/official/efficientnet>
-
-<center>
-
-![alt text](favicon.ico)
-
-</center>
+- **Code Repository**: <https://github.com/vladmandic/pigallery>  
+- **Changelog**: <https://github.com/vladmandic/pigallery/CHANGELOG.md>  
+- **Todo List**: <https://github.com/vladmandic/pigallery/TODO.md>  
+- **Notes on Models**: <https://github.com/vladmandic/pigallery/MODELS.md>  
