@@ -38,7 +38,7 @@ async function decodeValues(model, values) {
     .filter((a) => ((a.score * model.config.scoreScale) > model.config.score) && (model.config.background !== parseInt(a.index, 10)))
     .sort((a, b) => b.score - a.score)
     .map((a) => {
-      const id = parseInt(a.index, 10) - model.config.offset; // offset indexes for some models
+      const id = parseInt(a.index) - model.config.offset; // offset indexes for some models
       const wnid = model.labels[id] ? model.labels[id][0] : a.index;
       const label = model.labels[id] ? model.labels[id][1] : `unknown id:${a.index}`;
       return { wnid, id, class: label.toLowerCase(), score: a.score * model.config.scoreScale };

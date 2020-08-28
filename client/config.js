@@ -114,7 +114,7 @@ async function initTheme() {
 
 // user configurable options & defalt values, stored in browsers local storage
 window.options = {
-  get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || 500, 10); },
+  get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || 500); },
   set listItemCount(val) { return localStorage.setItem('listItemCount', val); },
 
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
@@ -135,10 +135,10 @@ window.options = {
   get listTitle() { return localStorage.getItem('listTitle') ? localStorage.getItem('listTitle') === 'true' : true; },
   set listTitle(val) { return localStorage.setItem('listTitle', val); },
 
-  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 180, 10); },
+  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 180); },
   set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
 
-  get listLimit() { return parseInt(localStorage.getItem('listLimit') || 10000, 10); },
+  get listLimit() { return parseInt(localStorage.getItem('listLimit') || 10000); },
   set listLimit(val) { return localStorage.setItem('listLimit', val); },
 
   get viewDetails() { return localStorage.getItem('viewDetails') ? localStorage.getItem('viewDetails') === 'true' : true; },
@@ -168,19 +168,19 @@ window.options = {
   get fontSize() { return localStorage.getItem('fontSize') || '16px'; },
   set fontSize(val) { return localStorage.setItem('fontSize', val); },
 
-  get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || 2500, 10); },
+  get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || 2500); },
   set slideDelay(val) { return localStorage.setItem('slidedelay', val); },
 
-  get topClasses() { return parseInt(localStorage.getItem('topClasses') || 25, 10); },
+  get topClasses() { return parseInt(localStorage.getItem('topClasses') || 25); },
   set topClasses(val) { return localStorage.setItem('topClasses', val); },
 
-  get listDetailsWidth() { return parseInt(localStorage.getItem('listDetailsWidth') || 25, 10); },
+  get listDetailsWidth() { return parseInt(localStorage.getItem('listDetailsWidth') || 25); },
   set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
 
-  get lastUpdated() { return parseInt(localStorage.getItem('lastUpdated') || 0, 10); },
+  get lastUpdated() { return parseInt(localStorage.getItem('lastUpdated') || 0); },
   set lastUpdated(val) { return localStorage.setItem('lastUpdated', val); },
 
-  get theme() { return parseInt(localStorage.getItem('theme') || 2, 10); },
+  get theme() { return parseInt(localStorage.getItem('theme') || 2); },
   set theme(val) { return localStorage.setItem('theme', val); },
 };
 

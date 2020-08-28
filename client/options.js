@@ -63,7 +63,7 @@ function saveOptions() {
   window.options.listThumbSquare = $('#listThumbSquare')[0].checked;
   window.options.viewBoxes = $('#viewBoxes')[0].checked;
   window.options.viewFaces = $('#viewFaces')[0].checked;
-  window.options.theme = parseInt($('#colorTheme').val(), 10);
+  window.options.theme = parseInt($('#colorTheme').val());
   /*
   window.options.mapColor = $('#mapColor').val();
   window.options.colorText = $('#colorText').val();

@@ -173,7 +173,7 @@ async function redrawResults() {
 
 // resize gallery view depending on user configuration
 async function resizeResults() {
-  const thumbSize = parseInt($('#thumbsize')[0].value, 10);
+  const thumbSize = parseInt($('#thumbsize')[0].value);
   if (thumbSize !== window.options.listThumbSize) {
     window.options.listThumbSize = thumbSize;
     $('#thumblabel').text(`Size: ${window.options.listThumbSize}px`);
