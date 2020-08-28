@@ -1,7 +1,25 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/08/24 cyan00@gmail.com
+### **v2.0.2** 2020/08/28 cyan00@gmail.com
 
+- removed radix
+
+### **origin/HEAD** 2020/08/28 cyan00@gmail.com
+
+- smudge
+- smudge users
+- added config.json
+- simplification
+- experimenting with food and places365 models
+- updated docs
+- update
+- updated face-api models
+- added tfjs precompiled assets
+- models refactoring
+- split active and inactive models
+- reduced dependencies
+- client reload fix
+- updated
 
 ### **v2.0.1** 2020/08/24 cyan00@gmail.com
 
