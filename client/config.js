@@ -4,8 +4,6 @@
 /* eslint-disable no-multi-spaces */
 
 const log = require('./log.js');
-const modelClassify = require('./modelClassify.js');
-const modelDetect = require('./modelDetect.js');
 
 // load tfjs and face-api via npm module or esm script
 // window.tf = require('@tensorflow/tfjs');
@@ -18,6 +16,17 @@ if (typeof faceapi !== 'undefined') window.faceapi = faceapi;
 // if (window.faceapi.tf) window.tf = window.faceapi.tf;
 
 window.debug = true;
+
+// TFJS Configuration
+const config = {
+  backEnd: 'webgl',        // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
+  floatPrecision: true,    // use 32bit or 16bit float precision
+  maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
+  renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
+  batchProcessing: 1,      // how many images to process in parallel
+  squareImage: false,      // resize proportional to the original image or to a square image
+  registerPWA: true,       // register PWA service worker?
+};
 
 function colorHex(str) {
   const ctx = document.createElement('canvas').getContext('2d');
@@ -100,11 +109,10 @@ async function initTheme() {
   document.documentElement.style.setProperty('--shadow', window.theme.shadow);
   document.documentElement.style.setProperty('--link', window.theme.link);
   document.documentElement.style.setProperty('--inactive', window.theme.inactive);
-  // document.body.style.setProperty('font-family', window.theme.font);
   log.debug(null, `Theme: ${window.theme.name}`);
 }
 
-// user configurable options, stored in browsers local storage
+// user configurable options & defalt values, stored in browsers local storage
 window.options = {
   get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || 500, 10); },
   set listItemCount(val) { return localStorage.setItem('listItemCount', val); },
@@ -174,45 +182,6 @@ window.options = {
 
   get theme() { return parseInt(localStorage.getItem('theme') || 2, 10); },
   set theme(val) { return localStorage.setItem('theme', val); },
-};
-
-// TFJS Configuration
-const config = {
-  backEnd: 'webgl',        // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
-  floatPrecision: true,    // use 32bit or 16bit float precision
-  maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
-  renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
-  batchProcessing: 1,      // how many images to process in parallel
-  squareImage: false,      // resize proportional to the original image or to a square image
-  registerPWA: true,       // register PWA service worker?
-
-  /*
-  models that can be used for "classify" can be found at
-    https://tfhub.dev/s?deployment-format=tfjs&module-type=image-classification&tf-version=tf2
-  or just pick one from below
-    { name: 'MobileNet v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v1_100_224/classification/3/default/1' },
-    { name: 'MobileNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/classification/3/default/1' },
-    { name: 'Inception v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1' },
-    { name: 'Inception v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v2/classification/3/default/1' },
-    { name: 'Inception v3', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v3/classification/3/default/1' },
-  */
-
-  /*
-  models that can be used for "detect" can be found at
-    https://tfhub.dev/s?deployment-format=tfjs&module-type=image-object-detection
-  or just pick one from below
-    detect: { name: 'Coco SSD/MobileNet v1', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v1/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
-    detect: { name: 'Coco SSD/MobileNet v2', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
-  or enable darknet/yolo model in a separate module (js module is not initialized by default)
-  */
-
-  /*
-  models that can be used for "person" are
-    person: { name: 'FaceAPI SSD', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'ssdMobilenetv1' },
-    person: { name: 'FaceAPI Yolo', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyYolov2' },
-    person: { name: 'FaceAPI Tiny', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'tinyFaceDetector' },
-    person: { name: 'FaceAPI MTCNN', modelPath: 'models/faceapi/', score: 0.5, topK: 1, type: 'mtcnn' },
-  */
 };
 
 exports.default = config;

@@ -11,6 +11,11 @@ const cacheFiles = [
 ];
 let listening = false;
 
+function ts() {
+  const dt = new Date();
+  return `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
+}
+
 async function cached(evt) {
   let found;
   if (navigator.onLine) found = await caches.match(evt.request) || await fetch(evt.request);
@@ -30,23 +35,23 @@ async function cached(evt) {
 }
 
 async function refresh() {
-  console.log('PWA Cache refresh');
+  console.log(ts(), 'PWA Cache refresh');
   caches.open(cacheName).then((cache) => cache.addAll(cacheFiles));
 }
 
 if (!listening) {
   self.addEventListener('message', (evt) => {
-    console.log('PWA event message:', evt);
+    console.log(ts(), 'PWA event message:', evt);
   });
 
   self.addEventListener('install', (evt) => {
-    console.log('PWA Install');
+    console.log(ts(), 'PWA Install');
     self.skipWaiting();
     evt.waitUntil(refresh);
   });
 
   self.addEventListener('activate', (evt) => {
-    console.log('PWA Activate');
+    console.log(ts(), 'PWA Activate');
     evt.waitUntil(self.clients.claim());
     refresh();
   });
@@ -64,7 +69,7 @@ if (!listening) {
 
   let refreshed = false;
   self.addEventListener('controllerchange', (evt) => {
-    console.log(`PWA: ${evt.type}`);
+    console.log(ts(), `PWA: ${evt.type}`);
     if (refreshed) return;
     refreshed = true;
     window.location.reload();

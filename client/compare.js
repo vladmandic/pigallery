@@ -100,7 +100,7 @@ async function print(file, image, results) {
     let classified = model.model.name || model.model;
     all = all.concat(model.data);
     for (const res of model.data) {
-      if (res.score && res.class) classified += ` | ${Math.round(res.score * 100)}% ${res.class}`;
+      if (res.score && res.class) classified += ` | ${Math.round(res.score * 100)}% ${res.class} [id:${res.id}]`;
       if (res.age && res.gender) classified += ` | gender: ${Math.round(100 * res.genderProbability)}% ${res.gender} age: ${res.age.toFixed(1)}`;
       if (res.expression) {
         const emotion = Object.entries(res.expressions).reduce(([keyPrev, valPrev], [keyCur, valCur]) => (valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]));
