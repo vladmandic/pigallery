@@ -438,8 +438,9 @@ async function initSharesHandler() {
     return;
   }
   $('#sharestitle').off();
-  $('#sharestitle').click(() => {
+  $('#sharestitle').click(async () => {
     const show = $('#share').is(':visible');
+    if (!show) await menu.shares();
     $('#btn-shareadd').removeClass('fa-minus-square').addClass('fa-plus-square');
     $('#share').toggle(!show);
     $('#shares').find('li').toggle(!show);

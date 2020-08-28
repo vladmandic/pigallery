@@ -125,9 +125,9 @@ async function enumerateShares() {
 async function enumerateResults() {
   const a1 = enumerateFolders();
   const a2 = enumerateLocations();
-  const a3 = enumerateShares();
-  const a4 = enumerateClasses();
-  await Promise.all([a1, a2, a3, a4]);
+  const a3 = enumerateClasses();
+  // const a4 = enumerateShares();
+  await Promise.all([a1, a2, a3]);
 }
 
 exports.classes = enumerateClasses;
