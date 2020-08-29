@@ -14,9 +14,11 @@ async function stop() {
   $('#video-status').text('Stopping camera ...');
   const tracks = video.srcObject ? video.srcObject.getTracks() : null;
   if (tracks) tracks.forEach((track) => track.stop());
+  video.pause();
 }
 
-function roundRect(ctx, x, y, width, height, radius = 5, fill = false, stroke = true) {
+function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null) {
+  ctx.lineWidth = lineWidth;
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
   ctx.lineTo(x + width - radius, y);
@@ -28,8 +30,14 @@ function roundRect(ctx, x, y, width, height, radius = 5, fill = false, stroke = 
   ctx.lineTo(x, y + radius);
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
-  if (fill) ctx.fill();
-  if (stroke) ctx.stroke();
+  if (fillStyle) {
+    ctx.fillStyle(fillStyle);
+    ctx.fill();
+  }
+  if (strokeStyle) {
+    ctx.strokeStyle = strokeStyle;
+    ctx.stroke();
+  }
 }
 
 let previousDetect = null;
@@ -51,9 +59,6 @@ async function drawDetect(object) {
   canvas.height = $('#videocanvas').height();
   parent.appendChild(canvas);
   const ctx = canvas.getContext('2d');
-  ctx.strokeStyle = 'lightyellow';
-  ctx.fillStyle = 'lightyellow';
-  ctx.lineWidth = 4;
   ctx.font = 'small-caps 16px Lato';
   const resizeX = $('#videocanvas').width() / video.videoWidth;
   const resizeY = $('#videocanvas').height() / video.videoHeight;
@@ -61,9 +66,10 @@ async function drawDetect(object) {
     const x = obj.box[0] * resizeX;
     const y = obj.box[1] * resizeY;
     ctx.globalAlpha = 0.4;
-    roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, false, true);
+    roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, 4, 'lightyellow', null);
     ctx.globalAlpha = 1;
-    ctx.fillText(`${(100 * obj.score).toFixed(0)}% ${obj.class}`, x + 2, y + 18);
+    ctx.fillStyle = 'lightyellow';
+    ctx.fillText(obj.class, x + 2, y + 18);
   }
   previousDetect = canvas;
 }
@@ -87,9 +93,6 @@ async function drawPerson(object) {
   canvas.height = $('#videocanvas').height();
   parent.appendChild(canvas);
   const ctx = canvas.getContext('2d');
-  ctx.strokeStyle = 'deepskyblue';
-  ctx.fillStyle = 'deepskyblue';
-  ctx.lineWidth = 4;
   ctx.font = 'small-caps 1rem Lato';
   const resizeX = $('#videocanvas').width() / video.videoWidth;
   const resizeY = $('#videocanvas').height() / video.videoHeight;
@@ -97,11 +100,10 @@ async function drawPerson(object) {
     const x = res.detection.box.x * resizeX;
     const y = res.detection.box.y * resizeY;
     ctx.globalAlpha = 0.4;
-    roundRect(ctx, x, y, res.detection.box.width * resizeX, res.detection.box.height * resizeY, 10, false, true);
+    roundRect(ctx, x, y, res.detection.box.width * resizeX, res.detection.box.height * resizeY, 10, 3, 'deepskyblue', null);
     ctx.globalAlpha = 1;
-    ctx.font = 'small-caps 1rem Lato';
-    ctx.fillText(`${res.gender} ${res.age.toFixed(1)}y`, x + 2, y + 18);
     ctx.fillStyle = 'lightblue';
+    ctx.fillText(`${res.gender} ${res.age.toFixed(1)}y`, x + 2, y + 18);
     ctx.globalAlpha = 0.5;
     const pointSize = 2;
     for (const pt of res.landmarks.positions) {
@@ -159,7 +161,7 @@ async function process() {
 }
 
 async function camera() {
-  $('#video-status').text('Warming up ...');
+  $('#video-status').text(`Resolution: ${video.videoWidth} x ${video.videoHeight} | Warming up ...`);
   video.removeEventListener('loadeddata', camera);
   const ratio = 1.0 * video.videoWidth / video.videoHeight;
   video.width = ratio >= 1 ? $('#main').width() : 1.0 * $('#main').height() * ratio;
@@ -177,8 +179,8 @@ async function start() {
   const constraints = {
     audio: false,
     video: {
-      width: { min: 480, ideal: 1920, max: 3840 },
-      height: { min: 480, ideal: 1080, max: 3840 },
+      width: { min: 480, ideal: $('#main').width(), max: 3840 },
+      height: { min: 480, ideal: $('#main').height(), max: 3840 },
       facingMode: front ? 'user' : 'environment',
     },
   };
@@ -225,6 +227,13 @@ async function init() {
     front = !front;
     $('#text-facing').text(front ? 'Camera: Front' : 'Camera: Back');
     start();
+  });
+
+  $(window).resize(() => {
+    if (video && (video.readyState > 1)) {
+      stop();
+      start();
+    }
   });
 
   $('#btn-play').click();

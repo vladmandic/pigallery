@@ -2,9 +2,7 @@
 
 ## Bugs
 
-- Fix FaceAPI exec in main
-- Rounded boxes in main
-- Video doesn't stop
+N/A
 
 ## Notes
 
