@@ -1,5 +1,11 @@
 # TODO
 
+## Bugs
+
+- Fix FaceAPI exec in main
+- Rounded boxes in main
+- Video doesn't stop
+
 ## Notes
 
 PiGallery uses private branches of following public distributions due to following issues:

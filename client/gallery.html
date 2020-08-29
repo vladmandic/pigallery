@@ -34,6 +34,8 @@
     <script defer type="text/javascript" src="/assets/leaflet-heat.js"></script>
     <script defer type="text/javascript" src="/assets/color-thief.js"></script>
     <script defer type="text/javascript" src="/assets/iv-viewer.js"></script>
+    <script defer type="text/javascript" src="/assets/tf.es2017.js"></script>
+    <script defer type="text/javascript" src="/assets/face-api.js"></script>
     <style>
       @font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('../assets/lato.ttf') format('truetype'); }
       html { font-size: 18px; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; }
@@ -104,6 +106,7 @@
       .popup-image { width: 100%; height: 100%; }
       .popup-details { margin: 0 0 0 10px; overflow-x: hidden; overflow-y: scroll; word-break: break-word; color: var(--text); z-index: 10; }
       .docs { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
+      .video { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
       .splash { width: 100%; height: 100%; z-index: 100; position: absolute; top: 0; left: 0; background: black; text-align-last: center; display: block; }
       .palette { font-size: 3.5rem; line-height: 2.7rem; }
       .loading { color: white; position: absolute; top: 220px; left: 50%; transform: translateX(-50%); }
@@ -239,5 +242,22 @@
   </div>
   
   <div id="docs" class="docs"></div>
+  <div id="video" class="video">
+    <div class="row" style="display: flex">
+      <div style="display: block">
+        <span id="video-status" style="width: 100vw;">&nbsp</span><br>
+        <span id="video-classified" style="width: 100vw;">&nbsp</span><br>
+        <span id="video-detected" style="width: 100vw;">&nbsp</span><br>
+        <span id="video-person" style="width: 100vw;">&nbsp</span>
+      </div>
+      <div style="position: fixed; right: 0; display: flex">
+        <span style="margin: 10px"><i id="btn-facing" class="navbarbutton fad fa-sync-alt"></i><p id="text-facing">Camera: Front</p></span>
+        <span style="margin: 10px"><i id="btn-play" class="navbarbutton fad fa-play-circle"></i><p id="text-play">Live Video</p></span>
+      </div>
+    </div>
+    <div id="videosection" class="row main">
+      <video id="videocanvas" nocontrols loop controlslist="nodownload,nofullscreen,noremoteplayback"></video>
+    </div>
+  </div>
 </body>
 </html>

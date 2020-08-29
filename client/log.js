@@ -33,8 +33,8 @@ async function div(id, append, ...msg) {
   const elem = document.getElementById(id);
   const ts = await debug(...msg);
   if (elem) {
-    const html = `<span class="timestamp">${ts}</span> ${str(...msg).replace(/  /g, '&nbsp')}<br>`;
-    if (append) elem.innerHTML += html;
+    const html = `<span class="timestamp">${ts}</span> ${str(...msg).replace(/  /g, '&nbsp')}`;
+    if (append) elem.innerHTML += html + '<br>';
     else elem.innerHTML = html;
     elem.scrollTop = elem.scrollHeight;
   }
