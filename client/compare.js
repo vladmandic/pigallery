@@ -45,7 +45,7 @@ async function init() {
   // tf.ENV.set('WEBGL_PACK_IMAGE_OPERATIONS', false);
   // tf.ENV.set('WEBGL_PACK_UNARY_OPERATIONS', false);
 
-  if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
+  if (!config.floatPrecision) tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
   const f = `float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`;
   log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.batchProcessing} image resize: ${config.maxSize}px shape: ${config.squareImage ? 'square' : 'native'} ${f}`);
 }

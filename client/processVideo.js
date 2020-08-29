@@ -27,7 +27,7 @@ async function loadModels() {
   log.div('log', true, `Initializing TensorFlow/JS version ${tf.version.tfjs}`);
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
-  if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
+  if (!config.floatPrecision) await tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
   log.div('log', true, `Configured Backend: ${tf.getBackend().toUpperCase()}`);
   log.div('log', true, 'Configuration:');
   log.div('log', true, `  Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);

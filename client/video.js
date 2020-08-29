@@ -1,179 +1,177 @@
 const config = require('./config.js').default;
-const process = require('./processVideo.js');
+const definitions = require('./models.js').models;
+const modelClassify = require('./modelClassify.js');
+const modelDetect = require('./modelDetect.js');
 
-window.config = config;
-const ghost = 500;
+let tf = window.tf;
+let faceapi = window.faceapi;
 let video;
-let parent;
 let front = true;
+const exec = { classify: null, detect: null, person: null };
 
-function createCanvas() {
-  const canvas = document.createElement('canvas');
-  const left = $('#video').offset().left;
-  canvas.style.left = `${left}px`;
-  const top = $('#video').offset().top;
-  canvas.style.top = `${top}px`;
-  canvas.width = $('#video').width();
-  canvas.height = $('#video').height();
-  canvas.style.position = 'absolute';
-  canvas.style.border = 'px solid';
-  return canvas;
+async function stop() {
+  video.pause();
+  $('#video-status').text('Stopping camera ...');
+  const tracks = video.srcObject ? video.srcObject.getTracks() : null;
+  if (tracks) tracks.forEach((track) => track.stop());
 }
-async function drawDetectionBoxes(object) {
-  if (!object || !object.detect || object.detect.length === 0) return;
-  const canvas = createCanvas();
+
+function roundRect(ctx, x, y, width, height, radius = 5, fill = false, stroke = true) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+  if (fill) ctx.fill();
+  if (stroke) ctx.stroke();
+}
+
+let previousDetect = null;
+async function drawDetect(object) {
+  const parent = document.getElementById('videosection');
+  if (parent && previousDetect) {
+    const ctx = previousDetect.getContext('2d');
+    ctx.clearRect(0, 0, previousDetect.width, previousDetect.height);
+    parent.removeChild(previousDetect);
+    previousDetect = null;
+  }
+  if (!parent || !object || !object.detected || object.detected.length === 0) return;
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.border = 'px solid';
+  canvas.style.top = `${$('#videocanvas').offset().top}px`;
+  canvas.style.left = `${$('#videocanvas').offset().left}px`;
+  canvas.width = $('#videocanvas').width();
+  canvas.height = $('#videocanvas').height();
   parent.appendChild(canvas);
   const ctx = canvas.getContext('2d');
   ctx.strokeStyle = 'lightyellow';
   ctx.fillStyle = 'lightyellow';
-  ctx.linewidth = 2;
-  ctx.font = '16px Roboto';
-  const resizeX = $('#main').width() / object.canvas.width;
-  const resizeY = $('#main').height() / object.canvas.height;
-  for (const obj of object.detect) {
-    ctx.beginPath();
+  ctx.lineWidth = 4;
+  ctx.font = 'small-caps 16px Lato';
+  const resizeX = $('#videocanvas').width() / video.videoWidth;
+  const resizeY = $('#videocanvas').height() / video.videoHeight;
+  for (const obj of object.detected) {
     const x = obj.box[0] * resizeX;
     const y = obj.box[1] * resizeY;
-    const width = obj.box[2] * resizeX;
-    const height = obj.box[3] * resizeY;
-    ctx.rect(x, y, width, height);
-    ctx.stroke();
+    ctx.globalAlpha = 0.4;
+    roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, false, true);
+    ctx.globalAlpha = 1;
     ctx.fillText(`${(100 * obj.score).toFixed(0)}% ${obj.class}`, x + 2, y + 18);
   }
-  setTimeout(() => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    parent.removeChild(canvas);
-  }, ghost);
+  previousDetect = canvas;
 }
 
-async function drawFaces(object) {
-  if (!object || !object.face || object.face.length < 1) return;
-  const canvas = createCanvas();
+let previousPerson = null;
+async function drawPerson(object) {
+  const parent = document.getElementById('videosection');
+  if (parent && previousPerson) {
+    const ctx = previousPerson.getContext('2d');
+    ctx.clearRect(0, 0, previousPerson.width, previousPerson.height);
+    parent.removeChild(previousPerson);
+    previousPerson = null;
+  }
+  if (!parent || !object || !object.detected || object.detected.length === 0) return;
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.border = 'px solid';
+  canvas.style.top = `${$('#videocanvas').offset().top}px`;
+  canvas.style.left = `${$('#videocanvas').offset().left}px`;
+  canvas.width = $('#videocanvas').width();
+  canvas.height = $('#videocanvas').height();
   parent.appendChild(canvas);
   const ctx = canvas.getContext('2d');
-  const resizeX = $('#main').width() / object.canvas.width;
-  const resizeY = $('#main').height() / object.canvas.height;
-  for (const i in object.face) {
-    const x = object.face[i].detection.box.x * resizeX;
-    const y = object.face[i].detection.box.y * resizeY;
-    const width = object.face[i].detection.box.width * resizeX;
-    const height = object.face[i].detection.box.height * resizeY;
-    ctx.strokeStyle = 'deepskyblue';
-    ctx.fillStyle = 'deepskyblue';
-    ctx.beginPath();
-    ctx.rect(x, y, width, height);
-    ctx.stroke();
-    ctx.fillText(`face#${1 + parseInt(i)}`, x + 2, y + 18);
+  ctx.strokeStyle = 'deepskyblue';
+  ctx.fillStyle = 'deepskyblue';
+  ctx.lineWidth = 4;
+  ctx.font = 'small-caps 1rem Lato';
+  const resizeX = $('#videocanvas').width() / video.videoWidth;
+  const resizeY = $('#videocanvas').height() / video.videoHeight;
+  for (const res of object.person) {
+    const x = res.detection.box.x * resizeX;
+    const y = res.detection.box.y * resizeY;
+    ctx.globalAlpha = 0.4;
+    roundRect(ctx, x, y, res.detection.box.width * resizeX, res.detection.box.height * resizeY, 10, false, true);
+    ctx.globalAlpha = 1;
+    ctx.font = 'small-caps 1rem Lato';
+    ctx.fillText(`${res.gender} ${res.age.toFixed(1)}y`, x + 2, y + 18);
     ctx.fillStyle = 'lightblue';
+    ctx.globalAlpha = 0.5;
     const pointSize = 2;
-    for (const pt of object.face[i].landmarks.positions) {
+    for (const pt of res.landmarks.positions) {
       ctx.beginPath();
-      ctx.arc(pt._x * resizeX, pt._y * resizeY, pointSize, 0, 2 * Math.PI);
+      ctx.arc(pt.x * resizeX, pt.y * resizeY, pointSize, 0, 2 * Math.PI);
       ctx.fill();
     }
   }
-  setTimeout(() => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    parent.removeChild(canvas);
-  }, ghost);
+  previousPerson = canvas;
 }
 
-async function showDetails(object) {
-  if (!object) return;
-  let detected = 'Objects';
-  if (object.detect) {
-    for (const obj of object.detect) detected += ` | ${(100 * obj.score).toFixed(0)}% ${obj.class}`;
+async function print(obj) {
+  let classified = '';
+  if (obj.classified) {
+    classified = 'Classified';
+    for (const res of obj.classified) classified += ` | ${Math.round(res.score * 100)}% ${res.class}`;
   }
-  let face = 'People';
-  if (object.face) {
-    for (const person of object.face) face += ` | ${(100 * person.genderProbability).toFixed(0)}% ${person.gender} ${person.age.toFixed(1)}y`;
+  $('#video-classified').text(classified);
+
+  let detected = '';
+  if (obj.detected) {
+    detected = 'Detected';
+    for (const res of obj.detected) detected += ` | ${Math.round(res.score * 100)}% ${res.class}`;
   }
-  $('#detected').text(detected);
-  $('#face').text(face);
+  $('#video-detected').text(detected);
+  let person = '';
+  if (obj.person) {
+    person = 'Person';
+    for (const res of obj.person) person += ` | ${Math.round(100 * res.genderProbability)}% ${res.gender} ${res.age.toFixed(1)}y`;
+  }
+  $('#video-person').text(person);
 }
 
-function time(t0) {
-  const t1 = window.performance.now();
-  return Math.round(t1 - t0).toLocaleString();
+async function process() {
+  if (video.paused || video.ended) return;
+  if (video.readyState > 1) {
+    const obj = { classified: null, detected: null, person: null };
+    const t0 = window.performance.now();
+    obj.classified = await modelClassify.classify(exec.classify, video);
+    const t1 = window.performance.now();
+    obj.detected = await modelDetect.exec(exec.detect, video);
+    const t2 = window.performance.now();
+    obj.person = await faceapi
+      .detectAllFaces(video, exec.person)
+      .withFaceLandmarks()
+      .withAgeAndGender();
+    const t3 = window.performance.now();
+    await print(obj);
+    await drawDetect(obj);
+    await drawPerson(obj);
+    const t4 = window.performance.now();
+    $('#video-status').text(`Performance: ${(1000 / (t3 - t0)).toFixed(1)} FPS | Classify ${Math.floor(t1 - t0)} ms | Detect ${Math.floor(t2 - t1)} ms | Person ${Math.floor(t3 - t2)} ms | Draw ${Math.floor(t4 - t3)} ms`);
+  }
+  setTimeout(process, 50);
 }
 
-async function loadModels() {
-  $('#active').text('Loading Models ...');
-  $('#detected').text('');
-  $('#face').text('');
-  const t0 = window.performance.now();
-  const state = await process.load();
-  $('#active').text(`Ready in ${time(t0)} ms: Loaded ${state.tensors.toLocaleString()} tensors in ${state.bytes.toLocaleString()} bytes`);
-}
-
-// eslint-disable-next-line no-unused-vars
-function average(nums) {
-  return nums.reduce((a, b) => (a + b)) / nums.length;
-}
-
-async function startProcessing() {
-  video.removeEventListener('loadeddata', startProcessing);
-  $('#text-resolution').text(`${video.videoWidth} x ${video.videoHeight}`);
-
+async function camera() {
+  $('#video-status').text('Warming up ...');
+  video.removeEventListener('loadeddata', camera);
   const ratio = 1.0 * video.videoWidth / video.videoHeight;
   video.width = ratio >= 1 ? $('#main').width() : 1.0 * $('#main').height() * ratio;
   video.height = video.width / ratio;
-
-  while (!video.paused && !video.ended) {
-    const t0 = window.performance.now();
-    const object = video.readyState > 1 ? await process.process(video) : null;
-    const t1 = window.performance.now();
-    const fps = 1000 / (t1 - t0);
-    $('#active').text(`Performance: ${fps.toFixed(1)} FPS detect ${object.timeDetect.toFixed(0)} ms face ${object.timeFace.toFixed(0)} ms`);
-    await showDetails(object);
-    await drawDetectionBoxes(object);
-    await drawFaces(object);
-  }
-  $('#active').text('Idle ...');
+  setTimeout(process, 100);
 }
 
-async function startWebcam() {
-  video.removeEventListener('load', startProcessing);
-  // const ratio = 1.0 * video.videoWidth / video.videoHeight;
-  // video.width = ratio >= 1 ? $('#main').width() : 1.0 * $('#main').height() * ratio;
-  // video.height = video.width / ratio;
-  video.width = window.innerWidth;
-
-  // while (true) {
-  for (let i = 0; i < 1; i++) {
-    const t0 = window.performance.now();
-    // const uri = video.src;
-    // video.src = uri;
-    const object = await process.process(video);
-    const t1 = window.performance.now();
-    const fps = 1000 / (t1 - t0);
-    $('#active').text(`Performance: ${fps.toFixed(1)} FPS detect ${object.timeDetect.toFixed(0)} ms face ${object.timeFace.toFixed(0)} ms`);
-    await showDetails(object);
-    await drawDetectionBoxes(object);
-    await drawFaces(object);
-  }
-  $('#active').text('Idle ...');
-}
-
-async function stopProcessing() {
-  const stream = video.srcObject;
-  const tracks = stream ? stream.getTracks() : null;
-  if (tracks) tracks.forEach((track) => track.stop());
-}
-
-// eslint-disable-next-line no-unused-vars
-async function getCameraStream() {
-  // console.log(tf.models);
-  if (!process.models.detect) {
-    $('#active').text('Models not loaded ...');
-    return;
-  }
-  $('#video').toggle(true);
-  $('#image').toggle(false);
-  video = document.getElementById('video');
-  video.addEventListener('loadeddata', startProcessing);
+async function start() {
+  $('#video-status').text('Starting camera ...');
+  video = document.getElementById('videocanvas');
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    $('#active').text('Camera not supported');
+    $('#video-status').text('Camera not supported');
     return;
   }
   const constraints = {
@@ -184,85 +182,53 @@ async function getCameraStream() {
       facingMode: front ? 'user' : 'environment',
     },
   };
-  const stream = await navigator.mediaDevices.getUserMedia(constraints);
-  video.srcObject = stream;
-  await video.play();
+  video.addEventListener('loadeddata', camera);
+  video.srcObject = await navigator.mediaDevices.getUserMedia(constraints);
+  video.play();
 }
 
-// eslint-disable-next-line no-unused-vars
-async function getVideoStream(url) {
-  if (!url) return;
-  $('#video').toggle(true);
-  $('#image').toggle(false);
-  video = document.getElementById('video');
-  video.addEventListener('loadeddata', startProcessing);
-  video.src = url;
-  await video.play();
-  $('#text-resolution').text(`${video.videoWidth} x ${video.videoHeight}`);
-}
+async function init() {
+  $('#video-status').text('Initializing ...');
+  tf = window.tf;
+  await tf.setBackend(config.backEnd);
+  await tf.enableProdMode();
+  await tf.dispose();
+  tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
+  exec.classify = await modelClassify.load(definitions.video.classify);
+  exec.detect = await modelDetect.load(definitions.video.detect);
 
-// eslint-disable-next-line no-unused-vars
-async function getWebcamStream(url) {
-  if (!url) return;
-  $('#video').toggle(false);
-  $('#image').toggle(true);
-  video = document.getElementById('image');
-  video.addEventListener('load', startWebcam);
-  // video.crossOrigin = 'anonymous'; // doesn't work as access to image canvas is blocked for non-cors loaded images and cors doesn't work on webcams
-  video.src = url;
-  $('#text-resolution').text(`${video.naturalWidth} x ${video.naturalHeight}`);
-}
+  faceapi = window.faceapi;
+  const options = definitions.video.person;
+  $('#video-status').text('Loading models ...');
+  if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
+  if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
+  await faceapi.nets.ageGenderNet.load(options.modelPath);
+  await faceapi.nets.faceLandmark68Net.load(options.modelPath);
+  if (options.exec === 'yolo') exec.person = new faceapi.TinyFaceDetectorOptions(options);
+  if (options.exec === 'ssd') exec.person = new faceapi.SsdMobilenetv1Options(options);
 
-async function handlers() {
-  $('#btn-load').click(() => {
-    loadModels();
-  });
+  const engine = await tf.engine();
+  $('#video-status').text(`Loaded Models: ${tf.getBackend()} backend ${engine.state.numBytes.toLocaleString()} bytes ${engine.state.numTensors.toLocaleString()} tensors`);
 
   $('#btn-play').click(() => {
     $('#btn-play').toggleClass('fa-play-circle fa-pause-circle');
     if ($('#btn-play').hasClass('fa-play-circle')) {
       $('#text-play').text('Live Video');
-      if (!video) video = document.getElementById('image');
-      video.pause();
-      stopProcessing();
+      stop();
     } else {
       $('#text-play').text('Pause Video');
-      $('#active').text('Warming up models ...');
-
-      // use one of: getCameraStream, getVideoStream, getWebcamStream
-
-      // using live front/back camera
-      getCameraStream();
-
-      // using jpeg captured from webcam
-      // getWebcamStream('https://reolink-white/cgi-bin/api.cgi?cmd=Snap&channel=0&rs=wuuPhkmUCeI9WG7C&user=admin&password=xxxx');
-
-      // using webcam stream transcoded from rtsp to hls
-      // ffmpeg -hide_banner -y -i rtsp://admin:xxxx@reolink-black:554/h264Preview_01_main -fflags flush_packets -max_delay 2 -flags -global_header -hls_time 4 -hls_list_size 4 -hls_wrap 4 -vcodec copy black.m3u8
-      // getVideoStream('media/Webcam/black.m3u8');
-
-      // using mp4 video file
-      // getVideoStream('media/Samples/Videos/video-appartment.mp4');
-      // getVideoStream('media/Samples/Videos/video-jen.mp4');
-      // getVideoStream('media/Samples/Videos/video-dash.mp4');
-      // getVideoStream('media/Samples/Videos/video-r1.mp4');
+      start();
     }
   });
 
   $('#btn-facing').click(() => {
     front = !front;
     $('#text-facing').text(front ? 'Camera: Front' : 'Camera: Back');
-    getCameraStream();
+    start();
   });
+
+  $('#btn-play').click();
 }
 
-async function main() {
-  parent = document.getElementById('main');
-  handlers();
-}
-
-window.onload = main;
-
-// exports.camera = getCameraStream;
-// exports.webcam = getWebcamStream;
-// exports.video = getVideoStream;
+exports.init = init;
+exports.stop = stop;

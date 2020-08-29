@@ -9,6 +9,7 @@ const list = require('./list.js');
 const log = require('./log.js');
 const map = require('./map.js');
 const menu = require('./menu.js');
+const video = require('./video.js');
 const options = require('./options.js');
 const pwa = require('./pwa-register.js');
 
@@ -405,6 +406,8 @@ function resizeViewport() {
   $('#popup').height($('body').height() - parseInt($('#optionsview').css('height')));
   $('#docs').css('top', $('#optionsview').css('height'));
   $('#docs').height($('body').height() - parseInt($('#optionsview').css('height')));
+  $('#video').css('top', $('#optionsview').css('height'));
+  $('#video').height($('body').height() - parseInt($('#optionsview').css('height')));
 }
 
 // show/hide navigation bar elements
@@ -416,6 +419,7 @@ function showNavbar(elem) {
   $('#map').toggle(false);
   if (elem && elem[0] !== $('#popup')[0]) $('#popup').toggle(false);
   if (elem && elem[0] !== $('#docs')[0]) $('#docs').toggle(false);
+  if (elem && elem[0] !== $('#video')[0]) $('#video').toggle(false);
   if (elem && elem[0] !== $('#searchbar')[0]) $('#searchbar').toggle(false);
   if (elem && elem[0] !== $('#userbar')[0]) $('#userbar').toggle(false);
   if (elem && elem[0] !== $('#optionslist')[0]) $('#optionslist').toggle(false);
@@ -571,7 +575,6 @@ async function initListHandlers() {
   // navline user docs
   $('#btn-doc').click(async () => {
     await showNavbar($('#docs'));
-    // $('#docs').click(() => $('#docs').toggle('fast'));
     if ($('#docs').css('display') !== 'none') {
       const res = await fetch('/README.md');
       const md = await res.text();
@@ -582,7 +585,6 @@ async function initListHandlers() {
   // navline user changelog
   $('#btn-changelog').click(async () => {
     await showNavbar($('#docs'));
-    // $('#docs').click(() => $('#docs').toggle('fast'));
     if ($('#docs').css('display') !== 'none') {
       const res = await fetch('/CHANGELOG.md');
       const md = await res.text();
@@ -683,9 +685,12 @@ async function initListHandlers() {
 
   // navbar livevideo
   // starts live video detection in a separate window
-  $('#btn-video').click(() => {
+  $('#btn-video').click(async () => {
     log.div('log', true, 'Starting Live Video interface ...');
-    window.open('/video', '_blank');
+    // window.open('/video', '_blank');
+    await showNavbar($('#video'));
+    if ($('#video').css('display') !== 'none') video.init();
+    else video.stop();
   });
 
   // navbar images number

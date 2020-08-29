@@ -34,7 +34,7 @@ async function loadModels() {
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   await tf.dispose();
-  if (!config.floatPrecision) await tf.webgl.forceHalfFloat();
+  if (!config.floatPrecision) tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
   log.div('log', true, `Configured Backend: ${tf.getBackend().toUpperCase()}`);
   log.div('log', true, 'Configuration:');
   log.div('log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
