@@ -117,9 +117,13 @@ async function drawPerson(object) {
 }
 
 async function print(obj) {
-  const track = video.srcObject.getVideoTracks()[0];
-  const settings = track.getSettings();
-  $('#video-camera').text(`${track.label} Video: ${video.width} x ${video.height} Camera: ${settings.width} x ${settings.height}`);
+  if (video.srcObject) {
+    const track = video.srcObject.getVideoTracks()[0];
+    const settings = track.getSettings();
+    $('#video-camera').text(`${track.label} Video: ${video.width} x ${video.height} Camera: ${settings.width} x ${settings.height}`);
+  } else {
+    $('#video-camera').text(`Video: ${video.src}`);
+  }
 
   let classified = '';
   if (obj.classified) {
@@ -142,9 +146,14 @@ async function print(obj) {
   $('#video-person').text(person);
 }
 
+let firstFrame = true;
 async function process() {
-  if (video.paused || video.ended) return;
+  if (video.paused || video.ended) {
+    log.debug(`Video status: paused:${video.paused} ended:${video.ended} ready:${video.readyState}`);
+    return;
+  }
   if (video.readyState > 1) {
+    if (firstFrame) video.pause();
     const obj = { classified: null, detected: null, person: null };
     const t0 = window.performance.now();
     obj.classified = await modelClassify.classify(exec.classify, video);
@@ -161,14 +170,20 @@ async function process() {
     await drawPerson(obj);
     const t4 = window.performance.now();
     $('#video-status').text(`Performance: ${(1000 / (t3 - t0)).toFixed(1)} FPS | Classify ${Math.floor(t1 - t0)} ms | Detect ${Math.floor(t2 - t1)} ms | Person ${Math.floor(t3 - t2)} ms | Draw ${Math.floor(t4 - t3)} ms`);
+    if (firstFrame) {
+      video.play();
+      firstFrame = false;
+    }
   }
   setTimeout(process, 50);
 }
 
 async function camera() {
-  const track = video.srcObject.getVideoTracks()[0];
-  log.debug('Video capabilities', track.getCapabilities());
-  log.debug('Video settings', video.srcObject.getVideoTracks()[0].getSettings());
+  if (video.srcObject) {
+    const track = video.srcObject.getVideoTracks()[0];
+    log.debug('Video capabilities', track.getCapabilities());
+    log.debug('Video settings', video.srcObject.getVideoTracks()[0].getSettings());
+  }
   $('#video-status').text('Warming up ...');
   video.removeEventListener('loadeddata', camera);
   const ratio = 1.0 * video.videoWidth / video.videoHeight;
@@ -177,42 +192,40 @@ async function camera() {
   setTimeout(process, 100);
 }
 
-async function start() {
+async function start(url) {
   $('#video-status').text('Starting camera ...');
   video = document.getElementById('videocanvas');
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    $('#video-status').text('Camera not supported');
-    return;
-  }
-  const constraints = {
-    audio: false,
-    video: {
-      width: { max: 3840 },
-      height: { max: 3840 },
-      facingMode: front ? 'user' : 'environment',
-    },
-  };
-  if (window.innerHeight > window.innerWidth) constraints.video.height.ideal = window.innerHeight;
-  else constraints.video.width.ideal = window.innerWidth;
   video.addEventListener('loadeddata', camera);
-  let stream;
-  let track;
   try {
-    stream = await navigator.mediaDevices.getUserMedia(constraints);
-    track = stream.getVideoTracks()[0];
+    if (url) {
+      video.src = url;
+    } else {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        $('#video-status').text('Camera not supported');
+        return;
+      }
+      const constraints = {
+        audio: false,
+        video: {
+          width: { max: 3840 },
+          height: { max: 3840 },
+          facingMode: front ? 'user' : 'environment',
+        },
+      };
+      if (window.innerHeight > window.innerWidth) constraints.video.height.ideal = window.innerHeight;
+      else constraints.video.width.ideal = window.innerWidth;
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const track = stream.getVideoTracks()[0];
+      if (track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: 0 }); // stop strech & crop
+      video.srcObject = stream;
+    }
+    video.play();
   } catch (err) {
     $('#video-status').text(err);
   }
-  if (stream && track) {
-    video.srcObject = stream;
-    video.play();
-    if (track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: 0 }); // stop strech & crop
-    window.stream = stream;
-    window.track = track;
-  }
 }
 
-async function init() {
+async function init(url) {
   $('#video-status').text('Initializing ...');
   tf = window.tf;
   await tf.setBackend(config.backEnd);
@@ -242,7 +255,7 @@ async function init() {
       stop();
     } else {
       $('#text-play').text('Pause Video');
-      start();
+      start(url);
     }
   });
 
@@ -255,7 +268,7 @@ async function init() {
   $(window).resize(() => {
     if (video && (video.readyState > 1)) {
       stop();
-      start();
+      start(url);
     }
   });
 

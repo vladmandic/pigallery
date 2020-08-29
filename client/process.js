@@ -7,32 +7,37 @@ let id = 0;
 
 // initial complex image is used to trigger all models thus warming them up
 async function warmupModels() {
-  log.div('log', true, 'TensorFlow models warming up ...');
+  log.div('process-log', true, 'TensorFlow models warming up ...');
   const t0 = window.performance.now();
   const res = await process.process('assets/warmup.jpg');
   if (res.error) {
-    log.div('log', true, 'Aborting current run due to error during warmup');
+    log.div('process-log', true, 'Aborting current run due to error during warmup');
     setTimeout(() => window.location.reload(true), 2500);
   }
   const t1 = window.performance.now();
-  log.div('log', true, `TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
+  log.div('process-log', true, `TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
+  log.div('process-log', true, 'TensorFlow flags: <br>', window.tf.ENV.flags);
 }
 
 // calls main detectxion and then print results for all images matching spec
 async function processFiles() {
-  log.div('log', true, 'Requesting file list from server ...');
+  log.div('process-log', true, 'Requesting file list from server ...');
   const res = await fetch('/api/list');
   const dirs = await res.json();
   let files = [];
   for (const dir of dirs) {
-    log.div('log', true, `  Queued folder: ${dir.location.folder} matching: ${dir.location.match || '*'} recursive: ${dir.location.recursive || false} force: ${dir.location.force || false} pending: ${dir.files.length}`);
+    log.div('process-log', true, `  Analyzing folder: ${dir.location.folder} matching: ${dir.location.match || '*'} recursive: ${dir.location.recursive || false} force: ${dir.location.force || false} pending: ${dir.files.length}`);
     files = [...files, ...dir.files];
+  }
+  if (files.length === 0) {
+    log.div('process-log', true, 'No new images found');
+    return;
   }
   await process.load();
   await warmupModels();
   const t0 = window.performance.now();
   const promises = [];
-  log.div('log', true, `Processing images: ${files.length}`);
+  log.div('process-log', true, `Processing images: ${files.length}`);
   let error = false;
   let stuckTimer = new Date();
   const checkAlive = setInterval(() => { // reload window if no progress for 60sec
@@ -44,7 +49,7 @@ async function processFiles() {
       promises.push(process.process(url).then((obj) => {
         results[id] = obj;
         // eslint-disable-next-line no-console
-        log.div('active', false, `[${results.length}/${files.length}] Processed ${obj.image} in ${obj.perf.total.toLocaleString()} ms size ${JSON.stringify(obj).length.toLocaleString()} bytes`);
+        log.div('process-active', false, `[${results.length}/${files.length}] Processed ${obj.image} in ${obj.perf.total.toLocaleString()} ms size ${JSON.stringify(obj).length.toLocaleString()} bytes`);
         log.debug('Processed', obj.image, obj);
         error = (obj.error === true) || error;
         id += 1;
@@ -60,22 +65,25 @@ async function processFiles() {
   clearInterval(checkAlive);
   const t1 = window.performance.now();
   if (files.length > 0) {
-    log.div('log', true, `Processed ${results.length} of ${files.length} images in ${Math.round(t1 - t0).toLocaleString()}ms ${Math.round((t1 - t0) / results.length).toLocaleString()}ms avg`);
-    log.div('log', true, `Results: ${results.length} images in total ${JSON.stringify(results).length.toLocaleString()} bytes average ${Math.round((JSON.stringify(results).length / results.length)).toLocaleString()} bytes`);
+    log.div('process-log', true, `Processed ${results.length} of ${files.length} images in ${Math.round(t1 - t0).toLocaleString()}ms ${Math.round((t1 - t0) / results.length).toLocaleString()}ms avg`);
+    log.div('process-log', true, `Results: ${results.length} images in total ${JSON.stringify(results).length.toLocaleString()} bytes average ${Math.round((JSON.stringify(results).length / results.length)).toLocaleString()} bytes`);
   }
   if (error) {
-    log.div('log', true, 'Aborting current run due to error');
+    log.div('process-log', true, 'Aborting current run due to error');
     setTimeout(() => window.location.reload(true), 2500);
   }
-  log.div('active', false, 'Idle ...');
+  log.div('process-active', false, 'Idle ...');
 }
 
-async function main() {
+async function start() {
+  log.div('log', true, 'Image database update requested ...');
+  log.server('Image DB Update');
   const t0 = window.performance.now();
-  log.div('active', false, 'Starting ...');
+  log.div('process-active', false, 'Starting ...');
   await processFiles();
   const t1 = window.performance.now();
-  log.div('log', true, `Image Analysis done: ${Math.round(t1 - t0).toLocaleString()}ms`);
+  log.div('process-log', true, `Image Analysis done: ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
 
-window.onload = main;
+// window.onload = main;
+exports.start = start;
