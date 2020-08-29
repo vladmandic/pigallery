@@ -1,3 +1,4 @@
+const log = require('./log.js');
 const config = require('./config.js').default;
 const definitions = require('./models.js').models;
 const modelClassify = require('./modelClassify.js');
@@ -116,6 +117,10 @@ async function drawPerson(object) {
 }
 
 async function print(obj) {
+  const track = video.srcObject.getVideoTracks()[0];
+  const settings = track.getSettings();
+  $('#video-camera').text(`${track.label} Video: ${video.width} x ${video.height} Camera: ${settings.width} x ${settings.height}`);
+
   let classified = '';
   if (obj.classified) {
     classified = 'Classified';
@@ -161,7 +166,10 @@ async function process() {
 }
 
 async function camera() {
-  $('#video-status').text(`Resolution: ${video.videoWidth} x ${video.videoHeight} | Warming up ...`);
+  const track = video.srcObject.getVideoTracks()[0];
+  log.debug('Video capabilities', track.getCapabilities());
+  log.debug('Video settings', video.srcObject.getVideoTracks()[0].getSettings());
+  $('#video-status').text('Warming up ...');
   video.removeEventListener('loadeddata', camera);
   const ratio = 1.0 * video.videoWidth / video.videoHeight;
   video.width = ratio >= 1 ? $('#main').width() : 1.0 * $('#main').height() * ratio;
@@ -179,14 +187,29 @@ async function start() {
   const constraints = {
     audio: false,
     video: {
-      width: { min: 480, ideal: $('#main').width(), max: 3840 },
-      height: { min: 480, ideal: $('#main').height(), max: 3840 },
+      width: { max: 3840 },
+      height: { max: 3840 },
       facingMode: front ? 'user' : 'environment',
     },
   };
+  if (window.innerHeight > window.innerWidth) constraints.video.height.ideal = window.innerHeight;
+  else constraints.video.width.ideal = window.innerWidth;
   video.addEventListener('loadeddata', camera);
-  video.srcObject = await navigator.mediaDevices.getUserMedia(constraints);
-  video.play();
+  let stream;
+  let track;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia(constraints);
+    track = stream.getVideoTracks()[0];
+  } catch (err) {
+    $('#video-status').text(err);
+  }
+  if (stream && track) {
+    video.srcObject = stream;
+    video.play();
+    if (track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: 0 }); // stop strech & crop
+    window.stream = stream;
+    window.track = track;
+  }
 }
 
 async function init() {

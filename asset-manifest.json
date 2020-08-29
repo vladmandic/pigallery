@@ -232,8 +232,11 @@
       ]
     },
     "client/video.js": {
-      "bytes": 8896,
+      "bytes": 9729,
       "imports": [
+        {
+          "path": "client/log.js"
+        },
         {
           "path": "client/config.js"
         },
@@ -265,7 +268,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 428879
+      "bytes": 430165
     },
     "dist/gallery.js": {
       "imports": [],
@@ -313,7 +316,7 @@
           "bytesInOutput": 2677
         },
         "client/video.js": {
-          "bytesInOutput": 5884
+          "bytesInOutput": 6404
         },
         "client/options.js": {
           "bytesInOutput": 5711
@@ -325,12 +328,12 @@
           "bytesInOutput": 20158
         }
       },
-      "bytes": 135170
+      "bytes": 135690
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 49333
+      "bytes": 50619
     },
     "dist/video.js": {
       "imports": [],
@@ -351,10 +354,10 @@
           "bytesInOutput": 2643
         },
         "client/video.js": {
-          "bytesInOutput": 5810
+          "bytesInOutput": 6329
         }
       },
-      "bytes": 18430
+      "bytes": 18949
     },
     "dist/process.js.map": {
       "imports": [],
