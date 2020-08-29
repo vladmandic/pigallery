@@ -1,11 +1,21 @@
 # PiGallery Change Log
 
+### **origin/HEAD** 2020/08/29 cyan00@gmail.com
+
+- video interface
+- new live video module
+- optimized shares management
+- updated screenshots
+- updated docs
+
+### **2.0.2** 2020/08/28 cyan00@gmail.com
+
+- updated
+
 ### **v2.0.2** 2020/08/28 cyan00@gmail.com
 
 - removed radix
-
-### **origin/HEAD** 2020/08/28 cyan00@gmail.com
-
+- smudge
 - smudge
 - smudge users
 - added config.json
