@@ -15,10 +15,9 @@ PiGallery uses private branches of following public distributions due to followi
 
 ## Future Features
 
-- Move video to main window
-- Move process to main window
 - User DB management client-side
 - User DB check server-side
+- Move compare to main app as test feature
 - Server-side processing using TFJS-Node: nVidia CUDA on WSL2 requires kernel 4.19.121 current 4.19.104  
   <https://ubuntu.com/blog/getting-started-with-cuda-on-ubuntu-on-wsl-2>  
   <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>  

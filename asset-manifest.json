@@ -50,7 +50,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 31197,
+      "bytes": 31257,
       "imports": [
         {
           "path": "client/config.js"
@@ -81,6 +81,9 @@
         },
         {
           "path": "client/video.js"
+        },
+        {
+          "path": "client/process.js"
         },
         {
           "path": "client/options.js"
@@ -121,7 +124,7 @@
       ]
     },
     "client/log.js": {
-      "bytes": 1485,
+      "bytes": 1487,
       "imports": []
     },
     "client/map.js": {
@@ -187,7 +190,7 @@
       ]
     },
     "client/process.js": {
-      "bytes": 3424,
+      "bytes": 3834,
       "imports": [
         {
           "path": "client/log.js"
@@ -201,7 +204,7 @@
       ]
     },
     "client/processImage.js": {
-      "bytes": 10790,
+      "bytes": 11030,
       "imports": [
         {
           "path": "client/modelClassify.js"
@@ -232,7 +235,7 @@
       ]
     },
     "client/video.js": {
-      "bytes": 9729,
+      "bytes": 10141,
       "imports": [
         {
           "path": "client/log.js"
@@ -268,13 +271,13 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 430165
+      "bytes": 453390
     },
     "dist/gallery.js": {
       "imports": [],
       "inputs": {
         "client/log.js": {
-          "bytesInOutput": 988
+          "bytesInOutput": 990
         },
         "client/config.js": {
           "bytesInOutput": 5656
@@ -283,13 +286,13 @@
           "bytesInOutput": 3222
         },
         "node_modules/moment/moment.js": {
-          "bytesInOutput": 60175
+          "bytesInOutput": 60214
         },
         "client/details.js": {
           "bytesInOutput": 10695
         },
         "client/blockhash.js": {
-          "bytesInOutput": 1995
+          "bytesInOutput": 2003
         },
         "client/init.js": {
           "bytesInOutput": 964
@@ -313,10 +316,16 @@
           "bytesInOutput": 1806
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2677
+          "bytesInOutput": 2681
         },
         "client/video.js": {
-          "bytesInOutput": 6404
+          "bytesInOutput": 6596
+        },
+        "client/processImage.js": {
+          "bytesInOutput": 6089
+        },
+        "client/process.js": {
+          "bytesInOutput": 2549
         },
         "client/options.js": {
           "bytesInOutput": 5711
@@ -325,21 +334,21 @@
           "bytesInOutput": 663
         },
         "client/gallery.js": {
-          "bytesInOutput": 20158
+          "bytesInOutput": 20108
         }
       },
-      "bytes": 135690
+      "bytes": 144523
     },
     "dist/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 50619
+      "bytes": 51219
     },
     "dist/video.js": {
       "imports": [],
       "inputs": {
         "client/log.js": {
-          "bytesInOutput": 977
+          "bytesInOutput": 979
         },
         "client/config.js": {
           "bytesInOutput": 5651
@@ -354,21 +363,21 @@
           "bytesInOutput": 2643
         },
         "client/video.js": {
-          "bytesInOutput": 6329
+          "bytesInOutput": 6519
         }
       },
-      "bytes": 18949
+      "bytes": 19141
     },
     "dist/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 65297
+      "bytes": 66105
     },
     "dist/process.js": {
       "imports": [],
       "inputs": {
         "client/log.js": {
-          "bytesInOutput": 977
+          "bytesInOutput": 979
         },
         "client/config.js": {
           "bytesInOutput": 5651
@@ -386,24 +395,24 @@
           "bytesInOutput": 1444
         },
         "client/processImage.js": {
-          "bytesInOutput": 5865
+          "bytesInOutput": 6007
         },
         "client/process.js": {
-          "bytesInOutput": 2195
+          "bytesInOutput": 2534
         }
       },
-      "bytes": 22636
+      "bytes": 23139
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 95844
+      "bytes": 96083
     },
     "dist/compare.js": {
       "imports": [],
       "inputs": {
         "client/log.js": {
-          "bytesInOutput": 987
+          "bytesInOutput": 989
         },
         "client/config.js": {
           "bytesInOutput": 5655
@@ -424,13 +433,13 @@
           "bytesInOutput": 1444
         },
         "client/processImage.js": {
-          "bytesInOutput": 5872
+          "bytesInOutput": 6014
         },
         "client/compare.js": {
           "bytesInOutput": 6805
         }
       },
-      "bytes": 32607
+      "bytes": 32751
     },
     "dist/worker.js.map": {
       "imports": [],

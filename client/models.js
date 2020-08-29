@@ -41,11 +41,11 @@ exports.models = {
     // { name: 'OpenImages RCNN/Inception-ResNet v2', modelPath: 'models/rcnn-inception-resnet-v2', score: 0.2, topK: 6, classes: 'assets/OpenImage-Labels.json', exec: 'ssd' },
   ],
   person: [
-    { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 1, size: 416 },
+    { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 5, size: 416 },
   ],
   video: {
     classify: { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
-    detect: { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/coco-ssd-mobilenet-v2', score: 0.4, topK: 6, overlap: 0.5, useFloat: false, exec: 'coco' },
-    person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 1, size: 416 },
+    detect: { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/coco-ssd-mobilenet-v2', score: 0.4, topK: 5, overlap: 0.5, useFloat: false, exec: 'coco' },
+    person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },
   },
 };

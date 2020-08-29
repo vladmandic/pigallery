@@ -29,27 +29,27 @@ async function loadModels() {
   tf.ENV.set('WEBGL_PACK', false);
   tf.ENV.set('WEBGL_CONV_IM2COL', false);
 
-  log.div('log', true, 'Starting Image Analsys');
-  log.div('log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
+  log.div('process-log', true, 'Starting Image Analsys');
+  log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   await tf.dispose();
   if (!config.floatPrecision) tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
-  log.div('log', true, `Configured Backend: ${tf.getBackend().toUpperCase()}`);
-  log.div('log', true, 'Configuration:');
-  log.div('log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
-  log.div('log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
-  log.div('log', true, `  Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);
-  log.div('log', true, 'Image Classification models:');
+  log.div('process-log', true, 'Configuration:');
+  log.div('process-log', true, `  Backend: ${tf.getBackend().toUpperCase()}`);
+  log.div('process-log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
+  log.div('process-log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
+  log.div('process-log', true, `  Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`);
+  log.div('process-log', true, 'Image Classification models:');
   for (const model of definitions.classify) {
-    log.div('log', true, `  ${JSONtoStr(model)}`);
+    log.div('process-log', true, `  ${JSONtoStr(model)}`);
   }
-  log.div('log', true, 'Object Detection models:');
+  log.div('process-log', true, 'Object Detection models:');
   for (const model of definitions.detect) {
-    log.div('log', true, `  ${JSONtoStr(model)}`);
+    log.div('process-log', true, `  ${JSONtoStr(model)}`);
   }
-  log.div('log', true, 'Face Detection model:');
-  log.div('log', true, `  ${JSONtoStr(definitions.person)}`);
+  log.div('process-log', true, 'Face Detection model:');
+  log.div('process-log', true, `  ${JSONtoStr(definitions.person)}`);
   const t0 = window.performance.now();
 
   models.classify = [];
@@ -68,8 +68,10 @@ async function loadModels() {
     }
   }
 
+  // eslint-disable-next-line no-use-before-define
+  faceapi.classify = faceapiClassify;
   if (definitions.person[0]) {
-    const options = definitions.models.person[0];
+    const options = definitions.person[0];
     if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
     if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
     await faceapi.nets.ageGenderNet.load(options.modelPath);
@@ -82,7 +84,7 @@ async function loadModels() {
   }
 
   /* working but unreliable
-  log.div('log', true, '  Model: DarkNet/Yolo-v3');
+  log.div('process-log', true, '  Model: DarkNet/Yolo-v3');
   models.yolo = await yolo.v1tiny('/models/yolo-v1-tiny/model.json');
   models.yolo = await yolo.v2tiny('/models/yolo-v2-tiny/model.json');
   models.yolo = await yolo.v3tiny('/models/yolo-v3-tiny/model.json');
@@ -90,9 +92,9 @@ async function loadModels() {
   */
 
   const t1 = window.performance.now();
-  log.div('log', true, `TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
+  log.div('process-log', true, `TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
   const engine = await tf.engine();
-  log.div('log', true, `TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
+  log.div('process-log', true, `TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
 }
 
 function flattenObject(object) {
@@ -104,7 +106,7 @@ function flattenObject(object) {
   return stripped;
 }
 
-faceapi.classify = async (image) => {
+async function faceapiClassify(image) {
   const results = await faceapi.detectAllFaces(image, faceapi.options)
     .withFaceLandmarks()
     .withFaceExpressions()
@@ -126,7 +128,7 @@ faceapi.classify = async (image) => {
     faces.push(object);
   }
   return faces;
-};
+}
 
 async function getImage(url) {
   return new Promise((resolve) => {
@@ -173,8 +175,8 @@ async function getImage(url) {
 
 async function processImage(name) {
   if (config.batchProcessing === 1) tf.engine().startScope();
-  log.div('state', false, `Engine state: ${tf.memory().numBytes.toLocaleString()} bytes ${tf.memory().numTensors.toLocaleString()} 
-    tensors ${tf.memory().numDataBuffers.toLocaleString()} buffers ${tf.memory().numBytesInGPU ? tf.memory().numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
+  const mem = tf.memory();
+  log.div('process-state', false, `Engine state: ${mem.numBytes.toLocaleString()} bytes ${mem.numTensors.toLocaleString()} tensors ${mem.numDataBuffers.toLocaleString()} buffers ${mem.numBytesInGPU ? mem.numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj = {};
   obj.image = name;
 
@@ -201,7 +203,7 @@ async function processImage(name) {
       }
     }
   } catch (err) {
-    log.div('log', true, `Error during classification for ${name}: ${err}`);
+    log.div('process-log', true, `Error during classification for ${name}: ${err}`);
     error = true;
   }
   // const tc1 = window.performance.now();
@@ -218,7 +220,7 @@ async function processImage(name) {
       }
     }
   } catch (err) {
-    log.div('log', true, `Error during detection for ${name}: ${err}`);
+    log.div('process-log', true, `Error during detection for ${name}: ${err}`);
     error = true;
   }
   // const td1 = window.performance.now();
@@ -227,7 +229,7 @@ async function processImage(name) {
     try {
       resClassify = await Promise.all(promisesClassify);
     } catch (err) {
-      log.div('log', true, `Error during classification for ${name}: ${err}`);
+      log.div('process-log', true, `Error during classification for ${name}: ${err}`);
       error = true;
     }
     for (const i in resClassify) {
@@ -242,7 +244,7 @@ async function processImage(name) {
     try {
       resDetect = await Promise.all(promisesDetect);
     } catch (err) {
-      log.div('log', true, `Error during detection for ${name}: ${err}`);
+      log.div('process-log', true, `Error during detection for ${name}: ${err}`);
       error = true;
     }
     for (const i in resDetect) {
@@ -259,7 +261,7 @@ async function processImage(name) {
   try {
     if (!error && models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
   } catch (err) {
-    log.div('log', true, `Error in FaceAPI for ${name}: ${err}`);
+    log.div('process-log', true, `Error in FaceAPI for ${name}: ${err}`);
     error = true;
   }
   // const tp1 = window.performance.now();
@@ -270,7 +272,7 @@ async function processImage(name) {
   if (config.batchProcessing === 1) tf.engine().endScope();
 
   if (!error) {
-    log.div('active', false, `Processed: ${name}`);
+    log.div('process-active', false, `Processed: ${name}`);
     fetch('/api/metadata', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -10,6 +10,7 @@ const log = require('./log.js');
 const map = require('./map.js');
 const menu = require('./menu.js');
 const video = require('./video.js');
+const process = require('./process.js');
 const options = require('./options.js');
 const pwa = require('./pwa-register.js');
 
@@ -401,13 +402,16 @@ async function showContextPopup(evt) {
 function resizeViewport() {
   $('#main').height(window.innerHeight - $('#log').height() - $('#navbar').height() - 16);
   if ($('#popup').css('display') !== 'none') details.show();
-
-  $('#popup').css('top', $('#optionsview').css('height'));
-  $('#popup').height($('body').height() - parseInt($('#optionsview').css('height')));
-  $('#docs').css('top', $('#optionsview').css('height'));
-  $('#docs').height($('body').height() - parseInt($('#optionsview').css('height')));
-  $('#video').css('top', $('#optionsview').css('height'));
-  $('#video').height($('body').height() - parseInt($('#optionsview').css('height')));
+  const top = $('#optionsview').css('height');
+  const height = $('body').height() - parseInt($('#optionsview').css('height'));
+  $('#popup').css('top', top);
+  $('#popup').height(height);
+  $('#docs').css('top', top);
+  $('#docs').height(height);
+  $('#video').css('top', top);
+  $('#video').height(height);
+  $('#process').css('top', top);
+  $('#process').height(height);
 }
 
 // show/hide navigation bar elements
@@ -420,6 +424,7 @@ function showNavbar(elem) {
   if (elem && elem[0] !== $('#popup')[0]) $('#popup').toggle(false);
   if (elem && elem[0] !== $('#docs')[0]) $('#docs').toggle(false);
   if (elem && elem[0] !== $('#video')[0]) $('#video').toggle(false);
+  if (elem && elem[0] !== $('#process')[0]) $('#process').toggle(false);
   if (elem && elem[0] !== $('#searchbar')[0]) $('#searchbar').toggle(false);
   if (elem && elem[0] !== $('#userbar')[0]) $('#userbar').toggle(false);
   if (elem && elem[0] !== $('#optionslist')[0]) $('#optionslist').toggle(false);
@@ -560,13 +565,13 @@ async function initListHandlers() {
   });
 
   // navline user update db
-  // starts image processing in a separate window
-  $('#btn-update').click(() => {
+  $('#btn-update').click(async () => {
     if (window.user.admin) {
-      log.div('log', true, 'Image database update requested ...');
-      log.server('Image DB Update');
-      showNavbar();
-      window.open('/process', '_blank');
+      await showNavbar($('#process'));
+      if ($('#process').css('display') !== 'none') {
+        await process.start();
+        await loadGallery(window.options.listLimit);
+      }
     } else {
       log.div('log', true, 'Image database update not authorized');
     }
@@ -634,7 +639,6 @@ async function initListHandlers() {
   // navline search cancel
   $('#btn-resetsearch').click(() => {
     $('#search-input')[0].value = '';
-    // filterResults('');
     sortResults(window.options.listSortOrder);
   });
 
@@ -684,13 +688,15 @@ async function initListHandlers() {
   });
 
   // navbar livevideo
-  // starts live video detection in a separate window
   $('#btn-video').click(async () => {
     log.div('log', true, 'Starting Live Video interface ...');
-    // window.open('/video', '_blank');
     await showNavbar($('#video'));
     if ($('#video').css('display') !== 'none') video.init();
     else video.stop();
+    // 'media/Samples/Videos/video-appartment.mp4'
+    // 'media/Samples/Videos/video-jen.mp4'
+    // 'media/Samples/Videos/video-dash.mp4'
+    // 'media/Samples/Videos/video-r1.mp4'
   });
 
   // navbar images number
@@ -780,5 +786,3 @@ async function main() {
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
 window.onhashchange = (evt) => hashChange(evt);
 window.onload = main;
-
-// exports.load = loadGallery;

@@ -242,6 +242,13 @@
   </div>
   
   <div id="docs" class="docs"></div>
+
+  <div id="process" class="docs">
+    <div id="process-active" style="background: var(--title); padding: 8px; margin-bottom: 8px; font-size: 1.2rem; height: 52px"></div>
+    <div id="process-state" style="background: var(--title); padding: 8px; margin-bottom: 8px; font-size: 1.2rem; height: 52px;"></div>
+    <div id="process-log" class="row" style="overflow-y: scroll; overflow-wrap: anywhere; display: block;"></div> 
+  </div>
+
   <div id="video" class="video">
     <div class="row" style="display: flex">
       <div style="display: block">
@@ -256,7 +263,7 @@
         <span style="margin: 10px"><i id="btn-play" class="navbarbutton fad fa-play-circle"></i><p id="text-play">Live Video</p></span>
       </div>
     </div>
-    <div id="videosection" class="row main" style="margin-top: 20px">
+    <div id="videosection" class="row main">
       <video id="videocanvas" nocontrols loop controlslist="nodownload,nofullscreen,noremoteplayback"></video>
     </div>
   </div>
