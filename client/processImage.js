@@ -69,12 +69,15 @@ async function loadModels() {
   }
 
   if (definitions.person[0]) {
-    await faceapi.nets.tinyFaceDetector.load(definitions.person[0].modelPath);
-    faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: definitions.person[0].score, inputSize: definitions.person[0].size });
-    await faceapi.nets.ageGenderNet.load(definitions.person[0].modelPath);
-    await faceapi.nets.faceLandmark68Net.load(definitions.person[0].modelPath);
-    await faceapi.nets.faceRecognitionNet.load(definitions.person[0].modelPath);
-    await faceapi.nets.faceExpressionNet.load(definitions.person[0].modelPath);
+    const options = definitions.models.person[0];
+    if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
+    if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
+    await faceapi.nets.ageGenderNet.load(options.modelPath);
+    await faceapi.nets.faceLandmark68Net.load(options.modelPath);
+    await faceapi.nets.faceRecognitionNet.load(options.modelPath);
+    await faceapi.nets.faceExpressionNet.load(options.modelPath);
+    if (options.exec === 'yolo') faceapi.options = new faceapi.TinyFaceDetectorOptions(options);
+    if (options.exec === 'ssd') faceapi.options = new faceapi.SsdMobilenetv1Options(options);
     models.faceapi = faceapi;
   }
 

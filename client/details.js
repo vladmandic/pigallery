@@ -6,6 +6,29 @@ const log = require('./log.js');
 let viewer;
 let thief;
 
+function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null) {
+  ctx.lineWidth = lineWidth;
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+  if (fillStyle) {
+    ctx.fillStyle(fillStyle);
+    ctx.fill();
+  }
+  if (strokeStyle) {
+    ctx.strokeStyle = strokeStyle;
+    ctx.stroke();
+  }
+}
+
 // combine results from multiple model results
 function combineResults(object) {
   const res = [];
@@ -73,40 +96,31 @@ function drawBoxes(object) {
 
   // draw detected objects
   if (window.options.viewBoxes && object.detect) {
-    ctx.strokeStyle = 'lightyellow';
-    ctx.fillStyle = 'lightyellow';
-    ctx.lineWidth = 4;
     for (const obj of object.detect) {
       const x = obj.box[0] * resizeX;
       const y = obj.box[1] * resizeY;
-      ctx.globalAlpha = 0.2;
-      ctx.beginPath();
-      ctx.rect(x, y, obj.box[2] * resizeX, obj.box[3] * resizeY);
-      ctx.stroke();
+      ctx.globalAlpha = 0.4;
+      roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, 4, 'lightyellow', null);
       ctx.globalAlpha = 1;
+      ctx.fillStyle = 'lightyellow';
       ctx.font = 'small-caps 1rem Lato';
-      ctx.fillText(`${(100 * obj.score).toFixed(0)}% ${obj.class}`, x + 2, y + 18);
+      ctx.fillText(obj.class, x + 2, y + 18);
     }
   }
 
   // draw faces
   if (window.options.viewFaces && object.person) {
-    ctx.strokeStyle = 'deepskyblue';
-    ctx.fillStyle = 'deepskyblue';
-    ctx.lineWidth = 3;
     for (const i in object.person) {
       if (object.person[i].box) {
         // draw box around face
         const x = object.person[i].box.x * resizeX;
         const y = object.person[i].box.y * resizeY;
-        ctx.globalAlpha = 0.4;
-        ctx.beginPath();
-        ctx.rect(x, y, object.person[i].box.width * resizeX, object.person[i].box.height * resizeY);
-        ctx.stroke();
+        ctx.globalAlpha = 0.6;
+        roundRect(ctx, x, y, object.person[i].box.width * resizeX, object.person[i].box.height * resizeY, 10, 3, 'deepskyblue', null);
         ctx.globalAlpha = 1;
+        ctx.fillStyle = 'deepskyblue';
         ctx.font = 'small-caps 1rem Lato';
-        ctx.fillText(`face#${1 + parseInt(i)}`, x + 2, y + 18);
-
+        ctx.fillText(`${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`, x + 2, y + 18);
         // draw face points
         ctx.fillStyle = 'lightblue';
         ctx.globalAlpha = 0.5;
