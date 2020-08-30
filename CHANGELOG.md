@@ -2,6 +2,11 @@
 
 ### **origin/HEAD** 2020/08/29 cyan00@gmail.com
 
+
+### **v2.0.3** 2020/08/29 cyan00@gmail.com
+
+- moved processing and video to spa
+- tweaking video processing
 - video interface
 - new live video module
 - optimized shares management

@@ -1,7 +1,7 @@
 const esbuild = require('esbuild');
 const log = require('@vladmandic/pilogger');
 
-const entryPoints = ['client/gallery.js', 'client/video.js', 'client/process.js', 'client/compare.js', 'client/worker.js'];
+const entryPoints = ['client/gallery.js', 'client/compare.js', 'client/worker.js'];
 let service;
 
 async function init() {

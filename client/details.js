@@ -1,4 +1,5 @@
-/* global ImageViewer, ColorThief */
+import ColorThief from '../assets/color-thief.esm.js';
+import ImageViewer from '../assets/iv-viewer.js';
 
 const moment = require('moment');
 const log = require('./log.js');
@@ -211,7 +212,6 @@ async function showDetails(img) {
   $('#details-faces').removeClass('fa-head-side-cough fa-head-side-cough-slash');
   $('#details-faces').addClass(window.options.viewFaces ? 'fa-head-side-cough' : 'fa-head-side-cough-slash');
 
-  // http://ignitersworld.com/lab/imageViewer.html
   if (!viewer) {
     const div = document.getElementById('popup-image');
     viewer = new ImageViewer(div, { zoomValue: 500, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });

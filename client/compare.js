@@ -1,22 +1,21 @@
+import * as tf from '../assets/tf.es2017.js';
+
+const jQuery = require('jquery');
+const faceapi = require('../assets/face-api.node');
 const log = require('./log.js');
 const config = require('./config.js').default;
-
-let faceapi = window.faceapi;
 const modelClassify = require('./modelClassify.js');
 const modelDetect = require('./modelDetect.js');
 const modelYolo = require('./modelYolo.js');
 const processImage = require('./processImage.js');
 const definitions = require('./models.js');
 
-let tf = window.tf;
-
+window.$ = jQuery;
 const models = [];
 window.cache = [];
 
 async function init() {
   const res = await fetch('/api/user');
-  tf = window.tf;
-  faceapi = window.faceapi;
   if (res.ok) window.user = await res.json();
   if (window.user && window.user.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
@@ -30,6 +29,8 @@ async function init() {
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
+  window.tf = tf;
+  window.faceapi = faceapi;
 
   // tf.ENV.set('WEBGL_BUFFER_SUPPORTED', false);
   // tf.ENV.set('WEBGL_CONV_IM2COL', false);
