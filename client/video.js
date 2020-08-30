@@ -11,15 +11,17 @@ let front = true;
 const exec = { classify: null, detect: null, person: null };
 
 async function stop() {
-  video.pause();
-  $('#video-status').text('Stopping camera ...');
+  if (!video) return;
+  await video.pause();
   const tracks = video.srcObject ? video.srcObject.getTracks() : null;
   if (tracks) tracks.forEach((track) => track.stop());
-  video.pause();
+  await video.pause();
+  setTimeout(() => $('#video-status').text('Camera stopped ...'), 250);
 }
 
-function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null) {
+function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null, alpha = 1, title = null) {
   ctx.lineWidth = lineWidth;
+  ctx.globalAlpha = alpha;
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
   ctx.lineTo(x + width - radius, y);
@@ -31,13 +33,20 @@ function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeSt
   ctx.lineTo(x, y + radius);
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
-  if (fillStyle) {
-    ctx.fillStyle(fillStyle);
-    ctx.fill();
-  }
   if (strokeStyle) {
     ctx.strokeStyle = strokeStyle;
+    ctx.fillStyle = strokeStyle;
     ctx.stroke();
+  }
+  if (fillStyle) {
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ctx.lineWidth = 1;
+  if (title) {
+    ctx.font = 'small-caps 1rem Lato';
+    ctx.fillText(title, x + 4, y + 16);
   }
 }
 
@@ -66,11 +75,7 @@ async function drawDetect(object) {
   for (const obj of object.detected) {
     const x = obj.box[0] * resizeX;
     const y = obj.box[1] * resizeY;
-    ctx.globalAlpha = 0.4;
-    roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, 4, 'lightyellow', null);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = 'lightyellow';
-    ctx.fillText(obj.class, x + 2, y + 18);
+    roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, 4, 'lightyellow', null, 0.4, obj.class);
   }
   previousDetect = canvas;
 }
@@ -100,16 +105,12 @@ async function drawPerson(object) {
   for (const res of object.person) {
     const x = res.detection.box.x * resizeX;
     const y = res.detection.box.y * resizeY;
-    ctx.globalAlpha = 0.4;
-    roundRect(ctx, x, y, res.detection.box.width * resizeX, res.detection.box.height * resizeY, 10, 3, 'deepskyblue', null);
-    ctx.globalAlpha = 1;
+    roundRect(ctx, x, y, res.detection.box.width * resizeX, res.detection.box.height * resizeY, 10, 3, 'deepskyblue', null, 0.4, `${res.gender} ${res.age.toFixed(1)}y`);
     ctx.fillStyle = 'lightblue';
-    ctx.fillText(`${res.gender} ${res.age.toFixed(1)}y`, x + 2, y + 18);
     ctx.globalAlpha = 0.5;
-    const pointSize = 2;
     for (const pt of res.landmarks.positions) {
       ctx.beginPath();
-      ctx.arc(pt.x * resizeX, pt.y * resizeY, pointSize, 0, 2 * Math.PI);
+      ctx.arc(pt.x * resizeX, pt.y * resizeY, 2, 0, 2 * Math.PI);
       ctx.fill();
     }
   }
@@ -226,6 +227,7 @@ async function start(url) {
 }
 
 async function init(url) {
+  log.server('Starting Live Video');
   $('#video-status').text('Initializing ...');
   tf = window.tf;
   await tf.setBackend(config.backEnd);

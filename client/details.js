@@ -7,8 +7,9 @@ const log = require('./log.js');
 let viewer;
 let thief;
 
-function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null) {
+function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null, alpha = 1, title = null) {
   ctx.lineWidth = lineWidth;
+  ctx.globalAlpha = alpha;
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
   ctx.lineTo(x + width - radius, y);
@@ -20,13 +21,20 @@ function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeSt
   ctx.lineTo(x, y + radius);
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
-  if (fillStyle) {
-    ctx.fillStyle(fillStyle);
-    ctx.fill();
-  }
   if (strokeStyle) {
     ctx.strokeStyle = strokeStyle;
+    ctx.fillStyle = strokeStyle;
     ctx.stroke();
+  }
+  if (fillStyle) {
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ctx.lineWidth = 1;
+  if (title) {
+    ctx.font = 'small-caps 1rem Lato';
+    ctx.fillText(title, x + 4, y + 16);
   }
 }
 
@@ -100,12 +108,7 @@ function drawBoxes(object) {
     for (const obj of object.detect) {
       const x = obj.box[0] * resizeX;
       const y = obj.box[1] * resizeY;
-      ctx.globalAlpha = 0.4;
-      roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, 4, 'lightyellow', null);
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = 'lightyellow';
-      ctx.font = 'small-caps 1rem Lato';
-      ctx.fillText(obj.class, x + 2, y + 18);
+      roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, 4, 'lightyellow', null, 0.4, obj.class);
     }
   }
 
@@ -116,12 +119,7 @@ function drawBoxes(object) {
         // draw box around face
         const x = object.person[i].box.x * resizeX;
         const y = object.person[i].box.y * resizeY;
-        ctx.globalAlpha = 0.6;
-        roundRect(ctx, x, y, object.person[i].box.width * resizeX, object.person[i].box.height * resizeY, 10, 3, 'deepskyblue', null);
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = 'deepskyblue';
-        ctx.font = 'small-caps 1rem Lato';
-        ctx.fillText(`${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`, x + 2, y + 18);
+        roundRect(ctx, x, y, object.person[i].box.width * resizeX, object.person[i].box.height * resizeY, 10, 3, 'deepskyblue', null, 0.6, `${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`);
         // draw face points
         ctx.fillStyle = 'lightblue';
         ctx.globalAlpha = 0.5;
