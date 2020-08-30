@@ -4,8 +4,8 @@
       "bytes": 6397,
       "imports": []
     },
-    "assets/face-api.node.js": {
-      "bytes": 932649,
+    "assets/face-api.cjs": {
+      "bytes": 935531,
       "imports": []
     },
     "assets/iv-viewer.js": {
@@ -32,7 +32,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 12991,
+      "bytes": 12990,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -41,7 +41,7 @@
           "path": "node_modules/jquery/dist/jquery.js"
         },
         {
-          "path": "assets/face-api.node.js"
+          "path": "assets/face-api.cjs"
         },
         {
           "path": "client/log.js"
@@ -92,7 +92,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 30606,
+      "bytes": 30605,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -104,7 +104,7 @@
           "path": "node_modules/jquery/dist/jquery.js"
         },
         {
-          "path": "assets/face-api.node.js"
+          "path": "assets/face-api.cjs"
         },
         {
           "path": "client/config.js"
@@ -365,7 +365,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6606070
+      "bytes": 6611054
     },
     "dist/gallery.js": {
       "imports": [],
@@ -394,8 +394,8 @@
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 93714
         },
-        "assets/face-api.node.js": {
-          "bytesInOutput": 329253
+        "assets/face-api.cjs": {
+          "bytesInOutput": 329273
         },
         "client/log.js": {
           "bytesInOutput": 996
@@ -467,12 +467,12 @@
           "bytesInOutput": 19685
         }
       },
-      "bytes": 1539337
+      "bytes": 1539291
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6073394
+      "bytes": 6078378
     },
     "dist/compare.js": {
       "imports": [],
@@ -501,8 +501,8 @@
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 93351
         },
-        "assets/face-api.node.js": {
-          "bytesInOutput": 328171
+        "assets/face-api.cjs": {
+          "bytesInOutput": 328193
         },
         "client/log.js": {
           "bytesInOutput": 996
@@ -532,7 +532,7 @@
           "bytesInOutput": 7224
         }
       },
-      "bytes": 1365224
+      "bytes": 1365246
     },
     "dist/worker.js.map": {
       "imports": [],

@@ -15,6 +15,7 @@ PiGallery uses private branches of following public distributions due to followi
 
 ## Future Features
 
+- Validate full install from scratch
 - User DB management client-side
 - User DB check server-side
 - Move compare to main app as test feature
