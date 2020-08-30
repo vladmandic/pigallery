@@ -425,6 +425,7 @@
         const baseBottom = 0; // containerDim.h - baseTop;
 
         const zoom = function zoom() {
+          if (!imageDim) return;
           step++;
           if (step < 16) _this._frames.zoomFrame = requestAnimationFrame(zoom);
           const tickZoom = easeOutQuart(step, curPerc, perc - curPerc, 16);

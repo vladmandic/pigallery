@@ -35,8 +35,7 @@
 
 ### And it's **FAST**
 
-- Initial access (no cache) of database with 10,000 images completes in less than 1 minute  
-  (if your internet link is not a bottleneck)
+- Initial access (no cache) of database with 10,000 images completes in less than 1 minute (depending on your network speed)
 - Subsequent access (cached) with incremental database updates: less than 5 seconds for application startup and gallery load
 
 If you'd like to include any additional image analysis (additional machine models or static analysis), drop a note!
@@ -49,25 +48,25 @@ If you'd like to include any additional image analysis (additional machine model
 
 <center>
 
-### Gallery view
+### Screenshot: Gallery view
 
 ![alt text](assets/screenshot-gallery.png)
 
-### Detailed View
+### Screenshot: Detailed View
 
 ![alt text](assets/screenshot-details1.png)
 
 ![alt text](assets/screenshot-details2.png)
 
-### Complex Search Results
+### Screenshot: Complex Search Results
 
 ![alt text](assets/screenshot-search.png)
 
-### Live Video
+### Screenshot: Live Video
 
 ![alt text](assets/screenshot-video.png)
 
-### Image Processing
+### Screenshot: Image Processing
 
 ![alt text](assets/screenshot-processing.png)
 

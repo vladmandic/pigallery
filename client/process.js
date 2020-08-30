@@ -31,7 +31,7 @@ async function processFiles() {
   }
   if (files.length === 0) {
     log.div('process-log', true, 'No new images found');
-    return;
+    // return;
   }
   await process.load();
   await warmupModels();

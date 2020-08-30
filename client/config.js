@@ -5,16 +5,6 @@
 
 const log = require('./log.js');
 
-// load tfjs and face-api via npm module or esm script
-// window.tf = require('@tensorflow/tfjs');
-// window.faceapi = require('@vladmandic/face-api');
-/* global tf, faceapi */
-if (typeof tf !== 'undefined') window.tf = tf;
-if (typeof faceapi !== 'undefined') window.faceapi = faceapi;
-// make them use same instance of tfjs one way or the other
-// if (window.tf) window.faceapi.tf = window.tf;
-// if (window.faceapi.tf) window.tf = window.faceapi.tf;
-
 window.debug = true;
 
 // TFJS Configuration

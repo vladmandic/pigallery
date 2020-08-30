@@ -1,5 +1,8 @@
-/* global Popper, marked */
+import * as tf from '../assets/tf.es2017.js';
+import marked from '../assets/marked.esm.js';
 
+const jQuery = require('jquery');
+const faceapi = require('../assets/face-api.node');
 const config = require('./config.js');
 const db = require('./indexdb.js');
 const details = require('./details.js');
@@ -15,6 +18,7 @@ const options = require('./options.js');
 const pwa = require('./pwa-register.js');
 
 // global variables
+window.$ = jQuery;
 window.filtered = [];
 
 async function busy(text) {
@@ -35,22 +39,6 @@ async function time(fn, arg) {
   } else {
     fn(arg);
   }
-}
-
-// show tooltip with timeout
-function showTip(parent, text, timeout = 3000) {
-  const tip = document.createElement('div');
-  tip.id = 'tooltip';
-  tip.role = 'tooltip';
-  tip.className = 'popper';
-  tip.innerHTML = text;
-  parent.appendChild(tip);
-  let popup = Popper.createPopper(parent, tip, { placement: 'left', strategy: 'absolute', modifiers: [{ name: 'offset', options: { offset: [0, 20] } }] });
-  setTimeout(() => {
-    popup.destroy();
-    popup = null;
-    parent.removeChild(tip);
-  }, timeout);
 }
 
 // handles all clicks on sidebar menu (folders, locations, classes)
@@ -194,7 +182,6 @@ async function simmilarPerson(image) {
     busy();
     return;
   }
-  const faceapi = window.faceapi;
   for (const i in window.filtered) {
     const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
     window.filtered[i].simmilarity = target ? Math.round(100 * faceapi.euclideanDistance(target, descriptor)) : 100;
@@ -395,7 +382,6 @@ async function loadGallery(limit, refresh = false) {
 // popup on right-click
 async function showContextPopup(evt) {
   evt.preventDefault();
-  showTip(evt.target, `displaying ${window.filtered.length} of ${await db.count()} images`);
 }
 
 // resize viewport
@@ -558,8 +544,7 @@ async function initListHandlers() {
   });
 
   // navline user load
-  $('#btn-load').click((evt) => {
-    showTip(evt.target, `Loading maximum of ${window.options.listLimit} latest images`);
+  $('#btn-load').click(() => {
     showNavbar();
     loadGallery(window.options.listLimit);
   });
@@ -780,6 +765,9 @@ async function main() {
   await resizeViewport();
   await list.resize();
   await sortResults(window.options.listSortOrder);
+  window.tf = tf;
+  window.faceapi = faceapi;
+  log.debug('TensorFlow/JS', tf.version_core);
   log.debug(t0, 'Ready');
 }
 

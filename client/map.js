@@ -1,7 +1,5 @@
 /* global L */
 
-// eslint-disable-next-line no-unused-vars
-const config = require('./config.js').default;
 const db = require('./indexdb.js');
 const log = require('./log.js');
 const nearest = require('./nearest.js');
@@ -37,7 +35,24 @@ async function find(lat, lon) {
   list.redraw();
 }
 
+async function load() {
+  log.debug('Loading MapQuest');
+  return new Promise((resolve) => {
+    $('<link>')
+      .appendTo('head')
+      .attr({
+        type: 'text/css',
+        rel: 'stylesheet',
+        href: '/assets/mapquest.css',
+      });
+    $.getScript('/assets/mapquest.js').done(() => {
+      $.getScript('/assets/leaflet-heat.js').done(() => resolve());
+    });
+  });
+}
+
 async function show(visible) {
+  if (typeof L === 'undefined') await load();
   const t0 = window.performance.now();
   log.debug(t0, `Map show: ${visible}`);
   if (!visible && mapContainer) {
