@@ -96,31 +96,19 @@ async function loadDetect(options) {
 async function print(file, image, results) {
   window.cache.push({ file, results });
   let text = '';
-  let all = [];
   for (const model of results) {
     let classified = model.model.name || model.model;
-    all = all.concat(model.data);
-    for (const res of model.data) {
-      if (res.score && res.class) classified += ` | ${Math.round(res.score * 100)}% ${res.class} [id:${res.id}]`;
-      if (res.age && res.gender) classified += ` | gender: ${Math.round(100 * res.genderProbability)}% ${res.gender} age: ${res.age.toFixed(1)}`;
-      if (res.expression) {
-        const emotion = Object.entries(res.expressions).reduce(([keyPrev, valPrev], [keyCur, valCur]) => (valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]));
-        classified += ` emotion: ${emotion[1]}% ${emotion[0]}`;
+    if (model.data) {
+      for (const res of model.data) {
+        if (res.score && res.class) classified += ` | ${Math.round(res.score * 100)}% ${res.class} [id:${res.id}]`;
+        if (res.age && res.gender) classified += ` | gender: ${Math.round(100 * res.genderProbability)}% ${res.gender} age: ${res.age.toFixed(1)}`;
+        if (res.expression) {
+          const emotion = Object.entries(res.expressions).reduce(([keyPrev, valPrev], [keyCur, valCur]) => (valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]));
+          classified += ` emotion: ${emotion[1]}% ${emotion[0]}`;
+        }
       }
     }
     text += `${classified}<br>`;
-  }
-  const found = [];
-  all = all
-    .sort((a, b) => b.score - a.score)
-    .filter((a) => {
-      if (found.includes(a.class)) return false;
-      found.push(a.class);
-      return true;
-    });
-  let combined = 'Combined';
-  for (const res of all) {
-    combined += ` | ${Math.round(res.score * 100)}% ${res.class}`;
   }
   const item = document.createElement('div');
   item.className = 'listitem';
@@ -130,7 +118,6 @@ async function print(file, image, results) {
     </div>
     <div class="col description">
       <p class="listtitle">${file}</p>
-      ${combined}<br>
       ${text}
     </div>
   `;
@@ -143,14 +130,16 @@ async function redraw() {
 }
 
 async function classify() {
+  log.server('Compare: Classify');
   log.div('log', true, 'Loading models ...');
   for (const def of definitions.models.classify) await loadClassify(def);
-  log.div('log', true, 'Flags:', tf.ENV.flags);
 
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   await modelClassify.classify(models[0].model, warmup.canvas);
-  // console.table('Warmed up', tf.memory());
+  log.div('log', true, 'TensorFlow Memory:', tf.memory());
+  log.div('log', true, 'TensorFlow Flags:');
+  log.div('log', true, tf.ENV.flags);
 
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   // const api = await fetch('/api/dir?folder=Samples/NSFW/');
@@ -160,9 +149,6 @@ async function classify() {
   const stats = [];
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
-
-  // eslint-disable-next-line no-console
-  console.table('Starting', tf.memory());
   for (const file of files) {
     const results = [];
     const image = await processImage.getImage(file);
@@ -190,6 +176,9 @@ async function yolo() {
   const yolov2tiny = await modelYolo.v2tiny();
   const yolov3tiny = await modelYolo.v3tiny();
   const yolov3full = await modelYolo.v3();
+  log.div('log', true, 'TensorFlow Memory:', tf.memory());
+  log.div('log', true, 'TensorFlow Flags:');
+  log.div('log', true, tf.ENV.flags);
 
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   const files = await api.json();
@@ -199,8 +188,6 @@ async function yolo() {
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   let data;
-  // eslint-disable-next-line no-console
-  console.table('Starting', tf.memory());
   for (const file of files) {
     const results = [];
     const image = await processImage.getImage(file);
@@ -236,8 +223,15 @@ async function person() {
   await faceapi.nets.faceLandmark68Net.load(options.modelPath);
   await faceapi.nets.faceRecognitionNet.load(options.modelPath);
   await faceapi.nets.faceExpressionNet.load(options.modelPath);
-  if (options.exec === 'yolo') options.face = new faceapi.TinyFaceDetectorOptions(options);
-  if (options.exec === 'ssd') options.face = new faceapi.SsdMobilenetv1Options(options);
+  if (options.exec === 'yolo') faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
+  if (options.exec === 'ssd') faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
+
+  log.div('log', true, 'Warming up ...');
+  const warmup = await processImage.getImage('assets/warmup.jpg');
+  await faceapi.detectAllFaces(warmup.canvas, options.face);
+  log.div('log', true, 'TensorFlow Memory:', faceapi.tf.memory());
+  log.div('log', true, 'TensorFlow Flags:');
+  log.div('log', true, faceapi.tf.ENV.flags);
 
   engine = await tf.engine();
   stats.time1 = window.performance.now();
@@ -275,13 +269,17 @@ async function person() {
 
 // eslint-disable-next-line no-unused-vars
 async function detect() {
+  log.server('Compare: Detect');
   log.div('log', true, 'Loading models ...');
   for (const def of definitions.models.detect) await loadDetect(def);
 
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
-  // await modelDetect.detect(models[0].model, warmup.canvas);
   await modelDetect.exec(models[0].model, warmup.canvas);
+  log.div('log', true, 'TensorFlow Memory:', tf.memory());
+  log.div('log', true, 'TensorFlow Flags:');
+  log.div('log', true, tf.ENV.flags);
+
   const api = await fetch('/api/dir?folder=Samples/Objects/');
   // const api = await fetch('/api/dir?folder=Samples/NSFW/');
   const files = await api.json();
@@ -290,8 +288,7 @@ async function detect() {
   const stats = [];
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
-  // eslint-disable-next-line no-console
-  console.table('Starting', tf.memory());
+  log.div('log', true, 'TensorFlow Memory:', tf.memory());
   for (const file of files) {
     const results = [];
     const image = await processImage.getImage(file);

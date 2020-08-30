@@ -242,8 +242,8 @@ async function init(url) {
   if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
   await faceapi.nets.ageGenderNet.load(options.modelPath);
   await faceapi.nets.faceLandmark68Net.load(options.modelPath);
-  if (options.exec === 'yolo') exec.person = new faceapi.TinyFaceDetectorOptions(options);
-  if (options.exec === 'ssd') exec.person = new faceapi.SsdMobilenetv1Options(options);
+  if (options.exec === 'yolo') exec.person = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
+  if (options.exec === 'ssd') exec.person = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
 
   const engine = await tf.engine();
   $('#video-status').text(`Loaded Models: ${tf.getBackend()} backend ${engine.state.numBytes.toLocaleString()} bytes ${engine.state.numTensors.toLocaleString()} tensors`);

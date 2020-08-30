@@ -78,8 +78,8 @@ async function loadModels() {
     await faceapi.nets.faceLandmark68Net.load(options.modelPath);
     await faceapi.nets.faceRecognitionNet.load(options.modelPath);
     await faceapi.nets.faceExpressionNet.load(options.modelPath);
-    if (options.exec === 'yolo') faceapi.options = new faceapi.TinyFaceDetectorOptions(options);
-    if (options.exec === 'ssd') faceapi.options = new faceapi.SsdMobilenetv1Options(options);
+    if (options.exec === 'yolo') faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
+    if (options.exec === 'ssd') faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
     models.faceapi = faceapi;
   }
 

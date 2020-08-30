@@ -3,7 +3,6 @@ const path = require('path');
 const log = require('@vladmandic/pilogger');
 const http = require('http');
 const https = require('https');
-const http2 = require('http2');
 const express = require('express');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
@@ -84,12 +83,12 @@ async function main() {
     }
   }
   // define routes for static files
-  for (const f of ['/favicon.ico', '/manifest.json', '/asset-manifest.json', '/README.md', '/CHANGELOG.md', '/LICENSE']) {
+  for (const f of ['/favicon.ico', '/manifest.json', '/asset-manifest.json', '/README.md', '/CHANGELOG.md', '/MODELS.md', '/TODO.md', '/LICENSE']) {
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
   // define route for root
   app.get('/', (req, res) => res.sendFile('gallery.html', { root: './client' }));
-  app.get('/true', (req, res) => res.status(200).send(true));
+  app.get('/true', (req, res) => res.status(200).send(true)); // used for is-alive checks
   // define routes for folders
   const optionsStatic = { maxAge: '365d', cacheControl: true, etag: true, lastModified: true };
   app.use('/assets', express.static(path.join(root, './assets'), optionsStatic));
@@ -111,7 +110,7 @@ async function main() {
   }
 
   // start https server
-  if (global.config.server.httpsPort && global.config.server.httpsPort !== 0) {
+  if (global.config.server.httpsPort && (global.config.server.httpsPort !== 0) && fs.existsSync(global.config.server.SSLKey) && fs.existsSync(global.config.server.SSLCrt)) {
     const httpsOptions = {
       maxHeaderSize: 65536,
       key: fs.readFileSync(global.config.server.SSLKey, 'utf8'),
@@ -124,23 +123,6 @@ async function main() {
     serverHttps.on('listening', () => log.state('Server HTTPS listening:', serverHttps.address()));
     serverHttps.on('close', () => log.state('Server HTTPS closed'));
     serverHttps.listen(global.config.server.httpsPort);
-  }
-
-  // start http2 server
-  if (global.config.server.http2Port && global.config.server.http2Port !== 0) {
-    const http2Options = {
-      allowHTTP1: true,
-      maxHeaderSize: 65536,
-      key: fs.readFileSync(global.config.server.SSLKey, 'utf8'),
-      cert: fs.readFileSync(global.config.server.SSLCrt, 'utf8'),
-      requestCert: false,
-      rejectUnauthorized: false,
-    };
-    const serverHttp2 = http2.createServer(http2Options, app);
-    serverHttp2.on('error', (err) => log.error(err.message));
-    serverHttp2.on('listening', () => log.state('Server HTTP2 listening:', serverHttp2.address()));
-    serverHttp2.on('close', () => log.state('Server HTTPS closed'));
-    serverHttp2.listen(global.config.server.http2Port);
   }
 
   // initialize api calls
