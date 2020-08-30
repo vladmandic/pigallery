@@ -182,7 +182,7 @@
       "imports": []
     },
     "client/map.js": {
-      "bytes": 3197,
+      "bytes": 3211,
       "imports": [
         {
           "path": "client/indexdb.js"
@@ -365,7 +365,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6606141
+      "bytes": 6606096
     },
     "dist/gallery.js": {
       "imports": [],
@@ -428,7 +428,7 @@
           "bytesInOutput": 1522
         },
         "client/map.js": {
-          "bytesInOutput": 2079
+          "bytesInOutput": 1981
         },
         "client/menu.js": {
           "bytesInOutput": 3952
@@ -467,7 +467,7 @@
           "bytesInOutput": 19685
         }
       },
-      "bytes": 1539425
+      "bytes": 1539327
     },
     "dist/compare.js.map": {
       "imports": [],
