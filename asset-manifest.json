@@ -241,7 +241,7 @@
       ]
     },
     "client/process.js": {
-      "bytes": 3837,
+      "bytes": 3834,
       "imports": [
         {
           "path": "client/log.js"
@@ -344,19 +344,19 @@
       "bytes": 709,
       "imports": []
     },
-    "node_modules/string_decoder/lib/string_decoder.js": {
-      "bytes": 9465,
-      "imports": [
-        {
-          "path": "node_modules/string_decoder/node_modules/safe-buffer/index.js"
-        }
-      ]
-    },
-    "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
+    "node_modules/safe-buffer/index.js": {
       "bytes": 1529,
       "imports": [
         {
           "path": "node_modules/buffer/index.js"
+        }
+      ]
+    },
+    "node_modules/string_decoder/lib/string_decoder.js": {
+      "bytes": 9465,
+      "imports": [
+        {
+          "path": "node_modules/safe-buffer/index.js"
         }
       ]
     }
@@ -365,7 +365,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6606096
+      "bytes": 6606070
     },
     "dist/gallery.js": {
       "imports": [],
@@ -382,7 +382,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21028
         },
-        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
+        "node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {
@@ -449,7 +449,7 @@
           "bytesInOutput": 6232
         },
         "client/process.js": {
-          "bytesInOutput": 2567
+          "bytesInOutput": 2577
         },
         "client/options.js": {
           "bytesInOutput": 5720
@@ -467,12 +467,12 @@
           "bytesInOutput": 19685
         }
       },
-      "bytes": 1539327
+      "bytes": 1539337
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6073422
+      "bytes": 6073394
     },
     "dist/compare.js": {
       "imports": [],
@@ -489,7 +489,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21028
         },
-        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
+        "node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {

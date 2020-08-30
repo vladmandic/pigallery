@@ -49,13 +49,6 @@ async function dependencyCheck() {
   });
 }
 
-async function auditCheck() {
-  npm.auditjs = await exec('./node_modules/.bin/auditjs ossi --quiet --json', 'OSSI audit check');
-  for (const pkg of npm.auditjs) {
-    process.stdout.write(`OSSI vulnerability in ${pkg.coordinates}\n`);
-  }
-}
-
 async function deleteExamples() {
   await exec('find node_modules -type d -name "example*" -exec rm -rf {} \\; 2>/dev/null', 'Deleting module samples');
 }
@@ -83,13 +76,13 @@ async function main() {
   npm.installOpt = await exec('npm install --only=opt --json', 'NPM install optional modules');
 
   // ncu upgrade
-  process.stdout.write('Skipping NCU force upgrade modules\n');
+  process.stdout.write('NCU force upgrade modules\n');
   // eslint-disable-next-line node/no-unpublished-require
-  // const ncu = require('npm-check-updates'); // eariliest we can load it
-  // npm.ncu = await ncu.run({ jsonUpgraded: true, upgrade: true, packageManager: 'npm', silent: true });
+  const ncu = require('npm-check-updates'); // eariliest we can load it
+  npm.ncu = await ncu.run({ jsonUpgraded: true, upgrade: true, packageManager: 'npm', silent: true });
 
   // npm optimize
-  npm.update = await exec('npm update --depth=5 --json', 'NPM update modules');
+  npm.update = await exec('npm update --depth=10 --json', 'NPM update modules');
   npm.dedupe = await exec('npm dedupe --json', 'NPM deduplicate modules');
   npm.prune = await exec('npm prune --no-production --json', 'NPM prune unused modules');
   // npm.audit = await exec('npm audit fix --json', 'NPM audit modules');

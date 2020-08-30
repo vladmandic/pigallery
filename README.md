@@ -234,6 +234,7 @@ Result of all metadata processing is a very flexbile search engine - take a look
 - **Changelog**: <https://github.com/vladmandic/pigallery/CHANGELOG.md>  
 - **Todo List**: <https://github.com/vladmandic/pigallery/TODO.md>  
 - **Notes on Models**: <https://github.com/vladmandic/pigallery/MODELS.md>  
+- **License**: <https://github.com/vladmandic/pigallery/LICENSE>  
 
 <br>
 <br>
