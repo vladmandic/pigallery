@@ -1,4 +1,10 @@
 # PiGallery Change Log
+
+### **v2.0.4** 2020/08/30 cyan00@gmail.com
+
+- removed utils
+- implemented cleancss css merging
+- optimize live video
 - cleaned up docs and compare module
 
 ### **origin/HEAD** 2020/08/29 cyan00@gmail.com

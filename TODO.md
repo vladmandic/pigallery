@@ -2,7 +2,7 @@
 
 ## Bugs
 
-- Block some operations until load complete: Live Video, DB Update, Map
+- Block some operations until background load complete: Live Video, DB Update, Map
 
 ## Notes
 
