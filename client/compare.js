@@ -1,7 +1,7 @@
 import * as tf from '../assets/tf.es2017.js';
 
 const jQuery = require('jquery');
-const faceapi = require('../assets/face-api.node');
+const faceapi = require('../assets/face-api.cjs');
 const log = require('./log.js');
 const config = require('./config.js').default;
 const modelClassify = require('./modelClassify.js');

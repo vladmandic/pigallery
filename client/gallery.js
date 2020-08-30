@@ -2,7 +2,7 @@ import * as tf from '../assets/tf.es2017.js';
 import marked from '../assets/marked.esm.js';
 
 const jQuery = require('jquery');
-const faceapi = require('../assets/face-api.node');
+const faceapi = require('../assets/face-api.cjs');
 const config = require('./config.js');
 const db = require('./indexdb.js');
 const details = require('./details.js');
