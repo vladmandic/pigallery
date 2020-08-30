@@ -1,10 +1,77 @@
 # Moodels
 
-## Learning
+## Image Processing
 
-- Google ML Course: <https://developers.google.com/machine-learning/crash-course>
+- If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory.  
+  Just restart processing and it will continue from the last known good result.
+- Model load time can be from few seconds to over a minute depending on model size (in MB)
+- Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
+- Once models are loaded and ready, actual processing is ~1sec per image
+- Image analysis is maximized out-of-the-box for a GPU-accelerated system using WebGL acceleration and GPU with minimum of 4GB of memory  
+- For high-end systems with 8GB or higher, you can further enable ImageNet 21k models  
+- For low-end systems with 2GB or less, enable analysis based on MobileNet v2 and EfficientNet B0  
+- Usage without GPU acceleration is not recommended  
+- Note that GPU is not required for image gallery, only for initial processing  
 
-## TF Model Zoos
+## Loading Models
+
+Note that models can be loaded from either local storage or directly from an external http location.  
+Directly supported models are TensorFlow graph models and layers models.  
+For other types of models, see notes on coversion.
+
+## Recommended Models
+
+```js
+exports.models = {
+  classify: [
+    // Image classification using Inception v4 trained on ImageNet 1000 dataset
+    { name: 'ImageNet Inception v4', modelPath: 'models/imagenet-inception-v4', score: 0.22, topK: 3, tensorSize: 299, scoreScale: 200, offset: 1 },
+    // Image classification using EfficientNet B5 trained on ImageNet 1000 dataset
+    { name: 'ImageNet EfficientNet B5', modelPath: 'models/imagenet-efficientnet-b5', score: 0.2, topK: 3, tensorSize: 456, scoreScale: 1, offset: 0 },
+    // Image classification using Inception v3 trained on DeepDetect 6000 dataset
+    { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
+    // Image classification using MobileNet v1 trained on AIY 2000 dataset
+    { name: 'AIY MobileNet Food', modelPath: 'models/aiy-mobilenet-food', score: 0.35, topK: 1, tensorSize: 192, scoreScale: 500, offset: 0 },
+    // Image classification using Inception v3 trained on NSFW dataset
+    { name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3-quant', score: 0.7, topK: 4, tensorSize: 299, scoreScale: 2, offset: 0, background: 2, modelType: 'layers' },
+  ],
+  detect: [
+    // Object detection using SSD and classification using MobileNet v2 trained on CoCo 90 dataset
+    { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/coco-ssd-mobilenet-v2', score: 0.4, topK: 6, overlap: 0.5, useFloat: false, exec: 'coco' },
+    // Object detection using SSD and classification using SSD/MobileNet v2 trained on OpenImages 600 dataset
+    { name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/openimages-ssd-mobilenet-v2', score: 0.2, topK: 6, useFloat: true, exec: 'ssd' },
+  ],
+  person: [
+    // Object detection using SSD and classification using MobileNet v1 from Face-API
+    { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 5, size: 416 },
+  ],
+  video: {
+    classify: { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
+    detect: { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/coco-ssd-mobilenet-v2', score: 0.4, topK: 5, overlap: 0.5, useFloat: false, exec: 'coco' },
+    person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },
+  },
+};
+```
+
+### Model Parameters
+
+- modelPath: Where to load model from, can be a local path or a hosted http link such as one from tfhub.com
+- score: minimal score analysis has to achieve to include results
+- topK: how many top results to return
+- scoreScale: relative score multiplier to balance scores between different models
+- offset: specific to model and controls label index offset within classes definition
+- tensorSize, size: each model is compiled for specific input size. this is model specific and cannot be modified by user
+- background: which label to exclude from results as a generic result
+- model type: model specific, can be 'graph' or 'layers'
+- useFloat: model specific, should model use float or integer processing
+- overlap: maximum overlap percentage allowed before droping detetion boxes from results
+- exec: model specific, use cusom engine for model execution
+
+## Model Downloads
+
+### TF Model Zoos
+
+Where to find large number of pretrained models:
 
 - TFHub: <https://tfhub.dev/s?module-type=image-augmentation,image-classification,image-feature-vector,image-generator,image-object-detection,image-others,image-style-transfer,image-rnn-agent>
 - TF Model Garden - Official: <https://github.com/tensorflow/models/tree/master/official>
@@ -14,7 +81,7 @@
 - Intel: <https://github.com/IntelAI/models/tree/master/benchmarks>
 - Google: <https://aihub.cloud.google.com/>
 
-## Noted models
+### Interesting models
 
 - Places365: Still searching for a good pretrained model
 - Google BiT <https://tfhub.dev/google/collections/bit/1>: Large models pretrained on ImageNet 1k and 21k  
@@ -42,49 +109,59 @@
 
 ### Install TF Tools
 
-    pip3 install tensorflow tensorflowjs
+```bash
+  pip3 install tensorflow tensorflowjs
+```
 
 #### Install Python, TensorFlow <https://github.com/tensorflow/tensorflow> and Bazel <https://github.com/bazelbuild/bazel/releases>
 
-    sudo apt install python3 python3-pip
-    pip3 install tensorflow tensorflowjs
-    git clone https://github.com/tensorflow/tensorflow
-    cd tensorflow
-    ./configure
-    wget https://github.com/bazelbuild/bazel/releases/download/3.4.1/bazel_3.4.1-linux-x86_64.deb
-    sudo dpkg -i ./bazel_3.4.1-linux-x86_64.deb
-    rm bazel_3.4.1-linux-x86_64.deb
-    basel version
-    # update .bazelversion to match bazel version or install exact version
-    cp LICENSE tensorflow/tools/graph_transforms/
+```bash
+  sudo apt install python3 python3-pip
+  pip3 install tensorflow tensorflowjs
+  git clone https://github.com/tensorflow/tensorflow
+  cd tensorflow
+  ./configure
+  wget https://github.com/bazelbuild/bazel/releases/download/3.4.1/bazel_3.4.1-linux-x86_64.deb
+  sudo dpkg -i ./bazel_3.4.1-linux-x86_64.deb
+  rm bazel_3.4.1-linux-x86_64.deb
+  basel version
+  # update .bazelversion to match bazel version or install exact version
+  cp LICENSE tensorflow/tools/graph_transforms/
+```
 
 Bazel build takes a long time and may fail due to out-of-memory in which case, just restart and it will continue
 
-    bazel build \
-      --config=v2 --config=noaws --config=nogcp --config=nohdfs --config=nonccl \
-      --local_ram_resources=HOST_RAM*.5 --local_cpu_resources=HOST_CPUS*.5 \
-      tensorflow/tools/graph_transforms:*
+```bash
+  bazel build \
+    --config=v2 --config=noaws --config=nogcp --config=nohdfs --config=nonccl \
+    --local_ram_resources=HOST_RAM*.5 --local_cpu_resources=HOST_CPUS*.5 \
+    tensorflow/tools/graph_transforms:*
+```
 
 Once TF tools are compiled, use them to get details on the model before conversion
 
 #### Find input and output node names
 
-    ~/tensorflow/bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="saved_model.pb"
+```bash
+  ~/tensorflow/bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="saved_model.pb"
 
-      Found 1 possible inputs: (name=input, type=float(1), shape=[?,299,299,3])
-      Found 1 possible outputs: (name=InceptionV4/Logits/Predictions, op=Softmax)
+    Found 1 possible inputs: (name=input, type=float(1), shape=[?,299,299,3])
+    Found 1 possible outputs: (name=InceptionV4/Logits/Predictions, op=Softmax)
+```
 
 #### Convert Generic
 
-    tensorflowjs_converter \
-      --input_format <tfjs_layers_model,tf_saved_model,tf_hub,keras,tf_frozen_model,keras_saved_model> \
-      --output_format tfjs_graph_model \
-      --skip_op_check \
-      --strip_debug_ops True \
-      --control_flow_v2 True \
-      --weight_shard_size_bytes 4194304 \
-      <src> \
-      <tgt>
+```bash
+  tensorflowjs_converter \
+    --input_format <tfjs_layers_model,tf_saved_model,tf_hub,keras,tf_frozen_model,keras_saved_model> \
+    --output_format tfjs_graph_model \
+    --skip_op_check \
+    --strip_debug_ops True \
+    --control_flow_v2 True \
+    --weight_shard_size_bytes 4194304 \
+    <src> \
+    <tgt>
+```
 
 #### Conversion Notes
 
@@ -107,11 +184,14 @@ Once TF tools are compiled, use them to get details on the model before conversi
 - ONNX to TF  
   <https://github.com/onnx/onnx-tensorflow>
 
+<br>
+<br>
+<br>
+
 ## Testing Notes
 
-- Using Intel i7 with nVidia GTX-1050
+- Using Intel i7 with nVidia GTX-1050Ti
 - Sample is of 1,000 random images with processing size normalized to 780px
-- Testing is performed using 32bit float precision configured in `client/config.js`.
 
 |                          |                      |              |         |        |         |            |             | Top 1% Accuracy |           |        |        |
 |--------------------------|----------------------|--------------|---------|--------|---------|------------|-------------|-----------------|-----------|--------|--------|
@@ -143,3 +223,11 @@ Once TF tools are compiled, use them to get details on the model before conversi
 | MobileNet v2 Plants      | Image Classification | iNaturalist  | 2100    | 19 MB  | 169     | 224 px     | 58 ms       | -               | -         | -      | -      |
 | MobileNet v2 Birds       | Image Classification | iNaturalist  | 963     | 13 MB  | 170     | 224 px     | 34 ms       | -               | -         | -      | -      |
 | MobileNet v2 Insects     | Image Classification | iNaturalist  | 1020    | 13 MB  | 169     | 224 px     | 32 ms       | -               | -         | -      | -      |
+
+<br>
+<br>
+<br>
+
+## Learning
+
+- Google ML Course: <https://developers.google.com/machine-learning/crash-course>

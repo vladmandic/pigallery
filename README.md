@@ -38,7 +38,9 @@
 - Initial access (no cache) of database with 10,000 images completes in less than 1 minute (depending on your network speed)
 - Subsequent access (cached) with incremental database updates: less than 5 seconds for application startup and gallery load
 
-If you'd like to include any additional image analysis (additional machine models or static analysis), drop a note!
+<br>
+
+*If you'd like to include any additional image analysis (additional machine models or static analysis), drop a note!*
 
 <br>
 <br>
@@ -91,43 +93,76 @@ If you'd like to include any additional image analysis (additional machine model
 
 Edit `config.json`:
 
-    users: must contain at least one valid user to be able to login into application  
-      Note: users.*.mediaRoot is a starting point for a user,  
-      can be same as server.mediaRoot if you want user to have access to all media files,  
-      otherwise it should be the subfolder within server.mediaRoot  
-      Note: users includes one predefined user `share` used for anonymous album sharing
-    locations: must contain at least one valid location containing images to be analyzed  
-      Note: folder is relative to server.mediaRoot
-    server: general section containing following key options:
-      httpPort, httpsPort, http2Port: ports on which to run web server,  
-        set to 0 if you want to disable a specific server  
-        note that https and http2 require valid SSLKey and SSLCrt  
-      allowPWA: should application be installable as progressive web application?
-      authForce: force user authentication or allow anonymous users?
-      mediaRoot: used as a root for any location to be analyzed - must be set to a valid folder on a local storage
-      defaultLimit: size of initial set of images to set to client before rest is downloaded as a background task
-      forceHTTPS: should any unsecure http request be redirected to https?
+```json
+  {
+    // list of users and their home folders (which is relative to global server.mediaRoot property)
+    // if server.authForce is set to true, at least one valid user should be configured
+    // admin property controlls if user has rights to process images or just view them as well as to manage anonymous shares
+    "users": [
+      { "email": "user@example.com", "passwd": "test", "admin": true, "mediaRoot": "media/" },
+    ],
+    // predefined user used for anonymous sharing, only works with generated share links
+    "share": {
+      "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/"
+    },
+    // list of locations to scan for images to be processed
+    "locations": [
+      { "folder": "samples/", "match": ".jp", "recursive": true }
+    ],
+    "server": {
+      "authForce": true, // force user authentication or allow anounymous users
+      "httpPort": 8000, // http server port
+      "httpsPort": 8080, // https server port
+      "SSLKey": "/home/vlado/dev/piproxy/cert/private.pem", // https server key
+      "SSLCrt": "/home/vlado/dev/piproxy/cert/fullchain.pem", // https server certificate
+      "forceHTTPS": false, // redirect unsecure http requests to https
+      "allowPWA": true, // allow application installation as pwa or limit to browser-only
+      "logFile": "pigallery.log", // application log files
+      "mediaRoot": "media/", // root folder for all image processing
+      "allowedImageFileTypes": [ ".jpeg", ".jpg" ], // list of exensions that application will enumerate for processing
+      "defaultLimit": 500, // number of images that server will send to browser in initial requests, remaining images are loaded in the background
+      "db": "pigallery.db", // application image database
+      "descriptionsDB": "assets/wordnet-synset.json", // application lexicon database, used during image processing
+      "citiesDB": "assets/cities.json", // application geo-location database, used during image processing
+      "warmupImage": "assets/warmup.jpg", // test image used to warm-up models at the start of image processing
+    },
+    // how to handle sessions from authenticated users, probably no need to modify
+    "cookie": {
+      "path": "./sessions",
+      "secret": "whaTEvEr!42", "proxy": false, "resave": false, "rolling": true, "saveUninitialized": false,
+      "cookie": { "httpOnly": false, "sameSite": true, "secure": false, "maxAge": 6048000001000 }
+    }
+  }
+```
 
 Optionally edit `client/config.js` for image processing settings  
-Key options are:
 
-    backEnd: 'webgl',        // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
-    floatPrecision: true,    // use 32bit or 16bit float precision
-    maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
-    renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
-    batchProcessing: 1,      // how many images to process in parallel
+```js
+  const config = {
+    backEnd: 'webgl',     // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
+    floatPrecision: true, // use 32bit or 16bit float precision
+    maxSize: 780,         // maximum image width or height that will be used for processing
+    renderThumbnail: 230, // resolution in which to store image thumbnail embedded in result set
+    batchProcessing: 1,   // how many images to process in parallel
+  }
+```
 
-Optionally edit `client/model.js` to select active models  
-Note that models can be loaded from either local storage or directly from an external http location
+Optionally edit `client/model.js` to select active models for both image processing and live video  
+
+For details on model configuration, how to fine-tune them as well as where to find and how to convert models, see <https://github.com/vladmandic/pigallery/MODELS.md>
 
 ### Run
 
-- Run server application using `npm start`
-  - Server uses ESBuild to build client distribution in `./dist` and starts HTTP/HTTPS2/HTTP2 server
-- Use your browser to connect to server
-  - Default view is image gallery. If there are no processed images, it's blank
-  - Select `User`->`Update DB` to start image processing (opens separate browesr window)
-  - Select `Live Video` to play with your webcam or provide mp4 video file
+Run server application using `npm start`  
+
+- Optionally use provided `pigallery.service` as a template to run as a Linux systemd service
+
+Use your browser to navigate to server
+
+- Default view is image gallery.
+  If there are no processed images, it's blank
+- Select `User`->`Update DB` to start image processing
+- Select `Live Video` to process live video from your device camera
 
 <br>
 <br>
@@ -167,54 +202,27 @@ Collected metadata is additionally analyzed to render human-readable search term
 Result of all metadata processing is a very flexbile search engine - take a look at this example:  
 `"Happy female in 20ies in Miami wearing dress and dining outdoors"`
 
-### Keyboard shortcuts
+### Navigation
 
-      ENTER : Execute any open input
-      ESC   : Close any dialogs and reset view
-      \     : Reload data
-      /     : Open search input
-      .     : Open sort interface
-      ,     : Show/hide image descriptions in gallery view
-      Arrow Left & Right : Previous & Next image when in detailed view
-      Arrow Up & Down: Scroll up & down by one line when in gallery view
-      Page Up & Down: Scroll up & down by one page when in gallery view
-      Home & End: Scroll to start & end when in gallery view
+#### Keyboard shortcuts
 
-### Swipe controls
+```text
+  ENTER : Execute any open input
+  ESC   : Close any dialogs and reset view
+  \     : Reload data
+  /     : Open search input
+  .     : Open sort interface
+  ,     : Show/hide image descriptions in gallery view
+  Arrow Left & Right : Previous & Next image when in detailed view
+  Arrow Up & Down: Scroll up & down by one line when in gallery view
+  Page Up & Down: Scroll up & down by one page when in gallery view
+  Home & End: Scroll to start & end when in gallery view
+```
+
+#### Swipe controlss
 
 - Swipe down will refresh image database
 - Swipe left and right are previous and next image in details view
-
-<br>
-<br>
-<br>
-
-## Image Processing
-
-- If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory.  
-  Just restart processing and it will continue from the last known good result.
-- Model load time can be from few seconds to over a minute depending on model size (in MB)
-- Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
-- Once models are loaded and ready, actual processing is ~1sec per image
-- Image analysis is maximized out-of-the-box for a GPU-accelerated system using WebGL acceleration and GPU with minimum of 4GB of memory  
-- For high-end systems with 8GB or higher, you can further enable ImageNet 21k models  
-- For low-end systems with 2GB or less, enable analysis based on MobileNet v2 and EfficientNet B0  
-- Usage without GPU acceleration is not recommended  
-- Note that GPU is not required for image gallery, only for initial processing  
-
-### Recommended machine learning models
-
-- **Image classification**:
-  - Inception v4 trained on ImageNet 1000 dataset
-  - EfficientNet B5 trained on ImageNet 1000 dataset
-  - Inception v3 trained on DeepDetect 6000 dataset
-  - MobileNet v1 trained on AIY 2000 dataset
-  - Inception v3 trained on NSFW dataset
-- **Object detection**:
-  - SSD/MobileNet v2 trained on CoCo 90 dataset
-  - SSD/MobileNet v2 trained on OpenImages 600 dataset
-- **Age/Gender**:
-  - SSD/MobileNet v1 from Face-API
 
 <br>
 <br>

@@ -7,6 +7,12 @@
       "mediaRoot": "share/"
     }
   ],
+  "share": {
+    "email": "share@pigallery.ddns.net",
+    "passwd": "d1ff1cuTpa33w0RD",
+    "admin": false,
+    "mediaRoot": "share/"
+  },
   "locations": [
     {
       "folder": "Pictures/Snapseed/",
@@ -30,11 +36,12 @@
   "server": {
     "httpPort": 10010,
     "httpsPort": 10011,
-    "http2Port": 10012,
-    "allowCORS": true,
+    "SSLKey": "/home/vlado/dev/piproxy/cert/private.pem",
+    "SSLCrt": "/home/vlado/dev/piproxy/cert/fullchain.pem",
+    "forceHTTPS": false,
+    "authForce": true,
     "allowPWA": true,
     "logFile": "pigallery.log",
-    "authForce": true,
     "allowedImageFileTypes": [
       ".jpeg",
       ".jpg"
@@ -44,10 +51,7 @@
     "db": "pigallery.db",
     "descriptionsDB": "assets/wordnet-synset.json",
     "citiesDB": "assets/cities.json",
-    "warmupImage": "assets/warmup.jpg",
-    "forceHTTPS": false,
-    "SSLKey": "/home/vlado/dev/piproxy/cert/private.pem",
-    "SSLCrt": "/home/vlado/dev/piproxy/cert/fullchain.pem"
+    "warmupImage": "assets/warmup.jpg"
   },
   "cookie": {
     "path": "./sessions",

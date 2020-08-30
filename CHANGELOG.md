@@ -2,6 +2,8 @@
 
 ### **origin/HEAD** 2020/08/29 cyan00@gmail.com
 
+- optimized module loading
+- updated
 
 ### **v2.0.3** 2020/08/29 cyan00@gmail.com
 

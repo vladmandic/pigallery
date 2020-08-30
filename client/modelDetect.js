@@ -51,7 +51,8 @@ function buildDetectedObjects(model, batched, result, maxScores, classes, index)
     box[1] = minY;
     box[2] = maxX - minX;
     box[3] = maxY - minY;
-    objects.push({ box, class: model.labels[classes[indexes[i]] + 1].displayName, score: maxScores[indexes[i]] });
+    const id = classes[indexes[i]] + 1;
+    objects.push({ box, class: model.labels[id].displayName, score: maxScores[indexes[i]], id });
   }
   return objects;
 }
@@ -136,7 +137,7 @@ async function detectSSD(model, image) {
     box[2] = maxX - minX;
     box[3] = maxY - minY;
     const label = model.labels[classes[i]].displayName.toLowerCase();
-    objects.push({ class: label, score: scores[i], box });
+    objects.push({ class: label, score: scores[i], box, id: classes[i] });
   }
   objects = objects
     .filter((a) => a.score > model.config.score)

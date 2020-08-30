@@ -199,14 +199,16 @@ function api(app) {
     // if (!req.body.authEmail || req.body.authEmail === '') req.session.user = undefined;
     let email;
     let passwd;
+    let found = {};
     if (req.body.authShare) {
-      email = 'share@pigallery.ddns.net';
-      passwd = 'd1ff1cuTpa33w0RD';
+      found = true;
+      found.email = global.config.share.email;
+      found.passwd = global.config.share.passwd;
     } else {
       email = req.body.authEmail;
       passwd = req.body.authPassword;
+      found = global.config.users.find((a) => ((a.email && a.email === email) && (a.passwd && a.passwd === passwd) && (a.disabled ? a.disabled === 'false' : true)));
     }
-    const found = global.config.users.find((a) => ((a.email && a.email === email) && (a.passwd && a.passwd === passwd) && (a.disabled ? a.disabled === 'false' : true)));
     if (found) {
       req.session.user = found.email;
       req.session.admin = found.admin;
