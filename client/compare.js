@@ -13,6 +13,7 @@ const definitions = require('./models.js');
 window.$ = jQuery;
 const models = [];
 window.cache = [];
+let stop = false;
 
 async function init() {
   const res = await fetch('/api/user');
@@ -124,12 +125,8 @@ async function print(file, image, results) {
   $('#results').append(item);
 }
 
-async function redraw() {
-  $('#results').html('');
-  for (const item of window.cache) await print(item.file, item.image, item.results);
-}
-
 async function classify() {
+  stop = false;
   log.server('Compare: Classify');
   log.div('log', true, 'Loading models ...');
   for (const def of definitions.models.classify) await loadClassify(def);
@@ -150,6 +147,7 @@ async function classify() {
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   for (const file of files) {
+    if (stop) break;
     const results = [];
     const image = await processImage.getImage(file);
     for (const m in models) {
@@ -171,6 +169,7 @@ async function classify() {
 
 // eslint-disable-next-line no-unused-vars
 async function yolo() {
+  stop = false;
   log.div('log', true, 'Loading models ...');
   const yolov1tiny = await modelYolo.v1tiny();
   const yolov2tiny = await modelYolo.v2tiny();
@@ -189,6 +188,7 @@ async function yolo() {
   for (const m in models) stats.push(0);
   let data;
   for (const file of files) {
+    if (stop) break;
     const results = [];
     const image = await processImage.getImage(file);
     data = await yolov1tiny.predict(image.canvas);
@@ -206,6 +206,7 @@ async function yolo() {
 
 // eslint-disable-next-line no-unused-vars
 async function person() {
+  stop = false;
   log.div('log', true, `FaceAPI version: ${faceapi.tf.version_core} backend ${faceapi.tf.getBackend()}`);
   log.div('log', true, 'Loading models ...');
 
@@ -249,6 +250,7 @@ async function person() {
 
   stats = 0;
   for (const file of files) {
+    if (stop) break;
     const results = [];
     const image = await processImage.getImage(file);
     const t0 = window.performance.now();
@@ -269,6 +271,7 @@ async function person() {
 
 // eslint-disable-next-line no-unused-vars
 async function detect() {
+  stop = false;
   log.server('Compare: Detect');
   log.div('log', true, 'Loading models ...');
   for (const def of definitions.models.detect) await loadDetect(def);
@@ -290,6 +293,7 @@ async function detect() {
   for (const m in models) stats.push(0);
   log.div('log', true, 'TensorFlow Memory:', tf.memory());
   for (const file of files) {
+    if (stop) break;
     const results = [];
     const image = await processImage.getImage(file);
     for (const m in models) {
@@ -313,8 +317,7 @@ async function main() {
   $('#btn-detect').click(() => detect());
   $('#btn-person').click(() => person());
   // $('#btn-detect').click(() => yolo());
-
-  $('#btn-redraw').click(() => redraw());
+  $('#btn-stop').click(() => { stop = true; });
 }
 
 window.onload = main;

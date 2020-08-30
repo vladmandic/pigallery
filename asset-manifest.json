@@ -32,7 +32,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 12960,
+      "bytes": 12991,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -75,7 +75,7 @@
       ]
     },
     "client/details.js": {
-      "bytes": 17622,
+      "bytes": 17512,
       "imports": [
         {
           "path": "assets/color-thief.esm.js"
@@ -92,7 +92,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 30789,
+      "bytes": 30606,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -286,7 +286,7 @@
       ]
     },
     "client/video.js": {
-      "bytes": 10249,
+      "bytes": 10342,
       "imports": [
         {
           "path": "client/log.js"
@@ -365,7 +365,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6606429
+      "bytes": 6606141
     },
     "dist/gallery.js": {
       "imports": [],
@@ -413,7 +413,7 @@
           "bytesInOutput": 61114
         },
         "client/details.js": {
-          "bytesInOutput": 10707
+          "bytesInOutput": 10621
         },
         "client/blockhash.js": {
           "bytesInOutput": 2052
@@ -443,7 +443,7 @@
           "bytesInOutput": 2744
         },
         "client/video.js": {
-          "bytesInOutput": 6734
+          "bytesInOutput": 6802
         },
         "client/processImage.js": {
           "bytesInOutput": 6232
@@ -464,15 +464,15 @@
           "bytesInOutput": 6592
         },
         "client/gallery.js": {
-          "bytesInOutput": 19820
+          "bytesInOutput": 19685
         }
       },
-      "bytes": 1539578
+      "bytes": 1539425
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6073381
+      "bytes": 6073422
     },
     "dist/compare.js": {
       "imports": [],
@@ -502,7 +502,7 @@
           "bytesInOutput": 93351
         },
         "assets/face-api.node.js": {
-          "bytesInOutput": 328169
+          "bytesInOutput": 328171
         },
         "client/log.js": {
           "bytesInOutput": 996
@@ -529,10 +529,10 @@
           "bytesInOutput": 6232
         },
         "client/compare.js": {
-          "bytesInOutput": 7267
+          "bytesInOutput": 7224
         }
       },
-      "bytes": 1365265
+      "bytes": 1365224
     },
     "dist/worker.js.map": {
       "imports": [],

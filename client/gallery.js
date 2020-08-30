@@ -402,19 +402,18 @@ function resizeViewport() {
 
 // show/hide navigation bar elements
 function showNavbar(elem) {
-  if (!window.user.admin) $('#livevideo').toggle(false);
   if (elem) elem.toggle('slow');
   // hide the rest
   elem = elem || $('#main');
-  $('#map').toggle(false);
-  if (elem && elem[0] !== $('#popup')[0]) $('#popup').toggle(false);
-  if (elem && elem[0] !== $('#docs')[0]) $('#docs').toggle(false);
-  if (elem && elem[0] !== $('#video')[0]) $('#video').toggle(false);
-  if (elem && elem[0] !== $('#process')[0]) $('#process').toggle(false);
-  if (elem && elem[0] !== $('#searchbar')[0]) $('#searchbar').toggle(false);
-  if (elem && elem[0] !== $('#userbar')[0]) $('#userbar').toggle(false);
-  if (elem && elem[0] !== $('#optionslist')[0]) $('#optionslist').toggle(false);
-  if (elem && elem[0] !== $('#optionsview')[0]) $('#optionsview').toggle(false);
+  $('#map').hide();
+  if (elem && elem[0] !== $('#popup')[0]) $('#popup').hide();
+  if (elem && elem[0] !== $('#docs')[0]) $('#docs').hide();
+  if (elem && elem[0] !== $('#video')[0]) $('#video').hide();
+  if (elem && elem[0] !== $('#process')[0]) $('#process').hide();
+  if (elem && elem[0] !== $('#searchbar')[0]) $('#searchbar').hide();
+  if (elem && elem[0] !== $('#userbar')[0]) $('#userbar').hide();
+  if (elem && elem[0] !== $('#optionslist')[0]) $('#optionslist').hide();
+  if (elem && elem[0] !== $('#optionsview')[0]) $('#optionsview').hide();
   $(document).on('pagecontainerbeforechange', (evt, data) => {
     if (typeof data.toPage === 'string' && data.options.direction === 'back') {
       data.toPage = window.location;
@@ -674,10 +673,9 @@ async function initListHandlers() {
 
   // navbar livevideo
   $('#btn-video').click(async () => {
-    log.div('log', true, 'Starting Live Video interface ...');
-    await showNavbar($('#video'));
-    if ($('#video').css('display') !== 'none') video.init();
+    if ($('#video').css('display') === 'none') video.init();
     else video.stop();
+    await showNavbar($('#video'));
     // 'media/Samples/Videos/video-appartment.mp4'
     // 'media/Samples/Videos/video-jen.mp4'
     // 'media/Samples/Videos/video-dash.mp4'

@@ -2,7 +2,7 @@
 
 ## Bugs
 
-N/A
+- Block some operations until load complete: Live Video, DB Update, Map
 
 ## Notes
 
@@ -18,6 +18,7 @@ PiGallery uses private branches of following public distributions due to followi
 - User DB management client-side
 - User DB check server-side
 - Move compare to main app as test feature
+- Body pose for video
 - Change build process to prepackage all external scripts
 - Server-side processing using TFJS-Node: nVidia CUDA on WSL2 requires kernel 4.19.121 current 4.19.104  
   <https://ubuntu.com/blog/getting-started-with-cuda-on-ubuntu-on-wsl-2>  
