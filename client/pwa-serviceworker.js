@@ -2,11 +2,8 @@
 
 const cacheName = 'pigallery';
 const cacheFiles = [
-  '/favicon.ico', '/manifest.json', '/assets/lato.ttf', '/client/offline.html',
-  '/assets/dash-64.png', '/assets/dash-128.png', '/assets/dash-256.png', '/assets/dash-512.png', '/assets/dash-1024.png', '/assets/dash-mask.png',
-  '/assets/fontawesome/css/all.css', '/assets/fontawesome/webfonts/fa-duotone-900.woff2',
-  '/assets/bootstrap.css', '/assets/iv-viewer.css', '/assets/mapquest.css',
-  // '/assets/warmup.jpg', '/assets/roboto.ttf', '/assets/roboto-condensed.ttf'
+  '/favicon.ico', '/manifest.json', '/client/offline.html', '/assets/dash-256.png',
+  '/assets/lato.ttf', '/assets/webfonts/fa-duotone-900.woff2', '/assets/webfonts/fa-solid-900.woff2',
 ];
 let listening = false;
 

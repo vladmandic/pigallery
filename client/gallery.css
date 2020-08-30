@@ -1,0 +1,89 @@
+@font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('../assets/lato.ttf') format('truetype'); }
+html { font-size: 18px; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; }
+body { font-size: 1rem; width: 100vw; height: 100vh; background: var(--background); color: var(--text); }
+::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0; }
+::-webkit-scrollbar-thumb { background: var(--body); }
+::-webkit-scrollbar-track { margin: 8px; }
+::-webkit-scrollbar-button:single-button { display: block; border-style: solid; height: 40px; }
+::-webkit-scrollbar-button:single-button:vertical:decrement { border-width: 0 10px 15px 10px; border-color: transparent transparent var(--body) transparent; }
+::-webkit-scrollbar-button:single-button:vertical:increment { border-width: 15px 10px 0 10px; border-color: var(--body) transparent transparent transparent; }
+h1 { font-size: 1.4rem; margin-top: 1.2rem; font-weight: bold; color: var(--text); }
+h2 { font-size: 1.2rem; margin-top: 1.1rem; font-weight: bold; color: var(--text); }
+a { color: var(--text); }
+a:hover { color: var(--link); text-decoration: none; }
+p { margin: 0; }
+.row { width: 100%; margin: 0; align-content: start; }
+.col { text-align: left; margin: 8px; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
+.log { width: 100vw; height: 4rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
+.popper { padding: 8px; background: var(--text); color: var(--body); box-shadow: 2px 2px var(--background); border-radius: 4px; z-index: 50; }
+.navbar { background: var(--body); height: 86px; top: 0; }
+.navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
+.navbarbutton:hover { color: var(--title); text-shadow: 0; }
+.number { font-size: 1.2rem; color: var(--inactive); }
+.btntext { text-align: center; margin: 0; white-space: nowrap; }
+.navline { background: var(--body); min-height: 70px; position: fixed; top: 86px; padding-top: 10px; justify-content: center; z-index: 10; }
+.navlinebutton { font-size: 1.6rem; color: var(--foreground); padding: 0 2.5rem 0 2.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
+.navlinebutton:hover { color: var(--title); }
+.blank { min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
+.input { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); width: 50%; height: 2.5rem; border-radius: 1.5rem; }
+.input:hover { background: var(--foreground); }
+.input:focus { background: var(--foreground); }
+.label { display: flex; margin-left: 30px; }
+.options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); height: 1.5rem; border-radius: 1.5rem; position: sticky; left: 220px; }
+.options:hover { background: var(--foreground); }
+.options:focus { background: var(--foreground); }
+.main { height: 100%; display: flex; }
+.folderbar { overflow-x: hidden; overflow-y: auto; cursor: pointer; min-width: fit-content; margin-top: 65px; }
+.folderbar::-webkit-scrollbar { display: none; }
+.folderlist { margin: 0; min-width: 10rem; max-width: 15rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
+.folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
+.folder { background: var(--body); margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: 400; letter-spacing: 1px; }
+.folder:hover { background: var(--highlight); color: var(--background); letter-spacing: 2px; }
+.folder:active { background: var(--highlight); color: var(--background); letter-spacing: 2px; }
+.folderstitle { color: var(--text); letter-spacing: 2px; font-weight: 400; line-height: 2.6rem; padding: 4px; }
+.folderstitle:hover { background: var(--highlight); color: var(--background); }
+.folderbutton { padding-right: 4px; }
+.all { overflow: hidden; width: 100%; display: block; }
+.map { overflow: hidden; width: 100%; height: 40%; display: none; z-index: 5; }
+.share { overflow: hidden; width: 100%; padding-bottom: 8px; background: var(--body); display: none; z-index: 5; }
+.results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; scroll-snap-type: y mandatory; padding: 4px; }
+.timestamp { background: var(--title); margin-right: 4px; padding-left: 4px; padding-right: 4px; color: var(--text); }
+.listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; }
+.divider { padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; scroll-margin-top: 8px; }
+.thumbnail { padding: 0; cursor: zoom-in; }
+.thumbnail:hover { box-shadow: 0 0 8px 8px var(--body); }
+.thumb-top { display: flex; position: absolute; top: 0; width: 100%; justify-content: flex-end; }
+.thumb-top:hover { background: rgba(0, 0, 0, 0.4); }
+.thumb-bottom { display: flex; position: absolute; bottom: 0; width: 100%; justify-content: flex-end; }
+.thumb-bottom:hover { background: rgba(0, 0, 0, 0.4); }
+.description { min-width: 250px; max-width: 250px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
+.btn-tiny { font-size: var(--btntiny); color: var(--inactive); padding: 6px; cursor: grab; z-index: 8; display: none; text-shadow: 1px 1px var(--title); }
+.btn-tiny:hover { color: var(--foreground); }
+.listtitle { font-weight: bold; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; line-height: 1.4rem; }
+.thumbsize { height: 1.6rem; width: 150px; outline: none; border: none; margin-top: -4px; }
+.thumbsize::-webkit-slider-runnable-track { width: 100%; height: 1rem; background: var(--foreground); border-radius: 1rem; }
+.thumbsize::-moz-range-track { width: 100%; height: 1rem; background: var(--foreground); border-radius: 1rem; }
+.popup { background: var(--body); color: var(--background); overflow: hidden; position: fixed; top: 70px; left: 0; width: 100%; height: 100%; z-index: 10; display: none; }
+.popup-image { width: 100%; height: 100%; }
+.popup-details { margin: 0 0 0 10px; overflow-x: hidden; overflow-y: scroll; word-break: break-word; color: var(--text); z-index: 10; }
+.docs { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
+.video { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
+.splash { width: 100%; height: 100%; z-index: 100; position: absolute; top: 0; left: 0; background: black; text-align-last: center; display: block; }
+.palette { font-size: 3.5rem; line-height: 2.7rem; }
+.loading { color: white; position: absolute; top: 220px; left: 50%; transform: translateX(-50%); }
+.processing { position: relative; top: -78px; color: grey; font-size: 0.6rem; }
+.busy { justify-content: center; text-align: center; align-items: center; position: fixed; bottom: 80px; display: none; }
+.busy-dots { width: 1rem; height: 1rem; border-radius: 100%;	margin: 1rem; background-image: linear-gradient(145deg, rgba(255,255,255,0.5) 0%, rgba(0,0,0,0) 100%);	animation: bounce 1.5s 0.5s linear infinite; }
+@keyframes bounce {
+  0%, 50%, 100% { transform: scale(1); filter: blur(0px);	}
+  25% {	transform: scale(0.6); filter: blur(3px);	}
+  75% {	transform: scale(1.4); filter: blur(3px); }
+}
+.loader { width: 300px; height: 300px; border: 3px solid transparent; border-radius: 50%; border-top: 4px solid #f15e41; animation: spin 4s linear infinite; position: relative; }
+.loader::before, .loader::after { content: ""; position: absolute; top: 6px; bottom: 6px; left: 6px; right: 6px; border-radius: 50%; border: 4px solid transparent; }
+.loader::before { border-top-color: #bad375; animation: 3s spin linear infinite; }
+.loader::after { border-top-color: #26a9e0; animation: spin 1.5s linear infinite; }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

@@ -38,6 +38,7 @@ async function find(lat, lon) {
 async function load() {
   log.debug('Loading MapQuest');
   return new Promise((resolve) => {
+    /*
     $('<link>')
       .appendTo('head')
       .attr({
@@ -45,6 +46,7 @@ async function load() {
         rel: 'stylesheet',
         href: '/assets/mapquest.css',
       });
+    */
     $.getScript('/assets/mapquest.js').done(() => {
       $.getScript('/assets/leaflet-heat.js').done(() => resolve());
     });

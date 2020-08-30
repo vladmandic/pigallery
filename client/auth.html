@@ -37,7 +37,7 @@
     <div class="spinner"></div>
   </div>
   <div class="row">
-    <div class="title">PiGallery</div>
+    <div class="title" id="title">PiGallery</div>
     <form id="authForm" method="POST" action="/api/auth">
       <input type="email" class="input" name="authEmail" id="inputEmail" placeholder="Enter email" autocomplete="username"><br>
       <input type="password" class="input" name="authPassword" id="inputPassword" placeholder="Password" autocomplete="current-password">
@@ -942,7 +942,11 @@
         animateSakura();
       }
 
-      window.onload = () => document.body.addEventListener('click', createSakura);
+      window.onload = () => {
+        document.body.addEventListener('click', (evt) => {
+          if ((evt.target === document.body) || (evt.target === document.getElementById('sakura'))) createSakura();
+        });
+      };
       window.onresize = () => resizeSakura();
     </script>    
   </body>

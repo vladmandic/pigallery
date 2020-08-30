@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- cleaned up docs and compare module
 
 ### **origin/HEAD** 2020/08/29 cyan00@gmail.com
 
