@@ -1,4 +1,4 @@
-@font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('../assets/lato.ttf') format('truetype'); }
+@font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('/assets/lato.ttf') format('truetype'); }
 html { font-size: 18px; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; }
 body { font-size: 1rem; width: 100vw; height: 100vh; background: var(--background); color: var(--text); }
 ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0; }
