@@ -1,4 +1,9 @@
 # PiGallery Change Log
+
+### **origin/HEAD** 2020/08/30 cyan00@gmail.com
+
+- font fix
+- full rebuild
 - updated
 
 ### **v2.0.4** 2020/08/30 cyan00@gmail.com
@@ -7,9 +12,7 @@
 - implemented cleancss css merging
 - optimize live video
 - cleaned up docs and compare module
-
-### **origin/HEAD** 2020/08/29 cyan00@gmail.com
-
+- simplified dependencies
 - optimized module loading
 - updated
 

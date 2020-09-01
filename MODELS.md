@@ -116,14 +116,15 @@ Where to find large number of pretrained models:
 #### Install Python, TensorFlow <https://github.com/tensorflow/tensorflow> and Bazel <https://github.com/bazelbuild/bazel/releases>
 
 ```bash
-  sudo apt install python3 python3-pip
-  pip3 install tensorflow tensorflowjs
+  sudo apt install python3 python3-pip unzip
+  sudo ln -s /bin/python3 /bin/python
+  sudo ln -s /bin/pip3 /bin/pip
+  pip install tensorflow tensorflowjs
   git clone https://github.com/tensorflow/tensorflow
   cd tensorflow
-  ./configure
   wget https://github.com/bazelbuild/bazel/releases/download/3.4.1/bazel_3.4.1-linux-x86_64.deb
   sudo dpkg -i ./bazel_3.4.1-linux-x86_64.deb
-  rm bazel_3.4.1-linux-x86_64.deb
+  ./configure
   basel version
   # update .bazelversion to match bazel version or install exact version
   cp LICENSE tensorflow/tools/graph_transforms/

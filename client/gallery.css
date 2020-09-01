@@ -48,7 +48,7 @@ p { margin: 0; }
 .share { overflow: hidden; width: 100%; padding-bottom: 8px; background: var(--body); display: none; z-index: 5; }
 .results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; scroll-snap-type: y mandatory; padding: 4px; }
 .timestamp { background: var(--title); margin-right: 4px; padding-left: 4px; padding-right: 4px; color: var(--text); }
-.listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; }
+.listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; content-visibility: auto; }
 .divider { padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; scroll-margin-top: 8px; }
 .thumbnail { padding: 0; cursor: zoom-in; }
 .thumbnail:hover { box-shadow: 0 0 8px 8px var(--body); }
