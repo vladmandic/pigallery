@@ -17,6 +17,7 @@ PiGallery uses private branches of following public distributions due to followi
 
 - Validate full install from scratch
 - Package & host models: https://www.tensorflow.org/hub/hosting
+- Package samples
 - User DB management client-side
 - User DB check server-side
 - Move compare to main app as test feature
