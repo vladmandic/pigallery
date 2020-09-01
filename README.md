@@ -89,6 +89,12 @@
 - Install PiGallery:  
   run `./setup.js`
 
+**That's it!**
+
+- Image samples are provided (note: all included photos are mine)
+- Default configuration should work out-of-the-box
+- Setup step provides default models
+
 ### Configure
 
 Edit `config.json`:

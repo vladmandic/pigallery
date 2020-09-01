@@ -3,6 +3,7 @@
 ## Bugs
 
 - Block some operations until background load complete: Live Video, DB Update, Map
+- Processing restart on WegGL errors
 
 ## Notes
 
@@ -17,11 +18,9 @@ PiGallery uses private branches of following public distributions due to followi
 
 - Validate full install from scratch
 - Package & host models: https://www.tensorflow.org/hub/hosting
-- Package samples
 - User DB management client-side
 - User DB check server-side
 - Move compare to main app as test feature
-- Body pose for video
 - Server-side processing using TFJS-Node: nVidia CUDA on WSL2 requires kernel 4.19.121 current 4.19.104  
   <https://ubuntu.com/blog/getting-started-with-cuda-on-ubuntu-on-wsl-2>  
   <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>  
@@ -31,5 +30,6 @@ PiGallery uses private branches of following public distributions due to followi
 - Places365
 - ImageNet 21k
 - iNaturalist
+- Body pose for video
 
 ## Random

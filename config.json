@@ -31,13 +31,18 @@
       "folder": "Photos/",
       "match": "",
       "recursive": true
+    },
+    {
+      "folder": "Samples/",
+      "match": "",
+      "recursive": false
     }
   ],
   "server": {
     "httpPort": 10010,
-    "httpsPort": 10011,
-    "SSLKey": "/home/vlado/dev/piproxy/cert/private.pem",
-    "SSLCrt": "/home/vlado/dev/piproxy/cert/fullchain.pem",
+    "httpsPort": 0,
+    "SSLKey": "",
+    "SSLCrt": "",
     "forceHTTPS": false,
     "authForce": true,
     "allowPWA": true,
