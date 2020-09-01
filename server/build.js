@@ -19,9 +19,9 @@ async function init() {
           if (propertyName === 'src' && propertyValue.indexOf('webfonts/') > -1) return propertyValue.replace('webfonts/', '/assets/');
         },
       },
-      2: {
-        all: true,
-      },
+      // 2: {
+      //  all: true,
+      // },
     },
   });
 }

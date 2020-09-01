@@ -689,6 +689,17 @@ async function initListHandlers() {
     log.debug(t0, 'Reset filtered results');
   });
 
+  $('#log').click(() => {
+    if (!window.deferredPrompt) {
+      log.debug('Application is not installable');
+      return;
+    }
+    window.deferredPrompt.prompt();
+    window.deferredPrompt.userChoice.then((res) => {
+      log.debug('Application Install: ', res.outcome);
+    });
+  });
+
   $('#btn-number').mouseover(async () => { /**/ });
 }
 
@@ -728,15 +739,22 @@ async function googleAnalytics() {
   // gtag('set', { user_id: `${window.user}` }); // Set the user ID using signed-in user_id.
 }
 
-async function chromeDetails() {
-  if (!window.chrome) return;
-  const ts = window.chrome.loadTimes();
-  log.debug(null, 'Chrome load time:', Math.trunc(100 * (ts.finishLoadTime - ts.startLoadTime)) / 100, 'sec');
+async function perfDetails() {
+  if (window.PerformanceNavigationTiming) {
+    const perf = performance.getEntriesByType('navigation')[0];
+    log.debug('Performance: latency:', Math.round(perf.fetchStart), 'fetch:', Math.round(perf.responseEnd), 'interactive:', Math.round(perf.domInteractive), 'complete:', Math.round(perf.duration), perf);
+  } else if (window.performance) {
+    log.debug('Performance:', performance.timing);
+  }
 }
 
 async function main() {
   const t0 = window.performance.now();
   log.debug(null, 'Starting PiGallery');
+  window.addEventListener('beforeinstallprompt', (evt) => {
+    evt.preventDefault();
+    window.deferredPrompt = evt;
+  });
   if (config.default.registerPWA) pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
 
@@ -745,7 +763,6 @@ async function main() {
   await init.user();
   await showNavbar();
   googleAnalytics();
-  chromeDetails();
   initListHandlers();
   initSidebarHandlers();
   details.handlers();
@@ -761,6 +778,7 @@ async function main() {
   $('body').css('display', 'block');
   $('.collapsible').parent().parent().find('li').toggle(false);
   await resizeViewport();
+  await perfDetails();
   await list.resize();
   await sortResults(window.options.listSortOrder);
   window.tf = tf;

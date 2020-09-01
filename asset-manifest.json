@@ -92,7 +92,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 30605,
+      "bytes": 31243,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -164,7 +164,7 @@
       ]
     },
     "client/list.js": {
-      "bytes": 8554,
+      "bytes": 8633,
       "imports": [
         {
           "path": "node_modules/moment/moment.js"
@@ -365,7 +365,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6611054
+      "bytes": 6612103
     },
     "dist/gallery.js": {
       "imports": [],
@@ -422,7 +422,7 @@
           "bytesInOutput": 967
         },
         "client/list.js": {
-          "bytesInOutput": 5675
+          "bytesInOutput": 5752
         },
         "client/nearest.js": {
           "bytesInOutput": 1522
@@ -464,10 +464,10 @@
           "bytesInOutput": 6592
         },
         "client/gallery.js": {
-          "bytesInOutput": 19685
+          "bytesInOutput": 20187
         }
       },
-      "bytes": 1539291
+      "bytes": 1539870
     },
     "dist/compare.js.map": {
       "imports": [],
