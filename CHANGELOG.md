@@ -1,7 +1,12 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/08/30 cyan00@gmail.com
+### **origin/HEAD** 2020/09/01 cyan00@gmail.com
 
+
+### **v2.0.5** 2020/09/01 cyan00@gmail.com
+
+- optimizations
+- switch to face-api cjs
 - font fix
 - full rebuild
 - updated

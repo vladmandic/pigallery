@@ -2,7 +2,13 @@ node_modules/*
 sessions/*
 models/*
 inactive/*
-media/*
+media/GooglePhotos
+media/People
+media/Photos
+media/Pictures
+media/GooglePhotos
+media/Temp
+media/Tests
 dist/*
 pigallery.db
 pigallery.log
