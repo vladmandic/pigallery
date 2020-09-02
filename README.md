@@ -92,7 +92,8 @@
 **That's it!**
 
 - Image samples are provided (note: all included photos are mine)
-- Default configuration should work out-of-the-box
+- Default configuration should work out-of-the-box,  
+  only thing you must do is either add a user or disable authorization
 - Setup step provides default models
 
 ### Configure

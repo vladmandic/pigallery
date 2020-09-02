@@ -1,4 +1,5 @@
 const fs = require('fs');
+const process = require('process');
 const esbuild = require('esbuild');
 const CleanCSS = require('clean-css');
 const log = require('@vladmandic/pilogger');
@@ -7,6 +8,7 @@ const entryPoints = ['client/gallery.js', 'client/compare.js', 'client/worker.js
 const cssFiles = ['assets/bootstrap.css', 'assets/fontawesome.css', 'assets/iv-viewer.css', 'assets/mapquest.css', 'client/gallery.css'];
 let service;
 let clean;
+const metafile = './asset-manifest.json';
 
 async function init() {
   service = await esbuild.startService();
@@ -26,6 +28,32 @@ async function init() {
   });
 }
 
+async function buildStats() {
+  const stats = { modules: 0, moduleBytes: 0, imports: 0, importBytes: 0, outputs: 0, outputBytes: 0, outputFiles: [] };
+  if (!fs.existsSync(metafile)) return stats;
+  const data = fs.readFileSync(metafile);
+  const json = JSON.parse(data);
+  if (json && json.inputs && json.outputs) {
+    for (const [key, val] of Object.entries(json.inputs)) {
+      if (key.startsWith('node_modules')) {
+        stats.modules += 1;
+        stats.moduleBytes += val.bytes;
+      } else {
+        stats.imports += 1;
+        stats.importBytes += val.bytes;
+      }
+    }
+    for (const [key, val] of Object.entries(json.outputs)) {
+      if (!key.endsWith('.map')) {
+        stats.outputs += 1;
+        stats.outputFiles.push(key);
+        stats.outputBytes += val.bytes;
+      }
+    }
+  }
+  return stats;
+}
+
 async function compile() {
   if (!service) {
     log.error('ESBuild not initialized');
@@ -36,6 +64,7 @@ async function compile() {
     return;
   }
   try {
+    const t0 = process.hrtime.bigint();
     await service.build({
       entryPoints,
       outdir: './dist',
@@ -48,9 +77,11 @@ async function compile() {
       target: 'es2018',
       // format: 'cjs',
       format: 'esm',
-      metafile: './asset-manifest.json',
+      metafile,
     });
-    log.state('Client application rebuild ready');
+    const t1 = process.hrtime.bigint();
+    const s = await buildStats();
+    log.state('Client application rebuild:', Math.trunc(parseInt(t1 - t0) / 1000 / 1000), 'ms', s.imports, 'imports in', s.importBytes, 'bytes', s.modules, 'modules in ', s.moduleBytes, 'bytes', s.outputs, 'outputs in', s.outputBytes, 'bytes');
   } catch (err) {
     log.error('Client application build error', err.errors || err);
   }
@@ -65,3 +96,7 @@ async function compile() {
 
 exports.init = init;
 exports.compile = compile;
+
+if (!module.parent) {
+  //
+}
