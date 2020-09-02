@@ -18,6 +18,8 @@ PiGallery uses private branches of following public distributions due to followi
 
 - Validate full install from scratch
 - Package & host models: https://www.tensorflow.org/hub/hosting
+  Create tgz and add "?tfjs-format=compressed" to uri: <https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1?tfjs-format=compressed>
+  tf.loadGraphModel("https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1", { fromTFHub: true })
 - User DB management client-side
 - User DB check server-side
 - Move compare to main app as test feature
