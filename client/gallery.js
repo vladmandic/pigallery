@@ -20,6 +20,7 @@ const pwa = require('./pwa-register.js');
 // global variables
 window.$ = jQuery;
 window.filtered = [];
+const stats = { latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, size: 0, speed: 0, store: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0 };
 
 async function busy(text) {
   if (text) {
@@ -258,6 +259,7 @@ async function sortResults(sort) {
   $('#splash').toggle(false);
   log.debug(t0, `Cached images: ${window.filtered.length} fetched initial`);
   const t1 = window.performance.now();
+  stats.initial = Math.floor(t1 - t0);
   $('#all').focus();
   busy('Loading remaining<br>images in background');
   if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await db.all('name', true, window.options.listItemCount + 1));
@@ -267,16 +269,17 @@ async function sortResults(sort) {
   if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, window.options.listItemCount + 1));
   if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, window.options.listItemCount + 1));
   log.debug(t1, `Cached images: ${window.filtered.length} fetched remaining`);
-  if (window.filtered.length > 0) log.div('log', true, `Loaded ${window.filtered.length} images from cache`);
-  else log.div('log', true, 'Image cache empty');
+  stats.remaining = Math.floor(window.performance.now() - t1);
+  // if (window.filtered.length > 0) log.div('log', true, `Loaded ${window.filtered.length} images from cache`);
+  if (window.filtered.length === 0) log.div('log', true, 'Image cache empty');
   if (!loadTried && window.filtered.length === 0) {
     loadTried = true;
     // eslint-disable-next-line no-use-before-define
     await loadGallery(window.options.listLimit);
   }
-  log.server(`Loaded ${window.filtered.length} images`);
   busy('Enumerating images');
   await menu.enumerate();
+  stats.enumerate = Math.floor(window.performance.now() - t1);
   folderHandlers();
   list.scroll();
   busy();
@@ -358,11 +361,15 @@ async function loadGallery(limit, refresh = false) {
   if (res && res.ok) json = await fetchChunks(res);
 
   const t1 = window.performance.now();
+  stats.load = Math.floor(t1 - t0);
   $('#progress').text('Indexing');
   await db.store(json);
   const t2 = window.performance.now();
+  stats.store = Math.floor(t2 - t1);
   if (window.debug) {
     const size = JSON.stringify(json).length;
+    stats.size = size;
+    stats.speed = Math.round(size / (t1 - t0));
     log.debug(t0, `Cache download: ${json.length} images ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
   } else {
     // eslint-disable-next-line no-lonely-if
@@ -371,7 +378,7 @@ async function loadGallery(limit, refresh = false) {
   if (refresh && (json.length > 0)) {
     // const dt = window.options.lastUpdated === 0 ? 'start' : moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss');
     const dt = window.options.lastUpdated === 0 ? 'start' : new Date(window.options.lastUpdated).toLocaleDateString();
-    log.div('log', true, `Refreshed cache: ${json.length} images updated since ${dt} in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    log.div('log', true, `Refreshed cache: ${json.length} images updated since ${dt}`);
   }
   // window.filtered = await db.all();
   window.options.lastUpdated = updated;
@@ -742,7 +749,11 @@ async function googleAnalytics() {
 async function perfDetails() {
   if (window.PerformanceNavigationTiming) {
     const perf = performance.getEntriesByType('navigation')[0];
-    log.debug('Performance: latency:', Math.round(perf.fetchStart), 'fetch:', Math.round(perf.responseEnd), 'interactive:', Math.round(perf.domInteractive), 'complete:', Math.round(perf.duration), perf);
+    stats.latency = Math.round(perf.fetchStart);
+    stats.fetch = Math.round(perf.responseEnd);
+    stats.interactive = Math.round(perf.domInteractive);
+    stats.complete = Math.round(perf.duration);
+    log.debug('Performance:', perf);
   } else if (window.performance) {
     log.debug('Performance:', performance.timing);
   }
@@ -784,7 +795,10 @@ async function main() {
   window.tf = tf;
   window.faceapi = faceapi;
   log.debug('TensorFlow/JS', tf.version_core);
-  log.debug(t0, 'Ready');
+  stats.ready = Math.floor(window.performance.now() - t0);
+  log.div('log', true, 'Ready: ', window.filtered.length, ' Images Performance: ', stats);
+  // stats.images = window.filtered.length;
+  log.server(`load images: ${window.filtered.length} `, stats);
 }
 
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);

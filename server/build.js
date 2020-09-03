@@ -81,14 +81,14 @@ async function compile() {
     });
     const t1 = process.hrtime.bigint();
     const s = await buildStats();
-    log.state('Client application rebuild:', Math.trunc(parseInt(t1 - t0) / 1000 / 1000), 'ms', s.imports, 'imports in', s.importBytes, 'bytes', s.modules, 'modules in ', s.moduleBytes, 'bytes', s.outputs, 'outputs in', s.outputBytes, 'bytes');
+    log.state('Client application rebuild:', Math.trunc(parseInt(t1 - t0) / 1000 / 1000), 'ms', s.imports, 'imports in', s.importBytes, 'bytes', s.modules, 'modules in', s.moduleBytes, 'bytes', s.outputs, 'outputs in', s.outputBytes, 'bytes');
   } catch (err) {
     log.error('Client application build error', err.errors || err);
   }
   try {
     const css = clean.minify(cssFiles);
     fs.writeFileSync('dist/pigallery.css', css.styles);
-    log.state('Client CSS rebuild ready', css.stats);
+    log.state('Client CSS rebuild:', css.stats.timeSpent, 'ms imports', css.stats.originalSize, 'byes outputs', css.stats.minifiedSize, 'bytes');
   } catch (err) {
     log.error('Client CSS build error', err.errors || err);
   }
