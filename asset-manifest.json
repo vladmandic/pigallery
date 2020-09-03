@@ -92,7 +92,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 31243,
+      "bytes": 31905,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -365,7 +365,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6612103
+      "bytes": 6613179
     },
     "dist/gallery.js": {
       "imports": [],
@@ -395,7 +395,7 @@
           "bytesInOutput": 93714
         },
         "assets/face-api.cjs": {
-          "bytesInOutput": 329273
+          "bytesInOutput": 329275
         },
         "client/log.js": {
           "bytesInOutput": 996
@@ -464,10 +464,10 @@
           "bytesInOutput": 6592
         },
         "client/gallery.js": {
-          "bytesInOutput": 20187
+          "bytesInOutput": 20533
         }
       },
-      "bytes": 1539870
+      "bytes": 1540218
     },
     "dist/compare.js.map": {
       "imports": [],
