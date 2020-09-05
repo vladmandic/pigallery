@@ -67,7 +67,7 @@
       ]
     },
     "client/config.js": {
-      "bytes": 7638,
+      "bytes": 7841,
       "imports": [
         {
           "path": "client/log.js"
@@ -148,7 +148,7 @@
       ]
     },
     "client/indexdb.js": {
-      "bytes": 5095,
+      "bytes": 5117,
       "imports": [
         {
           "path": "client/log.js"
@@ -227,7 +227,7 @@
       "imports": []
     },
     "client/options.js": {
-      "bytes": 6829,
+      "bytes": 7238,
       "imports": [
         {
           "path": "client/log.js"
@@ -237,6 +237,9 @@
         },
         {
           "path": "client/config.js"
+        },
+        {
+          "path": "client/models.js"
         }
       ]
     },
@@ -278,7 +281,7 @@
       ]
     },
     "client/pwa-register.js": {
-      "bytes": 942,
+      "bytes": 1276,
       "imports": [
         {
           "path": "client/log.js"
@@ -365,7 +368,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6614681
+      "bytes": 6616112
     },
     "dist/gallery.js": {
       "imports": [],
@@ -395,16 +398,16 @@
           "bytesInOutput": 93714
         },
         "assets/face-api.cjs": {
-          "bytesInOutput": 329279
+          "bytesInOutput": 329281
         },
         "client/log.js": {
           "bytesInOutput": 996
         },
         "client/config.js": {
-          "bytesInOutput": 5602
+          "bytesInOutput": 5777
         },
         "client/indexdb.js": {
-          "bytesInOutput": 3256
+          "bytesInOutput": 3269
         },
         "assets/iv-viewer.js": {
           "bytesInOutput": 19684
@@ -452,10 +455,10 @@
           "bytesInOutput": 2577
         },
         "client/options.js": {
-          "bytesInOutput": 5720
+          "bytesInOutput": 6039
         },
         "client/pwa-register.js": {
-          "bytesInOutput": 666
+          "bytesInOutput": 887
         },
         "assets/marked.esm.js": {
           "bytesInOutput": 33320
@@ -467,12 +470,12 @@
           "bytesInOutput": 20619
         }
       },
-      "bytes": 1540816
+      "bytes": 1541546
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6078378
+      "bytes": 6078675
     },
     "dist/compare.js": {
       "imports": [],
@@ -508,7 +511,7 @@
           "bytesInOutput": 996
         },
         "client/config.js": {
-          "bytesInOutput": 5602
+          "bytesInOutput": 5777
         },
         "client/modelClassify.js": {
           "bytesInOutput": 1833
@@ -532,7 +535,7 @@
           "bytesInOutput": 7224
         }
       },
-      "bytes": 1365246
+      "bytes": 1365421
     },
     "dist/worker.js.map": {
       "imports": [],

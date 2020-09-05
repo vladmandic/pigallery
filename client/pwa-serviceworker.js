@@ -3,9 +3,10 @@
 const cacheName = 'pigallery';
 const cacheFiles = [
   '/favicon.ico', '/manifest.json', '/client/offline.html',
-  '/assets/dash-256.png', '/assets/lato.ttf',
-  '/assets/fa-duotone-900.woff2', '/assets/fa-solid-900.woff2',
+  // '/assets/dash-256.png', '/assets/lato.ttf',
+  // '/assets/fa-duotone-900.woff2', '/assets/fa-solid-900.woff2',
 ];
+let cacheModels = false;
 let listening = false;
 
 function ts() {
@@ -15,19 +16,16 @@ function ts() {
 
 async function cached(evt) {
   let found;
-  if (navigator.onLine) found = await caches.match(evt.request) || await fetch(evt.request);
+  if (navigator.onLine) found = await caches.match(evt.request); // || await fetch(evt.request);
   else found = await caches.match('/client/offline.html');
-  // if (!found) found = await fetch(evt.request);
-  /*
-  // cache only /assets folder
-  if (evt.request.url.includes('/assets/')) {
+
+  if (found && found.type === 'basic' && found.ok) {
     const clone = found.clone();
-    // this executes in the background to refresh cache after result has already been returned
-    evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
-  } else {
-    found = await fetch(evt.request);
+    if (evt.request.url.includes('/assets/')) evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
+    if (cacheModels && evt.request.url.includes('/models/')) evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
   }
-  */
+
+  if (!found) found = await fetch(evt.request);
   return found;
 }
 
@@ -42,7 +40,8 @@ function refresh() {
 
 if (!listening) {
   self.addEventListener('message', (evt) => {
-    console.log(ts(), 'PWA event message:', evt);
+    if (evt.data.key === 'cacheModels') cacheModels = evt.data.val;
+    else console.log(ts(), 'PWA event message:', evt);
   });
 
   self.addEventListener('install', (evt) => {
@@ -63,7 +62,7 @@ if (!listening) {
     if (evt.request.method !== 'GET') return; // only cache get requests
     if (uri.origin !== location.origin) return; // skip non-local requests
     if (evt.request.url.includes('/api/')) return; // skip api calls
-    if (evt.request.url.includes('/models/')) return; // skip caching model data
+    // if (evt.request.url.includes('/models/')) return; // skip caching model data
     const response = cached(evt);
     if (response) evt.respondWith(response);
   });

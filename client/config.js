@@ -107,6 +107,9 @@ window.options = {
   get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || 500); },
   set listItemCount(val) { return localStorage.setItem('listItemCount', val); },
 
+  get cacheModels() { return localStorage.getItem('cacheModels') ? localStorage.getItem('cacheModels') === 'true' : true; },
+  set cacheModels(val) { return localStorage.setItem('cacheModels', val); },
+
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
   set listFolders(val) { return localStorage.setItem('listFolders', val); },
 
