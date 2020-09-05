@@ -8,6 +8,7 @@ let tf = window.tf;
 let faceapi = window.faceapi;
 let video;
 let front = true;
+let firstTime = true;
 const exec = { classify: null, detect: null, person: null };
 
 async function stop() {
@@ -15,8 +16,10 @@ async function stop() {
   await video.pause();
   const tracks = video.srcObject ? video.srcObject.getTracks() : null;
   if (tracks) tracks.forEach((track) => track.stop());
-  await video.pause();
-  setTimeout(() => $('#video-status').text('Camera stopped ...'), 250);
+  setTimeout(async () => {
+    await video.pause();
+    $('#video-status').text('Camera stopped ...');
+  }, 250);
 }
 
 function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null, alpha = 1, title = null) {
@@ -117,6 +120,7 @@ async function drawPerson(object) {
   previousPerson = canvas;
 }
 
+let persons = null;
 async function print(obj) {
   if (video.srcObject) {
     const track = video.srcObject.getVideoTracks()[0];
@@ -139,10 +143,23 @@ async function print(obj) {
     for (const res of obj.detected) detected += ` | ${Math.round(res.score * 100)}% ${res.class}`;
   }
   $('#video-detected').text(detected);
+
+  if (!persons) {
+    persons = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    for (const i in persons) persons[i] = [];
+  }
   let person = '';
   if (obj.person) {
     person = 'Person';
-    for (const res of obj.person) person += ` | ${Math.round(100 * res.genderProbability)}% ${res.gender} ${res.age.toFixed(1)}y`;
+    for (const i in obj.person) {
+      persons[i].push(obj.person[i].age);
+      if (persons[i].length > 9) persons[i].shift();
+    }
+    // for (const res of obj.person) person += ` | ${Math.round(100 * res.genderProbability)}% ${res.gender} ${res.age.toFixed(1)}y`;
+    for (const i in obj.person) {
+      const age = persons[i].reduce((a, b) => (a + b)) / persons[i].length;
+      person += ` | ${Math.round(100 * obj.person[i].genderProbability)}% ${obj.person[i].gender} ${age.toFixed(1)}y`;
+    }
   }
   $('#video-person').text(person);
 }
@@ -154,7 +171,7 @@ async function process() {
     return;
   }
   if (video.readyState > 1) {
-    if (firstFrame) video.pause();
+    // if (firstFrame) video.pause();
     const obj = { classified: null, detected: null, person: null };
     const t0 = window.performance.now();
     obj.classified = await modelClassify.classify(exec.classify, video);
@@ -185,7 +202,7 @@ async function camera() {
     log.debug('Video capabilities', track.getCapabilities());
     log.debug('Video settings', video.srcObject.getVideoTracks()[0].getSettings());
   }
-  $('#video-status').text('Warming up ...');
+  $('#video-status').text('Warming up: Detection will start soon ...');
   video.removeEventListener('loadeddata', camera);
   const ratio = 1.0 * video.videoWidth / video.videoHeight;
   video.width = ratio >= 1 ? $('#main').width() : 1.0 * $('#main').height() * ratio;
@@ -228,18 +245,28 @@ async function start(url) {
 
 async function init(url) {
   log.server('Starting Live Video');
+  if (!firstTime) {
+    $('#btn-play').click();
+    return;
+  }
+  if (!window.tf) {
+    $('#video-status').text('Error: Library not loaded');
+    return;
+  }
   $('#video-status').text('Initializing ...');
   tf = window.tf;
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   await tf.dispose();
   tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
+  $('#video-status').text('Loading Image Classification models ...');
   exec.classify = await modelClassify.load(definitions.video.classify);
+  $('#video-status').text('Loading Object Detection models ...');
   exec.detect = await modelDetect.load(definitions.video.detect);
 
   faceapi = window.faceapi;
   const options = definitions.video.person;
-  $('#video-status').text('Loading models ...');
+  $('#video-status').text('Loading Face Recognition model ...');
   if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
   if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
   await faceapi.nets.ageGenderNet.load(options.modelPath);
@@ -274,6 +301,7 @@ async function init(url) {
     }
   });
 
+  firstTime = false;
   $('#btn-play').click();
 }
 

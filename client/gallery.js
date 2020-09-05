@@ -535,7 +535,7 @@ function initSidebarHandlers() {
 }
 
 // initializes all mouse handlers for main menu in list view
-async function initListHandlers() {
+async function initMenuHandlers() {
   // navbar user
   $('#btn-user').click(() => {
     showNavbar($('#userbar'));
@@ -708,6 +708,7 @@ async function initListHandlers() {
   });
 
   $('#btn-number').mouseover(async () => { /**/ });
+  $('.navbarbutton').css('opacity', 1);
 }
 
 async function hashChange(evt) {
@@ -766,7 +767,7 @@ async function main() {
     evt.preventDefault();
     window.deferredPrompt = evt;
   });
-  if (config.default.registerPWA) pwa.register('/client/pwa-serviceworker.js');
+  if (config.default.registerPWA) await pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
 
   await config.theme();
@@ -774,12 +775,9 @@ async function main() {
   await init.user();
   await showNavbar();
   googleAnalytics();
-  initListHandlers();
-  initSidebarHandlers();
   details.handlers();
   initHotkeys();
   await db.open();
-  initSharesHandler();
   window.details = details;
   window.simmilarImage = simmilarImage;
   window.simmilarPerson = simmilarPerson;
@@ -792,13 +790,18 @@ async function main() {
   await perfDetails();
   await list.resize();
   await sortResults(window.options.listSortOrder);
+
+  await initSidebarHandlers();
+  await initSharesHandler();
+  await initMenuHandlers();
+
   window.tf = tf;
   window.faceapi = faceapi;
+
   log.debug('TensorFlow/JS', tf.version_core);
   stats.ready = Math.floor(window.performance.now() - t0);
   log.div('log', true, 'Ready: ', window.filtered.length, ' Images Performance: ', stats);
-  // stats.images = window.filtered.length;
-  log.server(`load images: ${window.filtered.length} `, stats);
+  if (window.filtered.length > 0) log.server(`load images: ${window.filtered.length} `, stats);
 }
 
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);

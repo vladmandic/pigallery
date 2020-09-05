@@ -12,6 +12,7 @@ function sign(req) {
 
 function api(app) {
   log.state('RESTful API ready');
+  app.set('json spaces', 2);
   metadata.init();
 
   app.get('/api/log', (req, res) => {
