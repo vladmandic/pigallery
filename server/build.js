@@ -15,7 +15,7 @@ async function init() {
   clean = new CleanCSS({
     level: {
       1: {
-        all: true,
+        all: false,
         // eslint-disable-next-line consistent-return
         transform: (propertyName, propertyValue) => {
           if (propertyName === 'src' && propertyValue.indexOf('webfonts/') > -1) return propertyValue.replace('webfonts/', '/assets/');

@@ -17,7 +17,7 @@ p { margin: 0; }
 .log { width: 100vw; height: 4rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
 .popper { padding: 8px; background: var(--text); color: var(--body); box-shadow: 2px 2px var(--background); border-radius: 4px; z-index: 50; }
 .navbar { background: var(--body); height: 86px; top: 0; }
-.navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
+.navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); opacity: 0.3; }
 .navbarbutton:hover { color: var(--title); text-shadow: 0; }
 .number { font-size: 1.2rem; color: var(--inactive); }
 .btntext { text-align: center; margin: 0; white-space: nowrap; }

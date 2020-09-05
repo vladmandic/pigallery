@@ -2,8 +2,9 @@
 
 const cacheName = 'pigallery';
 const cacheFiles = [
-  '/favicon.ico', '/manifest.json', '/client/offline.html', '/assets/dash-256.png',
-  '/assets/lato.ttf', '/assets/webfonts/fa-duotone-900.woff2', '/assets/webfonts/fa-solid-900.woff2',
+  '/favicon.ico', '/manifest.json', '/client/offline.html',
+  '/assets/dash-256.png', '/assets/lato.ttf',
+  '/assets/fa-duotone-900.woff2', '/assets/fa-solid-900.woff2',
 ];
 let listening = false;
 
@@ -30,9 +31,13 @@ async function cached(evt) {
   return found;
 }
 
-async function refresh() {
-  console.log(ts(), 'PWA Cache refresh');
-  caches.open(cacheName).then((cache) => cache.addAll(cacheFiles));
+function refresh() {
+  caches.open(cacheName)
+    .then((cache) => cache.addAll(cacheFiles)
+      .then(
+        () => console.log(ts(), 'PWA Cache refresh:', cacheFiles.length, 'files'),
+        (err) => console.log(ts(), 'PWA Cache error', err),
+      ));
 }
 
 if (!listening) {
@@ -48,8 +53,8 @@ if (!listening) {
 
   self.addEventListener('activate', (evt) => {
     console.log(ts(), 'PWA Activate');
-    evt.waitUntil(self.clients.claim());
     refresh();
+    evt.waitUntil(self.clients.claim());
   });
 
   self.addEventListener('fetch', (evt) => {
