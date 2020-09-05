@@ -1,7 +1,8 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/09/03 cyan00@gmail.com
+### **origin/HEAD** 2020/09/04 cyan00@gmail.com
 
+- build and load stats
 - added build stats
 - added samples
 - updated

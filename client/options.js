@@ -1,6 +1,7 @@
 const log = require('./log.js');
 const list = require('./list.js');
 const config = require('./config.js');
+const models = require('./models.js').models;
 
 function JSONtoStr(json) {
   let text = '';
@@ -15,11 +16,13 @@ function JSONtoStr(json) {
 function globalOptions() {
   const tf = window.tf;
   let classify = '<b>&nbsp Image Classification:</b><br>';
-  for (const obj of config.default.classify) classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
+  for (const obj of models.classify) classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
   let detect = '<b>&nbsp Object Detection:</b><br>';
-  for (const obj of config.default.detect) detect += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
+  for (const obj of models.detect) detect += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
   let face = '<b>&nbsp Face Analysis:</b><br>';
-  face += `&nbsp &nbsp ${JSONtoStr(config.default.person)}<br>`;
+  let video = '<b>&nbsp Video Analysis:</b><br>';
+  for (const [key, val] of Object.entries(models.video)) video += `&nbsp &nbsp ${key}: ${JSONtoStr(val)}<br>`;
+  face += `&nbsp &nbsp ${JSONtoStr(models.person)}<br>`;
   const html = `<h1>Global configuration</h1>
     Browser register PWA handler: ${config.default.registerPWA}<br>
     Image Processing:<br>
@@ -34,6 +37,7 @@ function globalOptions() {
     <h1>TensorFlow Active Models:</h1>
     ${classify}
     ${detect}
+    ${video}
     ${face}
   `;
   return html;
@@ -63,6 +67,7 @@ function saveOptions() {
   window.options.listThumbSquare = $('#listThumbSquare')[0].checked;
   window.options.viewBoxes = $('#viewBoxes')[0].checked;
   window.options.viewFaces = $('#viewFaces')[0].checked;
+  window.options.cacheModels = $('#cacheModels')[0].checked;
   window.options.theme = parseInt($('#colorTheme').val());
   /*
   window.options.mapColor = $('#mapColor').val();
@@ -91,6 +96,7 @@ function userOptions() {
     <input type="button" id="btnResetConfig" class="options" style="left: 30px" value="Reset to default">
 
     <h1>Application:</h1>
+    <label class="label">Models cache <input class="options" type="checkbox" id="cacheModels" ${window.options.cacheModels ? 'checked' : ''} /></label>
     <label class="label">Short date format <input class="options" type="text" id="dateShort" value="${window.options.dateShort}" /></label>
     <label class="label">Long date format <input class="options" type="text" id="dateLong" value="${window.options.dateLong}" /></label>
     <label class="label">Base font size <input class="options" type="text" id="fontSize" value="${window.options.fontSize}" /></label>
