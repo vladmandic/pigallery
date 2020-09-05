@@ -1,13 +1,10 @@
 /* eslint-disable no-console */
 
 const cacheName = 'pigallery';
-const cacheFiles = [
-  '/favicon.ico', '/manifest.json', '/client/offline.html',
-  // '/assets/dash-256.png', '/assets/lato.ttf',
-  // '/assets/fa-duotone-900.woff2', '/assets/fa-solid-900.woff2',
-];
+const cacheFiles = ['/favicon.ico', '/manifest.json', '/client/offline.html']; // assets and models are cached on first access
 let cacheModels = false;
 let listening = false;
+const stats = { hit: 0, miss: 0 };
 
 function ts() {
   const dt = new Date();
@@ -25,7 +22,13 @@ async function cached(evt) {
     if (cacheModels && evt.request.url.includes('/models/')) evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
   }
 
-  if (!found) found = await fetch(evt.request);
+  if (!found) {
+    stats.miss += 1;
+    found = await fetch(evt.request);
+  } else {
+    stats.hit += 1;
+  }
+  console.log(stats);
   return found;
 }
 
