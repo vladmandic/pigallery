@@ -17,9 +17,10 @@ async function load(cfg) {
   config = { ...config, ...cfg };
   const loadOpts = {
     fetchFunc: (...args) => fetch(...args),
-    fromTFHub: config.modelPath.includes('tfhub.dev'),
+    requestInit: { mode: 'no-cors' },
+    fromTFHub: config.modelPath.includes('tfhub.dev') || config.tgz,
   };
-  const modelPath = config.modelPath.endsWith('.json') ? config.modelPath : config.modelPath + '/model.json';
+  const modelPath = (!loadOpts.fromTFHub && !config.tgz && !config.modelPath.endsWith('model.json')) ? config.modelPath + '/model.json' : config.modelPath;
   if (config.modelType === 'graph') model = await tf.loadGraphModel(modelPath, loadOpts);
   if (config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
   const res = config.classes ? await fetch(config.classes) : await fetch(config.modelPath + '/classes.json');

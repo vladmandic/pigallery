@@ -1,19 +1,15 @@
 exports.models = {
   classify: [
     // { name: 'ImageNet MobileNet v1', modelPath: 'models/mobilenet-v1', score: 0.2, topK: 3 },
-    // { name: 'ImageNet MobileNet v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v1_100_224/classification/3/default/1' },
     // { name: 'ImageNet MobileNet v2', modelPath: 'models/mobilenet-v2', score: 0.2, topK: 3 },
-    // { name: 'ImageNet MobileNet v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_100_224/classification/3/default/1' },
     // { name: 'ImageNet Inception v1', modelPath: 'models/inception-v1', score: 0.2, topK: 3 },
-    // { name: 'ImageNet Inception v1', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v1/classification/3/default/1' },
     // { name: 'ImageNet Inception v2', modelPath: 'models/inception-v2', score: 0.2, topK: 3 },
-    // { name: 'ImageNet Inception v2', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v2/classification/3/default/1' },
     // { name: 'ImageNet Inception v3', modelPath: 'models/inception-v3', score: 0.2, topK: 3 },
-    // { name: 'ImageNet Inception v3', modelPath: 'https://tfhub.dev/google/tfjs-model/imagenet/inception_v3/classification/3/default/1' },
     { name: 'ImageNet Inception v4', modelPath: 'models/imagenet-inception-v4', score: 0.22, topK: 3, tensorSize: 299, scoreScale: 200, offset: 1 },
     // { name: 'ImageNet EfficientNet B0', modelPath: 'models/imagenet-efficientnet-b0', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 0 },
     // { name: 'ImageNet EfficientNet B4', modelPath: 'models/imagenet-efficientnet-b4', score: 0.1, topK: 3, slice: 0, tensorSize: 380, offset: 0 },
-    { name: 'ImageNet EfficientNet B5', modelPath: 'models/imagenet-efficientnet-b5', score: 0.2, topK: 3, tensorSize: 456, scoreScale: 1, offset: 0 },
+    // { name: 'ImageNet EfficientNet B5', modelPath: 'models/imagenet-efficientnet-b5', score: 0.2, topK: 3, tensorSize: 456, scoreScale: 1, offset: 0 },
+    { name: 'Hub: ImageNet EfficientNet B5', modelPath: 'https://tfhub.dev/google/efficientnet/b5/classification/1', score: 0.2, topK: 3, tensorSize: 456, scoreScale: 1, offset: 0 },
     // { name: 'ImageNet EfficientNet B7', modelPath: 'models/imagenet-efficientnet-b7', score: 0.2, topK: 3, slice: 0, tensorSize: 600, offset: 0 },
     // { name: 'ImageNet ResNet v2-50', modelPath: 'models/resnet-v2-50', score: 0.2, topK: 3 },
     // { name: 'ImageNet ResNet v2-101', modelPath: 'models/resnet-v2-101', score: 0.2, topK: 3 },
@@ -30,9 +26,7 @@ exports.models = {
   ],
   detect: [
     // { name: 'CoCo SSD/MobileNet v1', modelPath: 'models/cocossd-v1', score: 0.4, topK: 6, overlap: 0.5, exec: 'coco' },
-    // { name: 'Coco SSD/MobileNet v1', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v1/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
     { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/coco-ssd-mobilenet-v2', score: 0.4, topK: 6, overlap: 0.5, useFloat: false, exec: 'coco' },
-    // { name: 'Coco SSD/MobileNet v2', modelPath: 'https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1', score: 0.4, topK: 6, overlap: 0.1 },
     // { name: 'CoCo DarkNet/Yolo v1 Tiny', modelPath: 'models/yolo-v1-tiny', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' },
     // { name: 'CoCo DarkNet/Yolo v2 Tiny', modelPath: 'models/yolo-v2-tiny', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' },
     // { name: 'CoCo DarkNet/Yolo v3 Tiny', modelPath: 'models/yolo-v3-tiny', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' },
@@ -41,11 +35,13 @@ exports.models = {
     // { name: 'OpenImages RCNN/Inception-ResNet v2', modelPath: 'models/rcnn-inception-resnet-v2', score: 0.2, topK: 6, classes: 'assets/OpenImage-Labels.json', exec: 'ssd' },
   ],
   person: [
+    // { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },
     { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 5, size: 416 },
   ],
   video: {
-    classify: { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
+    classify: { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3-f16', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
     detect: { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/coco-ssd-mobilenet-v2', score: 0.4, topK: 5, overlap: 0.5, useFloat: false, exec: 'coco' },
-    person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },
+    // person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },
+    person: { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 5, size: 416 },
   },
 };

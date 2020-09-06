@@ -113,6 +113,7 @@ async function print(file, image, results) {
   }
   const item = document.createElement('div');
   item.className = 'listitem';
+  item.style = `min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px; contain-intrinsic-size: ${16 + window.options.listThumbSize}px`;
   item.innerHTML = `
     <div class="col thumbnail">
       <img class="thumbnail" src="${image.thumbnail}" align="middle" tag="${file}">
@@ -138,8 +139,8 @@ async function classify() {
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, tf.ENV.flags);
 
-  const api = await fetch('/api/dir?folder=Samples/Objects/');
-  // const api = await fetch('/api/dir?folder=Samples/NSFW/');
+  const api = await fetch('/api/dir?folder=Tests/Objects/');
+  // const api = await fetch('/api/dir?folder=Tests/NSFW/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
@@ -179,7 +180,7 @@ async function yolo() {
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, tf.ENV.flags);
 
-  const api = await fetch('/api/dir?folder=Samples/Objects/');
+  const api = await fetch('/api/dir?folder=Tests/Objects/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
@@ -244,7 +245,7 @@ async function person() {
   stats.time = Math.round(stats.time1 - stats.time0);
   log.div('log', true, `Loaded model: FaceAPI in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 
-  const api = await fetch('/api/dir?folder=Samples/Persons/');
+  const api = await fetch('/api/dir?folder=Tests/Persons/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
@@ -283,8 +284,8 @@ async function detect() {
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, tf.ENV.flags);
 
-  const api = await fetch('/api/dir?folder=Samples/Objects/');
-  // const api = await fetch('/api/dir?folder=Samples/NSFW/');
+  const api = await fetch('/api/dir?folder=Tests/Objects/');
+  // const api = await fetch('/api/dir?folder=Tests/NSFW/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 

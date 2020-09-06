@@ -5,6 +5,7 @@ const cacheFiles = ['/favicon.ico', '/manifest.json', '/client/offline.html']; /
 let cacheModels = false;
 let listening = false;
 const stats = { hit: 0, miss: 0 };
+const skip = false;
 
 function ts() {
   const dt = new Date();
@@ -12,6 +13,7 @@ function ts() {
 }
 
 async function cached(evt) {
+  if (skip) return fetch(evt.request);
   let found;
   if (navigator.onLine) found = await caches.match(evt.request); // || await fetch(evt.request);
   else found = await caches.match('/client/offline.html');
@@ -28,7 +30,7 @@ async function cached(evt) {
   } else {
     stats.hit += 1;
   }
-  console.log(stats);
+  // console.log(stats);
   return found;
 }
 
