@@ -17,6 +17,10 @@ async function cached(evt) {
   let found;
   if (navigator.onLine) found = await caches.match(evt.request); // || await fetch(evt.request);
   else found = await caches.match('/client/offline.html');
+  if (found) stats.hit += 1;
+  else stats.miss += 1;
+
+  if (!found) found = await fetch(evt.request);
 
   if (found && found.type === 'basic' && found.ok) {
     const clone = found.clone();
@@ -24,13 +28,7 @@ async function cached(evt) {
     if (cacheModels && evt.request.url.includes('/models/')) evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
   }
 
-  if (!found) {
-    stats.miss += 1;
-    found = await fetch(evt.request);
-  } else {
-    stats.hit += 1;
-  }
-  // console.log(stats);
+  // console.log('fetch', evt.request.url, stats);
   return found;
 }
 

@@ -802,7 +802,7 @@ async function main() {
   stats.images = window.filtered.length;
   stats.ready = Math.floor(window.performance.now() - t0);
   const cache = caches ? await caches.open('pigallery') : null;
-  stats.cache = cache ? await cache.matchAll().length : 0;
+  stats.cache = cache ? (await cache.matchAll()).length : 0;
   if (window.filtered.length > 0) {
     log.div('log', true, 'Ready: ', stats.images, ' Images in ', stats.ready, 'ms');
     log.server('Stats: ', stats);

@@ -92,7 +92,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 32117,
+      "bytes": 32119,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -219,7 +219,7 @@
       "imports": []
     },
     "client/models.js": {
-      "bytes": 5214,
+      "bytes": 5030,
       "imports": []
     },
     "client/nearest.js": {
@@ -368,7 +368,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6616194
+      "bytes": 6616011
     },
     "dist/gallery.js": {
       "imports": [],
@@ -437,7 +437,7 @@
           "bytesInOutput": 3952
         },
         "client/models.js": {
-          "bytesInOutput": 1487
+          "bytesInOutput": 1458
         },
         "client/modelClassify.js": {
           "bytesInOutput": 1906
@@ -467,15 +467,15 @@
           "bytesInOutput": 6592
         },
         "client/gallery.js": {
-          "bytesInOutput": 20717
+          "bytesInOutput": 20719
         }
       },
-      "bytes": 1542000
+      "bytes": 1541973
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6078718
+      "bytes": 6078533
     },
     "dist/compare.js": {
       "imports": [],
@@ -526,7 +526,7 @@
           "bytesInOutput": 2049
         },
         "client/models.js": {
-          "bytesInOutput": 1487
+          "bytesInOutput": 1458
         },
         "client/processImage.js": {
           "bytesInOutput": 6232
@@ -535,7 +535,7 @@
           "bytesInOutput": 7389
         }
       },
-      "bytes": 1365779
+      "bytes": 1365750
     },
     "dist/worker.js.map": {
       "imports": [],
