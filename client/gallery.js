@@ -20,7 +20,7 @@ const pwa = require('./pwa-register.js');
 // global variables
 window.$ = jQuery;
 window.filtered = [];
-const stats = { latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, size: 0, speed: 0, store: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0 };
+const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, size: 0, speed: 0, store: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0 };
 
 async function busy(text) {
   if (text) {
@@ -799,9 +799,14 @@ async function main() {
   window.faceapi = faceapi;
 
   log.debug('TensorFlow/JS', tf.version_core);
+  stats.images = window.filtered.length;
   stats.ready = Math.floor(window.performance.now() - t0);
-  log.div('log', true, 'Ready: ', window.filtered.length, ' Images Performance: ', stats);
-  if (window.filtered.length > 0) log.server(`load images: ${window.filtered.length} `, stats);
+  const cache = caches ? await caches.open('pigallery') : null;
+  stats.cache = cache ? await cache.matchAll().length : 0;
+  if (window.filtered.length > 0) {
+    log.div('log', true, 'Ready: ', stats.images, ' Images in ', stats.ready, 'ms');
+    log.server('Stats: ', stats);
+  }
 }
 
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);

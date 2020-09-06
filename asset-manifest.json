@@ -32,7 +32,7 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 12990,
+      "bytes": 13163,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -92,7 +92,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 31960,
+      "bytes": 32117,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -156,7 +156,7 @@
       ]
     },
     "client/init.js": {
-      "bytes": 1271,
+      "bytes": 1266,
       "imports": [
         {
           "path": "client/log.js"
@@ -207,11 +207,11 @@
       ]
     },
     "client/modelClassify.js": {
-      "bytes": 3401,
+      "bytes": 3513,
       "imports": []
     },
     "client/modelDetect.js": {
-      "bytes": 5455,
+      "bytes": 5553,
       "imports": []
     },
     "client/modelYolo.js": {
@@ -219,7 +219,7 @@
       "imports": []
     },
     "client/models.js": {
-      "bytes": 5824,
+      "bytes": 5214,
       "imports": []
     },
     "client/nearest.js": {
@@ -344,7 +344,7 @@
       "imports": []
     },
     "node_modules/node-fetch/browser.js": {
-      "bytes": 709,
+      "bytes": 732,
       "imports": []
     },
     "node_modules/safe-buffer/index.js": {
@@ -368,13 +368,13 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6616112
+      "bytes": 6616194
     },
     "dist/gallery.js": {
       "imports": [],
       "inputs": {
         "node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 352
+          "bytesInOutput": 364
         },
         "node_modules/base64-js/index.js": {
           "bytesInOutput": 1503
@@ -410,7 +410,7 @@
           "bytesInOutput": 3269
         },
         "assets/iv-viewer.js": {
-          "bytesInOutput": 19684
+          "bytesInOutput": 19852
         },
         "node_modules/moment/moment.js": {
           "bytesInOutput": 61114
@@ -422,7 +422,7 @@
           "bytesInOutput": 2052
         },
         "client/init.js": {
-          "bytesInOutput": 967
+          "bytesInOutput": 962
         },
         "client/list.js": {
           "bytesInOutput": 5752
@@ -437,13 +437,13 @@
           "bytesInOutput": 3952
         },
         "client/models.js": {
-          "bytesInOutput": 1445
+          "bytesInOutput": 1487
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1833
+          "bytesInOutput": 1906
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2744
+          "bytesInOutput": 2810
         },
         "client/video.js": {
           "bytesInOutput": 7310
@@ -467,21 +467,21 @@
           "bytesInOutput": 6592
         },
         "client/gallery.js": {
-          "bytesInOutput": 20619
+          "bytesInOutput": 20717
         }
       },
-      "bytes": 1541546
+      "bytes": 1542000
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6078675
+      "bytes": 6078718
     },
     "dist/compare.js": {
       "imports": [],
       "inputs": {
         "node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 352
+          "bytesInOutput": 364
         },
         "node_modules/base64-js/index.js": {
           "bytesInOutput": 1503
@@ -514,10 +514,10 @@
           "bytesInOutput": 5777
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1833
+          "bytesInOutput": 1906
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2740
+          "bytesInOutput": 2806
         },
         "client/modelYolo.js": {
           "bytesInOutput": 5358
@@ -526,16 +526,16 @@
           "bytesInOutput": 2049
         },
         "client/models.js": {
-          "bytesInOutput": 1445
+          "bytesInOutput": 1487
         },
         "client/processImage.js": {
           "bytesInOutput": 6232
         },
         "client/compare.js": {
-          "bytesInOutput": 7224
+          "bytesInOutput": 7389
         }
       },
-      "bytes": 1365421
+      "bytes": 1365779
     },
     "dist/worker.js.map": {
       "imports": [],

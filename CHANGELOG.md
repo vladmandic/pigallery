@@ -1,7 +1,9 @@
 # PiGallery Change Log
 
-### **origin/HEAD** 2020/09/04 cyan00@gmail.com
+### **origin/HEAD** 2020/09/05 cyan00@gmail.com
 
+- added models caching
+- various optimizations
 - build and load stats
 - added build stats
 - added samples

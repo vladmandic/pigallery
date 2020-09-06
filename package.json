@@ -61,11 +61,12 @@
   },
   "homepage": "https://github.com/vladmandic/pigallery#readme",
   "dependencies": {
+    "@tensorflow/tfjs": "^2.3.0",
     "@vladmandic/pilogger": "^0.1.11",
     "buffer": "^5.6.0",
     "chokidar": "^3.4.2",
     "clean-css": "^4.2.3",
-    "esbuild": "^0.6.30",
+    "esbuild": "^0.6.31",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
@@ -73,7 +74,7 @@
     "jquery": "^3.5.1",
     "moment": "^2.27.0",
     "nedb-promises": "^4.0.4",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "session-file-store": "^1.4.0",
     "simple-git": "^2.20.1"
   },
@@ -81,12 +82,12 @@
     "depcheck": "^1.2.0",
     "eslint": "^7.8.1",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-html": "^6.0.3",
+    "eslint-plugin-html": "^6.1.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-json": "^2.1.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "htmlhint": "^1.0.0-beta.1",
-    "npm-check-updates": "^8.0.5"
+    "npm-check-updates": "^8.1.0"
   }
 }

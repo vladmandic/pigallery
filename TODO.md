@@ -3,6 +3,7 @@
 ## Bugs
 
 - Processing restart on WegGL errors
+- Test caching limits
 
 ## Notes
 
