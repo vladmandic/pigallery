@@ -641,11 +641,10 @@
       key: '_initImageSlider',
       value: function _initImageSlider() {
         const _this2 = this;
-
         const _elements = this._elements;
         const imageWrap = _elements.imageWrap;
-        let positions; let
-          currentPos;
+        let positions;
+        let currentPos;
         /* Add slide interaction to image */
 
         const imageSlider = new Slider(imageWrap, {
@@ -720,8 +719,8 @@
       value: function _initSnapSlider() {
         const _this3 = this;
         const snapHandle = this._elements.snapHandle;
-        let startHandleTop; let
-          startHandleLeft;
+        let startHandleTop;
+        let startHandleLeft;
         const snapSlider = new Slider(snapHandle, {
           isSliderEnabled: function isSliderEnabled() {
             return _this3._state.loaded;
@@ -771,8 +770,8 @@
         const snapView = _this$_elements.snapView;
         const zoomHandle = _this$_elements.zoomHandle; // zoom in zoom out using zoom handle
         const sliderElm = snapView.querySelector('.iv-zoom-slider');
-        let leftOffset; let
-          handleWidth; // on zoom slider we have to follow the mouse and set the handle to its position.
+        let leftOffset;
+        let handleWidth; // on zoom slider we have to follow the mouse and set the handle to its position.
 
         const zoomSlider = new Slider(sliderElm, {
           isSliderEnabled: function isSliderEnabled() {

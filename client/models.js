@@ -17,10 +17,6 @@ exports.models = {
     // { name: 'ImageNet-21k BiT-S R101x1', modelPath: 'models/bit-s-r101x1', score: 0.2, topK: 3, slice: 0, offset: 1 },
     // { name: 'ImageNet-21k BiT-M R101x1', modelPath: 'models/bit-m-r101x1', score: 0.2, topK: 3, slice: 0, offset: 1 },
     { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
-    { name: 'AIY MobileNet Food', modelPath: 'models/aiy-mobilenet-food', score: 0.35, topK: 1, tensorSize: 192, scoreScale: 500, offset: 0 },
-    // { name: 'iNaturalist Plants MobileNet v2', modelPath: 'models/inaturalist/plants', score: 0.2, scoreScale: 200, topK: 1, classes: 'assets/iNaturalist-Plants-Labels.json', offset: 0, background: 2101 },
-    // { name: 'iNaturalist Birds MobileNet v2', modelPath: 'models/inaturalist/birds', score: 0.25, scoreScale: 200, topK: 1, classes: 'assets/iNaturalist-Birds-Labels.json', offset: 0, background: 964 },
-    // { name: 'iNaturalist Insects MobileNet v2', modelPath: 'models/inaturalist/insects', score: 0.3, scoreScale: 200, topK: 1, classes: 'assets/iNaturalist-Insects-Labels.json', offset: 0, background: 1021 },
     { name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3-quant', score: 0.7, topK: 4, tensorSize: 299, scoreScale: 2, offset: 0, background: 2, modelType: 'layers' },
   ],
   detect: [
@@ -38,9 +34,15 @@ exports.models = {
     { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 5, size: 416 },
   ],
   video: {
-    classify: { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3-f16', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
     detect: { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/coco-ssd-mobilenet-v2', score: 0.25, topK: 5, overlap: 0.1, useFloat: false, exec: 'coco' },
-    // person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },
     person: { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.25, topK: 5, size: 416 },
+    // person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },
+    imagenet: { name: 'ImageNet EfficientNet B0', modelPath: 'models/imagenet-efficientnet-b0', score: 0.2, topK: 3, tensorSize: 299, scoreScale: 1, offset: 0 },
+    deepdetect: { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3-f16', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
+    nsfw: { name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3-quant', score: 0.7, topK: 4, tensorSize: 299, scoreScale: 2, offset: 0, background: 2, modelType: 'layers' },
+    food: { name: 'iNaturalist Food', modelPath: 'models/inaturalist/food', score: 0.1, topK: 1, tensorSize: 192, scoreScale: 500, offset: 0 },
+    plants: { name: 'iNaturalist Plants', modelPath: 'models/inaturalist/plants', score: 0.1, tensorSize: 224, scoreScale: 200, topK: 1, offset: 0, background: 2101 },
+    birds: { name: 'iNaturalist Birds', modelPath: 'models/inaturalist/birds', score: 0.1, tensorSize: 224, scoreScale: 200, topK: 1, offset: 0, background: 964 },
+    insects: { name: 'iNaturalist Insects', modelPath: 'models/inaturalist/insects', score: 0.1, tensorSize: 224, scoreScale: 200, topK: 1, offset: 0, background: 1021 },
   },
 };

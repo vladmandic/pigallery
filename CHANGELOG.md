@@ -1,8 +1,13 @@
 # PiGallery Change Log
+
+### **origin/HEAD** 2020/09/06 cyan00@gmail.com
+
+
+### **v2.0.6** 2020/09/06 cyan00@gmail.com
+
+- corrected model caching
 - update
-
-### **origin/HEAD** 2020/09/05 cyan00@gmail.com
-
+- optimized serviceworker
 - added models caching
 - various optimizations
 - build and load stats

@@ -15,15 +15,15 @@ async function init() {
   clean = new CleanCSS({
     level: {
       1: {
-        all: false,
+        all: true,
         // eslint-disable-next-line consistent-return
         transform: (propertyName, propertyValue) => {
           if (propertyName === 'src' && propertyValue.indexOf('webfonts/') > -1) return propertyValue.replace('webfonts/', '/assets/');
         },
       },
-      // 2: {
-      //  all: true,
-      // },
+      2: {
+        all: false,
+      },
     },
   });
 }
@@ -86,7 +86,16 @@ async function compile() {
     log.error('Client application build error', err.errors || err);
   }
   try {
-    const css = clean.minify(cssFiles);
+    const data = [];
+    for (let i = 0; i < cssFiles.length; i++) {
+      if (fs.existsSync(cssFiles[i])) {
+        const styles = fs.readFileSync(cssFiles[i], 'utf-8');
+        const obj = {};
+        obj[cssFiles[i]] = { styles };
+        data.push(obj);
+      }
+    }
+    const css = clean.minify(data);
     fs.writeFileSync('dist/pigallery.css', css.styles);
     log.state('Client CSS rebuild:', css.stats.timeSpent, 'ms imports', css.stats.originalSize, 'byes outputs', css.stats.minifiedSize, 'bytes');
   } catch (err) {

@@ -1,7 +1,7 @@
 {
   "inputs": {
-    "assets/color-thief.esm.js": {
-      "bytes": 6397,
+    "assets/color-thief.umd.js": {
+      "bytes": 6926,
       "imports": []
     },
     "assets/face-api.cjs": {
@@ -9,7 +9,7 @@
       "imports": []
     },
     "assets/iv-viewer.js": {
-      "bytes": 46621,
+      "bytes": 46614,
       "imports": []
     },
     "assets/marked.esm.js": {
@@ -78,7 +78,7 @@
       "bytes": 17512,
       "imports": [
         {
-          "path": "assets/color-thief.esm.js"
+          "path": "assets/color-thief.umd.js"
         },
         {
           "path": "assets/iv-viewer.js"
@@ -92,7 +92,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 32119,
+      "bytes": 32290,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -219,7 +219,7 @@
       "imports": []
     },
     "client/models.js": {
-      "bytes": 5030,
+      "bytes": 5257,
       "imports": []
     },
     "client/nearest.js": {
@@ -227,7 +227,7 @@
       "imports": []
     },
     "client/options.js": {
-      "bytes": 7238,
+      "bytes": 7377,
       "imports": [
         {
           "path": "client/log.js"
@@ -289,8 +289,11 @@
       ]
     },
     "client/video.js": {
-      "bytes": 11252,
+      "bytes": 13231,
       "imports": [
+        {
+          "path": "assets/color-thief.umd.js"
+        },
         {
           "path": "client/log.js"
         },
@@ -368,7 +371,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6616011
+      "bytes": 6621036
     },
     "dist/gallery.js": {
       "imports": [],
@@ -398,7 +401,7 @@
           "bytesInOutput": 93714
         },
         "assets/face-api.cjs": {
-          "bytesInOutput": 329281
+          "bytesInOutput": 329289
         },
         "client/log.js": {
           "bytesInOutput": 996
@@ -409,14 +412,17 @@
         "client/indexdb.js": {
           "bytesInOutput": 3269
         },
+        "assets/color-thief.umd.js": {
+          "bytesInOutput": 7251
+        },
         "assets/iv-viewer.js": {
-          "bytesInOutput": 19852
+          "bytesInOutput": 19684
         },
         "node_modules/moment/moment.js": {
           "bytesInOutput": 61114
         },
         "client/details.js": {
-          "bytesInOutput": 10621
+          "bytesInOutput": 10641
         },
         "client/blockhash.js": {
           "bytesInOutput": 2052
@@ -437,7 +443,7 @@
           "bytesInOutput": 3952
         },
         "client/models.js": {
-          "bytesInOutput": 1458
+          "bytesInOutput": 2191
         },
         "client/modelClassify.js": {
           "bytesInOutput": 1906
@@ -446,7 +452,7 @@
           "bytesInOutput": 2810
         },
         "client/video.js": {
-          "bytesInOutput": 7310
+          "bytesInOutput": 8487
         },
         "client/processImage.js": {
           "bytesInOutput": 6232
@@ -455,7 +461,7 @@
           "bytesInOutput": 2577
         },
         "client/options.js": {
-          "bytesInOutput": 6039
+          "bytesInOutput": 6157
         },
         "client/pwa-register.js": {
           "bytesInOutput": 887
@@ -463,19 +469,16 @@
         "assets/marked.esm.js": {
           "bytesInOutput": 33320
         },
-        "assets/color-thief.esm.js": {
-          "bytesInOutput": 6592
-        },
         "client/gallery.js": {
-          "bytesInOutput": 20719
+          "bytesInOutput": 20821
         }
       },
-      "bytes": 1541973
+      "bytes": 1544622
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6078533
+      "bytes": 6079242
     },
     "dist/compare.js": {
       "imports": [],
@@ -526,7 +529,7 @@
           "bytesInOutput": 2049
         },
         "client/models.js": {
-          "bytesInOutput": 1458
+          "bytesInOutput": 2191
         },
         "client/processImage.js": {
           "bytesInOutput": 6232
@@ -535,7 +538,7 @@
           "bytesInOutput": 7389
         }
       },
-      "bytes": 1365750
+      "bytes": 1366483
     },
     "dist/worker.js.map": {
       "imports": [],
