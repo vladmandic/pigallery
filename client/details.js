@@ -1,4 +1,4 @@
-import ColorThief from '../assets/color-thief.esm.js';
+import ColorThief from '../assets/color-thief.umd.js';
 import ImageViewer from '../assets/iv-viewer.js';
 
 const moment = require('moment');

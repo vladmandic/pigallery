@@ -594,6 +594,12 @@ async function initMenuHandlers() {
     if ($('#docs').css('display') !== 'none') options.show();
   });
 
+  // navline global params
+  $('#btn-params').click(async () => {
+    await showNavbar($('#docs'));
+    if ($('#docs').css('display') !== 'none') options.params();
+  });
+
   // navline user logout
   $('#btn-logout').click(async () => {
     await showNavbar();

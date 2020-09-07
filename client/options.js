@@ -19,11 +19,12 @@ function globalOptions() {
   for (const obj of models.classify) classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
   let detect = '<b>&nbsp Object Detection:</b><br>';
   for (const obj of models.detect) detect += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
-  let face = '<b>&nbsp Face Analysis:</b><br>';
   let video = '<b>&nbsp Video Analysis:</b><br>';
   for (const [key, val] of Object.entries(models.video)) video += `&nbsp &nbsp ${key}: ${JSONtoStr(val)}<br>`;
+  let face = '<b>&nbsp Face Analysis:</b><br>';
   face += `&nbsp &nbsp ${JSONtoStr(models.person)}<br>`;
-  const html = `<h1>Global configuration</h1>
+  const html = `<div style="line-height: 1.4rem">
+    <h1>Global configuration</h1>
     Browser register PWA handler: ${config.default.registerPWA}<br>
     Image Processing:<br>
     &nbsp Image thumbnail size: ${config.default.renderThumbnail}px<br>
@@ -35,10 +36,11 @@ function globalOptions() {
     &nbsp Version: ${tf.version_core} &nbsp Platform: ${tf.ENV.platformName} &nbsp Engine: ${config.default.backEnd} &nbsp Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}<br>
     &nbsp Image resize: ${config.default.maxSize}px &nbsp Image square: ${config.default.squareImage}<br>
     <h1>TensorFlow Active Models:</h1>
-    ${classify}
-    ${detect}
-    ${video}
-    ${face}
+    ${classify}<br>
+    ${detect}<br>
+    ${video}<br>
+    ${face}<br>
+    </div>
   `;
   return html;
 }
@@ -134,12 +136,16 @@ function userOptions() {
 }
 
 function showOptions() {
-  let html = '';
-  html += globalOptions();
-  html += userOptions();
+  const html = userOptions();
   $('#docs').html(html);
   $('#btnSaveConfig').click(saveOptions);
   $('#btnResetConfig').click(resetOptions);
 }
 
+function showParams() {
+  const html = globalOptions();
+  $('#docs').html(html);
+}
+
 exports.show = showOptions;
+exports.params = showParams;

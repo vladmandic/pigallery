@@ -1,3 +1,5 @@
+import ColorThief from '../assets/color-thief.umd.js';
+
 const log = require('./log.js');
 const config = require('./config.js').default;
 const definitions = require('./models.js').models;
@@ -8,8 +10,11 @@ let tf = window.tf;
 let faceapi = window.faceapi;
 let video;
 let front = true;
-let firstTime = true;
+let loading = false;
+let reduce = 1;
 const exec = { classify: null, detect: null, person: null };
+const videoCanvas = document.createElement('canvas');
+const thief = new ColorThief();
 
 async function stop() {
   if (!video) return;
@@ -73,8 +78,8 @@ async function drawDetect(object) {
   parent.appendChild(canvas);
   const ctx = canvas.getContext('2d');
   ctx.font = 'small-caps 16px Lato';
-  const resizeX = $('#videocanvas').width() / video.videoWidth;
-  const resizeY = $('#videocanvas').height() / video.videoHeight;
+  const resizeX = $('#videocanvas').width() / video.videoWidth * reduce;
+  const resizeY = $('#videocanvas').height() / video.videoHeight * reduce;
   for (const obj of object.detected) {
     const x = obj.box[0] * resizeX;
     const y = obj.box[1] * resizeY;
@@ -92,7 +97,7 @@ async function drawPerson(object) {
     parent.removeChild(previousPerson);
     previousPerson = null;
   }
-  if (!parent || !object || !object.detected || object.detected.length === 0) return;
+  if (!parent || !object || !object.person || object.person.length === 0) return;
   const canvas = document.createElement('canvas');
   canvas.style.position = 'fixed';
   canvas.style.border = 'px solid';
@@ -103,8 +108,8 @@ async function drawPerson(object) {
   parent.appendChild(canvas);
   const ctx = canvas.getContext('2d');
   ctx.font = 'small-caps 1rem Lato';
-  const resizeX = $('#videocanvas').width() / video.videoWidth;
-  const resizeY = $('#videocanvas').height() / video.videoHeight;
+  const resizeX = $('#videocanvas').width() / video.videoWidth * reduce;
+  const resizeY = $('#videocanvas').height() / video.videoHeight * reduce;
   for (const res of object.person) {
     const x = res.detection.box.x * resizeX;
     const y = res.detection.box.y * resizeY;
@@ -125,7 +130,7 @@ async function print(obj) {
   if (video.srcObject) {
     const track = video.srcObject.getVideoTracks()[0];
     const settings = track.getSettings();
-    $('#video-camera').text(`${track.label} Video: ${video.width} x ${video.height} Camera: ${settings.width} x ${settings.height}`);
+    $('#video-camera').text(`${track.label} Video: ${video.width} x ${video.height} Camera: ${settings.width || 0} x ${settings.height || 0}`);
   } else {
     $('#video-camera').text(`Video: ${video.src}`);
   }
@@ -155,7 +160,6 @@ async function print(obj) {
       persons[i].push(obj.person[i].age);
       if (persons[i].length > 9) persons[i].shift();
     }
-    // for (const res of obj.person) person += ` | ${Math.round(100 * res.genderProbability)}% ${res.gender} ${res.age.toFixed(1)}y`;
     for (const i in obj.person) {
       const age = persons[i].reduce((a, b) => (a + b)) / persons[i].length;
       person += ` | ${Math.round(100 * obj.person[i].genderProbability)}% ${obj.person[i].gender} ${age.toFixed(1)}y`;
@@ -164,34 +168,93 @@ async function print(obj) {
   $('#video-person').text(person);
 }
 
-let firstFrame = true;
+async function loadModel(model, subtype) {
+  loading = true;
+  log.debug('Loading model:', model, subtype || '');
+  if ((model === 'classify') && subtype) {
+    $('#video-status').text('Loading Image Classification models ...');
+    exec.classify = await modelClassify.load(definitions.video[subtype]);
+  }
+  if (model === 'detect') {
+    $('#video-status').text('Loading Object Detection models ...');
+    exec.detect = await modelDetect.load(definitions.video.detect);
+  }
+  if (model === 'person') {
+    const options = definitions.video.person;
+    $('#video-status').text('Loading Face Recognition model ...');
+    if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
+    if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
+    await faceapi.nets.ageGenderNet.load(options.modelPath);
+    await faceapi.nets.faceLandmark68Net.load(options.modelPath);
+    if (options.exec === 'yolo') exec.person = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
+    if (options.exec === 'ssd') exec.person = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
+  }
+  const engine = await tf.engine();
+  $('#video-status').text(`Loaded Model: ${tf.getBackend()} backend ${engine.state.numBytes.toLocaleString()} bytes ${engine.state.numTensors.toLocaleString()} tensors`);
+  loading = false;
+}
+
 async function process() {
   if (video.paused || video.ended) {
     log.debug(`Video status: paused:${video.paused} ended:${video.ended} ready:${video.readyState}`);
     return;
   }
-  if (video.readyState > 1) {
+  if ((video.readyState > 1) && !loading) {
     // if (firstFrame) video.pause();
-    const obj = { classified: null, detected: null, person: null };
+    const obj = { classified: [], detected: [], person: [] };
+
+    // draw canvas from video
+    const t5 = window.performance.now();
+    reduce = document.getElementById('videoReduce').checked ? 4 : 1;
+    videoCanvas.height = video.videoHeight / reduce;
+    videoCanvas.width = video.videoWidth / reduce;
+    const ctx = videoCanvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, videoCanvas.width, videoCanvas.height);
+
+    // get dominant color and setup animation
+    const dominant = thief.getColor(videoCanvas, 30);
+    document.documentElement.style.setProperty('--dominant', `rgb(${dominant})`);
+    document.getElementById('video').classList.add('animfade');
+
+    // run classification
     const t0 = window.performance.now();
-    obj.classified = await modelClassify.classify(exec.classify, video);
+    if (document.getElementById('videoClassify').checked) {
+      document.getElementById('videoClassification').style.visibility = 'visible';
+      // if (!exec.classify) await loadModel('classify'); // loaded from radio button onclick event
+      if (exec.classify) obj.classified = await modelClassify.classify(exec.classify, videoCanvas);
+    } else {
+      document.getElementById('videoClassification').style.visibility = 'hidden';
+    }
+
+    // run detection
     const t1 = window.performance.now();
-    obj.detected = await modelDetect.exec(exec.detect, video);
+    if (document.getElementById('videoDetect').checked) {
+      if (!exec.detect) await loadModel('detect');
+      obj.detected = await modelDetect.exec(exec.detect, videoCanvas);
+    }
+
+    // run face analysis
     const t2 = window.performance.now();
-    obj.person = await faceapi
-      .detectAllFaces(video, exec.person)
-      .withFaceLandmarks()
-      .withAgeAndGender();
+    if (document.getElementById('videoFace').checked) {
+      if (!exec.person) await loadModel('person');
+      obj.person = await faceapi.detectAllFaces(videoCanvas, exec.person).withFaceLandmarks().withAgeAndGender();
+    }
+
+    // print all results
     const t3 = window.performance.now();
     await print(obj);
     await drawDetect(obj);
     await drawPerson(obj);
     const t4 = window.performance.now();
-    $('#video-status').text(`Performance: ${(1000 / (t3 - t0)).toFixed(1)} FPS | Classify ${Math.floor(t1 - t0)} ms | Detect ${Math.floor(t2 - t1)} ms | Person ${Math.floor(t3 - t2)} ms | Draw ${Math.floor(t4 - t3)} ms`);
-    if (firstFrame) {
-      video.play();
-      firstFrame = false;
-    }
+
+    // stop animation and set fixed background color
+    document.getElementById('video').style.background = `rgb(${dominant})`;
+    document.getElementById('video').classList.remove('animfade');
+
+    // write status line
+    const modelPerf = `Classify ${Math.floor(t1 - t0)} ms | Detect ${Math.floor(t2 - t1)} ms | Person ${Math.floor(t3 - t2)} ms`;
+    const canvasData = `Data ${ctx.getImageData(0, 0, videoCanvas.width, videoCanvas.height).data.length.toLocaleString()} bytes ${Math.floor(t0 - t5)} ms`;
+    $('#video-status').text(`Performance: ${(1000 / (t4 - t5)).toFixed(1)} FPS | ${canvasData} | Draw ${Math.floor(100 / reduce)}% ${Math.floor(t4 - t3)} ms | ${modelPerf}`);
   }
   setTimeout(process, 50);
 }
@@ -244,38 +307,17 @@ async function start(url) {
 }
 
 async function init(url) {
-  log.server('Starting Live Video');
-  if (!firstTime) {
-    $('#btn-play').click();
-    return;
-  }
+  $('#video-status').text('Initializing ...');
   if (!window.tf) {
     $('#video-status').text('Error: Library not loaded');
     return;
   }
-  $('#video-status').text('Initializing ...');
   tf = window.tf;
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   await tf.dispose();
   tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
-  $('#video-status').text('Loading Image Classification models ...');
-  exec.classify = await modelClassify.load(definitions.video.classify);
-  $('#video-status').text('Loading Object Detection models ...');
-  exec.detect = await modelDetect.load(definitions.video.detect);
-
   faceapi = window.faceapi;
-  const options = definitions.video.person;
-  $('#video-status').text('Loading Face Recognition model ...');
-  if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
-  if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
-  await faceapi.nets.ageGenderNet.load(options.modelPath);
-  await faceapi.nets.faceLandmark68Net.load(options.modelPath);
-  if (options.exec === 'yolo') exec.person = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
-  if (options.exec === 'ssd') exec.person = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
-
-  const engine = await tf.engine();
-  $('#video-status').text(`Loaded Models: ${tf.getBackend()} backend ${engine.state.numBytes.toLocaleString()} bytes ${engine.state.numTensors.toLocaleString()} tensors`);
 
   $('#btn-play').click(() => {
     $('#btn-play').toggleClass('fa-play-circle fa-pause-circle');
@@ -301,7 +343,7 @@ async function init(url) {
     }
   });
 
-  firstTime = false;
+  $('input[type="radio"]').on('click', (evt) => loadModel('classify', evt.target.value));
   $('#btn-play').click();
 }
 
