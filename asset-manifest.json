@@ -5,11 +5,15 @@
       "imports": []
     },
     "assets/face-api.cjs": {
-      "bytes": 935531,
+      "bytes": 936557,
       "imports": []
     },
     "assets/iv-viewer.js": {
       "bytes": 46614,
+      "imports": []
+    },
+    "assets/keras.min.js": {
+      "bytes": 672911,
       "imports": []
     },
     "assets/marked.esm.js": {
@@ -32,10 +36,19 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 13163,
+      "bytes": 17189,
       "imports": [
         {
+          "path": "node_modules/ndarray/ndarray.js"
+        },
+        {
+          "path": "node_modules/ndarray-ops/ndarray-ops.js"
+        },
+        {
           "path": "assets/tf.es2017.js"
+        },
+        {
+          "path": "assets/keras.min.js"
         },
         {
           "path": "node_modules/jquery/dist/jquery.js"
@@ -258,7 +271,7 @@
       ]
     },
     "client/processImage.js": {
-      "bytes": 11138,
+      "bytes": 11115,
       "imports": [
         {
           "path": "client/modelClassify.js"
@@ -334,8 +347,40 @@
         }
       ]
     },
+    "node_modules/cwise-compiler/compiler.js": {
+      "bytes": 3607,
+      "imports": [
+        {
+          "path": "node_modules/cwise-compiler/lib/thunk.js"
+        }
+      ]
+    },
+    "node_modules/cwise-compiler/lib/compile.js": {
+      "bytes": 14838,
+      "imports": [
+        {
+          "path": "node_modules/uniq/uniq.js"
+        }
+      ]
+    },
+    "node_modules/cwise-compiler/lib/thunk.js": {
+      "bytes": 4214,
+      "imports": [
+        {
+          "path": "node_modules/cwise-compiler/lib/compile.js"
+        }
+      ]
+    },
     "node_modules/ieee754/index.js": {
       "bytes": 2064,
+      "imports": []
+    },
+    "node_modules/iota-array/iota.js": {
+      "bytes": 150,
+      "imports": []
+    },
+    "node_modules/is-buffer/index.js": {
+      "bytes": 698,
       "imports": []
     },
     "node_modules/jquery/dist/jquery.js": {
@@ -345,6 +390,25 @@
     "node_modules/moment/moment.js": {
       "bytes": 173825,
       "imports": []
+    },
+    "node_modules/ndarray-ops/ndarray-ops.js": {
+      "bytes": 13347,
+      "imports": [
+        {
+          "path": "node_modules/cwise-compiler/compiler.js"
+        }
+      ]
+    },
+    "node_modules/ndarray/ndarray.js": {
+      "bytes": 9848,
+      "imports": [
+        {
+          "path": "node_modules/iota-array/iota.js"
+        },
+        {
+          "path": "node_modules/is-buffer/index.js"
+        }
+      ]
     },
     "node_modules/node-fetch/browser.js": {
       "bytes": 732,
@@ -365,13 +429,17 @@
           "path": "node_modules/safe-buffer/index.js"
         }
       ]
+    },
+    "node_modules/uniq/uniq.js": {
+      "bytes": 910,
+      "imports": []
     }
   },
   "outputs": {
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6621036
+      "bytes": 6622194
     },
     "dist/gallery.js": {
       "imports": [],
@@ -401,7 +469,7 @@
           "bytesInOutput": 93714
         },
         "assets/face-api.cjs": {
-          "bytesInOutput": 329289
+          "bytesInOutput": 329543
         },
         "client/log.js": {
           "bytesInOutput": 996
@@ -455,7 +523,7 @@
           "bytesInOutput": 8487
         },
         "client/processImage.js": {
-          "bytesInOutput": 6232
+          "bytesInOutput": 6182
         },
         "client/process.js": {
           "bytesInOutput": 2577
@@ -473,16 +541,40 @@
           "bytesInOutput": 20821
         }
       },
-      "bytes": 1544622
+      "bytes": 1544826
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6079242
+      "bytes": 7470819
     },
     "dist/compare.js": {
       "imports": [],
       "inputs": {
+        "node_modules/iota-array/iota.js": {
+          "bytesInOutput": 116
+        },
+        "node_modules/is-buffer/index.js": {
+          "bytesInOutput": 302
+        },
+        "node_modules/ndarray/ndarray.js": {
+          "bytesInOutput": 6323
+        },
+        "node_modules/uniq/uniq.js": {
+          "bytesInOutput": 417
+        },
+        "node_modules/cwise-compiler/lib/compile.js": {
+          "bytesInOutput": 5094
+        },
+        "node_modules/cwise-compiler/lib/thunk.js": {
+          "bytesInOutput": 1783
+        },
+        "node_modules/cwise-compiler/compiler.js": {
+          "bytesInOutput": 2372
+        },
+        "node_modules/ndarray-ops/ndarray-ops.js": {
+          "bytesInOutput": 9224
+        },
         "node_modules/node-fetch/browser.js": {
           "bytesInOutput": 364
         },
@@ -502,13 +594,16 @@
           "bytesInOutput": 3632
         },
         "assets/tf.es2017.js": {
-          "bytesInOutput": 875625
+          "bytesInOutput": 878997
+        },
+        "assets/keras.min.js": {
+          "bytesInOutput": 682605
         },
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 93351
+          "bytesInOutput": 95000
         },
         "assets/face-api.cjs": {
-          "bytesInOutput": 328193
+          "bytesInOutput": 328487
         },
         "client/log.js": {
           "bytesInOutput": 996
@@ -520,25 +615,25 @@
           "bytesInOutput": 1906
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2806
+          "bytesInOutput": 2792
         },
         "client/modelYolo.js": {
-          "bytesInOutput": 5358
+          "bytesInOutput": 5318
         },
         "client/blockhash.js": {
-          "bytesInOutput": 2049
+          "bytesInOutput": 1993
         },
         "client/models.js": {
           "bytesInOutput": 2191
         },
         "client/processImage.js": {
-          "bytesInOutput": 6232
+          "bytesInOutput": 6182
         },
         "client/compare.js": {
-          "bytesInOutput": 7389
+          "bytesInOutput": 10017
         }
       },
-      "bytes": 1366483
+      "bytes": 2082622
     },
     "dist/worker.js.map": {
       "imports": [],
