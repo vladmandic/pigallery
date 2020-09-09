@@ -130,18 +130,18 @@ async function faceapiClassify(image) {
   return faces;
 }
 
-async function getImage(url) {
+async function getImage(url, maxSize = config.maxSize) {
   return new Promise((resolve) => {
     const image = new Image();
     image.addEventListener('load', () => {
       const ratio = 1.0 * image.height / image.width;
-      if (Math.max(image.width, image.height) > config.maxSize) {
+      if (Math.max(image.width, image.height) > maxSize) {
         if (config.squareImage) {
-          image.height = config.maxSize;
-          image.width = config.maxSize;
+          image.height = maxSize;
+          image.width = maxSize;
         } else {
-          image.width = ratio <= 1 ? config.maxSize : 1.0 * config.maxSize / ratio;
-          image.height = ratio >= 1 ? config.maxSize : 1.0 * config.maxSize * ratio;
+          image.width = ratio <= 1 ? maxSize : 1.0 * maxSize / ratio;
+          image.height = ratio >= 1 ? maxSize : 1.0 * maxSize * ratio;
         }
       }
       const offscreenCanvas = document.createElement('canvas');

@@ -1,4 +1,7 @@
+import ndarray from 'ndarray';
+import ops from 'ndarray-ops';
 import * as tf from '../assets/tf.es2017.js';
+import KerasJS from '../assets/keras.min.js';
 
 const jQuery = require('jquery');
 const faceapi = require('../assets/face-api.cjs');
@@ -312,9 +315,91 @@ async function detect() {
   }
 }
 
+async function keras() {
+  log.server('Compare: Detect');
+  const res = await fetch('/models/imagenet-efficientnet-b5/classes.json');
+  const labels = await res.json();
+
+  function preprocess(image) {
+    const dataTensor = ndarray(new Float32Array(image.data), [image.width, image.height, 4]);
+    const dataProcessedTensor = ndarray(new Float32Array(image.width * image.height * 3), [image.width, image.height, 3]);
+    ops.subseq(dataTensor.pick(null, null, 2), 103.939);
+    ops.subseq(dataTensor.pick(null, null, 1), 116.779);
+    ops.subseq(dataTensor.pick(null, null, 0), 123.68);
+    ops.assign(dataProcessedTensor.pick(null, null, 0), dataTensor.pick(null, null, 2));
+    ops.assign(dataProcessedTensor.pick(null, null, 1), dataTensor.pick(null, null, 1));
+    ops.assign(dataProcessedTensor.pick(null, null, 2), dataTensor.pick(null, null, 0));
+    const preprocessedData = dataProcessedTensor.data;
+    return preprocessedData;
+  }
+
+  function decode(values) {
+    const pairs = [];
+    for (const i in values) pairs.push({ score: values[i], index: i });
+    const results = pairs
+      .filter((a) => (a.score) > 0.1)
+      .sort((a, b) => b.score - a.score)
+      .map((a) => {
+        const id = parseInt(a.index);
+        const wnid = labels[id] ? labels[id][0] : a.index;
+        const label = labels[id] ? labels[id][1] : `unknown id:${a.index}`;
+        return { wnid, id, class: label.toLowerCase(), score: a.score };
+      });
+    if (results && results.length > 10) results.length = 10;
+    return results;
+  }
+
+  log.div('log', true, 'Loading models ...');
+  // use keras-js/python/encoder.py to convert from keras h5 to bin
+  models.push({ name: 'Imagenet SqueezeNet v1.1', exec: new KerasJS.Model({ filepath: 'models/kerasjs/squeezenet_v1.1.bin', gpu: true }), size: 227, input: 'input_1', output: 'loss' });
+  models.push({ name: 'Imagenet Inception v3', exec: new KerasJS.Model({ filepath: 'models/kerasjs/inception_v3.bin', gpu: true }), size: 299, input: 'input_1', output: 'predictions' });
+  models.push({ name: 'Imagenet DenseNet-121', exec: new KerasJS.Model({ filepath: 'models/kerasjs/densenet121.bin', gpu: true }), size: 224, input: 'input_2', output: 'dense_2' });
+  models.push({ name: 'Imagenet ResNet-50', exec: new KerasJS.Model({ filepath: 'models/kerasjs/resnet50.bin', gpu: true }), size: 224, input: 'input_1', output: 'fc1000' });
+
+  const promises = models.map((a) => a.exec.ready());
+  await Promise.all(promises);
+
+  log.div('log', true, 'TensorFlow Memory:', tf.memory());
+  log.div('log', true, 'TensorFlow Flags:');
+  log.div('log', true, tf.ENV.flags);
+
+  const api = await fetch('/api/dir?folder=Tests/Objects/');
+  const files = await api.json();
+  log.div('log', true, `Received list from server: ${files.length} images`);
+
+  const stats = [];
+  // eslint-disable-next-line no-unused-vars
+  for (const m in models) stats.push(0);
+  log.div('log', true, 'TensorFlow Memory:', tf.memory());
+  for (const file of files) {
+    if (stop) break;
+    const results = [];
+    for (const m in models) {
+      const image = await processImage.getImage(file, models[m].size);
+      const t0 = window.performance.now();
+      const data = preprocess(image.data);
+      const obj = {};
+      obj[models[m].input] = new Float32Array(data);
+      const values = await models[m].exec.predict(obj);
+      console.log(values);
+      const output = decode(values[models[m].output]);
+      const t1 = window.performance.now();
+      stats[m] += (t1 - t0);
+      results.push({ model: models[m].name, data: output });
+      log.debug('Detect', file, models[m].name, output);
+    }
+    const thumb = await processImage.getImage(file);
+    print(file, thumb, results);
+  }
+  for (const m in models) {
+    log.div('log', true, `${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
+  }
+}
+
 async function main() {
   await init();
   $('#btn-classify').click(() => classify());
+  $('#btn-keras').click(() => keras());
   $('#btn-detect').click(() => detect());
   $('#btn-person').click(() => person());
   // $('#btn-detect').click(() => yolo());
