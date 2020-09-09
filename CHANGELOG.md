@@ -1,11 +1,12 @@
 # PiGallery Change Log
 
+### **origin/HEAD** 2020/09/07 cyan00@gmail.com
+
+
 ### **v2.0.7** 2020/09/07 cyan00@gmail.com
 
 - major work on livevideo function
-
-### **origin/HEAD** 2020/09/06 cyan00@gmail.com
-
+- updated
 
 ### **v2.0.6** 2020/09/06 cyan00@gmail.com
 
