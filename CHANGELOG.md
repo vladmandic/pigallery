@@ -1,7 +1,13 @@
 # PiGallery Change Log
+- playing with efficientdet models
 
-### **origin/HEAD** 2020/09/07 cyan00@gmail.com
+### **origin/HEAD** 2020/09/09 cyan00@gmail.com
 
+
+### **v2.0.8** 2020/09/09 cyan00@gmail.com
+
+- added several keras models to compare
+- updated
 
 ### **v2.0.7** 2020/09/07 cyan00@gmail.com
 
