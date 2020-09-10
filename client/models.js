@@ -28,6 +28,8 @@ exports.models = {
     // { name: 'CoCo DarkNet/Yolo v3 Full', modelPath: 'models/yolo-v3-full', score: 0.4, topK: 6, overlap: 0.5, modelType: 'layers' },
     { name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/openimages-ssd-mobilenet-v2', score: 0.2, topK: 6, useFloat: true, exec: 'ssd' },
     // { name: 'OpenImages RCNN/Inception-ResNet v2', modelPath: 'models/rcnn-inception-resnet-v2', score: 0.2, topK: 6, classes: 'assets/OpenImage-Labels.json', exec: 'ssd' },
+    // { name: 'OpenImages SSD/EfficientDet D0', modelPath: 'models/coco-ssd-efficientdet-d0-f16', score: 0.1, topK: 6, useFloat: false, exec: 'ssd' },
+    // { name: 'OpenImages SSD/EfficientDet D0', modelPath: 'models/coco-ssd-efficientdet-d5-f16', score: 0.1, topK: 6, useFloat: false, exec: 'ssd' },
   ],
   person: [
     // { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },

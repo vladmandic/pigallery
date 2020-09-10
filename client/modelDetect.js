@@ -117,7 +117,6 @@ async function detectSSD(model, image) {
   }
   // console.log('execute start', model); // look at model.inputs and model.outputs on how to execute a model
   const result = await model.executeAsync({ images: batched }, ['module_apply_default/hub_input/strided_slice_1', 'module_apply_default/hub_input/strided_slice_2', 'module_apply_default/hub_input/strided_slice']); // scores, classes, boxes
-  // console.log('execute end', model, result); model.outputs map to result
   const scores = result[0].dataSync();
   const classes = result[1].dataSync();
   const boxes = result[2].dataSync();

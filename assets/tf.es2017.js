@@ -53854,7 +53854,7 @@
                 node.inputNames.forEach(name => {
                     const [nodeName,] = getNodeNameAndIndex(name);
                     node.inputs.push(nodes[nodeName]);
-                    nodes[nodeName].children.push(node);
+                    if (node[nodeName]) nodes[nodeName].children.push(node);
                 });
             });
             const returnNodeMap = functionDef.ret;

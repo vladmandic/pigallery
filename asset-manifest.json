@@ -21,7 +21,7 @@
       "imports": []
     },
     "assets/tf.es2017.js": {
-      "bytes": 3321775,
+      "bytes": 3321795,
       "imports": [
         {
           "path": "node_modules/node-fetch/browser.js"
@@ -224,7 +224,7 @@
       "imports": []
     },
     "client/modelDetect.js": {
-      "bytes": 5553,
+      "bytes": 5477,
       "imports": []
     },
     "client/modelYolo.js": {
@@ -232,7 +232,7 @@
       "imports": []
     },
     "client/models.js": {
-      "bytes": 5257,
+      "bytes": 5561,
       "imports": []
     },
     "client/nearest.js": {
@@ -439,7 +439,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6622194
+      "bytes": 6622458
     },
     "dist/gallery.js": {
       "imports": [],
@@ -463,7 +463,7 @@
           "bytesInOutput": 3632
         },
         "assets/tf.es2017.js": {
-          "bytesInOutput": 876601
+          "bytesInOutput": 876607
         },
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 93714
@@ -541,12 +541,12 @@
           "bytesInOutput": 20821
         }
       },
-      "bytes": 1544826
+      "bytes": 1544832
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7470819
+      "bytes": 7471083
     },
     "dist/compare.js": {
       "imports": [],
@@ -594,7 +594,7 @@
           "bytesInOutput": 3632
         },
         "assets/tf.es2017.js": {
-          "bytesInOutput": 878997
+          "bytesInOutput": 879003
         },
         "assets/keras.min.js": {
           "bytesInOutput": 682605
@@ -633,7 +633,7 @@
           "bytesInOutput": 10017
         }
       },
-      "bytes": 2082622
+      "bytes": 2082628
     },
     "dist/worker.js.map": {
       "imports": [],
