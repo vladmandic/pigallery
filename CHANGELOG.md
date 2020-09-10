@@ -1,4 +1,5 @@
 # PiGallery Change Log
+- added samples
 - playing with efficientdet models
 
 ### **origin/HEAD** 2020/09/09 cyan00@gmail.com
