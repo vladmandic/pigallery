@@ -813,6 +813,7 @@ async function main() {
     log.div('log', true, 'Ready: ', stats.images, ' Images in ', stats.ready, 'ms');
     log.server('Stats: ', stats);
   }
+  if (window.location.search && window.location.search.startsWith('?process')) $('#btn-update').click();
 }
 
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
