@@ -32,8 +32,10 @@ PiGallery uses private branches of following public distributions due to followi
 Didn't find:
 
 - Places365: All found pre-trained weights are for PyTorch
+- Objects365: New dataset, no public pre-trained weights so far
 - ImageNet 21k: Huge
 - iNaturalist: Found only feature-extract, not classificaiotn
+- NudeNet: Requires port to TFJS: <https://github.com/notAI-tech/NudeNet/tree/master>
 
 No tags in saved model:
 - <https://tfhub.dev/google/on_device_vision/classifier/popular_wine_V1/1>
@@ -62,3 +64,4 @@ Firefox:
 CSS package
 - Dynamic rebuild
 - Fixed ordering
+

@@ -12,7 +12,8 @@ async function warmupModels() {
   const res = await process.process('assets/warmup.jpg');
   if (res.error) {
     log.div('process-log', true, 'Aborting current run due to error during warmup');
-    setTimeout(() => window.location.reload(true), 2500);
+    // setTimeout(() => window.location.reload(true), 2500);
+    setTimeout(() => window.location.replace(`${window.location.origin}?process`), 2500);
   }
   const t1 = window.performance.now();
   log.div('process-log', true, `TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
