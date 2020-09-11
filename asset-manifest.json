@@ -302,7 +302,7 @@
       ]
     },
     "client/video.js": {
-      "bytes": 13231,
+      "bytes": 13283,
       "imports": [
         {
           "path": "assets/color-thief.umd.js"
@@ -439,7 +439,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6623318
+      "bytes": 6623399
     },
     "dist/gallery.js": {
       "imports": [],
@@ -520,7 +520,7 @@
           "bytesInOutput": 2810
         },
         "client/video.js": {
-          "bytesInOutput": 8485
+          "bytesInOutput": 8523
         },
         "client/processImage.js": {
           "bytesInOutput": 6180
@@ -541,7 +541,7 @@
           "bytesInOutput": 20880
         }
       },
-      "bytes": 1544911
+      "bytes": 1544949
     },
     "dist/compare.js.map": {
       "imports": [],
