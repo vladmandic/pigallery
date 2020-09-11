@@ -4,6 +4,8 @@ const process = require('./processImage.js');
 
 const results = [];
 let id = 0;
+let running = false;
+let stopping = false;
 
 // initial complex image is used to trigger all models thus warming them up
 async function warmupModels() {
@@ -22,6 +24,11 @@ async function warmupModels() {
 
 // calls main detectxion and then print results for all images matching spec
 async function processFiles() {
+  const p0 = window.performance.now();
+  running = true;
+  log.div('process-active', false, 'Starting ...');
+  log.div('log', true, 'Image database update requested ...');
+  log.server('Image DB Update');
   log.div('process-log', true, 'Requesting file list from server ...');
   const res = await fetch('/api/list');
   const dirs = await res.json();
@@ -32,6 +39,7 @@ async function processFiles() {
   }
   if (files.length === 0) {
     log.div('process-log', true, 'No new images found');
+    running = false;
     return;
   }
   await process.load();
@@ -46,7 +54,7 @@ async function processFiles() {
     if (now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) window.location.reload(true);
   }, 10000);
   for (const url of files) {
-    if (!error) {
+    if (!error && !stopping) {
       promises.push(process.process(url).then((obj) => {
         results[id] = obj;
         // eslint-disable-next-line no-console
@@ -65,6 +73,7 @@ async function processFiles() {
   if (promises.length > 0) await Promise.all(promises);
   clearInterval(checkAlive);
   const t1 = window.performance.now();
+  if (stopping) log.div('process-log', true, 'Aborting current run due to user stop request');
   if (files.length > 0) {
     log.div('process-log', true, `Processed ${results.length} of ${files.length} images in ${Math.round(t1 - t0).toLocaleString()}ms ${Math.round((t1 - t0) / results.length).toLocaleString()}ms avg`);
     log.div('process-log', true, `Results: ${results.length} images in total ${JSON.stringify(results).length.toLocaleString()} bytes average ${Math.round((JSON.stringify(results).length / results.length)).toLocaleString()} bytes`);
@@ -74,16 +83,16 @@ async function processFiles() {
     setTimeout(() => window.location.reload(true), 2500);
   }
   log.div('process-active', false, 'Idle ...');
+  const p1 = window.performance.now();
+  log.div('process-log', true, `Image Analysis done: ${Math.round(p1 - p0).toLocaleString()}ms`);
+  log.div('process-log', true, 'Reload image database now');
+  running = false;
 }
 
 async function start() {
-  log.div('log', true, 'Image database update requested ...');
-  log.server('Image DB Update');
-  const t0 = window.performance.now();
-  log.div('process-active', false, 'Starting ...');
-  await processFiles();
-  const t1 = window.performance.now();
-  log.div('process-log', true, `Image Analysis done: ${Math.round(t1 - t0).toLocaleString()}ms`);
+  if (!running) processFiles();
+  $('#process-stop').click(() => { stopping = true; });
+  $('#process-close').click(() => $('#process').hide());
 }
 
 // window.onload = main;

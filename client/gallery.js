@@ -561,7 +561,7 @@ async function initMenuHandlers() {
       await showNavbar($('#process'));
       if ($('#process').css('display') !== 'none') {
         await process.start();
-        await loadGallery(window.options.listLimit);
+        // await loadGallery(window.options.listLimit);
       }
     } else {
       log.div('log', true, 'Image database update not authorized');

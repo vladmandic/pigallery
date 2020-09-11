@@ -134,8 +134,12 @@
   <div id="docs" class="docs"></div>
 
   <div id="process" class="docs">
-    <div id="process-active" style="background: var(--title); padding: 8px; margin-bottom: 8px; font-size: 1.2rem; height: 52px"></div>
-    <div id="process-state" style="background: var(--title); padding: 8px; margin-bottom: 8px; font-size: 1.2rem; height: 52px;"></div>
+    <div class="btn-close">
+      <i class="navbarbutton fad fa-stop-circle" id="process-stop"></i><p class="btntext">Stop</p>
+      <i class="navbarbutton fad fa-times-circle" id="process-close"></i><p class="btntext">Close</p>
+    </div>
+    <div id="process-active" style="background: var(--title); padding: 8px; margin-bottom: 8px; font-size: 1.2rem; height: 52px; width: calc(100% - 100px); border-radius: 1.5rem;"></div>
+    <div id="process-state" style="background: var(--title); padding: 8px; margin-bottom: 8px; font-size: 1.2rem; height: 52px; width: calc(100% - 100px); border-radius: 1.5rem;"></div>
     <div id="process-log" class="row" style="overflow-y: scroll; overflow-wrap: anywhere; display: block;"></div> 
   </div>
 
