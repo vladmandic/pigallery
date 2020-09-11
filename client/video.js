@@ -262,7 +262,7 @@ async function process() {
 async function camera() {
   if (video.srcObject) {
     const track = video.srcObject.getVideoTracks()[0];
-    log.debug('Video capabilities', track.getCapabilities());
+    if (track.getCapabilities) log.debug('Video capabilities', track.getCapabilities());
     log.debug('Video settings', video.srcObject.getVideoTracks()[0].getSettings());
   }
   $('#video-status').text('Warming up: Detection will start soon ...');
@@ -297,7 +297,7 @@ async function start(url) {
       else constraints.video.width.ideal = window.innerWidth;
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       const track = stream.getVideoTracks()[0];
-      if (track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: 0 }); // stop strech & crop
+      if (track.getCapabilities && track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: 0 }); // stop strech & crop
       video.srcObject = stream;
     }
     video.play();

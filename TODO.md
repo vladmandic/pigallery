@@ -53,15 +53,17 @@ Settings:
 Models:
 - Configurable caching
 Video:
-- better messages on long operations
-- models reduced 50%
-- models are selectable
-- full or reduced processing
-- background fades to dominant color
+- Better messages on long operations
+- Age is avaraged to reduce jitter
+- Models size reduced 50%
+- Models are selectable
+- Full or reduced processing
+- Background fades to dominant color
 Firefox:
-- Bug with caching load order
-- Bug with content-length verification
+- Bug with PWA caching load order
+- Bug with content-length verification: result is block or encoding mismatch
+- Missing getCapabilities for video tracks
+- Missing some CSS tags
 CSS package
 - Dynamic rebuild
 - Fixed ordering
-
