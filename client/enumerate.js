@@ -54,7 +54,7 @@ async function enumerateLocations() {
     places = places.sort((a, b) => (a.sort > b.sort ? 1 : -1));
     locCount += places.length;
     for (const place of places) {
-      children += `<li><span tag="${escape(place.name)}" type="location" style="padding-left: 32px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${place.name}</span></li>`;
+      children += `<li style="display: none"><span tag="${escape(place.name)}" type="location" style="padding-left: 32px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${place.name}</span></li>`;
     }
     const html = `<li id="loc-${i}"><span tag="${escape(country)}" type="location" style="padding-left: 16px" class="folder"><i class="collapsible fas fa-chevron-circle-right">&nbsp</i>${country} (${items.length})</span></li>`;
     $('#locations').append(html);
@@ -92,6 +92,7 @@ async function enumerateFolders() {
         if (!document.getElementById(`dir-${pathId}`)) {
           const div = document.createElement('li');
           div.id = `dir-${pathId}`;
+          if (i !== depth) div.style = 'display: none';
           let path = '';
           for (let j = 0; j <= i; j++) path += `${escape(item.folders[j])}/`;
           const count = i === item.folders.length - 1 ? `(${item.count})` : '';

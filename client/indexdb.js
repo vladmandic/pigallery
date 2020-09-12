@@ -95,25 +95,28 @@ async function all(index = 'date', direction = true, start = 1, end = Number.MAX
       const res = [];
       if (!window.user || !window.user.user) resolve(res);
       let idx = 0;
-      db.transaction([table], 'readonly')
+      const transaction = db.transaction([table], 'readonly')
         .objectStore(table)
         .index(index)
-        .openCursor(null, direction ? 'next' : 'prev')
-        .onsuccess = (evt) => {
-          if (evt.target.result) {
-            idx++;
-            const obj = evt.target.result.value;
-            if ((idx >= start) && (obj.image.startsWith(window.user.root))) res.push(obj);
-            if (idx < end) evt.target.result.continue();
-            else {
-              log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images ${start}-${end}`);
-              resolve(res);
-            }
-          } else {
-            log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images`);
+        .openCursor(null, direction ? 'next' : 'prev');
+      transaction.onerror = (evt) => log.debug('IndexDB All error:', evt);
+      transaction.onabort = (evt) => log.debug('IndexDB All abort:', evt);
+      transaction.oncomplete = (evt) => log.debug('IndexDB All complete:', evt);
+      transaction.onsuccess = (evt) => {
+        const e = evt.target.result;
+        if (e) {
+          idx++;
+          if ((idx >= start) && (e.value.image.startsWith(window.user.root))) res.push(e.value);
+          if (idx < end) e.continue();
+          else {
+            log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images ${start}-${end}`);
             resolve(res);
           }
-        };
+        } else {
+          log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images`);
+          resolve(res);
+        }
+      };
     }
   });
 }

@@ -11,7 +11,7 @@ const init = require('./init.js');
 const list = require('./list.js');
 const log = require('./log.js');
 const map = require('./map.js');
-const menu = require('./menu.js');
+const enumerate = require('./enumerate.js');
 const video = require('./video.js');
 const process = require('./process.js');
 const options = require('./options.js');
@@ -45,6 +45,7 @@ async function time(fn, arg) {
 // handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
   $('.collapsible').off();
+  $('.collapsible').children('li').hide();
   $('.collapsible').click(async (evt) => {
     $(evt.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-right');
     $(evt.target).parent().parent().find('li').toggle('slow');
@@ -65,7 +66,7 @@ async function folderHandlers() {
           // window.options.listSortOrder = 'alpha-down';
         }
         if (path !== root) window.filtered = window.filtered.filter((a) => escape(a.image).startsWith(path));
-        await menu.classes();
+        await enumerate.classes();
         folderHandlers();
         break;
       case 'location':
@@ -76,7 +77,7 @@ async function folderHandlers() {
         }
         if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => (path.startsWith(escape(a.location.near)) || path.startsWith(escape(a.location.country))));
         else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
-        await menu.classes();
+        await enumerate.classes();
         folderHandlers();
         break;
       case 'class':
@@ -97,8 +98,7 @@ async function folderHandlers() {
         window.share = share.key;
         // eslint-disable-next-line no-use-before-define
         sortResults(window.options.listSortOrder);
-        await menu.enumerate();
-        folderHandlers();
+        enumerate.enumerate().then(() => folderHandlers());
         break;
       default:
     }
@@ -134,8 +134,7 @@ async function filterResults(words) {
   }
   if (window.filtered && window.filtered.length > 0) log.debug(t0, `Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} matches out of ${size} images`);
   else log.debug(t0, `Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
-  await menu.enumerate();
-  folderHandlers();
+  enumerate.enumerate().then(() => folderHandlers());
   list.redraw();
 }
 
@@ -166,8 +165,7 @@ async function simmilarImage(image) {
     .sort((a, b) => a.simmilarity - b.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} images`);
   list.redraw();
-  await menu.enumerate();
-  folderHandlers();
+  enumerate.enumerate().then(() => folderHandlers());
   list.scroll();
   busy();
 }
@@ -192,8 +190,7 @@ async function simmilarPerson(image) {
     .sort((a, b) => a.simmilarity - b.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} persons`);
   list.redraw();
-  await menu.enumerate();
-  folderHandlers();
+  enumerate.enumerate().then(() => folderHandlers());
   list.scroll();
   busy();
 }
@@ -217,8 +214,7 @@ async function simmilarClasses(image) {
     .sort((a, b) => b.simmilarity - a.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} classes`);
   list.redraw();
-  await menu.enumerate();
-  folderHandlers();
+  enumerate.enumerate().then(() => folderHandlers());
   list.scroll();
   busy();
 }
@@ -278,9 +274,10 @@ async function sortResults(sort) {
     await loadGallery(window.options.listLimit);
   }
   busy('Enumerating images');
-  await menu.enumerate();
+  // await enumerate.enumerate();
+  // folderHandlers();
+  enumerate.enumerate().then(() => folderHandlers());
   stats.enumerate = Math.floor(window.performance.now() - t1);
-  folderHandlers();
   list.scroll();
   busy();
 }
@@ -441,7 +438,7 @@ async function initSharesHandler() {
   $('#sharestitle').off();
   $('#sharestitle').click(async () => {
     const show = $('#share').is(':visible');
-    if (!show) await menu.shares();
+    if (!show) await enumerate.shares();
     $('#btn-shareadd').removeClass('fa-minus-square').addClass('fa-plus-square');
     $('#share').toggle(!show);
     $('#shares').find('li').toggle(!show);
@@ -466,12 +463,12 @@ async function initSharesHandler() {
       $.post('/api/share', share)
         .done((res) => $('#share-url').val(`${window.location.origin}?share=${res.key}`))
         .fail(() => $('#share-url').val('error creating share'));
-      menu.shares();
+      enumerate.shares();
     } else {
       const name = $('#share-name').val();
       const key = $('#share-url').val().split('=')[1];
       log.debug(t0, `Share remove: ${name} ${key}`);
-      fetch(`/api/share?rm=${key}`).then(() => menu.shares());
+      fetch(`/api/share?rm=${key}`).then(() => enumerate.shares());
     }
   });
 
@@ -536,6 +533,7 @@ function initSidebarHandlers() {
 
 // initializes all mouse handlers for main menu in list view
 async function initMenuHandlers() {
+  log.debug('Navigation enabled');
   // navbar user
   $('#btn-user').click(() => {
     showNavbar($('#userbar'));
@@ -702,17 +700,6 @@ async function initMenuHandlers() {
     log.debug(t0, 'Reset filtered results');
   });
 
-  $('#log').click(() => {
-    if (!window.deferredPrompt) {
-      log.debug('Application is not installable');
-      return;
-    }
-    window.deferredPrompt.prompt();
-    window.deferredPrompt.userChoice.then((res) => {
-      log.debug('Application Install: ', res.outcome);
-    });
-  });
-
   $('#btn-number').mouseover(async () => { /**/ });
   $('.navbarbutton').css('opacity', 1);
 }
@@ -760,19 +747,32 @@ async function perfDetails() {
     stats.fetch = Math.round(perf.responseEnd);
     stats.interactive = Math.round(perf.domInteractive);
     stats.complete = Math.round(perf.duration);
-    log.debug('Performance:', perf);
+    // log.debug('Performance:', perf);
   } else if (window.performance) {
     log.debug('Performance:', performance.timing);
   }
 }
 
+async function installable(evt) {
+  evt.preventDefault();
+  const deferredPrompt = evt;
+  document.getElementById('install').style.display = 'block';
+  document.getElementById('install').addEventListener('click', () => {
+    document.getElementById('install').style.display = 'none';
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((res) => log.debug('Application Install: ', res.outcome));
+  });
+  document.getElementById('log').addEventListener('click', () => {
+    document.getElementById('install').style.display = 'none';
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((res) => log.debug('Application Install: ', res.outcome));
+  });
+}
+
 async function main() {
   const t0 = window.performance.now();
   log.debug(null, 'Starting PiGallery');
-  window.addEventListener('beforeinstallprompt', (evt) => {
-    evt.preventDefault();
-    window.deferredPrompt = evt;
-  });
+  window.addEventListener('beforeinstallprompt', (evt) => installable(evt));
   if (config.default.registerPWA) await pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
 
@@ -797,9 +797,9 @@ async function main() {
   await list.resize();
   await sortResults(window.options.listSortOrder);
 
+  await initMenuHandlers();
   await initSidebarHandlers();
   await initSharesHandler();
-  await initMenuHandlers();
 
   window.tf = tf;
   window.faceapi = faceapi;
