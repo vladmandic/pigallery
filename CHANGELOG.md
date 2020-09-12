@@ -1,6 +1,9 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/09/10 cyan00@gmail.com
+### **HEAD -> master** 2020/09/11 cyan00@gmail.com
+- implemented processing resume
+
+### **origin/master, origin/HEAD** 2020/09/10 cyan00@gmail.com
 - changelog
 
 ### **2.0.9** 2020/09/10 cyan00@gmail.com

@@ -34,11 +34,11 @@ p { margin: 0; }
 .options:hover { background: var(--foreground); }
 .options:focus { background: var(--foreground); }
 .main { height: 100%; display: flex; }
-.folderbar { overflow-x: hidden; overflow-y: auto; cursor: pointer; min-width: fit-content; margin-top: 65px; }
+.folderbar { overflow-x: hidden; overflow-y: auto; cursor: pointer; min-width: auto; margin-top: 65px; }
 .folderbar::-webkit-scrollbar { display: none; }
-.folderlist { margin: 0; min-width: 10rem; max-width: 15rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
+.folderlist { margin: 0; min-width: 10rem; max-width: 15rem; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
 .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
-.folder { background: var(--body); margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: 400; letter-spacing: 1px; }
+.folder { margin: 0; padding: 0.4rem 200px 0.4rem 0; font-weight: 400; letter-spacing: 1px; }
 .folder:hover { background: var(--highlight); color: var(--background); letter-spacing: 2px; }
 .folder:active { background: var(--highlight); color: var(--background); letter-spacing: 2px; }
 .folderstitle { color: var(--text); letter-spacing: 2px; font-weight: 400; line-height: 2.6rem; padding: 4px; }
@@ -69,6 +69,7 @@ p { margin: 0; }
 .popup-details { margin: 0 0 0 10px; overflow-x: hidden; overflow-y: scroll; word-break: break-word; color: var(--text); z-index: 10; }
 .docs { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
 .btn-close { float: right; }
+.install { font-size: 0.8rem; font-weight: bold; background: var(--foreground); color: black; position: relative; width: fit-content; float: right; padding: 4px; text-align: center; cursor: pointer; z-index: 100; display: none; }
 .video { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
 .video-label { margin: 0; margin-right: 10px; display: block; }
 .video-models { margin-right: 10px; }

@@ -64,6 +64,7 @@ Firefox:
 - Bug with content-length verification: result is block or encoding mismatch
 - Missing getCapabilities for video tracks
 - Missing some CSS tags
+- Missing installable
 CSS package
 - Dynamic rebuild
 - Fixed ordering

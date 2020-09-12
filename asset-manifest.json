@@ -104,8 +104,16 @@
         }
       ]
     },
+    "client/enumerate.js": {
+      "bytes": 6237,
+      "imports": [
+        {
+          "path": "client/log.js"
+        }
+      ]
+    },
     "client/gallery.js": {
-      "bytes": 32398,
+      "bytes": 32950,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -144,7 +152,7 @@
           "path": "client/map.js"
         },
         {
-          "path": "client/menu.js"
+          "path": "client/enumerate.js"
         },
         {
           "path": "client/video.js"
@@ -161,7 +169,7 @@
       ]
     },
     "client/indexdb.js": {
-      "bytes": 5117,
+      "bytes": 5316,
       "imports": [
         {
           "path": "client/log.js"
@@ -208,14 +216,6 @@
         },
         {
           "path": "client/list.js"
-        }
-      ]
-    },
-    "client/menu.js": {
-      "bytes": 6159,
-      "imports": [
-        {
-          "path": "client/log.js"
         }
       ]
     },
@@ -439,7 +439,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6623399
+      "bytes": 6624631
     },
     "dist/gallery.js": {
       "imports": [],
@@ -478,7 +478,7 @@
           "bytesInOutput": 5777
         },
         "client/indexdb.js": {
-          "bytesInOutput": 3269
+          "bytesInOutput": 3396
         },
         "assets/color-thief.umd.js": {
           "bytesInOutput": 7247
@@ -507,8 +507,8 @@
         "client/map.js": {
           "bytesInOutput": 1981
         },
-        "client/menu.js": {
-          "bytesInOutput": 3952
+        "client/enumerate.js": {
+          "bytesInOutput": 4007
         },
         "client/models.js": {
           "bytesInOutput": 2191
@@ -538,10 +538,10 @@
           "bytesInOutput": 33308
         },
         "client/gallery.js": {
-          "bytesInOutput": 20880
+          "bytesInOutput": 21195
         }
       },
-      "bytes": 1544949
+      "bytes": 1545446
     },
     "dist/compare.js.map": {
       "imports": [],
