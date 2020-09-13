@@ -28,7 +28,7 @@ async function open() {
       log.debug(t0, 'IndexDB request open');
       db = evt.target.result;
       window.db = db;
-      db.onerror = (event) => log.div('log', true, `IndexDB DB error: ${event}`);
+      db.onerror = (event) => log.div('log', true, 'IndexDB DB error:', event.target.error || event);
       db.onsuccess = (event) => log.div('log', true, `IndexDB DB open: ${event}`);
       db.onblocked = (event) => log.div('log', true, `IndexDB DB blocked: ${event}`);
       resolve(true);
