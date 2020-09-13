@@ -80,7 +80,7 @@
       ]
     },
     "client/config.js": {
-      "bytes": 7841,
+      "bytes": 7924,
       "imports": [
         {
           "path": "client/log.js"
@@ -439,7 +439,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6624631
+      "bytes": 6624758
     },
     "dist/gallery.js": {
       "imports": [],
@@ -475,7 +475,7 @@
           "bytesInOutput": 994
         },
         "client/config.js": {
-          "bytesInOutput": 5777
+          "bytesInOutput": 5856
         },
         "client/indexdb.js": {
           "bytesInOutput": 3396
@@ -541,12 +541,12 @@
           "bytesInOutput": 21195
         }
       },
-      "bytes": 1545446
+      "bytes": 1545525
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7471081
+      "bytes": 7471208
     },
     "dist/compare.js": {
       "imports": [],
@@ -609,7 +609,7 @@
           "bytesInOutput": 994
         },
         "client/config.js": {
-          "bytesInOutput": 5777
+          "bytesInOutput": 5856
         },
         "client/modelClassify.js": {
           "bytesInOutput": 1906
@@ -633,7 +633,7 @@
           "bytesInOutput": 10017
         }
       },
-      "bytes": 2082252
+      "bytes": 2082331
     },
     "dist/worker.js.map": {
       "imports": [],

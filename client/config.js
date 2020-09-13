@@ -92,6 +92,7 @@ async function initTheme() {
   window.theme = window.themes[window.options.theme];
   document.documentElement.style.setProperty('--body', window.theme.body);
   document.documentElement.style.setProperty('--background', window.theme.background);
+  document.documentElement.style.setProperty('--gradient', window.theme.gradient);
   document.documentElement.style.setProperty('--foreground', window.theme.foreground);
   document.documentElement.style.setProperty('--text', window.theme.text);
   document.documentElement.style.setProperty('--title', window.theme.title);
