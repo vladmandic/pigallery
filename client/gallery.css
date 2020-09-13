@@ -52,7 +52,7 @@ p { margin: 0; }
 .listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; content-visibility: auto; }
 .divider { padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; scroll-margin-top: 8px; }
 .thumbnail { padding: 0; cursor: zoom-in; }
-.thumbnail:hover { box-shadow: 0 0 8px 8px var(--body); }
+.thumbnail:hover { box-shadow: 0 0 8px 8px var(--gradient); filter: grayscale(1); }
 .thumb-top { display: flex; position: absolute; top: 0; width: 100%; justify-content: flex-end; }
 .thumb-top:hover { background: rgba(0, 0, 0, 0.4); }
 .thumb-bottom { display: flex; position: absolute; bottom: 0; width: 100%; justify-content: flex-end; }

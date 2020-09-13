@@ -109,7 +109,7 @@ async function folderHandlers() {
 
 // used by filterresults
 function filterWord(word) {
-  const skip = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during', 'on'];
+  const skip = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during', 'on', 'having'];
   if (skip.includes(word)) return window.filtered;
   const res = window.filtered.filter((obj) => {
     for (const tag of obj.tags) {
@@ -119,23 +119,30 @@ function filterWord(word) {
     }
     return false;
   });
+  // log.debug('Debug searching for:', word, 'found:', res);
   return res;
 }
 
 // filters images based on search strings
 async function filterResults(words) {
+  busy(`Searching for<br>${words}`);
   list.previous = null;
   let foundWords = 0;
   const t0 = window.performance.now();
+  window.filtered = await db.refresh();
+  const full = filterWord(words.toLowerCase());
   const size = window.filtered.length;
   for (const word of words.split(' ')) {
-    window.filtered = filterWord(word.toLowerCase());
+    if (window.filtered.length > 0) window.filtered = filterWord(word.toLowerCase());
     foundWords += (window.filtered && window.filtered.length > 0) ? 1 : 0;
   }
+  if (full.length > 0) window.filtered.push(...full);
   if (window.filtered && window.filtered.length > 0) log.debug(t0, `Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} matches out of ${size} images`);
   else log.debug(t0, `Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
+  $('#search-result').text(` Found ${window.filtered.length || 0} out of ${size} images`);
   enumerate.enumerate().then(() => folderHandlers());
   list.redraw();
+  busy();
 }
 
 // randomize image order using Fisher-Yates (aka Knuth) shuffle
@@ -534,6 +541,8 @@ function initSidebarHandlers() {
 // initializes all mouse handlers for main menu in list view
 async function initMenuHandlers() {
   log.debug('Navigation enabled');
+
+  window.passive = false;
   // navbar user
   $('#btn-user').click(() => {
     showNavbar($('#userbar'));

@@ -68,3 +68,11 @@ Firefox:
 CSS package
 - Dynamic rebuild
 - Fixed ordering
+
+## Dev Warnings
+
+- jQuery: Added non-passive event listener to a scroll-blocking 'touchstart' event. Consider marking event handler as 'passive' to make the page more responsive.
+- Firefox: onmozfullscreenerror is deprecated.
+- Firefox: onmozfullscreenchange is deprecated.
+- Firefox: The ‘content’ attribute of Window objects is deprecated.  Please use ‘window.top’ instead.
+- Firefox: This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”.
