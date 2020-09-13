@@ -79,7 +79,7 @@ function printResult(object) {
   const square = window.options.listThumbSquare ? `width=${window.options.listThumbSize}px` : '';
   const title = `${object.image}\n${timestamp}\n${classified}\n${detected}\n${location}\n${camera}`;
   thumb.innerHTML = `
-    <img class="thumbnail" loading="lazy" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" align="middle" ${square} height=${window.options.listThumbSize}px title="${title}">
+    <img loading="lazy" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" align="middle" ${square} height=${window.options.listThumbSize}px title="${title}">
     <div class="thumb-top">
       <p class="btn-tiny fa fa-file-image" onclick="details.show('${escape(object.image)}');" title="View image details"></p>
       <a class="btn-tiny fa fa-file" href="${object.image}" download title="Download image"></a>

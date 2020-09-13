@@ -9,7 +9,7 @@
       "imports": []
     },
     "assets/iv-viewer.js": {
-      "bytes": 46614,
+      "bytes": 46693,
       "imports": []
     },
     "assets/keras.min.js": {
@@ -88,7 +88,7 @@
       ]
     },
     "client/details.js": {
-      "bytes": 17512,
+      "bytes": 17729,
       "imports": [
         {
           "path": "assets/color-thief.umd.js"
@@ -113,7 +113,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 32950,
+      "bytes": 33360,
       "imports": [
         {
           "path": "assets/tf.es2017.js"
@@ -169,7 +169,7 @@
       ]
     },
     "client/indexdb.js": {
-      "bytes": 5316,
+      "bytes": 5657,
       "imports": [
         {
           "path": "client/log.js"
@@ -185,7 +185,7 @@
       ]
     },
     "client/list.js": {
-      "bytes": 8633,
+      "bytes": 8615,
       "imports": [
         {
           "path": "node_modules/moment/moment.js"
@@ -439,7 +439,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6624758
+      "bytes": 6626397
     },
     "dist/gallery.js": {
       "imports": [],
@@ -469,7 +469,7 @@
           "bytesInOutput": 93702
         },
         "assets/face-api.cjs": {
-          "bytesInOutput": 329463
+          "bytesInOutput": 329467
         },
         "client/log.js": {
           "bytesInOutput": 994
@@ -478,19 +478,19 @@
           "bytesInOutput": 5856
         },
         "client/indexdb.js": {
-          "bytesInOutput": 3396
+          "bytesInOutput": 3613
         },
         "assets/color-thief.umd.js": {
           "bytesInOutput": 7247
         },
         "assets/iv-viewer.js": {
-          "bytesInOutput": 19684
+          "bytesInOutput": 19716
         },
         "node_modules/moment/moment.js": {
           "bytesInOutput": 61112
         },
         "client/details.js": {
-          "bytesInOutput": 10639
+          "bytesInOutput": 10667
         },
         "client/blockhash.js": {
           "bytesInOutput": 2052
@@ -499,7 +499,7 @@
           "bytesInOutput": 962
         },
         "client/list.js": {
-          "bytesInOutput": 5750
+          "bytesInOutput": 5732
         },
         "client/nearest.js": {
           "bytesInOutput": 1522
@@ -538,10 +538,10 @@
           "bytesInOutput": 33308
         },
         "client/gallery.js": {
-          "bytesInOutput": 21195
+          "bytesInOutput": 21466
         }
       },
-      "bytes": 1545525
+      "bytes": 1546059
     },
     "dist/compare.js.map": {
       "imports": [],

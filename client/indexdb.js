@@ -5,6 +5,7 @@ let id = 0;
 
 const database = 'pigallery';
 const table = 'images';
+let last = { index: 'date', direction: true, start: 1, end: Number.MAX_SAFE_INTEGER };
 
 async function open() {
   if (window.share) return null;
@@ -85,6 +86,7 @@ async function share() {
 
 async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER) {
   const t0 = window.performance.now();
+  last = { index, direction, start: 1, end: Number.MAX_SAFE_INTEGER };
   return new Promise((resolve) => {
     if (window.share) {
       let res;
@@ -119,6 +121,10 @@ async function all(index = 'date', direction = true, start = 1, end = Number.MAX
       };
     }
   });
+}
+
+async function refresh() {
+  return all(last.index, last.direction, last.start, last.end);
 }
 
 async function count() {
@@ -160,4 +166,5 @@ exports.get = get; // get one record
 exports.count = count; // get record count
 exports.store = store; // store all records
 exports.all = all; // get all records
+exports.refresh = refresh; // get all records in the same manner as the last call to all
 exports.test = test; // test function

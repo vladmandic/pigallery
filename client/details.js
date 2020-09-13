@@ -72,13 +72,8 @@ function getPalette() {
 }
 
 function clearBoxes() {
-  const img = document.getElementsByClassName('iv-image')[0];
   const canvas = document.getElementById('popup-canvas');
   canvas.style.position = 'absolute';
-  canvas.style.left = `${img.offsetLeft}px`;
-  canvas.style.top = `${img.offsetTop}px`;
-  canvas.width = img.width;
-  canvas.height = img.height;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
@@ -108,7 +103,11 @@ function drawBoxes(object) {
     for (const obj of object.detect) {
       const x = obj.box[0] * resizeX;
       const y = obj.box[1] * resizeY;
-      roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, 4, 'lightyellow', null, 0.4, obj.class);
+      let width = obj.box[2] * resizeX;
+      let height = obj.box[3] * resizeY;
+      if (x + width > canvas.width) width = canvas.width - x;
+      if (y + height > canvas.height) height = canvas.height - y;
+      roundRect(ctx, x, y, width, height, 10, 4, 'lightyellow', null, 0.4, obj.class);
     }
   }
 
@@ -119,7 +118,11 @@ function drawBoxes(object) {
         // draw box around face
         const x = object.person[i].box.x * resizeX;
         const y = object.person[i].box.y * resizeY;
-        roundRect(ctx, x, y, object.person[i].box.width * resizeX, object.person[i].box.height * resizeY, 10, 3, 'deepskyblue', null, 0.6, `${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`);
+        let width = object.person[i].box.width * resizeX;
+        let height = object.person[i].box.height * resizeY;
+        if (x + width > canvas.width) width = canvas.width - x;
+        if (y + height > canvas.height) height = canvas.height - y;
+        roundRect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`);
         // draw face points
         ctx.fillStyle = 'lightblue';
         ctx.globalAlpha = 0.5;
@@ -332,11 +335,11 @@ function detectSwipe() {
   el.addEventListener('touchstart', (e) => {
     swipePos.sX = e.touches[0].screenX;
     swipePos.sY = e.touches[0].screenY;
-  });
+  }, { passive: true });
   el.addEventListener('touchmove', (e) => {
     swipePos.eX = e.touches[0].screenX;
     swipePos.eY = e.touches[0].screenY;
-  });
+  }, { passive: true });
   el.addEventListener('touchend', () => {
     const deltaX = swipePos.eX - swipePos.sX;
     const deltaY = swipePos.eY - swipePos.sY;
@@ -349,7 +352,7 @@ function detectSwipe() {
     // if (direction && typeof func === 'function') func(el, direction);
     if (direction === directions.LEFT) showNextDetails(false);
     if (direction === directions.RIGHT) showNextDetails(true);
-  });
+  }, { passive: true });
 }
 
 // navbar details - used when in details view

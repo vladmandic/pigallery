@@ -279,11 +279,11 @@
   function assignEvent(element, events, handler) {
     if (typeof events === 'string') events = [events];
     events.forEach((event) => {
-      element.addEventListener(event, handler);
+      element.addEventListener(event, handler, { passive: true });
     });
     return () => {
       events.forEach((event) => {
-        element.removeEventListener(event, handler);
+        element.removeEventListener(event, handler, { passive: true });
       });
     };
   }
@@ -367,13 +367,13 @@
       key: 'init',
       value: function init() {
         const _this2 = this;
-        ['touchstart', 'mousedown'].forEach((evt) => _this2.container.addEventListener(evt, _this2.startHandler));
+        ['touchstart', 'mousedown'].forEach((evt) => _this2.container.addEventListener(evt, _this2.startHandler, { passive: true }));
       },
     }, {
       key: 'destroy',
       value: function destroy() {
         const _this3 = this;
-        ['touchstart', 'mousedown'].forEach((evt) => _this3.container.removeEventListener(evt, _this3.startHandler));
+        ['touchstart', 'mousedown'].forEach((evt) => _this3.container.removeEventListener(evt, _this3.startHandler, { passive: true }));
         this.removeListeners();
       },
     }]);
@@ -891,7 +891,7 @@
           } else {
             changedDelta = 0;
           }
-          e.preventDefault();
+          // e.preventDefault();
           if (changedDelta > MOUSE_WHEEL_COUNT) return;
           const contOffset = container.getBoundingClientRect();
           const x = (e.pageX || e.pageX) - (contOffset.left + document.body.scrollLeft);
