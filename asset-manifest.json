@@ -169,7 +169,7 @@
       ]
     },
     "client/indexdb.js": {
-      "bytes": 5657,
+      "bytes": 5677,
       "imports": [
         {
           "path": "client/log.js"
@@ -302,7 +302,7 @@
       ]
     },
     "client/video.js": {
-      "bytes": 13283,
+      "bytes": 14194,
       "imports": [
         {
           "path": "assets/color-thief.umd.js"
@@ -439,7 +439,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6626397
+      "bytes": 6627649
     },
     "dist/gallery.js": {
       "imports": [],
@@ -478,7 +478,7 @@
           "bytesInOutput": 5856
         },
         "client/indexdb.js": {
-          "bytesInOutput": 3613
+          "bytesInOutput": 3626
         },
         "assets/color-thief.umd.js": {
           "bytesInOutput": 7247
@@ -520,7 +520,7 @@
           "bytesInOutput": 2810
         },
         "client/video.js": {
-          "bytesInOutput": 8523
+          "bytesInOutput": 8991
         },
         "client/processImage.js": {
           "bytesInOutput": 6180
@@ -541,7 +541,7 @@
           "bytesInOutput": 21466
         }
       },
-      "bytes": 1546059
+      "bytes": 1546540
     },
     "dist/compare.js.map": {
       "imports": [],

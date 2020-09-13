@@ -9,9 +9,11 @@ const modelDetect = require('./modelDetect.js');
 let tf = window.tf;
 let faceapi = window.faceapi;
 let video;
-let front = true;
-let loading = false;
-let reduce = 1;
+let front = true; // camera front or back
+let loading = false; // busy loading models
+let reduce = 1; // resolution reduction factor
+const delay = 25; // delay in ms between ml calls
+// const ghosts = 3; // how many ghost objects to render
 const exec = { classify: null, detect: null, person: null };
 const videoCanvas = document.createElement('canvas');
 const thief = new ColorThief();
@@ -27,102 +29,111 @@ async function stop() {
   }, 250);
 }
 
-function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null, alpha = 1, title = null) {
-  ctx.lineWidth = lineWidth;
-  ctx.globalAlpha = alpha;
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + width - radius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-  ctx.lineTo(x + width, y + height - radius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  ctx.lineTo(x + radius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
-  if (strokeStyle) {
-    ctx.strokeStyle = strokeStyle;
-    ctx.fillStyle = strokeStyle;
-    ctx.stroke();
+function roundRect(obj) { // ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null, alpha = 1, title = null) {
+  obj.ctx.lineWidth = obj.lineWidth;
+  obj.ctx.globalAlpha = obj.alpha;
+  obj.ctx.beginPath();
+  obj.ctx.moveTo(obj.x + obj.radius, obj.y);
+  obj.ctx.lineTo(obj.x + obj.width - obj.radius, obj.y);
+  obj.ctx.quadraticCurveTo(obj.x + obj.width, obj.y, obj.x + obj.width, obj.y + obj.radius);
+  obj.ctx.lineTo(obj.x + obj.width, obj.y + obj.height - obj.radius);
+  obj.ctx.quadraticCurveTo(obj.x + obj.width, obj.y + obj.height, obj.x + obj.width - obj.radius, obj.y + obj.height);
+  obj.ctx.lineTo(obj.x + obj.radius, obj.y + obj.height);
+  obj.ctx.quadraticCurveTo(obj.x, obj.y + obj.height, obj.x, obj.y + obj.height - obj.radius);
+  obj.ctx.lineTo(obj.x, obj.y + obj.radius);
+  obj.ctx.quadraticCurveTo(obj.x, obj.y, obj.x + obj.radius, obj.y);
+  obj.ctx.closePath();
+  if (obj.strokeStyle) {
+    obj.ctx.strokeStyle = obj.strokeStyle;
+    obj.ctx.fillStyle = obj.strokeStyle;
+    obj.ctx.stroke();
   }
-  if (fillStyle) {
-    ctx.fillStyle = fillStyle;
-    ctx.fill();
+  if (obj.fillStyle) {
+    obj.ctx.fillStyle = obj.fillStyle;
+    obj.ctx.fill();
   }
-  ctx.globalAlpha = 1;
-  ctx.lineWidth = 1;
-  if (title) {
-    ctx.font = 'small-caps 1rem Lato';
-    ctx.fillText(title, x + 4, y + 16);
+  obj.ctx.globalAlpha = 1;
+  obj.ctx.lineWidth = 1;
+  if (obj.title) {
+    obj.ctx.font = 'small-caps 1rem Lato';
+    obj.ctx.fillText(obj.title, obj.x + 4, obj.y + 16);
   }
 }
 
-let previousDetect = null;
-async function drawDetect(object) {
-  const parent = document.getElementById('videosection');
-  if (parent && previousDetect) {
-    const ctx = previousDetect.getContext('2d');
-    ctx.clearRect(0, 0, previousDetect.width, previousDetect.height);
-    parent.removeChild(previousDetect);
-    previousDetect = null;
-  }
-  if (!parent || !object || !object.detected || object.detected.length === 0) return;
+let ctxDetect;
+async function initDetect() {
   const canvas = document.createElement('canvas');
   canvas.style.position = 'fixed';
   canvas.style.border = 'px solid';
-  canvas.style.top = `${$('#videocanvas').offset().top}px`;
-  canvas.style.left = `${$('#videocanvas').offset().left}px`;
+  canvas.id = 'canvas-detect';
   canvas.width = $('#videocanvas').width();
   canvas.height = $('#videocanvas').height();
-  parent.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-  ctx.font = 'small-caps 16px Lato';
+  canvas.style.top = `${$('#videocanvas').offset().top}px`;
+  canvas.style.left = `${$('#videocanvas').offset().left}px`;
+  ctxDetect = canvas.getContext('2d');
+  ctxDetect.font = 'small-caps 1rem Lato';
+  document.getElementById('videosection').appendChild(canvas);
+}
+
+// const objDetect = [];
+async function drawDetect(object) {
+  if (!ctxDetect) await initDetect();
+  ctxDetect.clearRect(0, 0, $('#videocanvas').width(), $('#videocanvas').height());
+  if (!object || !object.detected) return;
   const resizeX = $('#videocanvas').width() / video.videoWidth * reduce;
   const resizeY = $('#videocanvas').height() / video.videoHeight * reduce;
   for (const obj of object.detected) {
     const x = obj.box[0] * resizeX;
     const y = obj.box[1] * resizeY;
-    roundRect(ctx, x, y, obj.box[2] * resizeX, obj.box[3] * resizeY, 10, 4, 'lightyellow', null, 0.4, obj.class);
+    const width = obj.box[2] * resizeX;
+    const height = obj.box[3] * resizeY;
+    roundRect({ ctx: ctxDetect, x, y, width, height, radius: 10, lineWidth: 4, strokeStyle: 'lightyellow', fillStyle: null, alpha: 0.4, title: obj.class });
+    // objDetect.push({ ctx: ctxDetect, x, y, width, height, radius: 10, lineWidth: 4, strokeStyle: 'lightyellow', fillStyle: null, title: obj.class });
   }
-  previousDetect = canvas;
+  /*
+  while (objDetect.length > (object.detected.length * ghosts)) objDetect.shift();
+  for (const i in objDetect) {
+    objDetect[i].alpha = ((i + 1) ** 2) / (5 * ghosts);
+    roundRect(objDetect[i]);
+  }
+  */
 }
 
-let previousPerson = null;
-async function drawPerson(object) {
-  const parent = document.getElementById('videosection');
-  if (parent && previousPerson) {
-    const ctx = previousPerson.getContext('2d');
-    ctx.clearRect(0, 0, previousPerson.width, previousPerson.height);
-    parent.removeChild(previousPerson);
-    previousPerson = null;
-  }
-  if (!parent || !object || !object.person || object.person.length === 0) return;
+let ctxPerson;
+async function initPerson() {
   const canvas = document.createElement('canvas');
   canvas.style.position = 'fixed';
   canvas.style.border = 'px solid';
-  canvas.style.top = `${$('#videocanvas').offset().top}px`;
-  canvas.style.left = `${$('#videocanvas').offset().left}px`;
+  canvas.id = 'canvas-person';
   canvas.width = $('#videocanvas').width();
   canvas.height = $('#videocanvas').height();
-  parent.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-  ctx.font = 'small-caps 1rem Lato';
+  canvas.style.top = `${$('#videocanvas').offset().top}px`;
+  canvas.style.left = `${$('#videocanvas').offset().left}px`;
+  ctxPerson = canvas.getContext('2d');
+  ctxPerson.font = 'small-caps 1rem Lato';
+  document.getElementById('videosection').appendChild(canvas);
+}
+
+async function drawPerson(object) {
+  if (!ctxPerson) await initPerson();
+  ctxPerson.clearRect(0, 0, $('#videocanvas').width(), $('#videocanvas').height());
+  if (!object || !object.person) return;
   const resizeX = $('#videocanvas').width() / video.videoWidth * reduce;
   const resizeY = $('#videocanvas').height() / video.videoHeight * reduce;
   for (const res of object.person) {
     const x = res.detection.box.x * resizeX;
     const y = res.detection.box.y * resizeY;
-    roundRect(ctx, x, y, res.detection.box.width * resizeX, res.detection.box.height * resizeY, 10, 3, 'deepskyblue', null, 0.4, `${res.gender} ${res.age.toFixed(1)}y`);
-    ctx.fillStyle = 'lightblue';
-    ctx.globalAlpha = 0.5;
+    const width = res.detection.box.width * resizeX;
+    const height = res.detection.box.height * resizeY;
+    roundRect({ ctx: ctxPerson, x, y, width, height, radius: 10, lineWidth: 3, strokeStyle: 'deepskyblue', filleStyle: null, alpha: 0.4, title: `${res.gender} ${res.age.toFixed(1)}y` });
+    ctxPerson.fillStyle = 'lightblue';
+    ctxPerson.globalAlpha = 0.5;
     for (const pt of res.landmarks.positions) {
-      ctx.beginPath();
-      ctx.arc(pt.x * resizeX, pt.y * resizeY, 2, 0, 2 * Math.PI);
-      ctx.fill();
+      ctxPerson.beginPath();
+      ctxPerson.arc(pt.x * resizeX, pt.y * resizeY, 2, 0, 2 * Math.PI);
+      ctxPerson.fill();
     }
   }
-  previousPerson = canvas;
 }
 
 let persons = null;
@@ -256,7 +267,7 @@ async function process() {
     const canvasData = `Data ${ctx.getImageData(0, 0, videoCanvas.width, videoCanvas.height).data.length.toLocaleString()} bytes ${Math.floor(t0 - t5)} ms`;
     $('#video-status').text(`Performance: ${(1000 / (t4 - t5)).toFixed(1)} FPS | ${canvasData} | Draw ${Math.floor(100 / reduce)}% ${Math.floor(t4 - t3)} ms | ${modelPerf}`);
   }
-  setTimeout(process, 50);
+  setTimeout(process, delay);
 }
 
 async function camera() {
