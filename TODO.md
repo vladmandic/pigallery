@@ -36,6 +36,7 @@ Didn't find:
 - ImageNet 21k: Huge
 - iNaturalist: Found only feature-extract, not classificaiotn
 - NudeNet: Requires port to TFJS: <https://github.com/notAI-tech/NudeNet/tree/master>
+- EfficientDet: Models on TFHub are unusable, but trying stuff from <https://github.com/google/automl/tree/master/efficientdet>
 
 No tags in saved model:
 - <https://tfhub.dev/google/on_device_vision/classifier/popular_wine_V1/1>
@@ -60,11 +61,13 @@ Video:
 - Full or reduced processing
 - Background fades to dominant color
 Firefox:
+- Bug with cache population: fails all when any item fails
 - Bug with PWA caching load order
 - Bug with content-length verification: result is block or encoding mismatch
 - Missing getCapabilities for video tracks
 - Missing some CSS tags
-- Missing installable
+- Missing PWA installable
+- Warnings on deprecated features without stating where
 CSS package
 - Dynamic rebuild
 - Fixed ordering

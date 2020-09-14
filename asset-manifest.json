@@ -232,7 +232,7 @@
       "imports": []
     },
     "client/models.js": {
-      "bytes": 5561,
+      "bytes": 5696,
       "imports": []
     },
     "client/nearest.js": {
@@ -439,7 +439,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6627649
+      "bytes": 6627785
     },
     "dist/gallery.js": {
       "imports": [],
@@ -546,7 +546,7 @@
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7471208
+      "bytes": 7471344
     },
     "dist/compare.js": {
       "imports": [],

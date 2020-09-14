@@ -30,6 +30,7 @@ exports.models = {
     // { name: 'OpenImages RCNN/Inception-ResNet v2', modelPath: 'models/rcnn-inception-resnet-v2', score: 0.2, topK: 6, classes: 'assets/OpenImage-Labels.json', exec: 'ssd' },
     // { name: 'OpenImages SSD/EfficientDet D0', modelPath: 'models/coco-ssd-efficientdet-d0-f16', score: 0.1, topK: 6, useFloat: false, exec: 'ssd' },
     // { name: 'OpenImages SSD/EfficientDet D0', modelPath: 'models/coco-ssd-efficientdet-d5-f16', score: 0.1, topK: 6, useFloat: false, exec: 'ssd' },
+    // { name: 'CoCo EfficientDet D0', modelPath: 'models/coco-efficientdet-d0', score: 0.1, topK: 6, useFloat: false, exec: 'coco' },
   ],
   person: [
     // { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },

@@ -144,7 +144,7 @@ Once TF tools are compiled, use them to get details on the model before conversi
 #### Find input and output node names
 
 ```bash
-  ~/tensorflow/bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="saved_model.pb"
+  ~/dev/tensorflow/bazel-bin/tensorflow/tools/graph_transforms/summarize_graph --in_graph="saved_model.pb"
 
     Found 1 possible inputs: (name=input, type=float(1), shape=[?,299,299,3])
     Found 1 possible outputs: (name=InceptionV4/Logits/Predictions, op=Softmax)
