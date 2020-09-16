@@ -21,7 +21,7 @@
       "imports": []
     },
     "assets/tf.es2017.js": {
-      "bytes": 3321795,
+      "bytes": 3321945,
       "imports": [
         {
           "path": "node_modules/node-fetch/browser.js"
@@ -224,7 +224,7 @@
       "imports": []
     },
     "client/modelDetect.js": {
-      "bytes": 5477,
+      "bytes": 6523,
       "imports": []
     },
     "client/modelYolo.js": {
@@ -232,7 +232,7 @@
       "imports": []
     },
     "client/models.js": {
-      "bytes": 5696,
+      "bytes": 5716,
       "imports": []
     },
     "client/nearest.js": {
@@ -439,7 +439,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6627785
+      "bytes": 6629582
     },
     "dist/gallery.js": {
       "imports": [],
@@ -463,13 +463,13 @@
           "bytesInOutput": 3632
         },
         "assets/tf.es2017.js": {
-          "bytesInOutput": 876465
+          "bytesInOutput": 876578
         },
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 93702
         },
         "assets/face-api.cjs": {
-          "bytesInOutput": 329467
+          "bytesInOutput": 329471
         },
         "client/log.js": {
           "bytesInOutput": 994
@@ -517,7 +517,7 @@
           "bytesInOutput": 1906
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2810
+          "bytesInOutput": 3249
         },
         "client/video.js": {
           "bytesInOutput": 8991
@@ -541,12 +541,12 @@
           "bytesInOutput": 21466
         }
       },
-      "bytes": 1546540
+      "bytes": 1547096
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7471344
+      "bytes": 7473141
     },
     "dist/compare.js": {
       "imports": [],
@@ -594,7 +594,7 @@
           "bytesInOutput": 3632
         },
         "assets/tf.es2017.js": {
-          "bytesInOutput": 878861
+          "bytesInOutput": 878974
         },
         "assets/keras.min.js": {
           "bytesInOutput": 682473
@@ -615,7 +615,7 @@
           "bytesInOutput": 1906
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 2792
+          "bytesInOutput": 3231
         },
         "client/modelYolo.js": {
           "bytesInOutput": 5318
@@ -633,7 +633,7 @@
           "bytesInOutput": 10017
         }
       },
-      "bytes": 2082331
+      "bytes": 2082883
     },
     "dist/worker.js.map": {
       "imports": [],

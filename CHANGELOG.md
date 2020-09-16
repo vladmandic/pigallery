@@ -1,9 +1,13 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/09/11 cyan00@gmail.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/09/13 cyan00@gmail.com
+- video detection improvements
+- improved search
+- uploaded samples
+- custom pwa installation event
+- workaround for firefox getcapabilities bug
 - implemented processing resume
-
-### **origin/master, origin/HEAD** 2020/09/10 cyan00@gmail.com
+- process continue
 - changelog
 
 ### **2.0.9** 2020/09/10 cyan00@gmail.com
