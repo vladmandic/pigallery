@@ -55890,10 +55890,9 @@
                     const squeezedShape = squeeze(tensors[0]).shape;
                     const mapped = tensors.map(tensor => {
                         const sameShape = arraysEqual(tensor.shape, shape);
-                        if (!sameShape &&
-                            !arraysEqual(squeeze(tensor).shape, squeezedShape)) {
-                            throw new Error('the input tensors shape does not match');
-                        }
+                        const sameSqueezedShape = arraysEqual(squeeze(tensor).shape, squeezedShape);
+                        if (!sameShape) throw new Error(`the input tensors shape does not match: ${tensor.shape}, ${shape}`);
+                        if (!sameSqueezedShape) throw new Error(`the input squeezed tensors shape does not match: ${squeeze(tensor).shape}, ${squeezedShape}`);
                         return sameShape ? tensor : reshape(tensor, shape);
                     });
                     return [stack(mapped, axis)];
