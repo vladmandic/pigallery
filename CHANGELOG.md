@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/09/13 cyan00@gmail.com
+### **HEAD -> master** 2020/09/16 cyan00@gmail.com
+
+### **origin/master, origin/HEAD** 2020/09/13 cyan00@gmail.com
 - video detection improvements
 - improved search
 - uploaded samples
