@@ -247,7 +247,7 @@
       ]
     },
     "client/processImage.js": {
-      "bytes": 11115,
+      "bytes": 11061,
       "imports": [
         {
           "path": "client/modelClassify.js"
@@ -371,7 +371,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5728624
+      "bytes": 5728401
     },
     "dist/gallery.js": {
       "imports": [],
@@ -458,7 +458,7 @@
           "bytesInOutput": 8981
         },
         "client/processImage.js": {
-          "bytesInOutput": 6180
+          "bytesInOutput": 5880
         },
         "client/process.js": {
           "bytesInOutput": 2859
@@ -473,12 +473,12 @@
           "bytesInOutput": 21478
         }
       },
-      "bytes": 1550932
+      "bytes": 1550632
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5185760
+      "bytes": 5185537
     },
     "dist/compare.js": {
       "imports": [],
@@ -532,13 +532,13 @@
           "bytesInOutput": 2191
         },
         "client/processImage.js": {
-          "bytesInOutput": 6180
+          "bytesInOutput": 5880
         },
         "client/compare.js": {
           "bytesInOutput": 7467
         }
       },
-      "bytes": 1370851
+      "bytes": 1370551
     },
     "dist/worker.js.map": {
       "imports": [],
