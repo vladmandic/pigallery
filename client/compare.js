@@ -1,10 +1,10 @@
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
-import * as tf from '../assets/tf.es2017.js';
 import KerasJS from '../assets/keras.min.js';
 
-const jQuery = require('jquery');
-const faceapi = require('../assets/face-api.cjs');
+const jquery = require('jquery');
+const tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+const faceapi = require('@vladmandic/face-api');
 const log = require('./log.js');
 const config = require('./config.js').default;
 const modelClassify = require('./modelClassify.js');
@@ -13,7 +13,7 @@ const modelYolo = require('./modelYolo.js');
 const processImage = require('./processImage.js');
 const definitions = require('./models.js');
 
-window.$ = jQuery;
+window.$ = jquery;
 const models = [];
 window.cache = [];
 let stop = false;

@@ -1,8 +1,10 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/09/16 cyan00@gmail.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/09/16 cyan00@gmail.com
 
-### **origin/master, origin/HEAD** 2020/09/13 cyan00@gmail.com
+### **2.1.1** 2020/09/16 cyan00@gmail.com
+- package.name
+- playing with efficientdet
 - video detection improvements
 - improved search
 - uploaded samples
