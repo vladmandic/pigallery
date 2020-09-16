@@ -12,10 +12,6 @@
       "bytes": 46693,
       "imports": []
     },
-    "assets/keras.min.js": {
-      "bytes": 672911,
-      "imports": []
-    },
     "assets/marked.esm.js": {
       "bytes": 64471,
       "imports": []
@@ -25,17 +21,8 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 17199,
+      "bytes": 17217,
       "imports": [
-        {
-          "path": "node_modules/ndarray/ndarray.js"
-        },
-        {
-          "path": "node_modules/ndarray-ops/ndarray-ops.js"
-        },
-        {
-          "path": "assets/keras.min.js"
-        },
         {
           "path": "node_modules/jquery/dist/jquery.js"
         },
@@ -77,16 +64,16 @@
       ]
     },
     "client/details.js": {
-      "bytes": 17729,
+      "bytes": 17738,
       "imports": [
+        {
+          "path": "node_modules/moment/moment.js"
+        },
         {
           "path": "assets/color-thief.umd.js"
         },
         {
           "path": "assets/iv-viewer.js"
-        },
-        {
-          "path": "node_modules/moment/moment.js"
         },
         {
           "path": "client/log.js"
@@ -102,11 +89,8 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 33370,
+      "bytes": 33382,
       "imports": [
-        {
-          "path": "assets/marked.esm.js"
-        },
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
         },
@@ -115,6 +99,9 @@
         },
         {
           "path": "node_modules/jquery/dist/jquery.js"
+        },
+        {
+          "path": "assets/marked.esm.js"
         },
         {
           "path": "client/config.js"
@@ -291,11 +278,8 @@
       ]
     },
     "client/video.js": {
-      "bytes": 14194,
+      "bytes": 14198,
       "imports": [
-        {
-          "path": "assets/color-thief.umd.js"
-        },
         {
           "path": "client/log.js"
         },
@@ -310,6 +294,9 @@
         },
         {
           "path": "client/modelDetect.js"
+        },
+        {
+          "path": "assets/color-thief.umd.js"
         }
       ]
     },
@@ -347,40 +334,8 @@
         }
       ]
     },
-    "node_modules/cwise-compiler/compiler.js": {
-      "bytes": 3607,
-      "imports": [
-        {
-          "path": "node_modules/cwise-compiler/lib/thunk.js"
-        }
-      ]
-    },
-    "node_modules/cwise-compiler/lib/compile.js": {
-      "bytes": 14838,
-      "imports": [
-        {
-          "path": "node_modules/uniq/uniq.js"
-        }
-      ]
-    },
-    "node_modules/cwise-compiler/lib/thunk.js": {
-      "bytes": 4214,
-      "imports": [
-        {
-          "path": "node_modules/cwise-compiler/lib/compile.js"
-        }
-      ]
-    },
     "node_modules/ieee754/index.js": {
       "bytes": 2064,
-      "imports": []
-    },
-    "node_modules/iota-array/iota.js": {
-      "bytes": 150,
-      "imports": []
-    },
-    "node_modules/is-buffer/index.js": {
-      "bytes": 698,
       "imports": []
     },
     "node_modules/jquery/dist/jquery.js": {
@@ -390,25 +345,6 @@
     "node_modules/moment/moment.js": {
       "bytes": 173857,
       "imports": []
-    },
-    "node_modules/ndarray-ops/ndarray-ops.js": {
-      "bytes": 13347,
-      "imports": [
-        {
-          "path": "node_modules/cwise-compiler/compiler.js"
-        }
-      ]
-    },
-    "node_modules/ndarray/ndarray.js": {
-      "bytes": 9848,
-      "imports": [
-        {
-          "path": "node_modules/iota-array/iota.js"
-        },
-        {
-          "path": "node_modules/is-buffer/index.js"
-        }
-      ]
     },
     "node_modules/node-fetch/browser.js": {
       "bytes": 732,
@@ -429,17 +365,13 @@
           "path": "node_modules/safe-buffer/index.js"
         }
       ]
-    },
-    "node_modules/uniq/uniq.js": {
-      "bytes": 910,
-      "imports": []
     }
   },
   "outputs": {
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5728575
+      "bytes": 5728624
     },
     "dist/gallery.js": {
       "imports": [],
@@ -466,10 +398,13 @@
           "bytesInOutput": 883491
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 326538
+          "bytesInOutput": 326528
         },
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 93702
+        },
+        "assets/marked.esm.js": {
+          "bytesInOutput": 33353
         },
         "client/log.js": {
           "bytesInOutput": 994
@@ -480,17 +415,17 @@
         "client/indexdb.js": {
           "bytesInOutput": 3626
         },
+        "node_modules/moment/moment.js": {
+          "bytesInOutput": 61144
+        },
         "assets/color-thief.umd.js": {
           "bytesInOutput": 7247
         },
         "assets/iv-viewer.js": {
           "bytesInOutput": 19716
         },
-        "node_modules/moment/moment.js": {
-          "bytesInOutput": 61144
-        },
         "client/details.js": {
-          "bytesInOutput": 10667
+          "bytesInOutput": 10647
         },
         "client/blockhash.js": {
           "bytesInOutput": 2052
@@ -520,7 +455,7 @@
           "bytesInOutput": 3249
         },
         "client/video.js": {
-          "bytesInOutput": 8991
+          "bytesInOutput": 8981
         },
         "client/processImage.js": {
           "bytesInOutput": 6180
@@ -534,52 +469,22 @@
         "client/pwa-register.js": {
           "bytesInOutput": 887
         },
-        "assets/marked.esm.js": {
-          "bytesInOutput": 33308
-        },
         "client/gallery.js": {
-          "bytesInOutput": 21462
+          "bytesInOutput": 21478
         }
       },
-      "bytes": 1551170
+      "bytes": 1550932
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 6572064
+      "bytes": 5185760
     },
     "dist/compare.js": {
       "imports": [],
       "inputs": {
-        "node_modules/iota-array/iota.js": {
-          "bytesInOutput": 116
-        },
-        "node_modules/is-buffer/index.js": {
-          "bytesInOutput": 302
-        },
-        "node_modules/ndarray/ndarray.js": {
-          "bytesInOutput": 6323
-        },
-        "node_modules/uniq/uniq.js": {
-          "bytesInOutput": 417
-        },
-        "node_modules/cwise-compiler/lib/compile.js": {
-          "bytesInOutput": 5094
-        },
-        "node_modules/cwise-compiler/lib/thunk.js": {
-          "bytesInOutput": 1783
-        },
-        "node_modules/cwise-compiler/compiler.js": {
-          "bytesInOutput": 2370
-        },
-        "node_modules/ndarray-ops/ndarray-ops.js": {
-          "bytesInOutput": 9224
-        },
-        "assets/keras.min.js": {
-          "bytesInOutput": 682473
-        },
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 94988
+          "bytesInOutput": 93339
         },
         "node_modules/node-fetch/browser.js": {
           "bytesInOutput": 364
@@ -600,10 +505,10 @@
           "bytesInOutput": 3632
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 885938
+          "bytesInOutput": 882512
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 325528
+          "bytesInOutput": 325403
         },
         "client/log.js": {
           "bytesInOutput": 994
@@ -615,13 +520,13 @@
           "bytesInOutput": 1906
         },
         "client/modelDetect.js": {
-          "bytesInOutput": 3231
+          "bytesInOutput": 3245
         },
         "client/modelYolo.js": {
-          "bytesInOutput": 5318
+          "bytesInOutput": 5358
         },
         "client/blockhash.js": {
-          "bytesInOutput": 1993
+          "bytesInOutput": 2049
         },
         "client/models.js": {
           "bytesInOutput": 2191
@@ -630,10 +535,10 @@
           "bytesInOutput": 6180
         },
         "client/compare.js": {
-          "bytesInOutput": 10013
+          "bytesInOutput": 7467
         }
       },
-      "bytes": 2086968
+      "bytes": 1370851
     },
     "dist/worker.js.map": {
       "imports": [],
