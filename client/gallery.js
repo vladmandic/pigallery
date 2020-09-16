@@ -1,8 +1,7 @@
-import marked from '../assets/marked.esm.js';
-
 const tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
 const faceapi = require('@vladmandic/face-api');
 const jQuery = require('jquery');
+const marked = require('../assets/marked.esm.js').default;
 const config = require('./config.js');
 const db = require('./indexdb.js');
 const details = require('./details.js');

@@ -1,6 +1,6 @@
-import ndarray from 'ndarray';
-import ops from 'ndarray-ops';
-import KerasJS from '../assets/keras.min.js';
+// import ndarray from 'ndarray';
+// import ops from 'ndarray-ops';
+// import KerasJS from '../assets/keras.min.js';
 
 const jquery = require('jquery');
 const tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
@@ -316,7 +316,8 @@ async function detect() {
 }
 
 async function keras() {
-  log.server('Compare: Detect');
+  log.server('Compare: Keras');
+  /*
   const res = await fetch('/models/imagenet-efficientnet-b5/classes.json');
   const labels = await res.json();
 
@@ -394,6 +395,7 @@ async function keras() {
   for (const m in models) {
     log.div('log', true, `${models[m].name}: ${Math.round(stats[m]).toLocaleString()} ms / ${Math.round(stats[m] / files.length)} avg`);
   }
+  */
 }
 
 async function main() {

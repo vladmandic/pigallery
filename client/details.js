@@ -1,7 +1,6 @@
-import ColorThief from '../assets/color-thief.umd.js';
-import ImageViewer from '../assets/iv-viewer.js';
-
 const moment = require('moment');
+const ColorThief = require('../assets/color-thief.umd.js');
+const ImageViewer = require('../assets/iv-viewer.js');
 const log = require('./log.js');
 
 let viewer;

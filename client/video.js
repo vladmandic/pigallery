@@ -1,10 +1,9 @@
-import ColorThief from '../assets/color-thief.umd.js';
-
 const log = require('./log.js');
 const config = require('./config.js').default;
 const definitions = require('./models.js').models;
 const modelClassify = require('./modelClassify.js');
 const modelDetect = require('./modelDetect.js');
+const ColorThief = require('../assets/color-thief.umd.js');
 
 let tf = window.tf;
 let faceapi = window.faceapi;
