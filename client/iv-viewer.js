@@ -305,7 +305,7 @@
       _defineProperty(this, 'startHandler', (eStart) => {
         if (!_this.isSliderEnabled()) return;
         _this.removeListeners();
-        eStart.preventDefault();
+        // eStart.preventDefault();
         const moveHandler = _this.moveHandler;
         const endHandler = _this.endHandler;
         const onStart = _this.onStart;

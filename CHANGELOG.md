@@ -1,10 +1,11 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/09/16 cyan00@gmail.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/09/16 cyan00@gmail.com
+
+### **2.1.2** 2020/09/16 cyan00@gmail.com
+- improved logging
 - reduced number of imports
 - upgrade to tfjs@2.4.0
-
-### **origin/master, origin/HEAD** 2020/09/16 cyan00@gmail.com
 
 ### **2.1.1** 2020/09/16 cyan00@gmail.com
 - package.name

@@ -5,7 +5,7 @@ const CleanCSS = require('clean-css');
 const log = require('@vladmandic/pilogger');
 
 const entryPoints = ['client/gallery.js', 'client/compare.js', 'client/worker.js'];
-const cssFiles = ['assets/bootstrap.css', 'assets/fontawesome.css', 'assets/iv-viewer.css', 'assets/mapquest.css', 'client/gallery.css'];
+const cssFiles = ['assets/bootstrap.css', 'assets/fontawesome.css', 'client/iv-viewer.css', 'assets/mapquest.css', 'client/gallery.css'];
 let service;
 let clean;
 const metafile = './asset-manifest.json';
