@@ -8,10 +8,6 @@
       "bytes": 6926,
       "imports": []
     },
-    "assets/iv-viewer.js": {
-      "bytes": 46693,
-      "imports": []
-    },
     "assets/marked.esm.js": {
       "bytes": 64471,
       "imports": []
@@ -64,7 +60,7 @@
       ]
     },
     "client/details.js": {
-      "bytes": 17738,
+      "bytes": 18169,
       "imports": [
         {
           "path": "node_modules/moment/moment.js"
@@ -73,7 +69,7 @@
           "path": "assets/color-thief.umd.js"
         },
         {
-          "path": "assets/iv-viewer.js"
+          "path": "client/iv-viewer.js"
         },
         {
           "path": "client/log.js"
@@ -159,6 +155,10 @@
           "path": "client/log.js"
         }
       ]
+    },
+    "client/iv-viewer.js": {
+      "bytes": 46696,
+      "imports": []
     },
     "client/list.js": {
       "bytes": 8615,
@@ -371,7 +371,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5728401
+      "bytes": 5729110
     },
     "dist/gallery.js": {
       "imports": [],
@@ -421,11 +421,11 @@
         "assets/color-thief.umd.js": {
           "bytesInOutput": 7247
         },
-        "assets/iv-viewer.js": {
-          "bytesInOutput": 19716
+        "client/iv-viewer.js": {
+          "bytesInOutput": 19696
         },
         "client/details.js": {
-          "bytesInOutput": 10647
+          "bytesInOutput": 10952
         },
         "client/blockhash.js": {
           "bytesInOutput": 2052
@@ -473,7 +473,7 @@
           "bytesInOutput": 21478
         }
       },
-      "bytes": 1550632
+      "bytes": 1550917
     },
     "dist/compare.js.map": {
       "imports": [],

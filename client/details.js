@@ -1,6 +1,6 @@
 const moment = require('moment');
 const ColorThief = require('../assets/color-thief.umd.js');
-const ImageViewer = require('../assets/iv-viewer.js');
+const ImageViewer = require('./iv-viewer.js');
 const log = require('./log.js');
 
 let viewer;
@@ -221,9 +221,14 @@ async function showDetails(img) {
   resizeDetailsImage(object);
 
   // handle pan&zoom redraws
-  $('.iv-large-image').on('touchstart mousedown', () => clearBoxes(object));
-  $('.iv-large-image').on('touchend mouseup dblclick', () => drawBoxes(object));
-  $('.iv-large-image').on('wheel mousewheel', () => setTimeout(() => drawBoxes(object), 200));
+  const el = document.getElementsByClassName('iv-large-image')[0];
+  el.addEventListener('touchstart', () => clearBoxes(object), { passive: true });
+  el.addEventListener('mousedown', () => clearBoxes(object), { passive: true });
+  el.addEventListener('touchend', () => drawBoxes(object), { passive: true });
+  el.addEventListener('mouseup', () => drawBoxes(object), { passive: true });
+  el.addEventListener('dblclick', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
+  el.addEventListener('wheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
+  el.addEventListener('mousewheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
 
   let classified = 'Classified ';
   for (const obj of combineResults(object.classify)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
