@@ -123,22 +123,35 @@ function filterWord(word) {
 }
 
 // filters images based on search strings
-async function filterResults(words) {
-  busy(`Searching for<br>${words}`);
+async function filterResults(input) {
+  busy(`Searching for<br>${input}`);
   list.previous = null;
-  let foundWords = 0;
   const t0 = window.performance.now();
-  window.filtered = await db.refresh();
-  const full = filterWord(words.toLowerCase());
-  const size = window.filtered.length;
-  for (const word of words.split(' ')) {
-    if (window.filtered.length > 0) window.filtered = filterWord(word.toLowerCase());
-    foundWords += (window.filtered && window.filtered.length > 0) ? 1 : 0;
+  const words = [];
+  let selective = null;
+  for (const word of input.split(' ')) {
+    if (!word.includes(':')) words.push(word);
+    else if (!selective) selective = word;
   }
-  if (full.length > 0) window.filtered.push(...full);
-  if (window.filtered && window.filtered.length > 0) log.debug(t0, `Searching for "${words}" found ${foundWords} words in ${window.filtered.length || 0} matches out of ${size} images`);
-  else log.debug(t0, `Searching for "${words}" found ${foundWords} of ${words.split(' ').length} terms`);
-  $('#search-result').text(` Found ${window.filtered.length || 0} out of ${size} images`);
+  if (selective) {
+    const keys = selective.split(':');
+    if (keys.length !== 2) window.filtered = [];
+    const key = keys[0].toLowerCase();
+    const val = parseInt(keys[1]) || keys[1].toLowerCase();
+    if (key === 'limit') window.filtered = await db.all('date', false, 1, parseInt(keys[1]));
+    else window.filtered = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val });
+  } else {
+    window.filtered = await db.refresh();
+  }
+  if (words.length > 0) {
+    const full = filterWord(words.join(' ').toLowerCase());
+    if (full.length > 0) window.filtered.push(...full);
+    for (const word of words) {
+      if (window.filtered.length > 0) window.filtered = filterWord(word.toLowerCase());
+    }
+  }
+  $('#search-result').html(`"${input}"<br>found ${window.filtered.length || 0} images`);
+  log.debug(t0, `Searching for "${input}" found ${window.filtered.length || 0} images`);
   enumerate.enumerate().then(() => folderHandlers());
   list.redraw();
   busy();
