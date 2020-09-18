@@ -9,7 +9,7 @@
     "version": "node server/changelog.js",
     "setup": "node ./setup.js",
     "update": "npm update --depth 10 && ncu --greatest -u",
-    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && depcheck --ignores='seedrandom,buffer,node-fetch,@tensorflow/tfjs-core'"
+    "lint": "htmlhint client/*.html && eslint client/*.js server/*.js *.json && depcheck --ignores=buffer,node-fetch"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -67,15 +67,13 @@
     "buffer": "^5.6.0",
     "chokidar": "^3.4.2",
     "clean-css": "^4.2.3",
-    "esbuild": "^0.6.34",
+    "esbuild": "^0.7.1",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
     "jpeg-exif": "^1.1.4",
     "jquery": "^3.5.1",
     "moment": "^2.28.0",
-    "ndarray": "^1.0.19",
-    "ndarray-ops": "^1.2.2",
     "nedb-promises": "^4.0.4",
     "node-fetch": "^2.6.1",
     "session-file-store": "^1.4.0",
@@ -83,14 +81,14 @@
   },
   "devDependencies": {
     "depcheck": "^1.2.0",
+    "htmlhint": "^1.0.0-beta.1",
+    "npm-check-updates": "^9.0.1",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-html": "^6.1.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-json": "^2.1.2",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "htmlhint": "^1.0.0-beta.1",
-    "npm-check-updates": "^8.1.1"
+    "eslint-plugin-promise": "^4.2.1"
   }
 }
