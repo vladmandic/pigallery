@@ -85,7 +85,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 33382,
+      "bytes": 33686,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -141,7 +141,7 @@
       ]
     },
     "client/indexdb.js": {
-      "bytes": 5677,
+      "bytes": 5907,
       "imports": [
         {
           "path": "client/log.js"
@@ -371,7 +371,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5729110
+      "bytes": 5729993
     },
     "dist/gallery.js": {
       "imports": [],
@@ -413,7 +413,7 @@
           "bytesInOutput": 5856
         },
         "client/indexdb.js": {
-          "bytesInOutput": 3626
+          "bytesInOutput": 3715
         },
         "node_modules/moment/moment.js": {
           "bytesInOutput": 61144
@@ -470,10 +470,10 @@
           "bytesInOutput": 887
         },
         "client/gallery.js": {
-          "bytesInOutput": 21478
+          "bytesInOutput": 21614
         }
       },
-      "bytes": 1550917
+      "bytes": 1551142
     },
     "dist/compare.js.map": {
       "imports": [],

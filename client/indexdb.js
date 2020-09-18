@@ -84,7 +84,7 @@ async function share() {
   return json;
 }
 
-async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER) {
+async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER, tag = null) {
   const t0 = window.performance.now();
   last = { index, direction, start: 1, end: Number.MAX_SAFE_INTEGER };
   return new Promise((resolve) => {
@@ -108,7 +108,15 @@ async function all(index = 'date', direction = true, start = 1, end = Number.MAX
         const e = evt.target.result;
         if (e) {
           idx++;
-          if ((idx >= start) && (e.value.image.startsWith(window.user.root))) res.push(e.value);
+          if ((idx >= start) && (e.value.image.startsWith(window.user.root))) {
+            if (!tag) {
+              res.push(e.value);
+            } else {
+              for (const val of e.value.tags) {
+                if (val[tag.tag] === tag.value) res.push(e.value);
+              }
+            }
+          }
           if (idx < end) e.continue();
           else {
             log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images ${start}-${end}`);
