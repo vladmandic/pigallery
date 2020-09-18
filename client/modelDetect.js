@@ -83,9 +83,9 @@ async function detectEfficientDet(model, image) {
   const imgBuf = tf.browser.fromPixels(image, 3);
   const expanded = tf.expandDims(imgBuf, 0);
   tf.dispose(imgBuf);
-  console.log(image, expanded, model);
+  // console.log(image, expanded, model);
   const result = await model.executeAsync(expanded);
-  console.log(result);
+  // console.log(result);
   const [scores, classes] = calculateMaxScores(result);
   const reshaped = tf.tensor2d(result[1].dataSync(), [result[1].shape[1], result[1].shape[3]]);
   // const index = tf.image.nonMaxSuppression(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma); // async version leaks 2 tensors

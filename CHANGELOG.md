@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/09/16 cyan00@gmail.com
+### **HEAD -> master** 2020/09/18 cyan00@gmail.com
+
+### **origin/master, origin/HEAD** 2020/09/18 cyan00@gmail.com
 
 ### **2.1.2** 2020/09/16 cyan00@gmail.com
 - improved logging
