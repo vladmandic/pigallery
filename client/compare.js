@@ -2,9 +2,11 @@
 // import ops from 'ndarray-ops';
 // import KerasJS from '../assets/keras.min.js';
 
-const jquery = require('jquery');
 const tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+// const wasm = require('@tensorflow/tfjs-backend-wasm');
+// const webgpu = require('@tensorflow/tfjs-backend-webgpu');
 const faceapi = require('@vladmandic/face-api');
+const jquery = require('jquery');
 const log = require('./log.js');
 const config = require('./config.js').default;
 const modelClassify = require('./modelClassify.js');
@@ -31,6 +33,7 @@ async function init() {
   }
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
   await tf.setBackend(config.backEnd);
+  await tf.ready();
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
   window.tf = tf;

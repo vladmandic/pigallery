@@ -7,6 +7,7 @@ exports.models = {
     // { name: 'ImageNet Inception v3', modelPath: 'models/inception-v3', score: 0.2, topK: 3 },
     { name: 'ImageNet Inception v4', modelPath: 'models/imagenet-inception-v4', score: 0.22, topK: 3, tensorSize: 299, scoreScale: 200, offset: 1 },
     // { name: 'ImageNet EfficientNet B0', modelPath: 'models/imagenet-efficientnet-b0', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 0 },
+    // { name: 'ImageNet EfficientNet B0', modelPath: 'https://tfhub.dev/tensorflow/efficientnet/b0/classification/1', score: 0.2, topK: 3, slice: 0, tensorSize: 224, offset: 0 },
     // { name: 'ImageNet EfficientNet B4', modelPath: 'models/imagenet-efficientnet-b4', score: 0.1, topK: 3, slice: 0, tensorSize: 380, offset: 0 },
     { name: 'ImageNet EfficientNet B5', modelPath: 'models/imagenet-efficientnet-b5', score: 0.2, topK: 3, tensorSize: 456, scoreScale: 1, offset: 0 },
     // { name: 'ImageNet EfficientNet B7', modelPath: 'models/imagenet-efficientnet-b7', score: 0.2, topK: 3, slice: 0, tensorSize: 600, offset: 0 },
