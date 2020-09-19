@@ -22,7 +22,7 @@ async function load(cfg) {
   const loadOpts = {
     fetchFunc: (...args) => fetch(...args),
     requestInit: { mode: 'no-cors' },
-    fromTFHub: config.modelPath.includes('tfhub.dev') || config.tgz,
+    fromTFHub: config.modelPath.startsWith('http') || config.tgz,
   };
   const modelPath = (!loadOpts.fromTFHub && !config.tgz && !config.modelPath.endsWith('model.json')) ? config.modelPath + '/model.json' : config.modelPath;
   if (config.modelType === 'graph') model = await tf.loadGraphModel(modelPath, loadOpts);

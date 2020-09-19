@@ -17,16 +17,16 @@
       "imports": []
     },
     "client/compare.js": {
-      "bytes": 17217,
+      "bytes": 17357,
       "imports": [
-        {
-          "path": "node_modules/jquery/dist/jquery.js"
-        },
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
         },
         {
           "path": "../face-api/dist/face-api.esm.js"
+        },
+        {
+          "path": "node_modules/jquery/dist/jquery.js"
         },
         {
           "path": "client/log.js"
@@ -196,7 +196,7 @@
       ]
     },
     "client/modelClassify.js": {
-      "bytes": 3513,
+      "bytes": 3510,
       "imports": []
     },
     "client/modelDetect.js": {
@@ -208,7 +208,7 @@
       "imports": []
     },
     "client/models.js": {
-      "bytes": 5716,
+      "bytes": 5896,
       "imports": []
     },
     "client/nearest.js": {
@@ -371,7 +371,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5729953
+      "bytes": 5730130
     },
     "dist/gallery.js": {
       "imports": [],
@@ -449,7 +449,7 @@
           "bytesInOutput": 2191
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1906
+          "bytesInOutput": 1903
         },
         "client/modelDetect.js": {
           "bytesInOutput": 3210
@@ -473,19 +473,16 @@
           "bytesInOutput": 21614
         }
       },
-      "bytes": 1551103
+      "bytes": 1551100
     },
     "dist/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5185497
+      "bytes": 5185832
     },
     "dist/compare.js": {
       "imports": [],
       "inputs": {
-        "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 93339
-        },
         "node_modules/node-fetch/browser.js": {
           "bytesInOutput": 364
         },
@@ -510,6 +507,9 @@
         "../face-api/dist/face-api.esm.js": {
           "bytesInOutput": 325403
         },
+        "node_modules/jquery/dist/jquery.js": {
+          "bytesInOutput": 93339
+        },
         "client/log.js": {
           "bytesInOutput": 994
         },
@@ -517,7 +517,7 @@
           "bytesInOutput": 5856
         },
         "client/modelClassify.js": {
-          "bytesInOutput": 1906
+          "bytesInOutput": 1903
         },
         "client/modelDetect.js": {
           "bytesInOutput": 3206
@@ -535,10 +535,10 @@
           "bytesInOutput": 5880
         },
         "client/compare.js": {
-          "bytesInOutput": 7467
+          "bytesInOutput": 7484
         }
       },
-      "bytes": 1370512
+      "bytes": 1370526
     },
     "dist/worker.js.map": {
       "imports": [],
