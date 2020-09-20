@@ -45,46 +45,34 @@ async function time(fn, arg) {
 async function folderHandlers() {
   $('.collapsible').off();
   $('.collapsible').children('li').hide();
-  $('.collapsible').click(async (evt) => {
+  $('.collapsible').on('click', async (evt) => {
     $(evt.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-right');
     $(evt.target).parent().parent().find('li').toggle('slow');
   });
   $('.folder').off();
-  $('.folder').click(async (evt) => {
+  $('.folder').on('click', async (evt) => {
+    $('.folder').off();
     const path = $(evt.target).attr('tag');
     const type = evt.target.getAttribute('type');
     if (!path || path.length < 1) return;
     const t0 = window.performance.now();
-    busy(`Selected<br>${path}`);
+    busy(`Selected ${type}<br>${path}`);
     switch (type) {
       case 'folder':
         log.debug(t0, `Selected path: ${path}`);
         const root = window.user && window.user.root ? window.user.root : 'media/';
-        if (window.filtered.length < await db.count()) {
-          window.filtered = await db.all();
-          // window.options.listSortOrder = 'alpha-down';
-        }
+        if (window.filtered.length < await db.count()) window.filtered = await db.refresh();
         if (path !== root) window.filtered = window.filtered.filter((a) => escape(a.image).startsWith(path));
-        await enumerate.classes();
-        folderHandlers();
         break;
       case 'location':
         log.debug(t0, `Selected location: ${path}`);
-        if (window.filtered.length < await db.count()) {
-          window.filtered = await db.all();
-          // window.options.listSortOrder = 'numeric-down';
-        }
+        if (window.filtered.length < await db.count()) window.filtered = await db.refresh();
         if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => (path.startsWith(escape(a.location.near)) || path.startsWith(escape(a.location.country))));
         else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
-        await enumerate.classes();
-        folderHandlers();
         break;
       case 'class':
         if (!window.filtered) window.filtered = [];
-        window.filtered = window.filtered.filter((a) => {
-          const found = a.tags.find((b) => (escape(Object.values(b)[0]).toString().startsWith(path)));
-          return found;
-        });
+        window.filtered = window.filtered.filter((a) => a.tags.find((b) => (escape(Object.values(b)[0]).toString().startsWith(path))));
         log.debug(t0, `Selected class: ${path}`);
         break;
       case 'share':
@@ -95,13 +83,15 @@ async function folderHandlers() {
         $('#share-url').val(`${window.location.origin}?share=${share.key}`);
         $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
         window.share = share.key;
+        window.filtered = await db.refresh();
         // eslint-disable-next-line no-use-before-define
-        sortResults(window.options.listSortOrder);
-        enumerate.enumerate().then(() => folderHandlers());
+        // await sortResults(window.options.listSortOrder);
         break;
       default:
     }
-    list.redraw();
+    await enumerate.enumerate();
+    folderHandlers();
+    await list.redraw();
     busy();
   });
 }
@@ -298,6 +288,7 @@ async function sortResults(sort) {
   enumerate.enumerate().then(() => folderHandlers());
   stats.enumerate = Math.floor(window.performance.now() - t1);
   list.scroll();
+  log.div('log', true, 'Displaying: ', window.filtered.length, ' images');
   busy();
 }
 
@@ -386,7 +377,7 @@ async function loadGallery(limit, refresh = false) {
     const size = JSON.stringify(json).length;
     stats.size = size;
     stats.speed = Math.round(size / (t1 - t0));
-    log.debug(t0, `Cache download: ${json.length} images ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
+    log.debug(t0, 'Cache download:', json.length, `images ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
   } else {
     // eslint-disable-next-line no-lonely-if
     if (!refresh) log.div('log', true, `Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
@@ -455,9 +446,12 @@ async function initSharesHandler() {
     return;
   }
   $('#sharestitle').off();
-  $('#sharestitle').click(async () => {
+  $('#sharestitle').on('click', async () => {
     const show = $('#share').is(':visible');
-    if (!show) await enumerate.shares();
+    if (!show) {
+      await enumerate.shares();
+      await folderHandlers();
+    }
     $('#btn-shareadd').removeClass('fa-minus-square').addClass('fa-plus-square');
     $('#share').toggle(!show);
     $('#shares').find('li').toggle(!show);
@@ -467,7 +461,7 @@ async function initSharesHandler() {
   });
 
   $('#btn-shareadd').off();
-  $('#btn-shareadd').click(() => {
+  $('#btn-shareadd').on('click', () => {
     const t0 = window.performance.now();
     if ($('#btn-shareadd').hasClass('fa-plus-square')) {
       const share = {};
@@ -492,7 +486,7 @@ async function initSharesHandler() {
   });
 
   $('#btn-sharecopy').off();
-  $('#btn-sharecopy').click(() => {
+  $('#btn-sharecopy').on('click', () => {
     $('#share-url').focus();
     $('#share-url').select();
     document.execCommand('copy');
@@ -501,7 +495,7 @@ async function initSharesHandler() {
 
 // handle keypresses on main
 async function initHotkeys() {
-  $('html').keydown(() => {
+  $('html').on('keydown', () => {
     const top = $('#results').scrollTop();
     const line = window.options.listThumbSize / 2 + 16;
     const page = $('#results').height() - window.options.listThumbSize;
@@ -537,17 +531,17 @@ async function initHotkeys() {
 }
 
 function initSidebarHandlers() {
-  $('#resettitle').click(() => {
+  $('#resettitle').on('click', () => {
     window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
     sortResults(window.options.listSortOrder);
   });
-  $('#folderstitle').click(() => $('#folders').toggle('slow'));
-  $('#locationstitle').click(() => $('#locations').toggle('slow'));
-  $('#classestitle').click(() => $('#classes').toggle('slow'));
+  $('#folderstitle').on('click', () => $('#folders').toggle('slow'));
+  $('#locationstitle').on('click', () => $('#locations').toggle('slow'));
+  $('#classestitle').on('click', () => $('#classes').toggle('slow'));
   $('#folders').toggle(false);
   $('#locations').toggle(false);
   $('#classes').toggle(false);
-  $(window).resize(() => resizeViewport());
+  $(window).on('resize', () => resizeViewport());
 }
 
 // initializes all mouse handlers for main menu in list view
@@ -556,12 +550,12 @@ async function initMenuHandlers() {
 
   window.passive = false;
   // navbar user
-  $('#btn-user').click(() => {
+  $('#btn-user').on('click', () => {
     showNavbar($('#userbar'));
   });
 
   // navline user input
-  $('#imagenum').keyup(() => {
+  $('#imagenum').on('keyup', () => {
     if (event.keyCode === 13) {
       $('#btn-load').click();
       showNavbar();
@@ -569,13 +563,13 @@ async function initMenuHandlers() {
   });
 
   // navline user load
-  $('#btn-load').click(() => {
+  $('#btn-load').on('click', () => {
     showNavbar();
     loadGallery(window.options.listLimit);
   });
 
   // navline user update db
-  $('#btn-update').click(async () => {
+  $('#btn-update').on('click', async () => {
     if (window.user.admin) {
       await showNavbar($('#process'));
       if ($('#process').css('display') !== 'none') {
@@ -588,7 +582,7 @@ async function initMenuHandlers() {
   });
 
   // navline user docs
-  $('#btn-doc').click(async () => {
+  $('#btn-doc').on('click', async () => {
     await showNavbar($('#docs'));
     if ($('#docs').css('display') !== 'none') {
       const res = await fetch('/README.md');
@@ -598,7 +592,7 @@ async function initMenuHandlers() {
   });
 
   // navline user changelog
-  $('#btn-changelog').click(async () => {
+  $('#btn-changelog').on('click', async () => {
     await showNavbar($('#docs'));
     if ($('#docs').css('display') !== 'none') {
       const res = await fetch('/CHANGELOG.md');
@@ -608,83 +602,86 @@ async function initMenuHandlers() {
   });
 
   // navline user options
-  $('#btn-options').click(async () => {
+  $('#btn-options').on('click', async () => {
     await showNavbar($('#docs'));
     if ($('#docs').css('display') !== 'none') options.show();
   });
 
   // navline global params
-  $('#btn-params').click(async () => {
+  $('#btn-params').on('click', async () => {
     await showNavbar($('#docs'));
     if ($('#docs').css('display') !== 'none') options.params();
   });
 
   // navline user logout
-  $('#btn-logout').click(async () => {
+  $('#btn-logout').on('click', async () => {
+    log.debug('Logout');
     await showNavbar();
     $.post('/api/auth');
-    if ($('#btn-user').hasClass('fa-user-slash')) window.location = '/client/auth.html';
+    let loc = window.location.href;
+    if (loc.includes('share=')) loc = '/client/auth.html';
+    if ($('#btn-user').hasClass('fa-user-slash')) loc = '/client/auth.html';
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     document.cookie = 'connect.sid=null; expires=Thu, 1 Jan 2000 12:00:00 UTC; path=/';
-    window.location.reload();
+    window.location.replace(loc);
   });
 
   // navbar search
-  $('#btn-search').click(async () => {
+  $('#btn-search').on('click', async () => {
     await showNavbar($('#searchbar'));
     $('#btn-search').toggleClass('fa-search fa-search-location');
     $('#search-input').focus();
   });
 
   // navbar map
-  $('#btn-map').click(() => {
+  $('#btn-map').on('click', () => {
     $('#btn-map').toggleClass('fa-map fa-map-marked');
     map.show($('btn-map').hasClass('fa-map-marked'));
   });
 
   // navline search input
-  $('#search-input').keyup(() => {
+  $('#search-input').on('keyup', () => {
     event.preventDefault();
     if (event.keyCode === 191) $('#search-input')[0].value = ''; // reset on key=/
     if (event.keyCode === 13) filterResults($('#search-input')[0].value);
   });
 
   // navline search ok
-  $('#btn-searchnow').click(() => filterResults($('#search-input')[0].value));
+  $('#btn-searchnow').on('click', () => filterResults($('#search-input')[0].value));
 
   // navline search cancel
-  $('#btn-resetsearch').click(() => {
+  $('#btn-resetsearch').on('click', () => {
     $('#search-input')[0].value = '';
     sortResults(window.options.listSortOrder);
   });
 
   // navbar list
-  $('#btn-list').click(async () => {
+  $('#btn-list').on('click', async () => {
     await showNavbar($('#optionslist'));
   });
 
   // navline list sidebar
-  $('#btn-folder').click(() => {
+  $('#btn-folder').on('click', () => {
     $('#folderbar').toggle('slow');
     $('#btn-folder').toggleClass('fa-folder fa-folder-open');
     window.options.listFolders = !window.options.listFolders;
   });
 
   // navline list descriptions
-  $('#btn-desc').click(() => {
+  $('#btn-desc').on('click', () => {
     window.options.listDetails = !window.options.listDetails;
     $('.description').toggle('slow');
     $('#btn-desc').toggleClass('fa-comment fa-comment-slash');
   });
 
-  $('#btn-title').click(() => {
+  $('#btn-title').on('click', () => {
     window.options.listTitle = !window.options.listTitle;
     $('.divider').toggle('slow');
     $('#btn-title').toggleClass('fa-comment-dots fa-comment-slash');
   });
 
   // navline list duplicates
-  $('#btn-duplicates').click(() => {
+  $('#btn-duplicates').on('click', () => {
     findDuplicates();
   });
 
@@ -698,13 +695,13 @@ async function initMenuHandlers() {
   $('#thumbsize').on('input', () => list.resize());
 
   // navbar slideshow
-  $('#btn-slide').click(() => {
+  $('#btn-slide').on('click', () => {
     details.show(window.filtered[0].image);
     details.slideshow(true);
   });
 
   // navbar livevideo
-  $('#btn-video').click(async () => {
+  $('#btn-video').on('click', async () => {
     if ($('#video').css('display') === 'none') video.init();
     else video.stop();
     await showNavbar($('#video'));
@@ -715,13 +712,13 @@ async function initMenuHandlers() {
   });
 
   // navbar images number
-  $('#btn-number').click(async () => {
+  $('#btn-number').on('click', async () => {
     const t0 = window.performance.now();
     sortResults(window.options.listSortOrder);
     log.debug(t0, 'Reset filtered results');
   });
 
-  $('#btn-number').mouseover(async () => { /**/ });
+  $('#btn-number').on('mouseover', async () => { /**/ });
   $('.navbarbutton').css('opacity', 1);
 }
 
@@ -744,12 +741,14 @@ async function hashChange(evt) {
 
 async function animate() {
   $('body').css('background', `radial-gradient(at 50% 100%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
-  $(document).mousemove((event) => {
+  $(document).on('mousemove', (event) => {
     const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
     const mouseYpercentage = Math.round(event.pageY / $(window).height() * 100);
     $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
-    if (window.dominant) $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.dominant[1]} 0, ${window.dominant[0]} 100%, ${window.dominant[0]} 100%)`);
-    else $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+    if ($('#popup').css('display') !== 'none') {
+      if (window.dominant) $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.dominant[1]} 0, ${window.dominant[0]} 100%, ${window.dominant[0]} 100%)`);
+      else $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+    }
   });
 }
 
@@ -796,7 +795,6 @@ async function main() {
   window.addEventListener('beforeinstallprompt', (evt) => installable(evt));
   if (config.default.registerPWA) await pwa.register('/client/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
-
   await config.theme();
   animate();
   await init.user();
@@ -810,7 +808,7 @@ async function main() {
   window.simmilarPerson = simmilarPerson;
   window.simmilarClasses = simmilarClasses;
   if (window.share) log.debug(null, `Direct link to share: ${window.share}`);
-  $('body').contextmenu((evt) => showContextPopup(evt));
+  $('body').on('contextmenu', (evt) => showContextPopup(evt));
   $('body').css('display', 'block');
   $('.collapsible').parent().parent().find('li').toggle(false);
   await resizeViewport();
@@ -818,9 +816,9 @@ async function main() {
   await list.resize();
   await sortResults(window.options.listSortOrder);
 
+  await initSharesHandler();
   await initMenuHandlers();
   await initSidebarHandlers();
-  await initSharesHandler();
 
   window.tf = tf;
   window.faceapi = faceapi;
@@ -831,7 +829,7 @@ async function main() {
   const cache = caches ? await caches.open('pigallery') : null;
   stats.cache = cache ? (await cache.matchAll()).length : 0;
   if (window.filtered.length > 0) {
-    log.div('log', true, 'Ready: ', stats.images, ' Images in ', stats.ready, 'ms');
+    log.div('log', true, 'Ready: ', stats.ready, 'ms');
     log.server('Stats: ', stats);
   }
   if (window.location.search && window.location.search.startsWith('?process')) $('#btn-update').click();

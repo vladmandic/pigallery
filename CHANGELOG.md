@@ -1,8 +1,10 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/09/18 cyan00@gmail.com
+### **HEAD -> master** 2020/09/19 cyan00@gmail.com
 
 ### **origin/master, origin/HEAD** 2020/09/18 cyan00@gmail.com
+- added search limit and search by tag
+- switch to passive event listeners
 
 ### **2.1.2** 2020/09/16 cyan00@gmail.com
 - improved logging
