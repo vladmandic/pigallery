@@ -1,6 +1,7 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/09/19 cyan00@gmail.com
+### **HEAD -> master** 2020/09/19 mandic00@live.com
+- testing different models
 
 ### **origin/master, origin/HEAD** 2020/09/18 cyan00@gmail.com
 - added search limit and search by tag
