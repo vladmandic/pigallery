@@ -77,7 +77,7 @@
       ]
     },
     "client/enumerate.js": {
-      "bytes": 6237,
+      "bytes": 6296,
       "imports": [
         {
           "path": "client/log.js"
@@ -85,7 +85,7 @@
       ]
     },
     "client/gallery.js": {
-      "bytes": 33686,
+      "bytes": 33914,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -141,7 +141,7 @@
       ]
     },
     "client/indexdb.js": {
-      "bytes": 5907,
+      "bytes": 6004,
       "imports": [
         {
           "path": "client/log.js"
@@ -278,7 +278,7 @@
       ]
     },
     "client/video.js": {
-      "bytes": 14198,
+      "bytes": 14176,
       "imports": [
         {
           "path": "client/log.js"
@@ -371,7 +371,7 @@
     "dist/gallery.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5730130
+      "bytes": 5730878
     },
     "dist/gallery.js": {
       "imports": [],
@@ -413,7 +413,7 @@
           "bytesInOutput": 5856
         },
         "client/indexdb.js": {
-          "bytesInOutput": 3715
+          "bytesInOutput": 3771
         },
         "node_modules/moment/moment.js": {
           "bytesInOutput": 61144
@@ -443,7 +443,7 @@
           "bytesInOutput": 1981
         },
         "client/enumerate.js": {
-          "bytesInOutput": 4007
+          "bytesInOutput": 4042
         },
         "client/models.js": {
           "bytesInOutput": 2191
@@ -455,7 +455,7 @@
           "bytesInOutput": 3210
         },
         "client/video.js": {
-          "bytesInOutput": 8981
+          "bytesInOutput": 8962
         },
         "client/processImage.js": {
           "bytesInOutput": 5880
@@ -470,10 +470,10 @@
           "bytesInOutput": 887
         },
         "client/gallery.js": {
-          "bytesInOutput": 21614
+          "bytesInOutput": 21935
         }
       },
-      "bytes": 1551100
+      "bytes": 1551493
     },
     "dist/compare.js.map": {
       "imports": [],

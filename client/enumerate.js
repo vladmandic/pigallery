@@ -26,7 +26,7 @@ async function enumerateClasses() {
     html += `<li><span tag="${escape(tag)}" type="class" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${tag} (${item.count})</span></li>`;
   }
   $('#classes').append(html);
-  log.debug(t0, `Enumerated classees: ${classesCount}`);
+  log.debug(t0, 'Enumerated classees:', classesCount);
 }
 
 // extracts all locations from loaded images and builds sidebar menu
@@ -36,7 +36,7 @@ async function enumerateLocations() {
   if (!Array.isArray(window.filtered)) window.filtered = [];
   let countries = [];
   for (const item of window.filtered) {
-    if (item.location.country && !countries.includes(item.location.country)) countries.push(item.location.country);
+    if (item && item.location.country && !countries.includes(item.location.country)) countries.push(item.location.country);
   }
   countries = countries.sort((a, b) => (a > b ? 1 : -1));
   countries.push('Unknown');
@@ -61,7 +61,7 @@ async function enumerateLocations() {
     $(`#loc-${i}`).append(children);
     i++;
   }
-  log.debug(t0, `Enumerated locations: ${locCount}`);
+  log.debug(t0, 'Enumerated locations:', locCount);
 }
 
 // builds folder list from all loaded images and builds sidebar menu, can be used with entire image list or per-object
@@ -74,6 +74,7 @@ async function enumerateFolders() {
 
   let list = [];
   for (const item of window.filtered) {
+    if (!item) continue;
     const path = item.image.substr(0, item.image.lastIndexOf('/'));
     const folders = path.split('/').filter((a) => a !== '');
     const existing = list.find((a) => a.path === path);
@@ -104,10 +105,11 @@ async function enumerateFolders() {
       }
     }
   }
-  log.debug(t0, `Enumerated folders: ${folderCount}`);
+  log.debug(t0, 'Enumerated folders:', folderCount);
 }
 
 async function enumerateShares() {
+  if (!window.user.admin) return;
   const t0 = window.performance.now();
   $('#shares').html('');
   window.shares = [];
@@ -120,7 +122,7 @@ async function enumerateShares() {
   }
   $('#shares').append(html);
   $('#shares').find('li').toggle(false);
-  log.debug(t0, `Enumerated shares: ${window.shares.length}`);
+  log.debug(t0, 'Enumerated shares:', window.shares.length);
 }
 
 async function enumerateResults() {
@@ -134,5 +136,5 @@ async function enumerateResults() {
 exports.classes = enumerateClasses;
 exports.folders = enumerateFolders;
 exports.locations = enumerateLocations;
-exports.enumerate = enumerateResults;
 exports.shares = enumerateShares;
+exports.enumerate = enumerateResults;

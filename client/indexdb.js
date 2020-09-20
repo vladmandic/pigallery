@@ -79,9 +79,13 @@ async function share() {
   const res = await fetch(`/api/share?id=${window.share}`);
   let json = {};
   if (res.ok) json = await res.json();
-  log.debug(t0, `Selected share: ${window.share} received ${json.length} images`);
-  log.div('log', true, `Loaded ${window.filtered.length} images from server for share ${window.share}`);
-  return json;
+  const filtered = [];
+  for (const img of json) {
+    if (img) filtered.push(img);
+  }
+  log.debug(t0, `Selected share: ${window.share} received:${json.length} valid:${filtered.length} invalid:${json.length - filtered.length}`);
+  log.div('log', true, `Loaded ${filtered.length} images from server for share ${window.share}`);
+  return filtered;
 }
 
 async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER, tag = null) {
@@ -89,9 +93,7 @@ async function all(index = 'date', direction = true, start = 1, end = Number.MAX
   last = { index, direction, start: 1, end: Number.MAX_SAFE_INTEGER };
   return new Promise((resolve) => {
     if (window.share) {
-      let res;
-      if (start === 1) res = share();
-      else res = [];
+      const res = share();
       resolve(res);
     } else {
       const res = [];

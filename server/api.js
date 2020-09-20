@@ -202,9 +202,7 @@ function api(app) {
     let passwd;
     let found = {};
     if (req.body.authShare) {
-      found = true;
-      found.email = global.config.share.email;
-      found.passwd = global.config.share.passwd;
+      found = { email: global.config.share.email, passwd: global.config.share.passwd };
     } else {
       email = req.body.authEmail;
       passwd = req.body.authPassword;
@@ -212,8 +210,8 @@ function api(app) {
     }
     if (found) {
       req.session.user = found.email;
-      req.session.admin = found.admin;
-      req.session.root = found.mediaRoot;
+      req.session.admin = found.admin || false;
+      req.session.root = found.mediaRoot || global.config.server.mediaRoot;
       req.session.share = req.body.authShare;
     }
     log.info('API Auth', sign(req), email, req.session.user !== undefined);

@@ -325,7 +325,6 @@ async function init(url) {
   tf = window.tf;
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
-  await tf.dispose();
   tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
   faceapi = window.faceapi;
 
