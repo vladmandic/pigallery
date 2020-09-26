@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/09/26 mandic00@live.com
+### **HEAD -> master** 2020/09/26 mandic00@live.com
+
+### **origin/master, origin/HEAD** 2020/09/26 mandic00@live.com
 - database updates
 
 ### **2.1.3** 2020/09/19 mandic00@live.com
