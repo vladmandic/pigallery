@@ -1,6 +1,7 @@
 # PiGallery Change Log
 
 ### **HEAD -> master** 2020/09/26 mandic00@live.com
+- moved processing to separate page
 
 ### **origin/master, origin/HEAD** 2020/09/26 mandic00@live.com
 
