@@ -87,7 +87,7 @@ async function main() {
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
   // define route for root
-  app.get('/', (req, res) => res.sendFile('gallery.html', { root: './client' }));
+  app.get('/', (req, res) => res.sendFile('index.html', { root: './client' }));
   app.get('/true', (req, res) => res.status(200).send(true)); // used for is-alive checks
   // define routes for folders
   const optionsStatic = { maxAge: '365d', cacheControl: true, etag: true, lastModified: true };

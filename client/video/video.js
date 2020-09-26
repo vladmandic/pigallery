@@ -1,12 +1,12 @@
-const log = require('./log.js');
-const config = require('./config.js').default;
-const definitions = require('./models.js').models;
-const modelClassify = require('./modelClassify.js');
-const modelDetect = require('./modelDetect.js');
-const ColorThief = require('../assets/color-thief.umd.js');
+/* global tf, faceapi */
 
-let tf = window.tf;
-let faceapi = window.faceapi;
+const log = require('../shared/log.js');
+const config = require('../shared/config.js').default;
+const definitions = require('../shared/models.js').models;
+const modelClassify = require('../process/modelClassify.js');
+const modelDetect = require('../process/modelDetect.js');
+const ColorThief = require('../../assets/color-thief.umd.js');
+
 let video;
 let front = true; // camera front or back
 let loading = false; // busy loading models
@@ -318,15 +318,9 @@ async function start(url) {
 
 async function init(url) {
   $('#video-status').text('Initializing ...');
-  if (!window.tf) {
-    $('#video-status').text('Error: Library not loaded');
-    return;
-  }
-  tf = window.tf;
   await tf.setBackend(config.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
-  faceapi = window.faceapi;
 
   $('#btn-play').click(() => {
     $('#btn-play').toggleClass('fa-play-circle fa-pause-circle');

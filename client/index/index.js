@@ -1,18 +1,20 @@
-const tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
-const faceapi = require('@vladmandic/face-api');
+/* global tf, faceapi */
+
+window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+window.faceapi = require('@vladmandic/face-api');
 const jQuery = require('jquery');
-const marked = require('../assets/marked.esm.js').default;
-const config = require('./config.js');
+const marked = require('../../assets/marked.esm.js').default;
+const config = require('../shared/config.js');
 const db = require('./indexdb.js');
 const details = require('./details.js');
-const hash = require('./blockhash.js');
+const hash = require('../shared/blockhash.js');
 const init = require('./init.js');
 const list = require('./list.js');
-const log = require('./log.js');
+const log = require('../shared/log.js');
 const map = require('./map.js');
 const enumerate = require('./enumerate.js');
-const video = require('./video.js');
-const process = require('./process.js');
+const video = require('../video/video.js');
+const process = require('../process/process.js');
 const options = require('./options.js');
 const pwa = require('./pwa-register.js');
 
@@ -300,7 +302,7 @@ async function findDuplicates() {
   const t0 = window.performance.now();
   list.previous = null;
 
-  const f = '/dist/worker.js';
+  const f = '/dist/index/worker.js';
   const worker = new Worker(f);
   worker.addEventListener('message', (msg) => {
     // console.log('Miain received message', msg.data);
@@ -793,7 +795,7 @@ async function main() {
   const t0 = window.performance.now();
   log.debug(null, 'Starting PiGallery');
   window.addEventListener('beforeinstallprompt', (evt) => installable(evt));
-  if (config.default.registerPWA) await pwa.register('/client/pwa-serviceworker.js');
+  if (config.default.registerPWA) await pwa.register('/dist/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
   await config.theme();
   animate();
@@ -819,9 +821,6 @@ async function main() {
   await initSharesHandler();
   await initMenuHandlers();
   await initSidebarHandlers();
-
-  window.tf = tf;
-  window.faceapi = faceapi;
 
   log.debug('TensorFlow/JS', tf.version_core);
   stats.images = window.filtered.length;

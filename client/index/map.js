@@ -1,7 +1,7 @@
 /* global L */
 
 const db = require('./indexdb.js');
-const log = require('./log.js');
+const log = require('../shared/log.js');
 const nearest = require('./nearest.js');
 const list = require('./list.js');
 

@@ -1,4 +1,4 @@
-const log = require('./log.js');
+const log = require('../shared/log.js');
 
 async function register(path) {
   const t0 = window.performance.now();

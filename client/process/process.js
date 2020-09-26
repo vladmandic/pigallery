@@ -1,5 +1,7 @@
-const log = require('./log.js');
-const config = require('./config.js').default;
+/* global tf */
+
+const log = require('../shared/log.js');
+const config = require('../shared/config.js').default;
 const process = require('./processImage.js');
 
 const results = [];
@@ -19,7 +21,7 @@ async function warmupModels() {
   }
   const t1 = window.performance.now();
   log.div('process-log', true, `TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
-  log.div('process-log', true, 'TensorFlow flags: <br>', window.tf.ENV.flags);
+  log.div('process-log', true, 'TensorFlow flags: <br>', tf.ENV.flags);
 }
 
 // calls main detectxion and then print results for all images matching spec

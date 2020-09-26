@@ -1,4 +1,4 @@
-const log = require('./log.js');
+const log = require('../shared/log.js');
 
 let db;
 let id = 0;

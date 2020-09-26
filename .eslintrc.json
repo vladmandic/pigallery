@@ -19,6 +19,7 @@
     "plugin:json/recommended-with-comments",
     "airbnb-base"
   ],
+  "ignorePatterns": [ "dist", "assets", "media", "models", "node_modules" ],
   "rules": {
     "max-len": [1, 275, 3],
     "camelcase": "off",
