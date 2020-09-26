@@ -1,5 +1,5 @@
-// const tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
-const faceapi = require('@vladmandic/face-api');
+window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+window.faceapi = require('@vladmandic/face-api');
 const jQuery = require('jquery');
 const marked = require('../../assets/marked.esm.js').default;
 const config = require('../shared/config.js');
@@ -192,7 +192,7 @@ async function simmilarPerson(image) {
   }
   for (const i in window.filtered) {
     const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
-    window.filtered[i].simmilarity = target ? Math.round(100 * faceapi.euclideanDistance(target, descriptor)) : 100;
+    window.filtered[i].simmilarity = target ? Math.round(100 * window.faceapi.euclideanDistance(target, descriptor)) : 100;
   }
   window.filtered = window.filtered
     .filter((a) => ((a.person && a.person[0]) && (a.simmilarity < 55) && (a.person[0].gender === object.person[0].gender)))
@@ -616,8 +616,8 @@ async function initMenuHandlers() {
     await showNavbar();
     $.post('/api/auth');
     let loc = window.location.href;
-    if (loc.includes('share=')) loc = '/client/auth.html';
-    if ($('#btn-user').hasClass('fa-user-slash')) loc = '/client/auth.html';
+    if (loc.includes('share=')) loc = '/auth';
+    if ($('#btn-user').hasClass('fa-user-slash')) loc = '/auth';
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     document.cookie = 'connect.sid=null; expires=Thu, 1 Jan 2000 12:00:00 UTC; path=/';
     window.location.replace(loc);
@@ -716,7 +716,7 @@ async function initMenuHandlers() {
   });
 
   $('#btn-number').on('mouseover', async () => { /**/ });
-  $('.navbarbutton').css('opacity', 1);
+  await config.done();
 }
 
 async function hashChange(evt) {

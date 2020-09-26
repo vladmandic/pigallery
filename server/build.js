@@ -4,7 +4,7 @@ const esbuild = require('esbuild');
 const CleanCSS = require('clean-css');
 const log = require('@vladmandic/pilogger');
 
-const entryPoints = ['client/index/index.js', 'client/compare/compare.js', 'client/index/worker.js', 'client/index/pwa-serviceworker.js', 'client/process/process.js'];
+const entryPoints = ['client/index/index.js', 'client/compare/compare.js', 'client/index/worker.js', 'client/index/pwa-serviceworker.js', 'client/process/process.js', 'client/prototype/prototype.js'];
 const cssFiles = ['assets/bootstrap.css', 'assets/fontawesome.css', 'client/index/iv-viewer.css', 'assets/mapquest.css', 'client/pigallery.css'];
 let service;
 let clean;

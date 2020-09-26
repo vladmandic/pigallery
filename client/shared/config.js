@@ -178,5 +178,11 @@ window.options = {
   set theme(val) { return localStorage.setItem('theme', val); },
 };
 
+async function doneLoading() {
+  $('.navbarbutton').css('opacity', 1);
+  $('.navbarbutton').prop('title', log.str(window.user));
+}
+
 exports.default = config;
 exports.theme = initTheme;
+exports.done = doneLoading;

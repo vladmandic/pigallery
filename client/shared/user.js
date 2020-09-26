@@ -17,7 +17,7 @@ async function getUser() {
     $('#user').text(window.user.user.split('@')[0]);
     log.div('log', true, `User: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
   } else {
-    window.location = '/client/auth.html';
+    window.location.replace('/auth');
   }
 }
 
