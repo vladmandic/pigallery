@@ -1,6 +1,6 @@
-const log = require('../shared/log.js');
+const log = require('./log.js');
 
-async function initUser() {
+async function getUser() {
   $('#progress').html('Authenticating');
   if (window.share) {
     await $.post('/api/auth', { authShare: window.share }); // autologin for direct shares
@@ -16,15 +16,9 @@ async function initUser() {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user.split('@')[0]);
     log.div('log', true, `User: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
-    if (!window.user.admin) $('#btn-update').css('color', 'gray');
   } else {
     window.location = '/client/auth.html';
   }
-  $('body').css('fontSize', window.options.fontSize);
-  $('#folderbar').toggle(window.options.listFolders);
-  $('.description').toggle(window.options.listDetails);
-  $('#thumbsize')[0].value = window.options.listThumbSize;
-  // log.debug(null, 'Cookie:', document.cookie);
 }
 
-exports.user = initUser;
+exports.get = getUser;

@@ -4,7 +4,7 @@ const esbuild = require('esbuild');
 const CleanCSS = require('clean-css');
 const log = require('@vladmandic/pilogger');
 
-const entryPoints = ['client/index/index.js', 'client/compare/compare.js', 'client/index/worker.js', 'client/index/pwa-serviceworker.js'];
+const entryPoints = ['client/index/index.js', 'client/compare/compare.js', 'client/index/worker.js', 'client/index/pwa-serviceworker.js', 'client/process/process.js'];
 const cssFiles = ['assets/bootstrap.css', 'assets/fontawesome.css', 'client/index/iv-viewer.css', 'assets/mapquest.css', 'client/pigallery.css'];
 let service;
 let clean;
@@ -16,12 +16,7 @@ async function init() {
     level: {
       1: {
         all: true,
-        // eslint-disable-next-line consistent-return
-        /*
-        transform: (propertyName, propertyValue) => {
-          if (propertyName === 'src' && propertyValue.indexOf('webfonts/') > -1) return propertyValue.replace('webfonts/', '/assets/');
-        },
-        */
+        // transform: (propertyName, propertyValue) => ((propertyName === 'src' && propertyValue.indexOf('webfonts/') > -1) ? propertyValue.replace('webfonts/', '/assets/') : propertyValue),
       },
       2: {
         all: false,

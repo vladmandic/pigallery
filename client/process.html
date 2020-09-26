@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PiGallery: Process Images</title>
+    <meta http-equiv="content-type">
+    <meta content="text/html">
+    <meta charset="UTF-8">
+    <meta name="description" content="Image Gallery and Classification; Author: Vladimir Mandic <mandic00@live.com>">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.1, maximum-scale=4.0, shrink-to-fit=yes, user-scalable=yes">
+    <meta name="theme-color" content="black"/>
+    <link rel="author" href="/humans.txt">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" sizes="256x256" href="/assets/dash-256.png">
+    <link rel="apple-touch-icon" href="/assets/dash-256.png">
+    <link rel="apple-touch-startup-image" href="/assets/dash-256.png">
+    <link rel="stylesheet" href="/dist/pigallery.css">
+    <script type="text/javascript" src="/dist/process/process.js"></script>
+    <style>
+      html { font-size: 18px; }
+      body { font-size: 1rem; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; width: 100vw; height: 100vh; background: black; color: white; }
+    </style>
+</head>
+<body>
+  <div id="navbar" class="row navbar text-center" style="justify-content: flex-end; background: darkslategray;">
+    <div><i id="btn-user" class="navbarbutton fad fa-user-slash"></i><p id="user">User</p></div>
+    <div><i id="btn-stop" class="navbarbutton fad fa-stop-circle"></i><p id="user">Stop</p></div>
+  </div>
+  <div id="process-active" style="background: darkslategray; padding: 8px; font-size: 1.2rem; height: 52px"></div>
+  <div id="process-state" style="background: darkslategray; padding: 8px; font-size: 1.2rem; height: 52px"></div>
+  <div id="process-log" class="row" style="overflow-y: scroll; overflow-wrap: anywhere; display: block;"></div> 
+</body>
+</html>
