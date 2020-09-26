@@ -73,7 +73,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 33942,
+      "bytes": 33948,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -375,7 +375,7 @@
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5730639
+      "bytes": 5730645
     },
     "dist/index/index.js": {
       "imports": [],
@@ -474,10 +474,10 @@
           "bytesInOutput": 887
         },
         "client/index/index.js": {
-          "bytesInOutput": 21932
+          "bytesInOutput": 21938
         }
       },
-      "bytes": 1551225
+      "bytes": 1551231
     },
     "dist/compare/compare.js.map": {
       "imports": [],

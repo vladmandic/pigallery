@@ -9,14 +9,12 @@ async function processChange(f, msg) {
   log.data('Monitor: file', msg, f);
   if (f.startsWith('server/')) {
     log.warn('Server file modified: restart required');
-  }
-  if (f.startsWith('client/')) {
-    build.compile();
-  }
-  if (f.endsWith('.json')) {
+  } else if (f.endsWith('.json')) {
     log.info('Reloading configuration');
     global.config = JSON.parse(fs.readFileSync('./config.json'));
     global.config.node = JSON.parse(fs.readFileSync('./package.json'));
+  } else {
+    build.compile();
   }
 }
 
