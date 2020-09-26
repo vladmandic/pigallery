@@ -1,22 +1,20 @@
-/* global tf, faceapi */
-
-window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
-window.faceapi = require('@vladmandic/face-api');
+// const tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+const faceapi = require('@vladmandic/face-api');
 const jQuery = require('jquery');
 const marked = require('../../assets/marked.esm.js').default;
 const config = require('../shared/config.js');
 const db = require('./indexdb.js');
 const details = require('./details.js');
 const hash = require('../shared/blockhash.js');
-const init = require('./init.js');
+const user = require('../shared/user.js');
 const list = require('./list.js');
 const log = require('../shared/log.js');
 const map = require('./map.js');
 const enumerate = require('./enumerate.js');
 const video = require('../video/video.js');
-const process = require('../process/process.js');
 const options = require('./options.js');
 const pwa = require('./pwa-register.js');
+// const process = require('../process/process.js');
 
 // global variables
 window.$ = jQuery;
@@ -418,6 +416,11 @@ function resizeViewport() {
 
 // show/hide navigation bar elements
 function showNavbar(elem) {
+  $('body').css('fontSize', window.options.fontSize);
+  $('#folderbar').toggle(window.options.listFolders);
+  $('.description').toggle(window.options.listDetails);
+  $('#thumbsize')[0].value = window.options.listThumbSize;
+
   if (elem) elem.toggle('slow');
   // hide the rest
   elem = elem || $('#main');
@@ -570,17 +573,9 @@ async function initMenuHandlers() {
     loadGallery(window.options.listLimit);
   });
 
-  // navline user update db
-  $('#btn-update').on('click', async () => {
-    if (window.user.admin) {
-      await showNavbar($('#process'));
-      if ($('#process').css('display') !== 'none') {
-        await process.start();
-        // await loadGallery(window.options.listLimit);
-      }
-    } else {
-      log.div('log', true, 'Image database update not authorized');
-    }
+  // navline process images
+  $('#btn-update').on('click', () => {
+    window.open('/process', '_blank');
   });
 
   // navline user docs
@@ -798,8 +793,8 @@ async function main() {
   if (config.default.registerPWA) await pwa.register('/dist/index/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
   await config.theme();
-  animate();
-  await init.user();
+  await animate();
+  await user.get();
   await showNavbar();
   googleAnalytics();
   details.handlers();
@@ -822,7 +817,7 @@ async function main() {
   await initMenuHandlers();
   await initSidebarHandlers();
 
-  log.debug('TensorFlow/JS', tf.version_core);
+  // log.debug('TensorFlow/JS', tf.version_core);
   stats.images = window.filtered.length;
   stats.ready = Math.floor(window.performance.now() - t0);
   const cache = caches ? await caches.open('pigallery') : null;
@@ -831,7 +826,6 @@ async function main() {
     log.div('log', true, 'Ready: ', stats.ready, 'ms');
     log.server('Stats: ', stats);
   }
-  if (window.location.search && window.location.search.startsWith('?process')) $('#btn-update').click();
 }
 
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);

@@ -1,8 +1,14 @@
 /* global tf */
 
+window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+window.faceapi = require('@vladmandic/face-api');
+const jQuery = require('jquery');
 const log = require('../shared/log.js');
 const config = require('../shared/config.js').default;
 const process = require('./processImage.js');
+const user = require('../shared/user.js');
+
+window.$ = jQuery;
 
 const results = [];
 let id = 0;
@@ -16,8 +22,8 @@ async function warmupModels() {
   const res = await process.process('assets/warmup.jpg');
   if (res.error) {
     log.div('process-log', true, 'Aborting current run due to error during warmup');
-    // setTimeout(() => window.location.reload(true), 2500);
-    setTimeout(() => window.location.replace(`${window.location.origin}?process`), 2500);
+    setTimeout(() => window.location.reload(true), 2500);
+    // setTimeout(() => window.location.replace(`${window.location.origin}?process`), 2500);
   }
   const t1 = window.performance.now();
   log.div('process-log', true, `TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
@@ -32,6 +38,7 @@ async function processFiles() {
   log.div('log', true, 'Image database update requested ...');
   log.server('Image DB Update');
   log.div('process-log', true, 'Requesting file list from server ...');
+  log.div('process-state', false, 'Requesting file list from server ...');
   const res = await fetch('/api/list');
   const dirs = await res.json();
   let files = [];
@@ -44,7 +51,9 @@ async function processFiles() {
     running = false;
     return;
   }
+  log.div('process-state', false, 'Loading models ...');
   await process.load();
+  log.div('process-state', false, 'Warming up ...');
   await warmupModels();
   const t0 = window.performance.now();
   const promises = [];
@@ -92,10 +101,13 @@ async function processFiles() {
 }
 
 async function start() {
+  await user.get();
+  if (!window.user.admin) {
+    log.div('process-active', true, 'Image database update not authorized: ', window.user);
+    return;
+  }
+  $('#btn-stop').on('click', () => { stopping = true; });
   if (!running) processFiles();
-  $('#process-stop').click(() => { stopping = true; });
-  $('#process-close').click(() => $('#process').hide());
 }
 
-// window.onload = main;
-exports.start = start;
+window.onload = start;

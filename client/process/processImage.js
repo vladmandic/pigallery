@@ -171,8 +171,8 @@ async function getImage(url, maxSize = config.maxSize) {
 
 async function processImage(name) {
   if (config.batchProcessing === 1) tf.engine().startScope();
-  // const mem = tf.memory();
-  // log.div('process-state', false, `Engine state: ${mem.numBytes.toLocaleString()} bytes ${mem.numTensors.toLocaleString()} tensors ${mem.numDataBuffers.toLocaleString()} buffers ${mem.numBytesInGPU ? mem.numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
+  const mem = tf.memory();
+  log.div('process-state', false, `Engine state: ${mem.numBytes.toLocaleString()} bytes ${mem.numTensors.toLocaleString()} tensors ${mem.numDataBuffers.toLocaleString()} buffers ${mem.numBytesInGPU ? mem.numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj = {};
   obj.image = name;
 
