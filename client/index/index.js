@@ -795,7 +795,7 @@ async function main() {
   const t0 = window.performance.now();
   log.debug(null, 'Starting PiGallery');
   window.addEventListener('beforeinstallprompt', (evt) => installable(evt));
-  if (config.default.registerPWA) await pwa.register('/dist/pwa-serviceworker.js');
+  if (config.default.registerPWA) await pwa.register('/dist/index/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
   await config.theme();
   animate();
