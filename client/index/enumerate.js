@@ -1,4 +1,4 @@
-const log = require('./log.js');
+const log = require('../shared/log.js');
 
 // exctract top classe from classification & detection and builds sidebar menu
 async function enumerateClasses() {

@@ -1,7 +1,7 @@
 const moment = require('moment');
-const ColorThief = require('../assets/color-thief.umd.js');
+const ColorThief = require('../../assets/color-thief.umd.js');
 const ImageViewer = require('./iv-viewer.js');
-const log = require('./log.js');
+const log = require('../shared/log.js');
 
 let viewer;
 let thief;

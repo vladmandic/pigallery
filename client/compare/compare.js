@@ -1,19 +1,18 @@
+/* global tf, faceapi */
 // import ndarray from 'ndarray';
 // import ops from 'ndarray-ops';
 // import KerasJS from '../assets/keras.min.js';
 
-const tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
-// const wasm = require('@tensorflow/tfjs-backend-wasm');
-// const webgpu = require('@tensorflow/tfjs-backend-webgpu');
-const faceapi = require('@vladmandic/face-api');
+window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+window.faceapi = require('@vladmandic/face-api');
 const jquery = require('jquery');
-const log = require('./log.js');
-const config = require('./config.js').default;
-const modelClassify = require('./modelClassify.js');
-const modelDetect = require('./modelDetect.js');
-const modelYolo = require('./modelYolo.js');
-const processImage = require('./processImage.js');
-const definitions = require('./models.js');
+const log = require('../shared/log.js');
+const config = require('../shared/config.js').default;
+const modelClassify = require('../process/modelClassify.js');
+const modelDetect = require('../process/modelDetect.js');
+const modelYolo = require('../process/modelYolo.js');
+const processImage = require('../process/processImage.js');
+const definitions = require('../shared/models.js');
 
 window.$ = jquery;
 const models = [];
@@ -36,8 +35,6 @@ async function init() {
   await tf.ready();
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
-  window.tf = tf;
-  window.faceapi = faceapi;
 
   // tf.ENV.set('WEBGL_BUFFER_SUPPORTED', false);
   // tf.ENV.set('WEBGL_CONV_IM2COL', false);

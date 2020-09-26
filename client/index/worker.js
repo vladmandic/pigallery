@@ -1,4 +1,4 @@
-const hash = require('./blockhash.js');
+const hash = require('../shared/blockhash.js');
 
 onmessage = async (msg) => {
   // console.log('Worker received message', msg.data);

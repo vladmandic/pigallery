@@ -1,12 +1,11 @@
+/* global tf, faceapi */
+
 const modelClassify = require('./modelClassify.js');
 const modelDetect = require('./modelDetect.js');
-const log = require('./log.js');
-const config = require('./config.js').default;
-const hash = require('./blockhash.js');
-const definitions = require('./models.js').models;
-
-let faceapi = window.faceapi;
-let tf = window.tf;
+const log = require('../shared/log.js');
+const config = require('../shared/config.js').default;
+const hash = require('../shared/blockhash.js');
+const definitions = require('../shared/models.js').models;
 
 const models = {};
 let error = false;
@@ -23,9 +22,6 @@ function JSONtoStr(json) {
 }
 
 async function loadModels() {
-  faceapi = window.faceapi;
-  tf = window.tf;
-
   tf.ENV.set('WEBGL_PACK', false);
   tf.ENV.set('WEBGL_CONV_IM2COL', false);
 

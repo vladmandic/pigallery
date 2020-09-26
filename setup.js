@@ -27,6 +27,7 @@ async function exec(cmd, msg) {
   });
 }
 
+/*
 async function dependencyCheck() {
   process.stdout.write('Running: Dependency check ...');
   // eslint-disable-next-line node/no-unpublished-require
@@ -48,6 +49,7 @@ async function dependencyCheck() {
     });
   });
 }
+*/
 
 async function deleteExamples() {
   await exec('find node_modules -type d -name "example*" -exec rm -rf {} \\; 2>/dev/null', 'Deleting module samples');
@@ -98,7 +100,7 @@ async function main() {
   process.stdout.write(`Total dependencies: production=${meta.dependencies} development=${meta.devDependencies} optional=${meta.optionalDependencies}\n`);
 
   // 3rd party checks
-  await dependencyCheck();
+  // await dependencyCheck();
   // await auditCheck();
 
   // npm.cache = await exec('npm cache verify', 'NPM verify cache');

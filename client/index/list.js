@@ -1,6 +1,6 @@
 const moment = require('moment');
 const details = require('./details.js');
-const log = require('./log.js');
+const log = require('../shared/log.js');
 
 // adds dividiers to list view based on sort order
 let previous;

@@ -3,7 +3,7 @@ const chokidar = require('chokidar');
 const log = require('@vladmandic/pilogger');
 const build = require('./build.js');
 
-const monitor = ['config.json', 'package.json', 'server/*', 'client/*', 'assets/*'];
+const monitor = ['config.json', 'package.json', 'server', 'client', 'assets'];
 
 async function processChange(f, msg) {
   log.data('Monitor: file', msg, f);

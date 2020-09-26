@@ -1,7 +1,7 @@
-const log = require('./log.js');
+const log = require('../shared/log.js');
 const list = require('./list.js');
-const config = require('./config.js');
-const models = require('./models.js').models;
+const config = require('../shared/config.js');
+const models = require('../shared/models.js').models;
 
 function JSONtoStr(json) {
   let text = '';
@@ -14,7 +14,6 @@ function JSONtoStr(json) {
 }
 
 function globalOptions() {
-  const tf = window.tf;
   let classify = '<b>&nbsp Image Classification:</b><br>';
   for (const obj of models.classify) classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
   let detect = '<b>&nbsp Object Detection:</b><br>';
@@ -33,7 +32,7 @@ function globalOptions() {
     &nbsp Image location processing: true, DB: assets/cities.json<br>
     &nbsp Image tag processing: true, DB: assets/wordnet-synset.json<br>
     <h1>TensorFlow Configuration:</h1>
-    &nbsp Version: ${tf.version_core} &nbsp Platform: ${tf.ENV.platformName} &nbsp Engine: ${config.default.backEnd} &nbsp Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}<br>
+    &nbsp Float Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}<br>
     &nbsp Image resize: ${config.default.maxSize}px &nbsp Image square: ${config.default.squareImage}<br>
     <h1>TensorFlow Active Models:</h1>
     ${classify}<br>

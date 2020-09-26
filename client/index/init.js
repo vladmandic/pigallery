@@ -1,4 +1,4 @@
-const log = require('./log.js');
+const log = require('../shared/log.js');
 
 async function initUser() {
   $('#progress').html('Authenticating');
