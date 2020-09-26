@@ -7,7 +7,7 @@ window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
 window.faceapi = require('@vladmandic/face-api');
 const jquery = require('jquery');
 const log = require('../shared/log.js');
-const config = require('../shared/config.js').default;
+const config = require('../shared/config.js');
 const modelClassify = require('../process/modelClassify.js');
 const modelDetect = require('../process/modelDetect.js');
 const modelYolo = require('../process/modelYolo.js');
@@ -28,10 +28,10 @@ async function init() {
     log.div('log', true, `Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
     if (!window.user.admin) $('#btn-update').css('color', 'gray');
   } else {
-    window.location = '/client/auth.html';
+    window.location.replace('/auth');
   }
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
-  await tf.setBackend(config.backEnd);
+  await tf.setBackend(config.default.backEnd);
   await tf.ready();
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
@@ -50,9 +50,9 @@ async function init() {
   // tf.ENV.set('WEBGL_PACK_IMAGE_OPERATIONS', false);
   // tf.ENV.set('WEBGL_PACK_UNARY_OPERATIONS', false);
 
-  if (!config.floatPrecision) tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
-  const f = `float Precision: ${config.floatPrecision ? '32bit' : '16bit'}`;
-  log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.batchProcessing} image resize: ${config.maxSize}px shape: ${config.squareImage ? 'square' : 'native'} ${f}`);
+  if (!config.default.floatPrecision) tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
+  const f = `float Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}`;
+  log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.default.batchProcessing} image resize: ${config.default.maxSize}px shape: ${config.default.squareImage ? 'square' : 'native'} ${f}`);
 }
 
 async function loadClassify(options) {
@@ -400,12 +400,13 @@ async function keras() {
 
 async function main() {
   await init();
-  $('#btn-classify').click(() => classify());
-  $('#btn-keras').click(() => keras());
-  $('#btn-detect').click(() => detect());
-  $('#btn-person').click(() => person());
-  // $('#btn-detect').click(() => yolo());
-  $('#btn-stop').click(() => { stop = true; });
+  $('#btn-classify').on('click', () => classify());
+  $('#btn-keras').on('click', () => keras());
+  $('#btn-detect').on('click', () => detect());
+  $('#btn-person').on('click', () => person());
+  // $('#btn-detect').on('click', () => yolo());
+  $('#btn-stop').on('click', () => { stop = true; });
+  await config.done();
 }
 
 window.onload = main;

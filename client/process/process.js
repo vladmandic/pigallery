@@ -4,7 +4,7 @@ window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
 window.faceapi = require('@vladmandic/face-api');
 const jQuery = require('jquery');
 const log = require('../shared/log.js');
-const config = require('../shared/config.js').default;
+const config = require('../shared/config.js');
 const process = require('./processImage.js');
 const user = require('../shared/user.js');
 
@@ -100,14 +100,16 @@ async function processFiles() {
   running = false;
 }
 
-async function start() {
+async function main() {
   await user.get();
+  await config.theme();
   if (!window.user.admin) {
     log.div('process-active', true, 'Image database update not authorized: ', window.user);
     return;
   }
+  await config.done();
   $('#btn-stop').on('click', () => { stopping = true; });
   if (!running) processFiles();
 }
 
-window.onload = start;
+window.onload = main;
