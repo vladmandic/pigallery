@@ -1,9 +1,11 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/09/19 mandic00@live.com
-- testing different models
+### **HEAD -> master, origin/master, origin/HEAD** 2020/09/19 mandic00@live.com
 
-### **origin/master, origin/HEAD** 2020/09/18 cyan00@gmail.com
+### **2.1.3** 2020/09/19 mandic00@live.com
+- bug fixes
+- testing different models
+- reduced dependencies
 - added search limit and search by tag
 - switch to passive event listeners
 
