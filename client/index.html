@@ -131,40 +131,6 @@
 
   <iframe id="iframe" class="iframe"></iframe>
 
-  <div id="video" class="video">
-    <div class="row" style="display: flex">
-      <div style="display: block">
-        <span id="video-status" style="width: 100vw;">&nbsp</span><br>
-        <span id="video-camera" style="width: 100vw;">&nbsp</span><br>
-        <span id="video-classified" style="width: 100vw;">&nbsp</span><br>
-        <span id="video-detected" style="width: 100vw;">&nbsp</span><br>
-        <span id="video-person" style="width: 100vw;">&nbsp</span>
-      </div>
-      <div style="position: fixed; right: 0; display: flex">
-        <div id="videoModels" style="line-height: 1.5rem;">
-          <label class="video-label"><input class="video-models" type="checkbox" id="videoClassify"/>Image Classification</label>
-          <label class="video-label"><input class="video-models" type="checkbox" id="videoDetect" checked/>Object Detection</label>
-          <label class="video-label"><input class="video-models" type="checkbox" id="videoFace" checked/>Face Analysis</label>
-          <label class="video-label"><input class="video-models" type="checkbox" id="videoReduce"/>Low Resolution</label>
-        </div>
-        <div id="videoClassification" style="font-size: 0.8rem; line-height: 1rem; visibility: hidden; ">
-          <label class="video-label"><input class="video-models" type="radio" name="videoClassify" value="deepdetect"/>DeepDetect</label>  
-          <label class="video-label"><input class="video-models" type="radio" name="videoClassify" value="imagenet"/>ImageNet</label>  
-          <label class="video-label"><input class="video-models" type="radio" name="videoClassify" value="food"/>Food</label>  
-          <label class="video-label"><input class="video-models" type="radio" name="videoClassify" value="birds"/>Birds</label>  
-          <label class="video-label"><input class="video-models" type="radio" name="videoClassify" value="insects"/>Insects</label>  
-          <label class="video-label"><input class="video-models" type="radio" name="videoClassify" value="plants"/>Plants</label>  
-          <label class="video-label"><input class="video-models" type="radio" name="videoClassify" value="nsfw"/>NSFW</label>  
-        </div>
-        <span style="margin: 10px"><i id="btn-facing" class="navbarbutton fad fa-sync-alt"></i><p id="text-facing">Camera: Front</p></span>
-        <span style="margin: 10px"><i id="btn-play" class="navbarbutton fad fa-play-circle"></i><p id="text-play">Live Video</p></span>
-      </div>
-    </div>
-    <div id="videosection" class="row main">
-      <video id="videocanvas" nocontrols loop controlslist="nodownload,nofullscreen,noremoteplayback"></video>
-    </div>
-  </div>
-
   <div id="install" class="install">
     Install web app<br>PiGallery
   </div>

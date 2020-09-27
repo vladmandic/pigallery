@@ -18,6 +18,7 @@ window.params = {
   extractSize: { width: 150, height: 150 },
   video: { scale: 1.0 },
   imageContrast: 0,
+  imageBlur: 0,
   imageSharpness: 0,
   imageSaturation: 0,
   imageBrightness: 0,
@@ -126,6 +127,7 @@ async function initControls() {
       case 'menu-brightness': params.imageBrightness = parseFloat(evt.target.value); break;
       case 'menu-contrast': params.imageContrast = parseFloat(evt.target.value); break;
       case 'menu-sharpness': params.imageSharpness = parseFloat(evt.target.value); break;
+      case 'menu-blur': params.imageBlur = parseInt(evt.target.value); break;
       case 'menu-saturation': params.imageSaturation = parseFloat(evt.target.value); break;
       case 'menu-hue': params.imageHue = parseInt(evt.target.value); break;
       default:

@@ -53,35 +53,38 @@
     <span><i id="menu-options" class="navbarbutton fad fa-chevron-circle-down" title="Image Options"></i><p id="menu-options">image<br>options</p></span>
   </div>
   <!-- Body -->
-  <div id="status" style="padding: 4px; position: absolute; white-space: nowrap; top: 1rem; overflow: hidden; z-index: 20; width: calc(100% - 22rem)"><a href="https://github.com/vladmandic/pihuman" target="_blank">PiHuman</a></div>
+  <div id="status" style="padding: 4px; position: absolute; white-space: nowrap; top: 0.2rem; overflow: hidden; z-index: 20; width: calc(100% - 22rem)"><a href="https://github.com/vladmandic/pihuman" target="_blank">PiHuman</a></div>
+  <div id="detected" style="padding: 4px; position: absolute; white-space: nowrap; top: 1.5rem; overflow: hidden; z-index: 20; width: calc(100% - 22rem)"></div>
+  <div id="perf" style="padding: 4px; position: absolute; white-space: nowrap; top: 2.8rem; overflow: hidden; z-index: 20; width: calc(100% - 22rem)"></div>
   <div id="pull-models" class="pulldown">
     <div class="menu" style="padding: 0">Detection Options</div>
     <div class="menu"><div class="slide"><input class="slide" type="checkbox" id="menu-complex" /><label for="menu-complex"></label></div>Complex Models</div>
     <div class="menu range"><input type="range" id="menu-threshold" min="0.1" max="1.0" step="0.05" value="0.6">Sensitivity</div>
     <hr>
     <div class="menu" style="padding: 0">Enabled Models</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="model-cocossd" /><label for="model-cocossd"></label></div>Objects Detection</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-cocossd" checked /><label for="model-cocossd"></label></div>Objects Detection</div>
     <div class="menu"><div class="slide"><input type="checkbox" id="model-facemesh" checked /><label for="model-facemesh"></label></div>Face Mesh</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-faceapi" checked /><label for="model-faceapi"></label></div>Age & Gender</div>
     <div class="menu"><div class="slide"><input type="checkbox" id="model-posenet" checked /><label for="model-posenet"></label></div>Body Pose</div>
     <div class="menu"><div class="slide"><input type="checkbox" id="model-handpose" checked /><label for="model-handpose"></label></div>Hand Pose</div>
   </div>
   <div id="pull-options" class="pulldown">
     <div class="menu" style="padding: 0">Draw Options</div>
     <div class="menu"><div class="slide"><input type="checkbox" id="menu-overlay" /><label for="menu-overlay"></label></div>Video Overlay</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="menu-log" /><label for="menu-log"></label></div>Print Log</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="menu-gestures" /><label for="menu-gestures"></label></div>Print Gestures</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="menu-labels" /><label for="menu-labels"></label></div>Show Labels</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="menu-boxes" /><label for="menu-boxes"></label></div>Show Boxes</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="menu-mesh" checked /><label for="menu-mesh"></label></div>Show Full Mesh</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="menu-points" /><label for="menu-points"></label></div>Highlight Points</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="menu-lines" checked /><label for="menu-lines"></label></div>Connect Lines</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="menu-extract" /><label for="menu-extract"></label></div>Extract Objects</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-log" /><label for="menu-log"></label></div>Log Details</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-boxes" checked /><label for="menu-boxes"></label></div>Show Boxes</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-lines" checked /><label for="menu-lines"></label></div>Connect Curves</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-mesh" checked /><label for="menu-mesh"></label></div>Points Mesh</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-points" /><label for="menu-points"></label></div>Points Highlights</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-labels" /><label for="menu-labels"></label></div>Points Labels</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-extract" checked /><label for="menu-extract"></label></div>Extract Objects</div>
     <hr>
     <div class="menu" style="padding: 0">Image Processing</div>
     <div class="menu range"><input type="range" id="menu-brightness" min="-1.0" max="1.0" step="0.05" value="0">Brightness</div>
     <div class="menu range"><input type="range" id="menu-contrast" min="-1.0" max="1.0" step="0.05" value="0">Contrast</div>
     <div class="menu range"><input type="range" id="menu-saturation" min="-1.0" max="1.0" step="0.05" value="0">Saturation</div>
     <div class="menu range"><input type="range" id="menu-sharpness" min="0" max="1" step="0.05" value="0">Sharpen</div>
+    <div class="menu range"><input type="range" id="menu-blur" min="0" max="10" step="1" value="0">Blur</div>
     <div class="menu range"><input type="range" id="menu-hue" min="0" max="360" step="5" value="0">Hue Shift</div>
   </div>
   <div id="video" style="display: block; position: fixed; top: 5rem; ">
