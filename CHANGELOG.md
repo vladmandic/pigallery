@@ -1,9 +1,10 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/09/26 mandic00@live.com
-- moved processing to separate page
+### **HEAD -> master, origin/master, origin/HEAD** 2020/09/26 mandic00@live.com
 
-### **origin/master, origin/HEAD** 2020/09/26 mandic00@live.com
+### **2.1.5** 2020/09/26 mandic00@live.com
+- refactoring complete
+- moved processing to separate page
 
 ### **2.1.4** 2020/09/26 mandic00@live.com
 - bugfix watcher

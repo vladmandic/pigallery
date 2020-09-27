@@ -28,6 +28,11 @@ function forceSSL(req, res, next) {
   return next();
 }
 
+function allowFrames(req, res, next) {
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN'); // allow | deny
+  next();
+}
+
 async function main() {
   log.configure({ logFile: global.config.server.logFile });
   log.header();
@@ -56,6 +61,7 @@ async function main() {
   app.use(express.urlencoded({ extended: false, limit: '1mb', parameterLimit: 10000 }));
   if (global.config.server.allowPWA) app.use(allowPWA);
   if (global.config.server.forceHTTPS) app.use(forceSSL);
+  app.use(allowFrames);
 
   // expressjs passthrough for all requests
   app.use((req, res, next) => {
