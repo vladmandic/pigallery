@@ -11,9 +11,9 @@ const list = require('./list.js');
 const log = require('../shared/log.js');
 const map = require('./map.js');
 const enumerate = require('./enumerate.js');
-const video = require('../video/video.js');
 const options = require('./options.js');
 const pwa = require('./pwa-register.js');
+// const video = require('../video/video.js');
 // const process = require('../process/process.js');
 
 // global variables
@@ -424,6 +424,8 @@ function showNavbar(elem) {
   if (elem) {
     elem.toggle('slow');
     $('#btn-close').show();
+  } else {
+    $('#btn-close').hide();
   }
   // hide the rest
   elem = elem || $('#main');
@@ -713,9 +715,11 @@ async function initMenuHandlers() {
 
   // navbar livevideo
   $('#btn-video').on('click', async () => {
-    if ($('#video').css('display') === 'none') video.init();
-    else video.stop();
-    await showNavbar($('#video'));
+    showNavbar($('#iframe'));
+    $('#iframe').attr('src', '/video');
+    // if ($('#video').css('display') === 'none') video.init();
+    // else video.stop();
+    // await showNavbar($('#video'));
     // 'media/Samples/Videos/video-appartment.mp4'
     // 'media/Samples/Videos/video-jen.mp4'
     // 'media/Samples/Videos/video-dash.mp4'

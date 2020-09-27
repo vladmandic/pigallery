@@ -88,21 +88,6 @@ window.themes = [
   },
 ];
 
-async function initTheme() {
-  window.theme = window.themes[window.options.theme];
-  document.documentElement.style.setProperty('--body', window.theme.body);
-  document.documentElement.style.setProperty('--background', window.theme.background);
-  document.documentElement.style.setProperty('--gradient', window.theme.gradient);
-  document.documentElement.style.setProperty('--foreground', window.theme.foreground);
-  document.documentElement.style.setProperty('--text', window.theme.text);
-  document.documentElement.style.setProperty('--title', window.theme.title);
-  document.documentElement.style.setProperty('--highlight', window.theme.highlight);
-  document.documentElement.style.setProperty('--shadow', window.theme.shadow);
-  document.documentElement.style.setProperty('--link', window.theme.link);
-  document.documentElement.style.setProperty('--inactive', window.theme.inactive);
-  log.debug(null, `Theme: ${window.theme.name}`);
-}
-
 // user configurable options & defalt values, stored in browsers local storage
 window.options = {
   get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || 500); },
@@ -178,10 +163,32 @@ window.options = {
   set theme(val) { return localStorage.setItem('theme', val); },
 };
 
+async function initTheme() {
+  window.theme = window.themes[window.options.theme];
+  log.debug(null, `Theme: ${window.theme?.name}`);
+  document.documentElement.style.setProperty('--body', window.theme.body);
+  document.documentElement.style.setProperty('--background', window.theme.background);
+  document.documentElement.style.setProperty('--gradient', window.theme.gradient);
+  document.documentElement.style.setProperty('--foreground', window.theme.foreground);
+  document.documentElement.style.setProperty('--text', window.theme.text);
+  document.documentElement.style.setProperty('--title', window.theme.title);
+  document.documentElement.style.setProperty('--highlight', window.theme.highlight);
+  document.documentElement.style.setProperty('--shadow', window.theme.shadow);
+  document.documentElement.style.setProperty('--link', window.theme.link);
+  document.documentElement.style.setProperty('--inactive', window.theme.inactive);
+}
+
 async function doneLoading() {
   // $('.navbarbutton').css('opacity', 1);
+  log.debug(parent.location.href === location.href ? 'Running in stand-alone mode' : 'Running in frame');
   $('.navbarbutton').animate({ opacity: 1.0 }, 1000);
-  $('.navbarbutton').prop('title', log.str(window.user));
+  $('#btn-user').prop('title', '');
+  if (parent.location.href !== location.href) {
+    $('#user').text('');
+    $('#btn-user').hide();
+  } else {
+    $('#btn-user').prop('title', log.str(window.user));
+  }
 }
 
 exports.default = config;

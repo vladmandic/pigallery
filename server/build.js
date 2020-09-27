@@ -4,7 +4,8 @@ const esbuild = require('esbuild');
 const CleanCSS = require('clean-css');
 const log = require('@vladmandic/pilogger');
 
-const entryPoints = ['client/index/index.js', 'client/compare/compare.js', 'client/index/worker.js', 'client/index/pwa-serviceworker.js', 'client/process/process.js', 'client/prototype/prototype.js'];
+const root = 'client';
+const jsFiles = ['client/index/worker.js', 'client/index/pwa-serviceworker.js'];
 const cssFiles = ['assets/bootstrap.css', 'assets/fontawesome.css', 'client/index/iv-viewer.css', 'assets/mapquest.css', 'client/pigallery.css'];
 let service;
 let clean;
@@ -60,10 +61,15 @@ async function compile() {
     log.error('CleanCSS not initialized');
     return;
   }
+  const dirs = fs.readdirSync(root);
+  const files = [];
+  for (const dir of dirs) {
+    if (fs.lstatSync(`${root}/${dir}`).isDirectory() && fs.existsSync(`${root}/${dir}/${dir}.js`)) files.push(`${root}/${dir}/${dir}.js`);
+  }
   try {
     const t0 = process.hrtime.bigint();
     await service.build({
-      entryPoints,
+      entryPoints: [...files, ...jsFiles],
       outdir: './dist',
       minify: true,
       bundle: true,

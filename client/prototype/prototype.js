@@ -8,9 +8,11 @@ async function main() {
 }
 
 async function init() {
+  log.debug(window.location.href);
   window.$ = jQuery;
   await user.get();
   await config.theme();
+  await main();
   if (!window.user.admin) {
     log.debug('User not authorized: ', window.user);
     return;

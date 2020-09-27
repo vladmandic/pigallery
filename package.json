@@ -61,6 +61,10 @@
   },
   "homepage": "https://github.com/vladmandic/pigallery#readme",
   "dependencies": {
+    "@tensorflow-models/coco-ssd": "^2.1.0",
+    "@tensorflow-models/facemesh": "0.0.4",
+    "@tensorflow-models/handpose": "0.0.6",
+    "@tensorflow-models/posenet": "^2.2.1",
     "@tensorflow/tfjs": "^2.4.0",
     "@vladmandic/face-api": "file:../face-api",
     "@vladmandic/pilogger": "^0.2.3",

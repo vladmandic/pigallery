@@ -102,6 +102,7 @@ async function processFiles() {
 }
 
 async function main() {
+  log.debug(parent.location.href === location.href ? 'Running in stand-alone mode' : 'Running in frame');
   await user.get();
   await config.theme();
   if (!window.user.admin) {
