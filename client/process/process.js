@@ -17,6 +17,7 @@ let stopping = false;
 
 // initial complex image is used to trigger all models thus warming them up
 async function warmupModels() {
+  if (stopping) return;
   log.div('process-log', true, 'TensorFlow models warming up ...');
   const t0 = window.performance.now();
   const res = await process.process('assets/warmup.jpg');

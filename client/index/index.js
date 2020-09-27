@@ -421,7 +421,10 @@ function showNavbar(elem) {
   $('.description').toggle(window.options.listDetails);
   $('#thumbsize')[0].value = window.options.listThumbSize;
 
-  if (elem) elem.toggle('slow');
+  if (elem) {
+    elem.toggle('slow');
+    $('#btn-close').show();
+  }
   // hide the rest
   elem = elem || $('#main');
   $('#map').hide();
@@ -433,6 +436,10 @@ function showNavbar(elem) {
   if (elem && elem[0] !== $('#userbar')[0]) $('#userbar').hide();
   if (elem && elem[0] !== $('#optionslist')[0]) $('#optionslist').hide();
   if (elem && elem[0] !== $('#optionsview')[0]) $('#optionsview').hide();
+  if (elem && elem[0] !== $('#iframe')[0]) {
+    $('#iframe').attr('src', '');
+    $('#iframe').hide();
+  }
   $(document).on('pagecontainerbeforechange', (evt, data) => {
     if (typeof data.toPage === 'string' && data.options.direction === 'back') {
       data.toPage = window.location;
@@ -559,6 +566,11 @@ async function initMenuHandlers() {
     showNavbar($('#userbar'));
   });
 
+  // navbar close
+  $('#btn-close').on('click', () => {
+    showNavbar();
+  });
+
   // navline user input
   $('#imagenum').on('keyup', () => {
     if (event.keyCode === 13) {
@@ -575,7 +587,9 @@ async function initMenuHandlers() {
 
   // navline process images
   $('#btn-update').on('click', () => {
-    window.open('/process', '_blank');
+    showNavbar($('#iframe'));
+    $('#iframe').attr('src', '/process');
+    // window.open('/process', '_blank');
   });
 
   // navline user docs

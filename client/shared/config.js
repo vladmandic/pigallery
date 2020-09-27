@@ -179,7 +179,8 @@ window.options = {
 };
 
 async function doneLoading() {
-  $('.navbarbutton').css('opacity', 1);
+  // $('.navbarbutton').css('opacity', 1);
+  $('.navbarbutton').animate({ opacity: 1.0 }, 1000);
   $('.navbarbutton').prop('title', log.str(window.user));
 }
 
