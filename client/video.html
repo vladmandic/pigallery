@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PiGallery: Live Video</title>
+  <meta http-equiv="content-type">
+  <meta content="text/html">
+  <meta charset="UTF-8">
+  <meta name="description" content="Image Gallery and Classification; Author: Vladimir Mandic <mandic00@live.com>">
+  <meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.1, maximum-scale=4.0, shrink-to-fit=yes, user-scalable=yes">
+  <meta name="theme-color" content="black"/>
+  <meta name="application-name" content="PiGallery">
+  <meta name="msapplication-tooltip" content="PiGallery: AI-powered Image Gallery and Classification">
+  <link rel="author" href="/humans.txt">
+  <link rel="pingback" href="/api/pingback">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" sizes="256x256" href="/assets/dash-256.png">
+  <link rel="apple-touch-icon" href="/assets/dash-256.png">
+  <link rel="apple-touch-startup-image" href="/assets/dash-256.png">
+  <link rel="stylesheet" href="/dist/pigallery.css">
+  <!-- Style Overrides -->
+  <style>
+    canvas { pointer-events: none; }
+    a { color: white; }
+    p { line-height: 0.8rem; }
+    hr { margin: 0.2rem; border: 1px solid rgba(0, 0, 0, 0.5) }
+    .icon { font-size: 2.5rem; margin: 0.75rem 0.5rem 0.75rem 0.5rem; --fa-primary-color: var(--color); --fa-secondary-color: white; --fa-secondary-opacity: 0.8; }
+    .icon:hover { --fa-secondary-opacity: 0.5; }
+    .menu { display: flex; white-space: nowrap; background: var(--color); padding: 0.2rem; width: max-content; }
+    .slide { width: 2.8rem; height: 1rem; background: black; margin: 0.6rem 0.8rem 0 0; position: relative; border-radius: 1rem; }
+    .slide:after { content: 'OFF'; color: lightcoral; position: absolute; right: 0.2rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
+    .slide:before { content: 'ON'; color: lightgreen; position: absolute; left: 0.3rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
+    .pulldown { display: none; background: var(--body); position: fixed; right: 0; width: fit-content; padding: 0 0.8rem 0 0.8rem; line-height: 1.8rem; z-index: 10; top: 5rem; max-height: calc(100% - 4rem); }
+    label { width: 1.3rem; height: 0.8rem; cursor: pointer; position: absolute; top: 0.1rem; left: 0.1rem; z-index: 1; background: lightcoral; border-radius: 1rem; transition: left 0.6s ease; }
+    input[type=checkbox] { visibility: hidden; }
+    input[type=checkbox]:checked + label { left: 1.4rem; background: lightgreen; }
+    input[type=range] { margin: 0.1rem 0.8rem 0 0; width: 5rem; -webkit-appearance: none; background: var(--color); }
+    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: black; border-radius: 1rem; border: 1px; }
+    input[type=range]::-webkit-slider-thumb { border: 1px solid #000000; height: 1rem; width: 1.5rem; border-radius: 1rem; background: #FFFFFF; cursor: pointer; -webkit-appearance: none; }
+    input[type=range]:focus::-webkit-slider-runnable-track { background: lightgreen; }
+  </style>
+  <!-- Script Module -->
+  <script type="text/javascript" src="/dist/video/video.js"></script>
+</head>
+<body>
+  <noscript><h1>You really need JS enabled...</h1></noscript>
+  <!-- Menu Bar -->
+  <div id="navbar" class="row navbar text-center" style="justify-content: flex-end;">
+    <span onclick="location.replace('/auth')"><i id="btn-user" class="navbarbutton fad fa-user-slash"></i><p id="user">User</p></span>
+    <span><i id="menu-startstop" class="navbarbutton fad fa-play-circle" title="Start & Stop Video Camera"></i><p id="btn-startstop">play</p></span>
+    <span><i id="menu-facing" class="navbarbutton fad fa-sort-circle" title="Switch Camera View"></i><p id="btn-facing">front</p></span>
+    <span><i id="menu-models" class="navbarbutton fad fa-user-circle" title="Model Options"></i><p id="menu-models">model<br>options</p></span>
+    <span><i id="menu-options" class="navbarbutton fad fa-chevron-circle-down" title="Image Options"></i><p id="menu-options">image<br>options</p></span>
+  </div>
+  <!-- Body -->
+  <div id="status" style="padding: 4px; position: absolute; white-space: nowrap; top: 1rem; overflow: hidden; z-index: 20; width: calc(100% - 22rem)"><a href="https://github.com/vladmandic/pihuman" target="_blank">PiHuman</a></div>
+  <div id="pull-models" class="pulldown">
+    <div class="menu" style="padding: 0">Detection Options</div>
+    <div class="menu"><div class="slide"><input class="slide" type="checkbox" id="menu-complex" /><label for="menu-complex"></label></div>Complex Models</div>
+    <div class="menu range"><input type="range" id="menu-threshold" min="0.1" max="1.0" step="0.05" value="0.6">Sensitivity</div>
+    <hr>
+    <div class="menu" style="padding: 0">Enabled Models</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-cocossd" /><label for="model-cocossd"></label></div>Objects Detection</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-facemesh" checked /><label for="model-facemesh"></label></div>Face Mesh</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-posenet" checked /><label for="model-posenet"></label></div>Body Pose</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-handpose" checked /><label for="model-handpose"></label></div>Hand Pose</div>
+  </div>
+  <div id="pull-options" class="pulldown">
+    <div class="menu" style="padding: 0">Draw Options</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-overlay" /><label for="menu-overlay"></label></div>Video Overlay</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-log" /><label for="menu-log"></label></div>Print Log</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-gestures" /><label for="menu-gestures"></label></div>Print Gestures</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-labels" /><label for="menu-labels"></label></div>Show Labels</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-boxes" /><label for="menu-boxes"></label></div>Show Boxes</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-mesh" checked /><label for="menu-mesh"></label></div>Show Full Mesh</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-points" /><label for="menu-points"></label></div>Highlight Points</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-lines" checked /><label for="menu-lines"></label></div>Connect Lines</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="menu-extract" /><label for="menu-extract"></label></div>Extract Objects</div>
+    <hr>
+    <div class="menu" style="padding: 0">Image Processing</div>
+    <div class="menu range"><input type="range" id="menu-brightness" min="-1.0" max="1.0" step="0.05" value="0">Brightness</div>
+    <div class="menu range"><input type="range" id="menu-contrast" min="-1.0" max="1.0" step="0.05" value="0">Contrast</div>
+    <div class="menu range"><input type="range" id="menu-saturation" min="-1.0" max="1.0" step="0.05" value="0">Saturation</div>
+    <div class="menu range"><input type="range" id="menu-sharpness" min="0" max="1" step="0.05" value="0">Sharpen</div>
+    <div class="menu range"><input type="range" id="menu-hue" min="0" max="360" step="5" value="0">Hue Shift</div>
+  </div>
+  <div id="video" style="display: block; position: fixed; top: 5rem; ">
+    <div id="video-start" class="fad fa-play-circle" style="font-size: 15rem; width: 100vw; text-align: center; position: fixed; top: 4rem; margin-top: 10rem; z-index: 50; cursor: pointer"></div>
+    <video id="videocanvas" style="width: 100vw; position: fixed" nocontrols loop controlslist="nodownload,nofullscreen,noremoteplayback"></video>
+    <div id="drawcanvas" style="position: relative"></div>
+  </div>
+  <div id="objects" style="display: flex; width: 100vw; position: fixed; bottom: 13rem"></div>
+  <div id="log" style="display: none; font-size: 0.9rem; overflow-y: scroll; padding: 4px; height: 12rem; position: fixed; bottom: 0; width: 99%"></div>
+</body>
+</html>
