@@ -545,11 +545,3 @@ async function main() {
 
 exports.main = main;
 exports.clear = clearAll;
-
-/*
-TBD:
-- DeepLab: https://github.com/tensorflow/tfjs-models/tree/master/deeplab
-- BodyPix: https://github.com/tensorflow/tfjs-models/tree/master/body-pix
-- Jeeliz: https://github.com/jeeliz/jeelizFaceFilter
-- DeepDetect, ImageNet, Food, Birds, Insects, Plants, NSFW
-*/
