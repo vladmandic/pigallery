@@ -329,7 +329,7 @@
       "imports": []
     },
     "client/video/process.js": {
-      "bytes": 26594,
+      "bytes": 26323,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -761,7 +761,7 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7798459
+      "bytes": 7798180
     },
     "dist/video/video.js": {
       "imports": [],

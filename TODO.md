@@ -48,9 +48,8 @@ TBD:
 
 - DeepLab semantic segmentation: <https://github.com/tensorflow/tfjs-models/tree/master/deeplab>
 - BodyPix people segmentation: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
-- MediaPipe FaceMesh: <https://github.com/tensorflow/tfjs-models/tree/master/facemesh> <https://google.github.io/mediapipe/solutions/face_mesh>
-- PoseNet pose detection: <https://github.com/tensorflow/tfjs-models/tree/master/posenet>
-- MediaPipe Iris: <https://google.github.io/mediapipe/solutions/iris>
+- Jeeliz: https://github.com/jeeliz/jeelizFaceFilter
+- Video: DeepDetect, ImageNet, Food, Birds, Insects, Plants, NSFW
 
 ## Random
 
