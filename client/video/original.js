@@ -5,17 +5,14 @@ const config = require('../shared/config.js').default;
 const definitions = require('../shared/models.js').models;
 const modelClassify = require('../process/modelClassify.js');
 const modelDetect = require('../process/modelDetect.js');
-const ColorThief = require('../../assets/color-thief.umd.js');
 
 let video;
 let front = true; // camera front or back
 let loading = false; // busy loading models
 let reduce = 1; // resolution reduction factor
 const delay = 25; // delay in ms between ml calls
-// const ghosts = 3; // how many ghost objects to render
 const exec = { classify: null, detect: null, person: null };
 const videoCanvas = document.createElement('canvas');
-const thief = new ColorThief();
 
 async function stop() {
   if (!video) return;
@@ -221,11 +218,6 @@ async function process() {
     const ctx = videoCanvas.getContext('2d');
     ctx.drawImage(video, 0, 0, videoCanvas.width, videoCanvas.height);
 
-    // get dominant color and setup animation
-    const dominant = thief.getColor(videoCanvas, 30);
-    document.documentElement.style.setProperty('--dominant', `rgb(${dominant})`);
-    document.getElementById('video').classList.add('animfade');
-
     // run classification
     const t0 = window.performance.now();
     if (document.getElementById('videoClassify').checked) {
@@ -256,10 +248,6 @@ async function process() {
     await drawDetect(obj);
     await drawPerson(obj);
     const t4 = window.performance.now();
-
-    // stop animation and set fixed background color
-    document.getElementById('video').style.background = `rgb(${dominant})`;
-    document.getElementById('video').classList.remove('animfade');
 
     // write status line
     const modelPerf = `Classify ${Math.floor(t1 - t0)} ms | Detect ${Math.floor(t2 - t1)} ms | Person ${Math.floor(t3 - t2)} ms`;

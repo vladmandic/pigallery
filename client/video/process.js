@@ -1,6 +1,7 @@
-/* global tf, log, models, canvases, perf, params, results, extracted */
+/* global tf, log, models, canvases, perf, params, results, extracted, detected, faceapi */
 
 window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+window.faceapi = require('@vladmandic/face-api');
 const facemesh = require('@tensorflow-models/facemesh/dist/facemesh.js');
 const handpose = require('@tensorflow-models/handpose/dist/handpose.js');
 const cocossd = require('@tensorflow-models/coco-ssd/dist/coco-ssd.js');
@@ -8,6 +9,7 @@ const posenet = require('@tensorflow-models/posenet/dist/posenet.js');
 const draw = require('./draw.js');
 const gesture = require('./gesture.js');
 const fx = require('../../assets/webgl-image-filter.js');
+const definitions = require('../shared/models.js').models;
 
 let fxFilter = null;
 
@@ -16,6 +18,7 @@ window.perf = { Frame: 0 }; // global performance counters
 window.models = []; // global list of all loaded modeles
 window.canvases = []; // global list of all per-model canvases
 window.extracted = [];
+window.detected = [];
 const fps = [];
 
 async function runPoseNet(image, video) {
@@ -57,16 +60,18 @@ async function runPoseNet(image, video) {
   const lines = document.getElementById('menu-lines').checked;
   const highlight = document.getElementById('menu-points').checked;
   for (const pose in poses) {
-    if (highlight) {
-      for (const point of poses[pose].keypoints) {
-        if (point.score > params.minThreshold) {
+    for (const point of poses[pose].keypoints) {
+      if (point.score > params.minThreshold) {
+        const label = `${(100 * point.score).toFixed(1)} ${point.part}`;
+        // detected.push(label);
+        if (highlight) {
           draw.point({
             canvas: canvases.posenet,
             x: point.position.x * canvases.posenet.width / image.width,
             y: point.position.y * canvases.posenet.height / image.height,
             color: 'rgba(0, 200, 255, 0.5)',
             radius: 4,
-            title: labels ? point.part : null,
+            title: labels ? label : null,
           });
         }
       }
@@ -172,6 +177,8 @@ async function runFaceMesh(image, video) {
     const height = face.boundingBox.bottomRight[1] - face.boundingBox.topLeft[1];
     // add face thumbnails
     if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'face' }));
+    const label = `${(100 * face.faceInViewConfidence).toFixed(1)}% face`;
+    detected.push(label);
     // draw border around detected faces
     if (boxes) {
       draw.rect({
@@ -182,7 +189,7 @@ async function runFaceMesh(image, video) {
         height: height * canvases.facemesh.height / image.height,
         lineWidth: 4,
         color: 'rgba(125, 255, 255, 0.4)',
-        title: 'Face',
+        title: label,
       });
     }
     // draw & label key face points
@@ -249,7 +256,9 @@ async function runCocoSSD(image, video) {
     const width = object.bbox[2] * canvases.cocossd.width / image.width;
     const height = object.bbox[3] * canvases.cocossd.height / image.height;
     if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: object.class }));
-    draw.rect({ canvas: canvases.cocossd, x, y, width, height, lineWidth: 4, color: 'rgba(125, 255, 255, 0.4)', title: `${object.class} ${Math.round(100 * object.score)}%` });
+    const label = `${(100 * object.score).toFixed(1)}% ${object.class}`;
+    detected.push(label);
+    draw.rect({ canvas: canvases.cocossd, x, y, width, height, lineWidth: 4, color: 'rgba(125, 255, 255, 0.4)', title: label });
   }
   const t2 = performance.now();
   perf.Canvas += t2 - t1;
@@ -297,6 +306,8 @@ async function runHandPose(image, video) {
     const height = hand.boundingBox.bottomRight[1] - hand.boundingBox.topLeft[1];
     if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'hand' }));
     // hand bounding box
+    const label = `${(100 * hand.handInViewConfidence).toFixed(1)}% hand`;
+    detected.push(label);
     if (boxes) {
       draw.rect({
         canvas: canvases.handpose,
@@ -306,7 +317,7 @@ async function runHandPose(image, video) {
         height: height * canvases.handpose.height / image.height,
         lineWidth: 4,
         color: 'rgba(125, 255, 255, 0.4)',
-        title: 'Hand',
+        title: label,
       });
     }
     const points = [];
@@ -336,7 +347,69 @@ async function runHandPose(image, video) {
   return { handpose: hands };
 }
 
+async function runFaceApi(image, video) {
+  // https://github.com/vladmandic/face-api
+  const t0 = performance.now();
+  if (!models.faceapi) {
+    document.getElementById('status').innerHTML = 'Loading models ...';
+    const memory0 = await tf.memory();
+    const opt = definitions.video.person;
+    $('#video-status').text('Loading Face Recognition model ...');
+    const complex = document.getElementById('menu-complex').checked;
+    if (complex) await faceapi.nets.ssdMobilenetv1.load(opt.modelPath);
+    else await faceapi.nets.tinyFaceDetector.load(opt.modelPath);
+    await faceapi.nets.ageGenderNet.load(opt.modelPath);
+    // await faceapi.nets.faceLandmark68Net.load(opt.modelPath);
+    if (complex) models.faceapi = new faceapi.SsdMobilenetv1Options({ minConfidence: params.minThreshold, maxResults: params.maxObjects });
+    else models.faceapi = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: params.minThreshold, inputSize: opt.tensorSize });
+    const memory1 = await tf.memory();
+    log.div('log', true, `Loaded model FaceAPI: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
+  }
+  if (!canvases.faceapi) {
+    canvases.faceapi = document.createElement('canvas', { desynchronized: true });
+    canvases.faceapi.style.position = 'relative';
+    canvases.faceapi.id = 'canvas-faceapi';
+    canvases.faceapi.style.position = 'absolute';
+    canvases.faceapi.style.top = 0;
+    canvases.faceapi.width = video.offsetWidth;
+    canvases.faceapi.height = video.offsetHeight;
+    document.getElementById('drawcanvas').appendChild(canvases.faceapi);
+  }
+  const tensor = tf.browser.fromPixels(image);
+  const faces = await faceapi.detectAllFaces(tensor, models.faceapi).withAgeAndGender();
+  const t1 = performance.now();
+  perf.FaceAPI = Math.trunc(t1 - t0);
+  if ((perf.Frame === 0) || !canvases.faceapi) return { faceapi: faces };
+  canvases.faceapi.getContext('2d').clearRect(0, 0, canvases.faceapi.width, canvases.faceapi.height);
+  const boxes = document.getElementById('menu-boxes').checked;
+  for (const face of faces) {
+    const x = face.detection.box.x;
+    const y = face.detection.box.y;
+    const width = face.detection.box.width;
+    const height = face.detection.box.height;
+    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'faceapi' }));
+    const title = `${(100 * face.genderProbability).toFixed(1)}% ${face.gender} ${face.age.toFixed(1)}y`;
+    detected.push(title);
+    if (boxes) {
+      draw.rect({
+        canvas: canvases.faceapi,
+        x: x * canvases.faceapi.width / image.width,
+        y: y * canvases.faceapi.height / image.height,
+        width: width * canvases.faceapi.width / image.width,
+        height: height * canvases.faceapi.height / image.height,
+        lineWidth: 4,
+        color: 'rgba(125, 255, 255, 0.4)',
+        title,
+      });
+    }
+  }
+  const t2 = performance.now();
+  perf.Canvas += t2 - t1;
+  return { faceapi: faces };
+}
+
 function getCameraImage(video) {
+  const t0 = performance.now();
   let matrix = video.style.transform.match(/[+-]?\d+(\.\d+)?/g);
   if (!matrix || matrix.length !== 6) matrix = [1.0, 1.0, 0, 0];
   else matrix = matrix.map((a) => parseFloat(a));
@@ -352,12 +425,15 @@ function getCameraImage(video) {
   fxFilter.addFilter('brightness', params.imageBrightness);
   fxFilter.addFilter('contrast', params.imageContrast);
   fxFilter.addFilter('sharpen', params.imageSharpness);
+  fxFilter.addFilter('blur', params.imageBlur);
   fxFilter.addFilter('saturation', params.imageSaturation);
   fxFilter.addFilter('hue', params.imageHue);
   const filtered = fxFilter.apply(canvas);
 
   if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(canvas, 0, 0, canvas.width, canvas.height, { title: 'original' }));
   if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(filtered, 0, 0, filtered.width, filtered.height, { title: 'filtered' }));
+  const t1 = performance.now();
+  perf.Image = Math.trunc(t1 - t0);
   return filtered;
 }
 
@@ -391,6 +467,7 @@ async function main() {
   if (video.readyState > 2) {
     const t0 = performance.now();
     const promises = [];
+    detected.length = 0;
     perf.Canvas = 0;
 
     const image = getCameraImage(video);
@@ -427,6 +504,11 @@ async function main() {
       promises.push(await runHandPose(image, video));
     } else draw.clear(canvases.handpose);
 
+    if (document.getElementById('model-faceapi').checked) {
+      if (params.async) promises.push(runFaceApi(image, video));
+      promises.push(await runFaceApi(image, video));
+    } else draw.clear(canvases.faceapi);
+
     window.results = params.async ? await Promise.all(promises) : promises;
 
     const objects = document.getElementById('objects');
@@ -446,7 +528,7 @@ async function main() {
       for (const result of results) log.debug('TF Results: ', result);
     }
 
-    const gestures = document.getElementById('menu-gestures').checked ? await gesture.analyze(window.results) : '';
+    const gestures = await gesture.analyze(window.results);
 
     const t1 = performance.now();
     perf.Total = Math.trunc(t1 - t0);
@@ -454,8 +536,9 @@ async function main() {
     perf.Canvas = Math.round(perf.Canvas);
     fps.push(Math.round(10000 / (t1 - t0)) / 10);
     const avg = Math.round(10 * fps.reduce((a, b) => (a + b)) / fps.length) / 10;
-    document.getElementById('status').innerText = `FPS: ${Math.round(10000 / (t1 - t0)) / 10} [${log.str(gestures)}]`;
-    if (document.getElementById('menu-log').checked) document.getElementById('status').innerText += ` AVG: ${avg} ${log.str(perf)}`;
+    document.getElementById('status').innerText = `FPS: ${Math.round(10000 / (t1 - t0)) / 10} AVG: ${avg}`;
+    document.getElementById('detected').innerText = `Detected: ${log.str([...detected, ...gestures])}`;
+    document.getElementById('perf').innerText = document.getElementById('menu-log').checked ? `Performance: ${log.str(perf)}` : '';
   }
   requestAnimationFrame(main);
 }
@@ -467,4 +550,6 @@ exports.clear = clearAll;
 TBD:
 - DeepLab: https://github.com/tensorflow/tfjs-models/tree/master/deeplab
 - BodyPix: https://github.com/tensorflow/tfjs-models/tree/master/body-pix
+- Jeeliz: https://github.com/jeeliz/jeelizFaceFilter
+- DeepDetect, ImageNet, Food, Birds, Insects, Plants, NSFW
 */
