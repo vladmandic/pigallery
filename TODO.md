@@ -49,7 +49,7 @@ TBD:
 - DeepLab semantic segmentation: <https://github.com/tensorflow/tfjs-models/tree/master/deeplab>
 - BodyPix people segmentation: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
 - Jeeliz: https://github.com/jeeliz/jeelizFaceFilter
-- Video: DeepDetect, ImageNet, Food, Birds, Insects, Plants, NSFW
+- Video: DeepDetect, ImageNet
 
 ## Random
 

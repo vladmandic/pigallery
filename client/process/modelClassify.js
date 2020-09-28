@@ -25,8 +25,15 @@ async function load(cfg) {
     fromTFHub: config.modelPath.startsWith('http') || config.tgz,
   };
   const modelPath = (!loadOpts.fromTFHub && !config.tgz && !config.modelPath.endsWith('model.json')) ? config.modelPath + '/model.json' : config.modelPath;
-  if (config.modelType === 'graph') model = await tf.loadGraphModel(modelPath, loadOpts);
-  if (config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
+  try {
+    if (config.modelType === 'graph') model = await tf.loadGraphModel(modelPath, loadOpts);
+    if (config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('TFJW Load Error: ', modelPath, config);
+    // eslint-disable-next-line no-console
+    console.error(err);
+  }
   const res = config.classes ? await fetch(config.classes) : await fetch(config.modelPath + '/classes.json');
   model.labels = await res.json();
   model.config = config;

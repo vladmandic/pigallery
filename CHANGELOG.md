@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
 ### **HEAD -> master** 2020/09/27 mandic00@live.com
+- added faceapi to video
+- video iframe
 - iframe support
 
 ### **origin/master, origin/HEAD** 2020/09/26 mandic00@live.com
