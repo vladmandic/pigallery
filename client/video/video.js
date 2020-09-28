@@ -9,20 +9,20 @@ const process = require('./process.js');
 
 window.params = {
   facing: true,
-  minThreshold: 0.6,
-  maxObjects: 4,
+  minThreshold: 0.4,
+  maxObjects: 5,
   quantBytes: 4,
   skipFrames: 20,
   async: false, // slightly faster, but atomic per-model performance and memory consumption is unreliable
   resolution: { width: 0, height: 0 }, // if 0, use camera resolution
-  extractSize: { width: 150, height: 150 },
-  video: { scale: 1.0 },
+  extractSize: 100, // width of extracted image, height is autocalculated
   imageContrast: 0,
   imageBlur: 0,
   imageSharpness: 0,
   imageSaturation: 0,
   imageBrightness: 0,
   imageHue: 0,
+  lineTension: 0.25,
 };
 
 async function cameraStart(play = true) {
@@ -110,6 +110,7 @@ async function cameraListen() {
     const settings = video.srcObject.getVideoTracks()[0].getSettings();
     log.div('div', true, `Start video: ${track.label} camera ${settings.width} x ${settings.height} display ${video.offsetWidth} x ${video.offsetHeight} facing ${settings.facingMode}`);
     log.debug('Camera Settings: ', settings);
+    document.getElementById('objects').style.top = `${video.offsetTop + video.offsetHeight}px`;
     event.stopPropagation();
     process.main();
   }, true);
@@ -117,13 +118,16 @@ async function cameraListen() {
 
 async function initControls() {
   document.getElementById('log').style.display = document.getElementById('menu-log').checked ? 'block' : 'none';
-  window.addEventListener('resize', () => cameraResize(false));
-  window.addEventListener('change', (evt) => {
+  for (const el of document.getElementsByClassName('range')) el.dataset.value = el.value;
+  document.addEventListener('resize', () => cameraResize(false));
+  document.addEventListener('change', (evt) => {
     // console.log('Event:', evt.type, evt.target);
+    if (evt.target.classList.contains('range')) evt.target.dataset.value = evt.target.value;
     switch (evt.target.id) {
       case 'menu-complex': modelsReload(); break;
       case 'menu-log': $('#log').slideToggle(); break;
       case 'menu-threshold': params.minThreshold = parseFloat(evt.target.value); break;
+      case 'menu-tension': params.lineTension = parseFloat(evt.target.value); break;
       case 'menu-brightness': params.imageBrightness = parseFloat(evt.target.value); break;
       case 'menu-contrast': params.imageContrast = parseFloat(evt.target.value); break;
       case 'menu-sharpness': params.imageSharpness = parseFloat(evt.target.value); break;
@@ -134,7 +138,7 @@ async function initControls() {
     }
   });
   const click = ('ontouchstart' in window) ? 'touchstart' : 'click';
-  window.addEventListener(click, (evt) => {
+  document.addEventListener(click, (evt) => {
     // console.log('Event:', evt.type, evt.target);
     switch (evt.target.id) {
       case 'video-start': cameraStartStop(); break;

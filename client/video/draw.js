@@ -77,13 +77,15 @@ function curve({ points = [], canvas = null, lineWidth = 2, color = 'white', tit
 
 function crop(image, x, y, width, height, { color = 'white', title = null, font = null }) {
   const canvas = document.createElement('canvas', { desynchronized: true });
-  canvas.width = params.extractSize.width;
-  canvas.height = params.extractSize.height;
+  canvas.width = params.extractSize * width / height;
+  canvas.height = params.extractSize;
+  canvas.style.width = `${canvas.width}px`;
+  canvas.style.height = `${canvas.height}px`;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
   ctx.fillStyle = color;
   ctx.font = font || defaultFont;
-  if (title) ctx.fillText(title, 2, 10);
+  if (title) ctx.fillText(title, 2, 16, canvas.width - 4);
   return canvas;
 }
 

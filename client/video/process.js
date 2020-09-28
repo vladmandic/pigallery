@@ -1,15 +1,10 @@
-/* global tf, log, models, canvases, perf, params, results, extracted, detected, faceapi */
+/* global tf, log, models, canvases, perf, params, results, extracted, detected */
 
 window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
-window.faceapi = require('@vladmandic/face-api');
-const facemesh = require('@tensorflow-models/facemesh/dist/facemesh.js');
-const handpose = require('@tensorflow-models/handpose/dist/handpose.js');
-const cocossd = require('@tensorflow-models/coco-ssd/dist/coco-ssd.js');
-const posenet = require('@tensorflow-models/posenet/dist/posenet.js');
 const draw = require('./draw.js');
 const gesture = require('./gesture.js');
 const fx = require('../../assets/webgl-image-filter.js');
-const definitions = require('../shared/models.js').models;
+const run = require('./run.js');
 
 let fxFilter = null;
 
@@ -20,393 +15,6 @@ window.canvases = []; // global list of all per-model canvases
 window.extracted = [];
 window.detected = [];
 const fps = [];
-
-async function runPoseNet(image, video) {
-  // https://github.com/tensorflow/tfjs-models/tree/master/posenet
-  const t0 = performance.now();
-  if (!models.posenet) {
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    models.posenet = await posenet.load({
-      architecture: document.getElementById('menu-complex').checked ? 'ResNet50' : 'MobileNetV1',
-      outputStride: 16,
-      multiplier: document.getElementById('menu-complex').checked ? 1 : 0.75,
-      quantBytes: params.quantBytes,
-      // inputResolution: { width: image.width, height: image.height },
-    });
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model PoseNet: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!canvases.posenet) {
-    canvases.posenet = document.createElement('canvas', { desynchronized: true });
-    canvases.posenet.style.position = 'relative';
-    canvases.posenet.id = 'canvas-posenet';
-    canvases.posenet.style.position = 'absolute';
-    canvases.posenet.style.top = 0;
-    canvases.posenet.width = video.offsetWidth;
-    canvases.posenet.height = video.offsetHeight;
-    document.getElementById('drawcanvas').appendChild(canvases.posenet);
-  }
-  const poses = await models.posenet.estimateMultiplePoses(image, {
-    maxDetections: params.maxObjects,
-    scoreThreshold: params.minThreshold,
-    nmsRadius: 20,
-  });
-  const t1 = performance.now();
-  perf.PoseNet = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.posenet) return { posenet: poses };
-  canvases.posenet.getContext('2d').clearRect(0, 0, canvases.posenet.width, canvases.posenet.height);
-  const labels = document.getElementById('menu-labels').checked;
-  const lines = document.getElementById('menu-lines').checked;
-  const highlight = document.getElementById('menu-points').checked;
-  for (const pose in poses) {
-    for (const point of poses[pose].keypoints) {
-      if (point.score > params.minThreshold) {
-        const label = `${(100 * point.score).toFixed(1)} ${point.part}`;
-        // detected.push(label);
-        if (highlight) {
-          draw.point({
-            canvas: canvases.posenet,
-            x: point.position.x * canvases.posenet.width / image.width,
-            y: point.position.y * canvases.posenet.height / image.height,
-            color: 'rgba(0, 200, 255, 0.5)',
-            radius: 4,
-            title: labels ? label : null,
-          });
-        }
-      }
-    }
-    if (lines) {
-      const points = [];
-      const line = [];
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftElbow'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftWrist'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)' });
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightElbow'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightWrist'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)' });
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftEye'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftEar'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightEye'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightEar'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftEye'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)' });
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftHip'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftKnee'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftAnkle'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)' });
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightHip'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightKnee'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightAnkle'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)' });
-    }
-  }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { posenet: poses };
-}
-
-async function runFaceMesh(image, video) {
-  // https://github.com/tensorflow/tfjs-models/tree/master/facemesh
-  const t0 = performance.now();
-  if (!models.facemesh) {
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    models.facemesh = await facemesh.load({
-      maxContinuousChecks: params.skipFrames,
-      detectionConfidence: params.minThreshold,
-      maxFaces: params.maxObjects,
-      iouThreshold: params.minThreshold,
-      scoreThreshold: params.minThreshold,
-    });
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model FaceMesh: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!canvases.facemesh) {
-    canvases.facemesh = document.createElement('canvas', { desynchronized: true });
-    canvases.facemesh.style.position = 'relative';
-    canvases.facemesh.id = 'canvas-facemesh';
-    canvases.facemesh.style.position = 'absolute';
-    canvases.facemesh.style.top = 0;
-    canvases.facemesh.width = video.offsetWidth;
-    canvases.facemesh.height = video.offsetHeight;
-    document.getElementById('drawcanvas').appendChild(canvases.facemesh);
-  }
-  const faces = await models.facemesh.estimateFaces(image);
-  const t1 = performance.now();
-  perf.FaceMesh = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.facemesh) return { facemesh: faces };
-  canvases.facemesh.getContext('2d').clearRect(0, 0, canvases.facemesh.width, canvases.facemesh.height);
-  const labels = document.getElementById('menu-labels').checked;
-  const boxes = document.getElementById('menu-boxes').checked;
-  for (const face of faces) {
-    const x = face.boundingBox.topLeft[0];
-    const y = face.boundingBox.topLeft[1];
-    const width = face.boundingBox.bottomRight[0] - face.boundingBox.topLeft[0];
-    const height = face.boundingBox.bottomRight[1] - face.boundingBox.topLeft[1];
-    // add face thumbnails
-    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'face' }));
-    const label = `${(100 * face.faceInViewConfidence).toFixed(1)}% face`;
-    detected.push(label);
-    // draw border around detected faces
-    if (boxes) {
-      draw.rect({
-        canvas: canvases.facemesh,
-        x: x * canvases.facemesh.width / image.width,
-        y: y * canvases.facemesh.height / image.height,
-        width: width * canvases.facemesh.width / image.width,
-        height: height * canvases.facemesh.height / image.height,
-        lineWidth: 4,
-        color: 'rgba(125, 255, 255, 0.4)',
-        title: label,
-      });
-    }
-    // draw & label key face points
-    for (const [key, val] of Object.entries(face.annotations)) {
-      for (const point in val) {
-        draw.point({
-          canvas: canvases.facemesh,
-          x: val[point][0] * canvases.facemesh.width / image.width,
-          y: val[point][1] * canvases.facemesh.height / image.height,
-          color: `rgba(${125 + 2 * val[point][2]}, ${255 - 2 * val[point][2]}, 255, 0.5)`,
-          radius: 2,
-          alpha: 0.5,
-          title: ((point >= val.length - 1) && labels) ? key : null,
-        });
-      }
-    }
-    // draw all face points
-    if (document.getElementById('menu-mesh').checked) {
-      for (const point of face.scaledMesh) {
-        draw.point({
-          canvas: canvases.facemesh,
-          x: point[0] * canvases.facemesh.width / image.width,
-          y: point[1] * canvases.facemesh.height / image.height,
-          color: `rgba(${125 + 2 * point[2]}, ${255 - 2 * point[2]}, 255, 0.5)`,
-          blue: 255,
-          radius: 1,
-        });
-      }
-    }
-  }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { facemesh: faces };
-}
-
-async function runCocoSSD(image, video) {
-  // https://github.com/tensorflow/tfjs-models/tree/master/coco-ssd
-  const t0 = performance.now();
-  if (!models.cocossd) {
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    models.cocossd = await cocossd.load({ base: document.getElementById('menu-complex').checked ? 'mobilenet_v2' : 'lite_mobilenet_v2' });
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model CocoSSD: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!canvases.cocossd) {
-    canvases.cocossd = document.createElement('canvas', { desynchronized: true });
-    canvases.cocossd.style.position = 'relative';
-    canvases.cocossd.id = 'canvas-cocossd';
-    canvases.cocossd.style.position = 'absolute';
-    canvases.cocossd.style.top = 0;
-    canvases.cocossd.width = video.offsetWidth;
-    canvases.cocossd.height = video.offsetHeight;
-    document.getElementById('drawcanvas').appendChild(canvases.cocossd);
-  }
-  const objects = await models.cocossd.detect(image, params.maxObjects, params.minThreshold);
-  const t1 = performance.now();
-  perf.CocoSSD = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.cocossd) return { cocossd: objects };
-  canvases.cocossd.getContext('2d').clearRect(0, 0, canvases.cocossd.width, canvases.cocossd.height);
-  for (const object of objects) {
-    const x = object.bbox[0] * canvases.cocossd.width / image.width;
-    const y = object.bbox[1] * canvases.cocossd.height / image.height;
-    const width = object.bbox[2] * canvases.cocossd.width / image.width;
-    const height = object.bbox[3] * canvases.cocossd.height / image.height;
-    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: object.class }));
-    const label = `${(100 * object.score).toFixed(1)}% ${object.class}`;
-    detected.push(label);
-    draw.rect({ canvas: canvases.cocossd, x, y, width, height, lineWidth: 4, color: 'rgba(125, 255, 255, 0.4)', title: label });
-  }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { cocossd: objects };
-}
-
-async function runHandPose(image, video) {
-  // https://github.com/tensorflow/tfjs-models/tree/master/handpose
-  const t0 = performance.now();
-  if (!models.handpose) {
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    models.handpose = await handpose.load({
-      maxContinuousChecks: params.skipFrames,
-      detectionConfidence: params.minThreshold,
-      iouThreshold: params.minThreshold,
-      scoreThreshold: params.minThreshold,
-    });
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model HandPose: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!canvases.handpose) {
-    canvases.handpose = document.createElement('canvas', { desynchronized: true });
-    canvases.handpose.style.position = 'relative';
-    canvases.handpose.id = 'canvas-handpose';
-    canvases.handpose.style.position = 'absolute';
-    canvases.handpose.style.top = 0;
-    canvases.handpose.width = video.offsetWidth;
-    canvases.handpose.height = video.offsetHeight;
-    document.getElementById('drawcanvas').appendChild(canvases.handpose);
-  }
-  const hands = await models.handpose.estimateHands(image);
-  const t1 = performance.now();
-  perf.HandPose = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.handpose) return { handpose: hands };
-  canvases.handpose.getContext('2d').clearRect(0, 0, canvases.handpose.width, canvases.handpose.height);
-  const labels = document.getElementById('menu-labels').checked;
-  const lines = document.getElementById('menu-lines').checked;
-  const highlight = document.getElementById('menu-points').checked;
-  const boxes = document.getElementById('menu-boxes').checked;
-  for (const hand of hands) {
-    const x = hand.boundingBox.topLeft[0];
-    const y = hand.boundingBox.topLeft[1];
-    const width = hand.boundingBox.bottomRight[0] - hand.boundingBox.topLeft[0];
-    const height = hand.boundingBox.bottomRight[1] - hand.boundingBox.topLeft[1];
-    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'hand' }));
-    // hand bounding box
-    const label = `${(100 * hand.handInViewConfidence).toFixed(1)}% hand`;
-    detected.push(label);
-    if (boxes) {
-      draw.rect({
-        canvas: canvases.handpose,
-        x: x * canvases.handpose.width / image.width,
-        y: y * canvases.handpose.height / image.height,
-        width: width * canvases.handpose.width / image.width,
-        height: height * canvases.handpose.height / image.height,
-        lineWidth: 4,
-        color: 'rgba(125, 255, 255, 0.4)',
-        title: label,
-      });
-    }
-    const points = [];
-    for (const [key, val] of Object.entries(hand.annotations)) {
-      points.length = 0;
-      for (const point in val) points.push([val[point][0] * canvases.handpose.width / image.width, val[point][1] * canvases.handpose.height / image.height, val[point][2]]);
-      points.reverse();
-      // draw connected line between finger points
-      if (lines) draw.spline({ canvas: canvases.handpose, color: 'rgba(125, 255, 255, 0.2)', points, lineWidth: 10, tension: 0.5 });
-      // draw all finger hand points
-      if (highlight) {
-        for (let point = 0; point < points.length; point++) {
-          draw.point({
-            canvas: canvases.handpose,
-            x: points[point][0],
-            y: points[point][1],
-            color: `rgba(${125 + 4 * points[point][2]}, ${125 - 4 * points[point][2]}, 255, 0.5)`,
-            radius: 3,
-            title: (labels && (point === 0)) ? key : null,
-          });
-        }
-      }
-    }
-  }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { handpose: hands };
-}
-
-async function runFaceApi(image, video) {
-  // https://github.com/vladmandic/face-api
-  const t0 = performance.now();
-  if (!models.faceapi) {
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    const opt = definitions.video.person;
-    $('#video-status').text('Loading Face Recognition model ...');
-    const complex = document.getElementById('menu-complex').checked;
-    if (complex) await faceapi.nets.ssdMobilenetv1.load(opt.modelPath);
-    else await faceapi.nets.tinyFaceDetector.load(opt.modelPath);
-    await faceapi.nets.ageGenderNet.load(opt.modelPath);
-    // await faceapi.nets.faceLandmark68Net.load(opt.modelPath);
-    if (complex) models.faceapi = new faceapi.SsdMobilenetv1Options({ minConfidence: params.minThreshold, maxResults: params.maxObjects });
-    else models.faceapi = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: params.minThreshold, inputSize: opt.tensorSize });
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model FaceAPI: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!canvases.faceapi) {
-    canvases.faceapi = document.createElement('canvas', { desynchronized: true });
-    canvases.faceapi.style.position = 'relative';
-    canvases.faceapi.id = 'canvas-faceapi';
-    canvases.faceapi.style.position = 'absolute';
-    canvases.faceapi.style.top = 0;
-    canvases.faceapi.width = video.offsetWidth;
-    canvases.faceapi.height = video.offsetHeight;
-    document.getElementById('drawcanvas').appendChild(canvases.faceapi);
-  }
-  const tensor = tf.browser.fromPixels(image);
-  const faces = await faceapi.detectAllFaces(tensor, models.faceapi).withAgeAndGender();
-  const t1 = performance.now();
-  perf.FaceAPI = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.faceapi) return { faceapi: faces };
-  canvases.faceapi.getContext('2d').clearRect(0, 0, canvases.faceapi.width, canvases.faceapi.height);
-  const boxes = document.getElementById('menu-boxes').checked;
-  for (const face of faces) {
-    const x = face.detection.box.x;
-    const y = face.detection.box.y;
-    const width = face.detection.box.width;
-    const height = face.detection.box.height;
-    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'faceapi' }));
-    const title = `${(100 * face.genderProbability).toFixed(1)}% ${face.gender} ${face.age.toFixed(1)}y`;
-    detected.push(title);
-    if (boxes) {
-      draw.rect({
-        canvas: canvases.faceapi,
-        x: x * canvases.faceapi.width / image.width,
-        y: y * canvases.faceapi.height / image.height,
-        width: width * canvases.faceapi.width / image.width,
-        height: height * canvases.faceapi.height / image.height,
-        lineWidth: 4,
-        color: 'rgba(125, 255, 255, 0.4)',
-        title,
-      });
-    }
-  }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { faceapi: faces };
-}
 
 function getCameraImage(video) {
   const t0 = performance.now();
@@ -484,32 +92,67 @@ async function main() {
     if (document.getElementById('menu-overlay').checked) await drawOverlay(image, video);
     else draw.clear(canvases.process);
 
+    if (document.getElementById('model-imagenet').checked) {
+      if (params.async) promises.push(run.imagenet(image, video));
+      else promises.push(await run.imagenet(image, video));
+    } else draw.clear(canvases.imagenet);
+
+    if (document.getElementById('model-deepdetect').checked) {
+      if (params.async) promises.push(run.deepdetect(image, video));
+      else promises.push(await run.deepdetect(image, video));
+    } else draw.clear(canvases.deepdetect);
+
+    if (document.getElementById('model-cocossd').checked) {
+      if (params.async) promises.push(run.cocossd(image, video));
+      else promises.push(await run.cocossd(image, video));
+    } else draw.clear(canvases.cocossd);
+
+    if (document.getElementById('model-nsfw').checked) {
+      if (params.async) promises.push(run.nsfw(image, video));
+      else promises.push(await run.nsfw(image, video));
+    } else draw.clear(canvases.nsfw);
+
+    if (document.getElementById('model-food').checked) {
+      if (params.async) promises.push(run.food(image, video));
+      else promises.push(await run.food(image, video));
+    } else draw.clear(canvases.food);
+
+    if (document.getElementById('model-plants').checked) {
+      if (params.async) promises.push(run.plants(image, video));
+      else promises.push(await run.plants(image, video));
+    } else draw.clear(canvases.plants);
+
+    if (document.getElementById('model-birds').checked) {
+      if (params.async) promises.push(run.birds(image, video));
+      else promises.push(await run.birds(image, video));
+    } else draw.clear(canvases.birds);
+
+    if (document.getElementById('model-insects').checked) {
+      if (params.async) promises.push(run.insects(image, video));
+      else promises.push(await run.insects(image, video));
+    } else draw.clear(canvases.insects);
+
     if (document.getElementById('model-facemesh').checked) {
-      if (params.async) promises.push(runFaceMesh(image, video));
-      else promises.push(await runFaceMesh(image, video));
+      if (params.async) promises.push(run.facemesh(image, video));
+      else promises.push(await run.facemesh(image, video));
     } else draw.clear(canvases.facemesh);
 
     if (document.getElementById('model-posenet').checked) {
-      if (params.async) promises.push(runPoseNet(image, video));
-      else promises.push(await runPoseNet(image, video));
+      if (params.async) promises.push(run.posenet(image, video));
+      else promises.push(await run.posenet(image, video));
     } else draw.clear(canvases.posenet);
 
-    if (document.getElementById('model-cocossd').checked) {
-      if (params.async) promises.push(runCocoSSD(image, video));
-      else promises.push(await runCocoSSD(image, video));
-    } else draw.clear(canvases.cocossd);
-
     if (document.getElementById('model-handpose').checked) {
-      if (params.async) promises.push(runHandPose(image, video));
-      promises.push(await runHandPose(image, video));
+      if (params.async) promises.push(run.handpose(image, video));
+      promises.push(await run.handpose(image, video));
     } else draw.clear(canvases.handpose);
 
     if (document.getElementById('model-faceapi').checked) {
-      if (params.async) promises.push(runFaceApi(image, video));
-      promises.push(await runFaceApi(image, video));
+      if (params.async) promises.push(run.faceapi(image, video));
+      promises.push(await run.faceapi(image, video));
     } else draw.clear(canvases.faceapi);
 
-    window.results = params.async ? await Promise.all(promises) : promises;
+    window.results = (params.async ? await Promise.all(promises) : promises).filter((a) => ((a !== null) && (a !== undefined)));
 
     const objects = document.getElementById('objects');
     objects.innerHTML = '';
