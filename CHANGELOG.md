@@ -1,12 +1,13 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/09/28 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/09/28 mandic00@live.com
+
+### **2.1.6** 2020/09/28 mandic00@live.com
+- added inaturalist models to video
 - cleaning up
 - added faceapi to video
 - video iframe
 - iframe support
-
-### **origin/master, origin/HEAD** 2020/09/26 mandic00@live.com
 
 ### **2.1.5** 2020/09/26 mandic00@live.com
 - refactoring complete

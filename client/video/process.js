@@ -1,6 +1,7 @@
 /* global tf, log, models, canvases, perf, params, results, extracted, detected */
 
 window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+const config = require('../shared/config.js');
 const draw = require('./draw.js');
 const gesture = require('./gesture.js');
 const fx = require('../../assets/webgl-image-filter.js');
@@ -81,8 +82,9 @@ async function main() {
     const image = getCameraImage(video);
 
     if (perf.Frame === 0) {
-      tf.setBackend('webgl');
-      tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
+      // if (config.default.backEnd === 'wasm') tf.wasm.setPaths('/assets');
+      tf.setBackend(config.default.backEnd);
+      if (config.default.backEnd === 'webgl') tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
       await tf.ready();
       await tf.enableProdMode();
       log.div('log', true, `Using TensorFlow/JS: ${tf.version_core} Backend: ${tf.getBackend().toUpperCase()}`);
@@ -162,7 +164,7 @@ async function main() {
     if (perf.Frame === 0) {
       const engine = await tf.engine();
       log.div('log', true, `TF State: ${engine.state.numBytes.toLocaleString()} bytes ${engine.state.numDataBuffers.toLocaleString()} buffers ${engine.state.numTensors.toLocaleString()} tensors`);
-      log.div('log', true, `TF GPU Memory: used ${engine.backendInstance.numBytesInGPU.toLocaleString()} bytes free ${Math.floor(1000 * engine.backendInstance.numMBBeforeWarning).toLocaleString()} bytes`);
+      log.div('log', true, `TF GPU Memory: used ${engine.backendInstance.numBytesInGPU.toLocaleString()} bytes free ${Math.floor(1024 * 1024 * engine.backendInstance.numMBBeforeWarning).toLocaleString()} bytes`);
       // eslint-disable-next-line no-console
       log.debug('TF Flags:', engine.ENV.flags);
       // eslint-disable-next-line no-console

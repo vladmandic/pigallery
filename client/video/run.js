@@ -23,7 +23,8 @@ function appendCanvas(name, width, height) {
 async function runPoseNet(image, video) {
   // https://github.com/tensorflow/tfjs-models/tree/master/posenet
   const t0 = performance.now();
-  if (!models.posenet) {
+  if (!models.posenet && !(video.paused || video.ended)) {
+    perf.Frame = 0;
     document.getElementById('status').innerHTML = 'Loading models ...';
     const memory0 = await tf.memory();
     models.posenet = await posenet.load({
@@ -35,6 +36,10 @@ async function runPoseNet(image, video) {
     });
     const memory1 = await tf.memory();
     log.div('log', true, `Loaded model PoseNet: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
+  }
+  if (!models.posenet) {
+    log.div('log', true, 'Model PoseNet not loaded');
+    return {};
   }
   if (!canvases.posenet) appendCanvas('posenet', video.offsetWidth, video.offsetHeight);
   const poses = await models.posenet.estimateMultiplePoses(image, {
@@ -130,7 +135,8 @@ async function runPoseNet(image, video) {
 async function runFaceMesh(image, video) {
   // https://github.com/tensorflow/tfjs-models/tree/master/facemesh
   const t0 = performance.now();
-  if (!models.facemesh) {
+  if (!models.facemesh && !(video.paused || video.ended)) {
+    perf.Frame = 0;
     document.getElementById('status').innerHTML = 'Loading models ...';
     const memory0 = await tf.memory();
     models.facemesh = await facemesh.load({
@@ -142,6 +148,10 @@ async function runFaceMesh(image, video) {
     });
     const memory1 = await tf.memory();
     log.div('log', true, `Loaded model FaceMesh: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
+  }
+  if (!models.facemesh) {
+    log.div('log', true, 'Model FaceMesh not loaded');
+    return {};
   }
   if (!canvases.facemesh) appendCanvas('facemesh', video.offsetWidth, video.offsetHeight);
   const faces = await models.facemesh.estimateFaces(image);
@@ -209,12 +219,17 @@ async function runFaceMesh(image, video) {
 async function runCocoSSD(image, video) {
   // https://github.com/tensorflow/tfjs-models/tree/master/coco-ssd
   const t0 = performance.now();
-  if (!models.cocossd) {
+  if (!models.cocossd && !(video.paused || video.ended)) {
+    perf.Frame = 0;
     document.getElementById('status').innerHTML = 'Loading models ...';
     const memory0 = await tf.memory();
     models.cocossd = await cocossd.load({ base: document.getElementById('menu-complex').checked ? 'mobilenet_v2' : 'lite_mobilenet_v2' });
     const memory1 = await tf.memory();
     log.div('log', true, `Loaded model CocoSSD: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
+  }
+  if (!models.cocossd) {
+    log.div('log', true, 'Model CocoSSD not loaded');
+    return {};
   }
   if (!canvases.cocossd) appendCanvas('cocossd', video.offsetWidth, video.offsetHeight);
   const objects = await models.cocossd.detect(image, params.maxObjects, params.minThreshold);
@@ -248,7 +263,8 @@ async function runCocoSSD(image, video) {
 async function runHandPose(image, video) {
   // https://github.com/tensorflow/tfjs-models/tree/master/handpose
   const t0 = performance.now();
-  if (!models.handpose) {
+  if (!models.handpose && !(video.paused || video.ended)) {
+    perf.Frame = 0;
     document.getElementById('status').innerHTML = 'Loading models ...';
     const memory0 = await tf.memory();
     models.handpose = await handpose.load({
@@ -259,6 +275,10 @@ async function runHandPose(image, video) {
     });
     const memory1 = await tf.memory();
     log.div('log', true, `Loaded model HandPose: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
+  }
+  if (!models.handpose) {
+    log.div('log', true, 'Model HandPose not loaded');
+    return {};
   }
   if (!canvases.handpose) appendCanvas('handpose', video.offsetWidth, video.offsetHeight);
   const hands = await models.handpose.estimateHands(image);
@@ -321,7 +341,8 @@ async function runHandPose(image, video) {
 async function runFaceApi(image, video) {
   // https://github.com/vladmandic/face-api
   const t0 = performance.now();
-  if (!models.faceapi) {
+  if (!models.faceapi && !(video.paused || video.ended)) {
+    perf.Frame = 0;
     document.getElementById('status').innerHTML = 'Loading models ...';
     const memory0 = await tf.memory();
     const opt = definitions.video.person;
@@ -335,6 +356,10 @@ async function runFaceApi(image, video) {
     else models.faceapi = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: params.minThreshold, inputSize: opt.tensorSize });
     const memory1 = await tf.memory();
     log.div('log', true, `Loaded model FaceAPI: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
+  }
+  if (!models.faceapi) {
+    log.div('log', true, 'Model FaceAPI not loaded');
+    return {};
   }
   if (!canvases.faceapi) appendCanvas('faceapi', video.offsetWidth, video.offsetHeight);
   const tensor = tf.browser.fromPixels(image);
@@ -372,7 +397,8 @@ async function runFaceApi(image, video) {
 
 async function runClassify(name, image, video) {
   const t0 = performance.now();
-  if (!models[name]) {
+  if (!models[name] && !(video.paused || video.ended)) {
+    perf.Frame = 0;
     document.getElementById('status').innerHTML = 'Loading models ...';
     const memory0 = await tf.memory();
     const opt = definitions.video[name];
@@ -381,6 +407,10 @@ async function runClassify(name, image, video) {
     models[name] = await modelClassify.load(opt);
     const memory1 = await tf.memory();
     log.div('log', true, `Loaded model ${name}: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
+  }
+  if (!models[name]) {
+    log.div('log', true, `Model ${name} not loaded`);
+    return {};
   }
   if (!canvases[name]) appendCanvas(name, video.offsetWidth, video.offsetHeight);
   const res = await modelClassify.classify(models[name], image);
