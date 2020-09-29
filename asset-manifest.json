@@ -329,7 +329,7 @@
       "imports": []
     },
     "client/video/process.js": {
-      "bytes": 8569,
+      "bytes": 8562,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -352,7 +352,7 @@
       ]
     },
     "client/video/run.js": {
-      "bytes": 21938,
+      "bytes": 22160,
       "imports": [
         {
           "path": "node_modules/@tensorflow-models/facemesh/dist/facemesh.js"
@@ -505,19 +505,19 @@
       "bytes": 732,
       "imports": []
     },
-    "node_modules/safe-buffer/index.js": {
-      "bytes": 1529,
-      "imports": [
-        {
-          "path": "node_modules/buffer/index.js"
-        }
-      ]
-    },
     "node_modules/string_decoder/lib/string_decoder.js": {
       "bytes": 9465,
       "imports": [
         {
-          "path": "node_modules/safe-buffer/index.js"
+          "path": "node_modules/string_decoder/node_modules/safe-buffer/index.js"
+        }
+      ]
+    },
+    "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
+      "bytes": 1529,
+      "imports": [
+        {
+          "path": "node_modules/buffer/index.js"
         }
       ]
     },
@@ -530,7 +530,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5186952
+      "bytes": 5186980
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -547,7 +547,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21028
         },
-        "node_modules/safe-buffer/index.js": {
+        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {
@@ -595,7 +595,7 @@
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5670569
+      "bytes": 5670597
     },
     "dist/index/index.js": {
       "imports": [],
@@ -612,7 +612,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21028
         },
-        "node_modules/safe-buffer/index.js": {
+        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {
@@ -687,7 +687,7 @@
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5154911
+      "bytes": 5154939
     },
     "dist/process/process.js": {
       "imports": [],
@@ -704,7 +704,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21028
         },
-        "node_modules/safe-buffer/index.js": {
+        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {
@@ -778,7 +778,7 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7811343
+      "bytes": 7811633
     },
     "dist/video/video.js": {
       "imports": [],
@@ -810,7 +810,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21072
         },
-        "node_modules/safe-buffer/index.js": {
+        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {
@@ -859,16 +859,16 @@
           "bytesInOutput": 1947
         },
         "client/video/run.js": {
-          "bytesInOutput": 14065
+          "bytesInOutput": 14133
         },
         "client/video/process.js": {
-          "bytesInOutput": 5564
+          "bytesInOutput": 5557
         },
         "client/video/video.js": {
           "bytesInOutput": 5131
         }
       },
-      "bytes": 1896062
+      "bytes": 1896123
     },
     "dist/index/worker.js.map": {
       "imports": [],

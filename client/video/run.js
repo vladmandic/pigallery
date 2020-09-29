@@ -7,6 +7,7 @@ const posenet = require('@tensorflow-models/posenet/dist/posenet.js');
 const faceapi = require('@vladmandic/face-api');
 const definitions = require('../shared/models.js').models;
 const draw = require('./draw.js');
+// const facegl = require('./facegl.js');
 const modelClassify = require('../process/modelClassify.js');
 
 function appendCanvas(name, width, height) {
@@ -204,11 +205,12 @@ async function runFaceMesh(image, video) {
           canvas: canvases.facemesh,
           x: point[0] * canvases.facemesh.width / image.width,
           y: point[1] * canvases.facemesh.height / image.height,
-          color: `rgba(${125 + 2 * point[2]}, ${255 - 2 * point[2]}, 255, 0.5)`,
+          color: `rgba(${125 + 2 * point[2] * canvases.facemesh.height / image.height}, ${255 - 2 * point[2] * canvases.facemesh.height / image.height}, 255, 0.5)`,
           blue: 255,
           radius: 1,
         });
       }
+      // await facegl.draw({ points: face.scaledMesh, offsetX: x, offsetY: y, width, height });
     }
   }
   const t2 = performance.now();
