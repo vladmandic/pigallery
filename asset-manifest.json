@@ -329,10 +329,13 @@
       "imports": []
     },
     "client/video/process.js": {
-      "bytes": 8383,
+      "bytes": 8569,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
+        },
+        {
+          "path": "client/shared/config.js"
         },
         {
           "path": "client/video/draw.js"
@@ -349,7 +352,7 @@
       ]
     },
     "client/video/run.js": {
-      "bytes": 21024,
+      "bytes": 21938,
       "imports": [
         {
           "path": "node_modules/@tensorflow-models/facemesh/dist/facemesh.js"
@@ -775,7 +778,7 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7809602
+      "bytes": 7811343
     },
     "dist/video/video.js": {
       "imports": [],
@@ -814,7 +817,7 @@
           "bytesInOutput": 3658
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 883438
+          "bytesInOutput": 883440
         },
         "client/video/draw.js": {
           "bytesInOutput": 3880
@@ -856,16 +859,16 @@
           "bytesInOutput": 1947
         },
         "client/video/run.js": {
-          "bytesInOutput": 13415
+          "bytesInOutput": 14065
         },
         "client/video/process.js": {
-          "bytesInOutput": 5509
+          "bytesInOutput": 5564
         },
         "client/video/video.js": {
           "bytesInOutput": 5131
         }
       },
-      "bytes": 1895355
+      "bytes": 1896062
     },
     "dist/index/worker.js.map": {
       "imports": [],
