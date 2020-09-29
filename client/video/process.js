@@ -173,7 +173,7 @@ async function main() {
       for (const result of results) log.debug('TF Results: ', result);
     }
 
-    const gestures = await gesture.analyze(window.results);
+    const gestures = await gesture.analyze(results);
 
     const t1 = performance.now();
     perf.Total = Math.trunc(t1 - t0);
