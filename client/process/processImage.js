@@ -170,7 +170,7 @@ async function getImage(url, maxSize = config.maxSize) {
 }
 
 async function processImage(name) {
-  if (config.batchProcessing === 1) tf.engine().startScope();
+  // if (config.batchProcessing === 1) tf.engine().startScope();
   const mem = tf.memory();
   log.div('process-state', false, `Engine state: ${mem.numBytes.toLocaleString()} bytes ${mem.numTensors.toLocaleString()} tensors ${mem.numDataBuffers.toLocaleString()} buffers ${mem.numBytesInGPU ? mem.numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj = {};
@@ -193,7 +193,8 @@ async function processImage(name) {
   try {
     if (!error) {
       for (const model of models.classify) {
-        promisesClassify.push(modelClassify.classify(model, image.canvas));
+        if (config.batchProcessing === 1) promisesClassify.push(await modelClassify.classify(model, image.canvas));
+        else promisesClassify.push(modelClassify.classify(model, image.canvas));
         // const res = await modelClassify.classify(model, image.canvas);
         // if (res) obj.classify.push(...res);
       }
@@ -210,7 +211,8 @@ async function processImage(name) {
   try {
     if (!error) {
       for (const model of models.detect) {
-        promisesDetect.push(modelDetect.exec(model, image.canvas));
+        if (config.batchProcessing === 1) promisesDetect.push(await modelDetect.exec(model, image.canvas));
+        else promisesDetect.push(modelDetect.exec(model, image.canvas));
         // const res = await modelDetect.exec(model, image.canvas);
         // if (res) obj.detect.push(...res);
       }
@@ -265,7 +267,7 @@ async function processImage(name) {
   const t1 = window.performance.now();
   obj.perf = { total: Math.round(t1 - t0) }; // , load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
   if (error) obj.error = error;
-  if (config.batchProcessing === 1) tf.engine().endScope();
+  // if (config.batchProcessing === 1) tf.engine().endScope();
 
   if (!error) {
     fetch('/api/metadata', {

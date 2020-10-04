@@ -253,7 +253,7 @@
       ]
     },
     "client/process/processImage.js": {
-      "bytes": 11015,
+      "bytes": 11255,
       "imports": [
         {
           "path": "client/process/modelClassify.js"
@@ -297,7 +297,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 8397,
+      "bytes": 8398,
       "imports": [
         {
           "path": "client/shared/log.js"
@@ -320,15 +320,7 @@
         }
       ]
     },
-    "client/video/draw.js": {
-      "bytes": 6993,
-      "imports": []
-    },
-    "client/video/gesture.js": {
-      "bytes": 2638,
-      "imports": []
-    },
-    "client/video/process.js": {
+    "client/video/detect.js": {
       "bytes": 8562,
       "imports": [
         {
@@ -350,6 +342,14 @@
           "path": "client/video/run.js"
         }
       ]
+    },
+    "client/video/draw.js": {
+      "bytes": 6993,
+      "imports": []
+    },
+    "client/video/gesture.js": {
+      "bytes": 2638,
+      "imports": []
     },
     "client/video/run.js": {
       "bytes": 22160,
@@ -381,7 +381,7 @@
       ]
     },
     "client/video/video.js": {
-      "bytes": 7300,
+      "bytes": 7295,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js"
@@ -399,7 +399,7 @@
           "path": "assets/panzoom.js"
         },
         {
-          "path": "client/video/process.js"
+          "path": "client/video/detect.js"
         }
       ]
     },
@@ -505,19 +505,19 @@
       "bytes": 732,
       "imports": []
     },
-    "node_modules/string_decoder/lib/string_decoder.js": {
-      "bytes": 9465,
-      "imports": [
-        {
-          "path": "node_modules/string_decoder/node_modules/safe-buffer/index.js"
-        }
-      ]
-    },
-    "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
+    "node_modules/safe-buffer/index.js": {
       "bytes": 1529,
       "imports": [
         {
           "path": "node_modules/buffer/index.js"
+        }
+      ]
+    },
+    "node_modules/string_decoder/lib/string_decoder.js": {
+      "bytes": 9465,
+      "imports": [
+        {
+          "path": "node_modules/safe-buffer/index.js"
         }
       ]
     },
@@ -530,7 +530,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5186980
+      "bytes": 5205077
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -547,7 +547,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21028
         },
-        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
+        "node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {
@@ -584,18 +584,21 @@
           "bytesInOutput": 2266
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 6130
+          "bytesInOutput": 6152
         },
         "client/compare/compare.js": {
-          "bytesInOutput": 7630
+          "bytesInOutput": 4243
+        },
+        "client/compare/compare.js": {
+          "bytesInOutput": 3387
         }
       },
-      "bytes": 1371333
+      "bytes": 1371359
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5670597
+      "bytes": 5705634
     },
     "dist/index/index.js": {
       "imports": [],
@@ -612,7 +615,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21028
         },
-        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
+        "node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {
@@ -679,15 +682,18 @@
           "bytesInOutput": 887
         },
         "client/index/index.js": {
-          "bytesInOutput": 21986
+          "bytesInOutput": 418
+        },
+        "client/index/index.js": {
+          "bytesInOutput": 21568
         }
       },
-      "bytes": 1528685
+      "bytes": 1528689
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5154939
+      "bytes": 5155205
     },
     "dist/process/process.js": {
       "imports": [],
@@ -704,7 +710,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21028
         },
-        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
+        "node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {
@@ -738,7 +744,7 @@
           "bytesInOutput": 2266
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 6130
+          "bytesInOutput": 6152
         },
         "client/shared/user.js": {
           "bytesInOutput": 694
@@ -747,12 +753,12 @@
           "bytesInOutput": 3244
         }
       },
-      "bytes": 1362287
+      "bytes": 1362313
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 441403
+      "bytes": 441404
     },
     "dist/prototype/prototype.js": {
       "imports": [],
@@ -778,7 +784,7 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7811633
+      "bytes": 7811599
     },
     "dist/video/video.js": {
       "imports": [],
@@ -810,7 +816,7 @@
         "node_modules/buffer/index.js": {
           "bytesInOutput": 21072
         },
-        "node_modules/string_decoder/node_modules/safe-buffer/index.js": {
+        "node_modules/safe-buffer/index.js": {
           "bytesInOutput": 764
         },
         "node_modules/string_decoder/lib/string_decoder.js": {
@@ -861,14 +867,14 @@
         "client/video/run.js": {
           "bytesInOutput": 14133
         },
-        "client/video/process.js": {
+        "client/video/detect.js": {
           "bytesInOutput": 5557
         },
         "client/video/video.js": {
           "bytesInOutput": 5131
         }
       },
-      "bytes": 1896123
+      "bytes": 1896127
     },
     "dist/index/worker.js.map": {
       "imports": [],
