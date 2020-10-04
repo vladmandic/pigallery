@@ -5,7 +5,7 @@ window.log = require('../shared/log.js');
 const config = require('../shared/config.js');
 const user = require('../shared/user.js');
 const panzoom = require('../../assets/panzoom.js');
-const process = require('./process.js');
+const detect = require('./detect.js');
 
 window.params = {
   facing: true,
@@ -70,7 +70,7 @@ async function cameraResize() {
     const live = !video.paused && (video.srcObject ? (video.srcObject.getVideoTracks()[0].readyState === 'live') : false);
     log.div('div', true, `Resize display: ${video.offsetWidth} x ${video.offsetHeight}`);
     await cameraStop();
-    process.clear();
+    detect.clear();
     window.canvases = [];
     document.getElementById('drawcanvas').innerHTML = '';
     cameraStart(live);
@@ -91,7 +91,7 @@ async function cameraFacing() {
   const video = document.getElementById('videocanvas');
   const live = video.srcObject ? ((video.srcObject.getVideoTracks()[0].readyState === 'live') && (video.readyState > 2) && (!video.paused)) : false;
   await cameraStop();
-  process.clear();
+  detect.clear();
   await cameraStart(live);
 }
 
@@ -112,7 +112,7 @@ async function cameraListen() {
     log.debug('Camera Settings: ', settings);
     document.getElementById('objects').style.top = `${video.offsetTop + video.offsetHeight}px`;
     event.stopPropagation();
-    process.main();
+    detect.main();
   }, true);
 }
 

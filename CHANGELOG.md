@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/09/29 mandic00@live.com
+### **HEAD -> master** 2020/09/29 mandic00@live.com
+
+### **origin/master, origin/HEAD** 2020/09/29 mandic00@live.com
 
 ### **2.1.6** 2020/09/28 mandic00@live.com
 - added inaturalist models to video
