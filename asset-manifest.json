@@ -448,7 +448,7 @@
       ]
     },
     "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.node.js": {
-      "bytes": 291985,
+      "bytes": 292196,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js"
@@ -456,18 +456,18 @@
       ]
     },
     "node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js": {
-      "bytes": 1300304,
+      "bytes": 1301644,
       "imports": [
         {
-          "path": "empty:/home/vlado/dev/pigallery/node_modules/@tensorflow/tfjs-core/node_modules/node-fetch/browser.js"
+          "path": "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js"
         }
       ]
     },
     "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-      "bytes": 3348136,
+      "bytes": 3416676,
       "imports": [
         {
-          "path": "node_modules/node-fetch/browser.js"
+          "path": "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js"
         },
         {
           "path": "node_modules/string_decoder/lib/string_decoder.js"
@@ -498,11 +498,7 @@
       "imports": []
     },
     "node_modules/moment/moment.js": {
-      "bytes": 173968,
-      "imports": []
-    },
-    "node_modules/node-fetch/browser.js": {
-      "bytes": 732,
+      "bytes": 173902,
       "imports": []
     },
     "node_modules/safe-buffer/index.js": {
@@ -521,7 +517,7 @@
         }
       ]
     },
-    "empty:/home/vlado/dev/pigallery/node_modules/@tensorflow/tfjs-core/node_modules/node-fetch/browser.js": {
+    "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
       "bytes": 0,
       "imports": []
     }
@@ -530,13 +526,13 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5205077
+      "bytes": 5294903
     },
     "dist/compare/compare.js": {
       "imports": [],
       "inputs": {
-        "node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 364
+        "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
+          "bytesInOutput": 18
         },
         "node_modules/base64-js/index.js": {
           "bytesInOutput": 1503
@@ -554,13 +550,13 @@
           "bytesInOutput": 3632
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 882512
+          "bytesInOutput": 886812
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 325393
+          "bytesInOutput": 325917
         },
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 93339
+          "bytesInOutput": 93336
         },
         "client/shared/log.js": {
           "bytesInOutput": 994
@@ -572,13 +568,13 @@
           "bytesInOutput": 1947
         },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 3180
+          "bytesInOutput": 3184
         },
         "client/process/modelYolo.js": {
-          "bytesInOutput": 5328
+          "bytesInOutput": 5334
         },
         "client/shared/blockhash.js": {
-          "bytesInOutput": 2049
+          "bytesInOutput": 2052
         },
         "client/shared/models.js": {
           "bytesInOutput": 2266
@@ -593,18 +589,18 @@
           "bytesInOutput": 3387
         }
       },
-      "bytes": 1371359
+      "bytes": 1376829
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5705634
+      "bytes": 5795399
     },
     "dist/index/index.js": {
       "imports": [],
       "inputs": {
-        "node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 364
+        "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
+          "bytesInOutput": 18
         },
         "node_modules/base64-js/index.js": {
           "bytesInOutput": 1503
@@ -622,13 +618,13 @@
           "bytesInOutput": 3632
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 883493
+          "bytesInOutput": 887777
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 326404
+          "bytesInOutput": 326702
         },
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 93702
+          "bytesInOutput": 93785
         },
         "assets/marked.esm.js": {
           "bytesInOutput": 33353
@@ -643,7 +639,7 @@
           "bytesInOutput": 3771
         },
         "node_modules/moment/moment.js": {
-          "bytesInOutput": 61177
+          "bytesInOutput": 61128
         },
         "assets/color-thief.umd.js": {
           "bytesInOutput": 7247
@@ -688,18 +684,18 @@
           "bytesInOutput": 21568
         }
       },
-      "bytes": 1528689
+      "bytes": 1533941
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5155205
+      "bytes": 5245036
     },
     "dist/process/process.js": {
       "imports": [],
       "inputs": {
-        "node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 364
+        "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
+          "bytesInOutput": 18
         },
         "node_modules/base64-js/index.js": {
           "bytesInOutput": 1503
@@ -717,13 +713,13 @@
           "bytesInOutput": 3632
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 882512
+          "bytesInOutput": 886812
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 325367
+          "bytesInOutput": 325895
         },
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 93339
+          "bytesInOutput": 93336
         },
         "client/shared/log.js": {
           "bytesInOutput": 994
@@ -735,10 +731,10 @@
           "bytesInOutput": 1947
         },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 3180
+          "bytesInOutput": 3184
         },
         "client/shared/blockhash.js": {
-          "bytesInOutput": 2049
+          "bytesInOutput": 2052
         },
         "client/shared/models.js": {
           "bytesInOutput": 2266
@@ -753,7 +749,7 @@
           "bytesInOutput": 3244
         }
       },
-      "bytes": 1362313
+      "bytes": 1367781
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
@@ -784,13 +780,13 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7811599
+      "bytes": 7902963
     },
     "dist/video/video.js": {
       "imports": [],
       "inputs": {
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 93653
+          "bytesInOutput": 93736
         },
         "client/shared/log.js": {
           "bytesInOutput": 994
@@ -804,8 +800,8 @@
         "assets/panzoom.js": {
           "bytesInOutput": 18825
         },
-        "node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 366
+        "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
+          "bytesInOutput": 18
         },
         "node_modules/base64-js/index.js": {
           "bytesInOutput": 1519
@@ -823,7 +819,7 @@
           "bytesInOutput": 3658
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 883440
+          "bytesInOutput": 888235
         },
         "client/video/draw.js": {
           "bytesInOutput": 3880
@@ -834,14 +830,11 @@
         "assets/webgl-image-filter.js": {
           "bytesInOutput": 11317
         },
-        "empty:/home/vlado/dev/pigallery/node_modules/@tensorflow/tfjs-core/node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 18
-        },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js": {
-          "bytesInOutput": 296780
+          "bytesInOutput": 296999
         },
         "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.node.js": {
-          "bytesInOutput": 108167
+          "bytesInOutput": 108239
         },
         "node_modules/@tensorflow-models/facemesh/dist/facemesh.js": {
           "bytesInOutput": 34035
@@ -874,7 +867,7 @@
           "bytesInOutput": 5131
         }
       },
-      "bytes": 1896127
+      "bytes": 1901912
     },
     "dist/index/worker.js.map": {
       "imports": [],
