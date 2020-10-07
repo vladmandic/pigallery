@@ -212,16 +212,15 @@ async function showDetails(img) {
   $('#details-faces').removeClass('fa-head-side-cough fa-head-side-cough-slash');
   $('#details-faces').addClass(window.options.viewFaces ? 'fa-head-side-cough' : 'fa-head-side-cough-slash');
 
+  const el = document.getElementById('popup-image');
   if (!viewer) {
-    const div = document.getElementById('popup-image');
-    viewer = new ImageViewer(div, { zoomValue: 500, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
+    viewer = new ImageViewer(el, { zoomValue: 500, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
     window.viewer = viewer;
   }
   await viewer.load(object.thumbnail, img);
   resizeDetailsImage(object);
 
   // handle pan&zoom redraws
-  const el = document.getElementsByClassName('iv-large-image')[0];
   el.addEventListener('touchstart', () => clearBoxes(object), { passive: true });
   el.addEventListener('mousedown', () => clearBoxes(object), { passive: true });
   el.addEventListener('touchend', () => drawBoxes(object), { passive: true });

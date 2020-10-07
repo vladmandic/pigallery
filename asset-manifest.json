@@ -1,7 +1,7 @@
 {
   "inputs": {
     "../face-api/dist/face-api.esm.js": {
-      "bytes": 929227,
+      "bytes": 929955,
       "imports": []
     },
     "assets/color-thief.umd.js": {
@@ -56,7 +56,7 @@
       ]
     },
     "client/index/details.js": {
-      "bytes": 18180,
+      "bytes": 18109,
       "imports": [
         {
           "path": "node_modules/moment/moment.js"
@@ -321,7 +321,7 @@
       ]
     },
     "client/video/detect.js": {
-      "bytes": 8562,
+      "bytes": 8605,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -526,7 +526,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5294903
+      "bytes": 5295067
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -553,7 +553,7 @@
           "bytesInOutput": 886812
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 325917
+          "bytesInOutput": 326151
         },
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 93336
@@ -589,12 +589,12 @@
           "bytesInOutput": 3387
         }
       },
-      "bytes": 1376829
+      "bytes": 1377063
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5795399
+      "bytes": 5795460
     },
     "dist/index/index.js": {
       "imports": [],
@@ -621,7 +621,7 @@
           "bytesInOutput": 887777
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 326702
+          "bytesInOutput": 326940
         },
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 93785
@@ -648,7 +648,7 @@
           "bytesInOutput": 19696
         },
         "client/index/details.js": {
-          "bytesInOutput": 10952
+          "bytesInOutput": 10889
         },
         "client/shared/blockhash.js": {
           "bytesInOutput": 2052
@@ -684,12 +684,12 @@
           "bytesInOutput": 21568
         }
       },
-      "bytes": 1533941
+      "bytes": 1534116
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5245036
+      "bytes": 5245209
     },
     "dist/process/process.js": {
       "imports": [],
@@ -716,7 +716,7 @@
           "bytesInOutput": 886812
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 325895
+          "bytesInOutput": 326133
         },
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 93336
@@ -749,7 +749,7 @@
           "bytesInOutput": 3244
         }
       },
-      "bytes": 1367781
+      "bytes": 1368019
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
@@ -780,7 +780,7 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 7902963
+      "bytes": 7903254
     },
     "dist/video/video.js": {
       "imports": [],
@@ -819,7 +819,7 @@
           "bytesInOutput": 3658
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 888235
+          "bytesInOutput": 888239
         },
         "client/video/draw.js": {
           "bytesInOutput": 3880
@@ -849,7 +849,7 @@
           "bytesInOutput": 19805
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 326422
+          "bytesInOutput": 326658
         },
         "client/shared/models.js": {
           "bytesInOutput": 2266
@@ -861,13 +861,13 @@
           "bytesInOutput": 14133
         },
         "client/video/detect.js": {
-          "bytesInOutput": 5557
+          "bytesInOutput": 5649
         },
         "client/video/video.js": {
           "bytesInOutput": 5131
         }
       },
-      "bytes": 1901912
+      "bytes": 1902244
     },
     "dist/index/worker.js.map": {
       "imports": [],
