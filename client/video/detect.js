@@ -82,8 +82,9 @@ async function main() {
     const image = getCameraImage(video);
 
     if (perf.Frame === 0) {
-      // if (config.default.backEnd === 'wasm') tf.wasm.setPaths('/assets');
+      if (config.default.backEnd === 'wasm') tf.wasm.setPaths('/assets');
       tf.setBackend(config.default.backEnd);
+      tf.ENV.set('WEBGL_CPU_FORWARD', false);
       if (config.default.backEnd === 'webgl') tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
       await tf.ready();
       await tf.enableProdMode();

@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/10/04 mandic00@live.com
+### **update to tfjs 2.5.0** 2020/10/07 mandic00@live.com
+
+### **origin/master, origin/HEAD** 2020/10/04 mandic00@live.com
 - webgl canvas prototype
 - video improved startup sequence
 
