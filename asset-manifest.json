@@ -5,7 +5,7 @@
       "imports": []
     },
     "../piface/dist/facemesh.esm.js": {
-      "bytes": 742141,
+      "bytes": 753643,
       "imports": []
     },
     "../piface/node_modules/@tensorflow/tfjs-backend-cpu/dist/backend_cpu.js": {
@@ -15693,7 +15693,7 @@
       "imports": []
     },
     "../piface/src/index.js": {
-      "bytes": 3339,
+      "bytes": 3674,
       "imports": [
         {
           "path": "../piface/dist/facemesh.esm.js"
@@ -15727,7 +15727,7 @@
       "imports": []
     },
     "assets/panzoom.js": {
-      "bytes": 47604,
+      "bytes": 47577,
       "imports": []
     },
     "assets/webgl-image-filter.js": {
@@ -16035,7 +16035,7 @@
       ]
     },
     "client/video/detect.js": {
-      "bytes": 8828,
+      "bytes": 8842,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -16062,11 +16062,11 @@
       "imports": []
     },
     "client/video/gesture.js": {
-      "bytes": 2638,
+      "bytes": 2620,
       "imports": []
     },
     "client/video/run.js": {
-      "bytes": 26787,
+      "bytes": 27143,
       "imports": [
         {
           "path": "node_modules/@tensorflow-models/facemesh/dist/facemesh.js"
@@ -16098,7 +16098,7 @@
       ]
     },
     "client/video/video.js": {
-      "bytes": 7295,
+      "bytes": 7247,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js"
@@ -16505,7 +16505,7 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 8896532
+      "bytes": 8917603
     },
     "dist/video/video.js": {
       "imports": [],
@@ -16523,7 +16523,7 @@
           "bytesInOutput": 694
         },
         "assets/panzoom.js": {
-          "bytesInOutput": 18726
+          "bytesInOutput": 18710
         },
         "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
           "bytesInOutput": 18
@@ -16550,7 +16550,7 @@
           "bytesInOutput": 3871
         },
         "client/video/gesture.js": {
-          "bytesInOutput": 1628
+          "bytesInOutput": 1620
         },
         "assets/webgl-image-filter.js": {
           "bytesInOutput": 11187
@@ -16577,7 +16577,7 @@
           "bytesInOutput": 326378
         },
         "../piface/dist/facemesh.esm.js": {
-          "bytesInOutput": 288495
+          "bytesInOutput": 291459
         },
         "../piface/node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 998
@@ -16613,7 +16613,7 @@
           "bytesInOutput": 10000
         },
         "../piface/src/index.js": {
-          "bytesInOutput": 1574
+          "bytesInOutput": 1927
         },
         "client/shared/models.js": {
           "bytesInOutput": 2269
@@ -16622,10 +16622,10 @@
           "bytesInOutput": 1950
         },
         "client/video/run.js": {
-          "bytesInOutput": 17054
+          "bytesInOutput": 17288
         },
         "client/video/detect.js": {
-          "bytesInOutput": 5793
+          "bytesInOutput": 5646
         },
         "client/video/video.js": {
           "bytesInOutput": 73
@@ -16655,13 +16655,13 @@
           "bytesInOutput": 197
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/kernel_names.js": {
-          "bytesInOutput": 182
+          "bytesInOutput": 189
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/kernel_names.js": {
-          "bytesInOutput": 22
+          "bytesInOutput": 23
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/kernel_names.js": {
-          "bytesInOutput": 25
+          "bytesInOutput": 26
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/kernel_names.js": {
           "bytesInOutput": 239
@@ -16865,7 +16865,7 @@
           "bytesInOutput": 220
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/div.js": {
-          "bytesInOutput": 268
+          "bytesInOutput": 269
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/mul.js": {
           "bytesInOutput": 205
@@ -17099,31 +17099,31 @@
           "bytesInOutput": 0
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/cosh.js": {
-          "bytesInOutput": 152
+          "bytesInOutput": 153
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/ops.js": {
           "bytesInOutput": 0
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/cumsum.js": {
-          "bytesInOutput": 328
+          "bytesInOutput": 329
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/ops.js": {
           "bytesInOutput": 0
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/depth_to_space.js": {
-          "bytesInOutput": 729
+          "bytesInOutput": 730
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/ops.js": {
           "bytesInOutput": 0
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/depthwise_conv2d.js": {
-          "bytesInOutput": 1106
+          "bytesInOutput": 1107
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/ops.js": {
           "bytesInOutput": 0
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/dilation2d.js": {
-          "bytesInOutput": 635
+          "bytesInOutput": 636
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/ops.js": {
           "bytesInOutput": 0
@@ -17741,10 +17741,10 @@
           "bytesInOutput": 2171
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/depthwise_conv2d_native_backprop_filter.js": {
-          "bytesInOutput": 308
+          "bytesInOutput": 309
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/depthwise_conv2d_native_backprop_input.js": {
-          "bytesInOutput": 292
+          "bytesInOutput": 293
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/fused/depthwise_conv2d.js": {
           "bytesInOutput": 2187
@@ -17768,7 +17768,7 @@
           "bytesInOutput": 183
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/image/crop_and_resize.js": {
-          "bytesInOutput": 976
+          "bytesInOutput": 977
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/image/flip_left_right.js": {
           "bytesInOutput": 241
@@ -18449,10 +18449,10 @@
           "bytesInOutput": 137
         },
         "client/video/video.js": {
-          "bytesInOutput": 5065
+          "bytesInOutput": 5024
         }
       },
-      "bytes": 2711356
+      "bytes": 2714713
     },
     "dist/index/worker.js.map": {
       "imports": [],

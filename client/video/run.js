@@ -230,6 +230,7 @@ async function runPiFace(image, video) {
       modelPathBlazeFace: '/models/piface/blazeface/model.json',
       modelPathSSRNetAge: '/models/piface/ssrnet-imdb-age/model.json',
       modelPathSSRNetGender: '/models/piface/ssrnet-imdb-gender/model.json',
+      modelPathIris: '/models/piface/iris/model.json',
       inputSize: 128,
       maxContinuousChecks: params.skipFrames,
       detectionConfidence: params.minThreshold,
@@ -237,7 +238,8 @@ async function runPiFace(image, video) {
       iouThreshold: params.minThreshold,
       scoreThreshold: params.minThreshold,
       cropSize: 128,
-      ageGender: true,
+      ageGender: document.getElementById('model-agegender').checked,
+      iris: document.getElementById('model-iris').checked,
     });
     models.piface = piface;
     const memory1 = await tf.memory();
@@ -260,9 +262,11 @@ async function runPiFace(image, video) {
     const y = face.box[1];
     const width = face.box[2];
     const height = face.box[3];
+    const z = face.mesh.map((a) => a[2]);
+    const zfact = 255 / (Math.max(...z) - Math.min(...z)); // get the range for colors
     // add face thumbnails
     if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'face' }));
-    const label = `face: ${face.age || ''} ${face.gender || ''}`;
+    const label = `face: ${face.age || ''} ${face.gender || ''} iris: ${face.iris}`;
     detected.push(label);
     // draw border around detected faces
     if (boxes) {
@@ -292,7 +296,7 @@ async function runPiFace(image, video) {
           path.lineTo(points[n][0] * canvases.piface.width / image.width, points[n][1] * canvases.piface.height / image.height);
         }
         path.closePath();
-        ctx.strokeStyle = `rgba(${125 + 3 * points[0][2]}, ${255 - 4 * points[0][2]}, 255, 0.5)`;
+        ctx.strokeStyle = `rgba(${127.5 + (zfact * points[0][2])}, ${127.5 - (zfact * points[0][2])}, 255, 0.5)`;
         ctx.stroke(path);
       }
     } else if (document.getElementById('menu-mesh').checked) {
@@ -302,7 +306,7 @@ async function runPiFace(image, video) {
           canvas: canvases.piface,
           x: point[0] * canvases.piface.width / image.width,
           y: point[1] * canvases.piface.height / image.height,
-          color: `rgba(${125 + 3 * point[2]}, ${255 - 4 * point[2]}, 255, 0.5)`,
+          color: `rgba(${127.5 + (zfact * point[2])}, ${127.5 - (zfact * point[2])}, 255, 0.5)`,
           blue: 255,
           radius: 1,
         });
@@ -316,7 +320,7 @@ async function runPiFace(image, video) {
             canvas: canvases.piface,
             x: val[point][0] * canvases.piface.width / image.width,
             y: val[point][1] * canvases.piface.height / image.height,
-            color: `rgba(${125 + 3 * val[point][2]}, ${255 - 4 * val[point][2]}, 255, 0.5)`,
+            color: `rgba(${127.5 + (zfact * val[point][2])}, ${127.5 - (zfact * val[point][2])}, 255, 0.5)`,
             radius: 2,
             alpha: 0.5,
             title: (point >= val.length - 1) ? key : null,
