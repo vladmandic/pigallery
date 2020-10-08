@@ -158,7 +158,6 @@ async function initControls() {
 }
 
 async function main() {
-  log.div('div', true, 'Starting PiHuman ...');
   await cameraListen();
   await initControls();
   // cameraStartStop();

@@ -135,10 +135,12 @@ async function main() {
       else promises.push(await run.insects(image, video));
     } else draw.clear(canvases.insects);
 
+    /*
     if (document.getElementById('model-facemesh').checked) {
       if (params.async) promises.push(run.facemesh(image, video));
       else promises.push(await run.facemesh(image, video));
     } else draw.clear(canvases.facemesh);
+    */
 
     if (document.getElementById('model-piface').checked) {
       if (params.async) promises.push(run.piface(image, video));
