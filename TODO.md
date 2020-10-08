@@ -1,20 +1,5 @@
 # TODO
 
-## Bugs
-
-- Processing restart on WegGL errors
-- Logout
-- Video for shared models
-
-## Notes
-
-PiGallery uses private branches of following public distributions due to following issues:
-
-- FaceAPI: SSD/MobileNet model not compatible with TFJS@2.0+  
-  <https://github.com/justadudewhohacks/face-api.js/issues/633>
-- TensorFlow/JS: bug with WeakMap deallocation  
-  <https://github.com/tensorflow/tfjs/issues/3823>
-
 ## Future Features
 
 - Validate full install from scratch

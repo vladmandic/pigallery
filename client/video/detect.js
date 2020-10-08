@@ -140,6 +140,11 @@ async function main() {
       else promises.push(await run.facemesh(image, video));
     } else draw.clear(canvases.facemesh);
 
+    if (document.getElementById('model-piface').checked) {
+      if (params.async) promises.push(run.piface(image, video));
+      else promises.push(await run.piface(image, video));
+    } else draw.clear(canvases.piface);
+
     if (document.getElementById('model-posenet').checked) {
       if (params.async) promises.push(run.posenet(image, video));
       else promises.push(await run.posenet(image, video));

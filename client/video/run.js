@@ -5,6 +5,7 @@ const handpose = require('@tensorflow-models/handpose/dist/handpose.js');
 const cocossd = require('@tensorflow-models/coco-ssd/dist/coco-ssd.js');
 const posenet = require('@tensorflow-models/posenet/dist/posenet.js');
 const faceapi = require('@vladmandic/face-api');
+const piface = require('@vladmandic/piface');
 const definitions = require('../shared/models.js').models;
 const draw = require('./draw.js');
 // const facegl = require('./facegl.js');
@@ -95,13 +96,12 @@ async function runPoseNet(image, video) {
       draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
       points.length = 0;
       line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftEye'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftEar'));
+      points.push(poses[pose].keypoints.find((a) => a.part === 'leftHip'));
       points.push(poses[pose].keypoints.find((a) => a.part === 'leftShoulder'));
       points.push(poses[pose].keypoints.find((a) => a.part === 'rightShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightEye'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightEar'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftEye'));
+      points.push(poses[pose].keypoints.find((a) => a.part === 'rightHip'));
+      points.push(poses[pose].keypoints.find((a) => a.part === 'leftHip'));
+      points.push(poses[pose].keypoints.find((a) => a.part === 'rightHip'));
       for (const point of points) {
         if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
       }
@@ -216,6 +216,118 @@ async function runFaceMesh(image, video) {
   const t2 = performance.now();
   perf.Canvas += t2 - t1;
   return { facemesh: faces };
+}
+
+async function runPiFace(image, video) {
+  // https://github.com/@vladmandic/piface
+  const t0 = performance.now();
+  if (!models.piface && !(video.paused || video.ended)) {
+    perf.Frame = 0;
+    document.getElementById('status').innerHTML = 'Loading models ...';
+    const memory0 = await tf.memory();
+    piface.load({
+      modelPathFaceMesh: '/models/piface/facemesh/model.json',
+      modelPathBlazeFace: '/models/piface/blazeface/model.json',
+      modelPathSSRNetAge: '/models/piface/ssrnet-imdb-age/model.json',
+      modelPathSSRNetGender: '/models/piface/ssrnet-imdb-gender/model.json',
+      inputSize: 128,
+      maxContinuousChecks: params.skipFrames,
+      detectionConfidence: params.minThreshold,
+      maxFaces: params.maxObjects,
+      iouThreshold: params.minThreshold,
+      scoreThreshold: params.minThreshold,
+      cropSize: 128,
+      ageGender: true,
+    });
+    models.piface = piface;
+    const memory1 = await tf.memory();
+    log.div('log', true, `Loaded model piface: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
+  }
+  if (!models.piface) {
+    log.div('log', true, 'Model piface not loaded');
+    return {};
+  }
+  if (!canvases.piface) appendCanvas('piface', video.offsetWidth, video.offsetHeight);
+  const faces = await models.piface.detect(image);
+  const t1 = performance.now();
+  perf.piface = Math.trunc(t1 - t0);
+  if ((perf.Frame === 0) || !canvases.piface) return { piface: faces };
+  canvases.piface.getContext('2d').clearRect(0, 0, canvases.piface.width, canvases.piface.height);
+  const labels = document.getElementById('menu-labels').checked;
+  const boxes = document.getElementById('menu-boxes').checked;
+  for (const face of faces) {
+    const x = face.box[0];
+    const y = face.box[1];
+    const width = face.box[2];
+    const height = face.box[3];
+    // add face thumbnails
+    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'face' }));
+    const label = `face: ${face.age || ''} ${face.gender || ''}`;
+    detected.push(label);
+    // draw border around detected faces
+    if (boxes) {
+      draw.rect({
+        canvas: canvases.piface,
+        x: x * canvases.piface.width / image.width,
+        y: y * canvases.piface.height / image.height,
+        width: width * canvases.piface.width / image.width,
+        height: height * canvases.piface.height / image.height,
+        lineWidth: 4,
+        color: 'rgba(125, 255, 255, 0.4)',
+        title: label,
+      });
+    }
+    // draw face lines
+    if (document.getElementById('menu-grid').checked) {
+      const ctx = canvases.piface.getContext('2d');
+      for (let i = 0; i < piface.triangulation.length / 3; i++) {
+        const points = [
+          piface.triangulation[i * 3 + 0],
+          piface.triangulation[i * 3 + 1],
+          piface.triangulation[i * 3 + 2],
+        ].map((index) => face.mesh[index]);
+        const path = new Path2D();
+        path.moveTo(points[0][0] * canvases.piface.width / image.width, points[0][1] * canvases.piface.height / image.height);
+        for (let n = 1; n < points.length; n++) {
+          path.lineTo(points[n][0] * canvases.piface.width / image.width, points[n][1] * canvases.piface.height / image.height);
+        }
+        path.closePath();
+        ctx.strokeStyle = `rgba(${125 + 3 * points[0][2]}, ${255 - 4 * points[0][2]}, 255, 0.5)`;
+        ctx.stroke(path);
+      }
+    } else if (document.getElementById('menu-mesh').checked) {
+    // draw all face points
+      for (const point of face.mesh) {
+        draw.point({
+          canvas: canvases.piface,
+          x: point[0] * canvases.piface.width / image.width,
+          y: point[1] * canvases.piface.height / image.height,
+          color: `rgba(${125 + 3 * point[2]}, ${255 - 4 * point[2]}, 255, 0.5)`,
+          blue: 255,
+          radius: 1,
+        });
+      }
+    }
+    // draw & label key face points
+    if (labels) {
+      for (const [key, val] of Object.entries(face.annotations)) {
+        for (const point in val) {
+          draw.point({
+            canvas: canvases.piface,
+            x: val[point][0] * canvases.piface.width / image.width,
+            y: val[point][1] * canvases.piface.height / image.height,
+            color: `rgba(${125 + 3 * val[point][2]}, ${255 - 4 * val[point][2]}, 255, 0.5)`,
+            radius: 2,
+            alpha: 0.5,
+            title: (point >= val.length - 1) ? key : null,
+          });
+        }
+      }
+    }
+  }
+  const t2 = performance.now();
+  perf.Canvas += t2 - t1;
+  return { piface: faces };
 }
 
 async function runCocoSSD(image, video) {
@@ -465,6 +577,7 @@ async function runDeepDetect(image, video) {
 exports.cocossd = runCocoSSD;
 exports.faceapi = runFaceApi;
 exports.facemesh = runFaceMesh;
+exports.piface = runPiFace;
 exports.handpose = runHandPose;
 exports.posenet = runPoseNet;
 exports.food = runFood;
