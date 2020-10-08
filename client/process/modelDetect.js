@@ -83,12 +83,9 @@ async function detectEfficientDet(model, image) {
   const imgBuf = tf.browser.fromPixels(image, 3);
   const expanded = tf.expandDims(imgBuf, 0);
   tf.dispose(imgBuf);
-  // console.log(image, expanded, model);
   const result = await model.executeAsync(expanded);
-  // console.log(result);
   const [scores, classes] = calculateMaxScores(result);
   const reshaped = tf.tensor2d(result[1].dataSync(), [result[1].shape[1], result[1].shape[3]]);
-  // const index = tf.image.nonMaxSuppression(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma); // async version leaks 2 tensors
   const index = await tf.image.nonMaxSuppressionAsync(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma);
   const results = buildDetectedObjects(model, expanded, result, scores, classes, index); // disposes of batched, result, index
   tf.dispose(reshaped);
@@ -131,7 +128,7 @@ async function detectSSD(model, image) {
     tf.dispose(expanded);
     tf.dispose(cast);
   }
-  // console.log('execute start', model); // look at model.inputs and model.outputs on how to execute a model
+  // look at model.inputs and model.outputs on how to execute a model
   const result = await model.executeAsync({ images: batched }, ['module_apply_default/hub_input/strided_slice_1', 'module_apply_default/hub_input/strided_slice_2', 'module_apply_default/hub_input/strided_slice']); // scores, classes, boxes
   const scores = result[0].dataSync();
   const classes = result[1].dataSync();

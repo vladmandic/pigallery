@@ -121,10 +121,10 @@ async function initControls() {
   for (const el of document.getElementsByClassName('range')) el.dataset.value = el.value;
   document.addEventListener('resize', () => cameraResize(false));
   document.addEventListener('change', (evt) => {
-    // console.log('Event:', evt.type, evt.target);
     if (evt.target.classList.contains('range')) evt.target.dataset.value = evt.target.value;
     switch (evt.target.id) {
       case 'menu-complex': modelsReload(); break;
+      case 'menu-objects': params.maxObjects = parseInt(evt.target.value); break;
       case 'menu-log': $('#log').slideToggle(); break;
       case 'menu-threshold': params.minThreshold = parseFloat(evt.target.value); break;
       case 'menu-tension': params.lineTension = parseFloat(evt.target.value); break;
@@ -139,7 +139,6 @@ async function initControls() {
   });
   const click = ('ontouchstart' in window) ? 'touchstart' : 'click';
   document.addEventListener(click, (evt) => {
-    // console.log('Event:', evt.type, evt.target);
     switch (evt.target.id) {
       case 'video-start': cameraStartStop(); break;
       case 'menu-startstop': cameraStartStop(); break;

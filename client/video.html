@@ -62,17 +62,19 @@
     <div class="menu" style="padding: 0">Detection Options</div>
     <div class="menu"><div class="slide"><input class="slide" type="checkbox" id="menu-complex" /><label for="menu-complex"></label></div>Complex Models</div>
     <div class="menu"><input class="range" type="range" id="menu-threshold" min="0.1" max="1.0" step="0.05" value="0.4">Sensitivity</div>
+    <div class="menu"><input class="range" type="range" id="menu-objects" min="1" max="20" step="1" value="5">Max Objects</div>
     <hr>
     <div class="menu" style="padding: 0">Detection</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="model-cocossd"  /><label for="model-cocossd"></label></div>COCO Objects</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="model-posenet"  /><label for="model-posenet"></label></div>Body Pose</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="model-handpose"  /><label for="model-handpose"></label></div>Hand Pose</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-cocossd" checked /><label for="model-cocossd"></label></div>COCO Objects</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-posenet" checked /><label for="model-posenet"></label></div>Body Pose</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-handpose" checked /><label for="model-handpose"></label></div>Hand Pose</div>
     <div class="menu" style="padding: 0">Face Analysis</div>
     <div class="menu"><div class="slide"><input type="checkbox" id="model-piface" checked /><label for="model-piface"></label></div>Face Detect</div>
-    <div class="menu"><div class="slide"><input type="checkbox" id="model-agegender" checked /><label for="model-agegender"></label></div>Age & Gender Prediction</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-mesh" checked /><label for="model-mesh"></label></div>Face Mesh</div>
     <div class="menu"><div class="slide"><input type="checkbox" id="model-iris" checked /><label for="model-iris"></label></div>Iris Detection</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-agegender" checked /><label for="model-agegender"></label></div>Age & Gender Prediction</div>
     <!-- <div class="menu"><div class="slide"><input type="checkbox" id="model-facemesh" /><label for="model-facemesh"></label></div>Face Mesh</div> -->
-    <div class="menu"><div class="slide"><input type="checkbox" id="model-faceapi" /><label for="model-faceapi"></label></div>Face API</div>
+    <div class="menu"><div class="slide"><input type="checkbox" id="model-faceapi" /><label for="model-faceapi"></label></div>Face API Alternative</div>
     <div class="menu" style="padding: 0">Classification</div>
     <div class="menu"><div class="slide"><input type="checkbox" id="model-imagenet" /><label for="model-imagenet"></label></div>ImageNet</div>
     <div class="menu"><div class="slide"><input type="checkbox" id="model-deepdetect" /><label for="model-deepdetect"></label></div>DeepDetect</div>

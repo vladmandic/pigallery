@@ -226,11 +226,14 @@ async function runPiFace(image, video) {
     document.getElementById('status').innerHTML = 'Loading models ...';
     const memory0 = await tf.memory();
     piface.load({
-      modelPathFaceMesh: '/models/piface/facemesh/model.json',
+      mesh: document.getElementById('model-mesh').checked,
+      iris: document.getElementById('model-iris').checked,
+      ageGender: document.getElementById('model-agegender').checked,
       modelPathBlazeFace: '/models/piface/blazeface/model.json',
+      modelPathFaceMesh: '/models/piface/facemesh/model.json',
+      modelPathIris: '/models/piface/iris/model.json',
       modelPathSSRNetAge: '/models/piface/ssrnet-imdb-age/model.json',
       modelPathSSRNetGender: '/models/piface/ssrnet-imdb-gender/model.json',
-      modelPathIris: '/models/piface/iris/model.json',
       inputSize: 128,
       maxContinuousChecks: params.skipFrames,
       detectionConfidence: params.minThreshold,
@@ -238,8 +241,6 @@ async function runPiFace(image, video) {
       iouThreshold: params.minThreshold,
       scoreThreshold: params.minThreshold,
       cropSize: 128,
-      ageGender: document.getElementById('model-agegender').checked,
-      iris: document.getElementById('model-iris').checked,
     });
     models.piface = piface;
     const memory1 = await tf.memory();
@@ -257,16 +258,17 @@ async function runPiFace(image, video) {
   canvases.piface.getContext('2d').clearRect(0, 0, canvases.piface.width, canvases.piface.height);
   const labels = document.getElementById('menu-labels').checked;
   const boxes = document.getElementById('menu-boxes').checked;
+  const mesh = document.getElementById('model-mesh').checked;
   for (const face of faces) {
     const x = face.box[0];
     const y = face.box[1];
     const width = face.box[2];
     const height = face.box[3];
-    const z = face.mesh.map((a) => a[2]);
-    const zfact = 255 / (Math.max(...z) - Math.min(...z)); // get the range for colors
     // add face thumbnails
     if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'face' }));
-    const label = `face: ${face.age || ''} ${face.gender || ''} iris: ${face.iris}`;
+    let label = 'face';
+    if (face.age && face.gender) label += ` ${face.gender} age: ${face.age}`;
+    if (face.iris && (face.iris > 0)) label += ` iris: ${face.iris}`;
     detected.push(label);
     // draw border around detected faces
     if (boxes) {
@@ -281,50 +283,54 @@ async function runPiFace(image, video) {
         title: label,
       });
     }
-    // draw face lines
-    if (document.getElementById('menu-grid').checked) {
-      const ctx = canvases.piface.getContext('2d');
-      for (let i = 0; i < piface.triangulation.length / 3; i++) {
-        const points = [
-          piface.triangulation[i * 3 + 0],
-          piface.triangulation[i * 3 + 1],
-          piface.triangulation[i * 3 + 2],
-        ].map((index) => face.mesh[index]);
-        const path = new Path2D();
-        path.moveTo(points[0][0] * canvases.piface.width / image.width, points[0][1] * canvases.piface.height / image.height);
-        for (let n = 1; n < points.length; n++) {
-          path.lineTo(points[n][0] * canvases.piface.width / image.width, points[n][1] * canvases.piface.height / image.height);
+    if (mesh) {
+      const z = face.mesh.map((a) => a[2]);
+      const zfact = 255 / (Math.max(...z) - Math.min(...z)); // get the range for colors
+      // draw face lines
+      if (document.getElementById('menu-grid').checked) {
+        const ctx = canvases.piface.getContext('2d');
+        for (let i = 0; i < piface.triangulation.length / 3; i++) {
+          const points = [
+            piface.triangulation[i * 3 + 0],
+            piface.triangulation[i * 3 + 1],
+            piface.triangulation[i * 3 + 2],
+          ].map((index) => face.mesh[index]);
+          const path = new Path2D();
+          path.moveTo(points[0][0] * canvases.piface.width / image.width, points[0][1] * canvases.piface.height / image.height);
+          for (const point of points) {
+            path.lineTo(point[0] * canvases.piface.width / image.width, point[1] * canvases.piface.height / image.height);
+          }
+          path.closePath();
+          ctx.strokeStyle = `rgba(${127.5 + (zfact * points[0][2])}, ${127.5 - (zfact * points[0][2])}, 255, 0.5)`;
+          ctx.stroke(path);
         }
-        path.closePath();
-        ctx.strokeStyle = `rgba(${127.5 + (zfact * points[0][2])}, ${127.5 - (zfact * points[0][2])}, 255, 0.5)`;
-        ctx.stroke(path);
-      }
-    } else if (document.getElementById('menu-mesh').checked) {
-    // draw all face points
-      for (const point of face.mesh) {
-        draw.point({
-          canvas: canvases.piface,
-          x: point[0] * canvases.piface.width / image.width,
-          y: point[1] * canvases.piface.height / image.height,
-          color: `rgba(${127.5 + (zfact * point[2])}, ${127.5 - (zfact * point[2])}, 255, 0.5)`,
-          blue: 255,
-          radius: 1,
-        });
-      }
-    }
-    // draw & label key face points
-    if (labels) {
-      for (const [key, val] of Object.entries(face.annotations)) {
-        for (const point in val) {
+      } else if (document.getElementById('menu-mesh').checked) {
+      // draw all face points
+        for (const point of face.mesh) {
           draw.point({
             canvas: canvases.piface,
-            x: val[point][0] * canvases.piface.width / image.width,
-            y: val[point][1] * canvases.piface.height / image.height,
-            color: `rgba(${127.5 + (zfact * val[point][2])}, ${127.5 - (zfact * val[point][2])}, 255, 0.5)`,
-            radius: 2,
-            alpha: 0.5,
-            title: (point >= val.length - 1) ? key : null,
+            x: point[0] * canvases.piface.width / image.width,
+            y: point[1] * canvases.piface.height / image.height,
+            color: `rgba(${127.5 + (zfact * point[2])}, ${127.5 - (zfact * point[2])}, 255, 0.5)`,
+            blue: 255,
+            radius: 1,
           });
+        }
+      }
+      // draw & label key face points
+      if (labels) {
+        for (const [key, val] of Object.entries(face.annotations)) {
+          for (const point in val) {
+            draw.point({
+              canvas: canvases.piface,
+              x: val[point][0] * canvases.piface.width / image.width,
+              y: val[point][1] * canvases.piface.height / image.height,
+              color: `rgba(${127.5 + (zfact * val[point][2])}, ${127.5 - (zfact * val[point][2])}, 255, 0.5)`,
+              radius: 2,
+              alpha: 0.5,
+              title: (point >= val.length - 1) ? key : null,
+            });
+          }
         }
       }
     }
