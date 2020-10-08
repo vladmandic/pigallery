@@ -303,7 +303,6 @@ async function findDuplicates() {
   const f = '/dist/index/worker.js';
   const worker = new Worker(f);
   worker.addEventListener('message', (msg) => {
-    // console.log('Miain received message', msg.data);
     window.filtered = msg.data;
     const t1 = window.performance.now();
     log.div('log', true, `Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
@@ -317,7 +316,6 @@ async function findDuplicates() {
 async function fetchChunks(response) {
   const t0 = window.performance.now();
   const reader = response.body.getReader();
-  // for (const header of response.headers.entries()) console.log('header', header);
   const size = parseInt(response.headers.get('content-Size') || response.headers.get('content-Length'));
   let received = 0;
   const chunks = [];

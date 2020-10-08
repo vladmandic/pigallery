@@ -5,7 +5,7 @@
       "imports": []
     },
     "../piface/dist/facemesh.esm.js": {
-      "bytes": 753643,
+      "bytes": 753610,
       "imports": []
     },
     "../piface/node_modules/@tensorflow/tfjs-backend-cpu/dist/backend_cpu.js": {
@@ -15693,7 +15693,7 @@
       "imports": []
     },
     "../piface/src/index.js": {
-      "bytes": 3674,
+      "bytes": 3842,
       "imports": [
         {
           "path": "../piface/dist/facemesh.esm.js"
@@ -15795,7 +15795,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 34179,
+      "bytes": 34038,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -15933,7 +15933,7 @@
       "imports": []
     },
     "client/process/modelDetect.js": {
-      "bytes": 6508,
+      "bytes": 6214,
       "imports": []
     },
     "client/process/modelYolo.js": {
@@ -16062,11 +16062,11 @@
       "imports": []
     },
     "client/video/gesture.js": {
-      "bytes": 2620,
+      "bytes": 2686,
       "imports": []
     },
     "client/video/run.js": {
-      "bytes": 27143,
+      "bytes": 27451,
       "imports": [
         {
           "path": "node_modules/@tensorflow-models/facemesh/dist/facemesh.js"
@@ -16098,7 +16098,7 @@
       ]
     },
     "client/video/video.js": {
-      "bytes": 7247,
+      "bytes": 7225,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js"
@@ -16251,7 +16251,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5295067
+      "bytes": 5294770
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -16319,7 +16319,7 @@
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5795460
+      "bytes": 5795174
     },
     "dist/index/index.js": {
       "imports": [],
@@ -16414,7 +16414,7 @@
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 5245209
+      "bytes": 5244912
     },
     "dist/process/process.js": {
       "imports": [],
@@ -16505,7 +16505,7 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 8917603
+      "bytes": 8917001
     },
     "dist/video/video.js": {
       "imports": [],
@@ -16550,7 +16550,7 @@
           "bytesInOutput": 3871
         },
         "client/video/gesture.js": {
-          "bytesInOutput": 1620
+          "bytesInOutput": 1668
         },
         "assets/webgl-image-filter.js": {
           "bytesInOutput": 11187
@@ -16577,7 +16577,7 @@
           "bytesInOutput": 326378
         },
         "../piface/dist/facemesh.esm.js": {
-          "bytesInOutput": 291459
+          "bytesInOutput": 291423
         },
         "../piface/node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 998
@@ -16613,7 +16613,7 @@
           "bytesInOutput": 10000
         },
         "../piface/src/index.js": {
-          "bytesInOutput": 1927
+          "bytesInOutput": 1826
         },
         "client/shared/models.js": {
           "bytesInOutput": 2269
@@ -16622,7 +16622,7 @@
           "bytesInOutput": 1950
         },
         "client/video/run.js": {
-          "bytesInOutput": 17288
+          "bytesInOutput": 17429
         },
         "client/video/detect.js": {
           "bytesInOutput": 5646
@@ -16655,7 +16655,7 @@
           "bytesInOutput": 197
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/kernel_names.js": {
-          "bytesInOutput": 189
+          "bytesInOutput": 187
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/kernel_names.js": {
           "bytesInOutput": 23
@@ -17099,13 +17099,13 @@
           "bytesInOutput": 0
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/cosh.js": {
-          "bytesInOutput": 153
+          "bytesInOutput": 152
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/ops.js": {
           "bytesInOutput": 0
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/cumsum.js": {
-          "bytesInOutput": 329
+          "bytesInOutput": 328
         },
         "../piface/node_modules/@tensorflow/tfjs-core/dist/ops/ops.js": {
           "bytesInOutput": 0
@@ -18449,10 +18449,10 @@
           "bytesInOutput": 137
         },
         "client/video/video.js": {
-          "bytesInOutput": 5024
+          "bytesInOutput": 5092
         }
       },
-      "bytes": 2714713
+      "bytes": 2714829
     },
     "dist/index/worker.js.map": {
       "imports": [],

@@ -23,7 +23,7 @@ find.face = (res) => {
   const piface = res.find((a) => a.piface);
   const face = (piface && piface.piface && piface.piface[0]) ? piface.piface[0] : null;
   if (!face) return;
-  if ((face.annotations['rightCheek'].length > 0) || (face.annotations['rightCheek'].length > 0)) {
+  if (face.annotations['rightCheek'] && face.annotations['leftCheek'] && (face.annotations['rightCheek'].length > 0) && (face.annotations['leftCheek'].length > 0)) {
     gestures.push(`facing ${((face.annotations['rightCheek'][0][2] > 0) || (face.annotations['leftCheek'][0][2] < 0)) ? 'right' : 'left'}`);
   }
 };

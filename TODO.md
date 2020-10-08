@@ -29,12 +29,6 @@ No tags in saved model:
 - <https://tfhub.dev/google/on_device_vision/classifier/popular_us_products_V1/1>
 - <https://tfhub.dev/metmuseum/vision/classifier/imet_attributes_V1/1?tf-hub-format=compressed>
 
-TBD: 
-
-- DeepLab semantic segmentation: <https://github.com/tensorflow/tfjs-models/tree/master/deeplab>
-- BodyPix people segmentation: <https://github.com/tensorflow/tfjs-models/tree/master/body-pix>
-- Jeeliz: https://github.com/jeeliz/jeelizFaceFilter
-- Video: DeepDetect, ImageNet
-
 ## Random
 
+- Jeeliz: https://github.com/jeeliz/jeelizFaceFilter

@@ -19,7 +19,6 @@ async function update(f) {
       const ver = msg.match(/[0-9].[0-9].[0-9]/) ? msg : l.refs;
       text += `\n### **${ver}** ${dt} ${l.author_email}\n`;
     } else if ((msg.length > 2) && !msg.startsWith('update') && (previous !== msg)) {
-      // console.log('text', previous, l.message, 'qqq');
       previous = msg;
       text += `- ${msg}\n`;
     }
