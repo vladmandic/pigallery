@@ -1,11 +1,13 @@
-/* global tf, log, models, canvases, perf, params, results, extracted, detected */
+/* global canvases, perf, params, results, extracted, detected */
 
-// window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
-const config = require('../shared/config.js');
-const draw = require('./draw.js');
-const gesture = require('./gesture.js');
-const run = require('./run.js');
-const fx = require('../../assets/webgl-image-filter.js');
+import * as tf from '@tensorflow/tfjs';
+import * as log from '../shared/log.js';
+import * as draw from './draw.js';
+import * as gesture from './gesture.js';
+import * as run from './run.js';
+import * as fx from '../../assets/webgl-image-filter.js';
+import config from '../shared/config.js';
+import * as definitions from '../shared/models.js';
 
 let fxFilter = null;
 
@@ -176,7 +178,7 @@ async function main() {
       // eslint-disable-next-line no-console
       log.debug('TF Flags:', engine.ENV.flags);
       // eslint-disable-next-line no-console
-      log.debug('TF Models:', models);
+      log.debug('TF Models:', definitions.models);
       // eslint-disable-next-line no-console
       for (const result of results) log.debug('TF Results: ', result);
     }

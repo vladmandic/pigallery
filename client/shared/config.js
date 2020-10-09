@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-multi-spaces */
 
-const log = require('./log.js');
+import * as log from './log.js';
 
 window.debug = true;
 

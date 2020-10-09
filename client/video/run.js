@@ -1,15 +1,15 @@
-/* global tf, log, models, canvases, perf, params, extracted, detected */
+/* global models, canvases, perf, params, extracted, detected */
 
-// const facemesh = require('@tensorflow-models/facemesh/dist/facemesh.js');
-const handpose = require('@tensorflow-models/handpose/dist/handpose.esm.js');
-const cocossd = require('@tensorflow-models/coco-ssd/dist/coco-ssd.es2017.js');
-const posenet = require('@tensorflow-models/posenet/dist/posenet.esm.js');
-const faceapi = require('@vladmandic/face-api');
-const piface = require('@vladmandic/piface');
-const definitions = require('../shared/models.js').models;
-const draw = require('./draw.js');
-// const facegl = require('./facegl.js');
-const modelClassify = require('../process/modelClassify.js');
+import * as tf from '@tensorflow/tfjs';
+import * as faceapi from '@vladmandic/face-api';
+import piface from '@vladmandic/piface';
+import * as handpose from '@tensorflow-models/handpose/dist/handpose.esm.js';
+import * as posenet from '@tensorflow-models/posenet/dist/posenet.esm.js';
+import * as cocossd from '@tensorflow-models/coco-ssd/dist/coco-ssd.es2017.js';
+import * as log from '../shared/log.js';
+import * as draw from './draw.js';
+import * as modelClassify from '../process/modelClassify.js';
+import * as definitions from '../shared/models.js';
 
 function appendCanvas(name, width, height) {
   canvases[name] = document.createElement('canvas', { desynchronized: true });
@@ -474,7 +474,7 @@ async function runFaceApi(image, video) {
     perf.Frame = 0;
     document.getElementById('status').innerHTML = 'Loading models ...';
     const memory0 = await tf.memory();
-    const opt = definitions.video.person;
+    const opt = definitions.models.video.person;
     $('#video-status').text('Loading Face Recognition model ...');
     const complex = document.getElementById('menu-complex').checked;
     if (complex) await faceapi.nets.ssdMobilenetv1.load(opt.modelPath);
@@ -530,7 +530,7 @@ async function runClassify(name, image, video) {
     perf.Frame = 0;
     document.getElementById('status').innerHTML = 'Loading models ...';
     const memory0 = await tf.memory();
-    const opt = definitions.video[name];
+    const opt = definitions.models.video[name];
     opt.score = params.minThreshold;
     $('#video-status').text(`Loading ${name} model ...`);
     models[name] = await modelClassify.load(opt);
