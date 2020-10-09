@@ -1,8 +1,10 @@
 # PiGallery Change Log
 
-### **update to tfjs 2.5.0** 2020/10/07 mandic00@live.com
-
-### **origin/master, origin/HEAD** 2020/10/04 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/10/08 mandic00@live.com
+- added iris model
+- implemented piface
+- disabled css scroll-snap due to chrome bug
+- sequentialized processing to avoid memory isseus
 - webgl canvas prototype
 - video improved startup sequence
 

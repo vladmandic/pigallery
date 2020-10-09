@@ -1,9 +1,9 @@
 /* global tf, log, models, canvases, perf, params, extracted, detected */
 
-const facemesh = require('@tensorflow-models/facemesh/dist/facemesh.js');
-const handpose = require('@tensorflow-models/handpose/dist/handpose.js');
-const cocossd = require('@tensorflow-models/coco-ssd/dist/coco-ssd.js');
-const posenet = require('@tensorflow-models/posenet/dist/posenet.js');
+// const facemesh = require('@tensorflow-models/facemesh/dist/facemesh.js');
+const handpose = require('@tensorflow-models/handpose/dist/handpose.esm.js');
+const cocossd = require('@tensorflow-models/coco-ssd/dist/coco-ssd.es2017.js');
+const posenet = require('@tensorflow-models/posenet/dist/posenet.esm.js');
 const faceapi = require('@vladmandic/face-api');
 const piface = require('@vladmandic/piface');
 const definitions = require('../shared/models.js').models;
@@ -133,6 +133,7 @@ async function runPoseNet(image, video) {
   return { posenet: poses };
 }
 
+/*
 async function runFaceMesh(image, video) {
   // https://github.com/tensorflow/tfjs-models/tree/master/facemesh
   const t0 = performance.now();
@@ -217,6 +218,7 @@ async function runFaceMesh(image, video) {
   perf.Canvas += t2 - t1;
   return { facemesh: faces };
 }
+*/
 
 async function runPiFace(image, video) {
   // https://github.com/@vladmandic/piface
@@ -241,6 +243,7 @@ async function runPiFace(image, video) {
       iouThreshold: params.minThreshold,
       scoreThreshold: params.minThreshold,
       cropSize: 128,
+      ageGenderStrict: false,
     });
     models.piface = piface;
     const memory1 = await tf.memory();
@@ -301,8 +304,10 @@ async function runPiFace(image, video) {
             path.lineTo(point[0] * canvases.piface.width / image.width, point[1] * canvases.piface.height / image.height);
           }
           path.closePath();
+          ctx.fillStyle = `rgba(${127.5 + (zfact * points[0][2])}, ${127.5 - (zfact * points[0][2])}, 255, 0.5)`;
           ctx.strokeStyle = `rgba(${127.5 + (zfact * points[0][2])}, ${127.5 - (zfact * points[0][2])}, 255, 0.5)`;
           ctx.stroke(path);
+          if (document.getElementById('menu-fill').checked) ctx.fill(path);
         }
       } else if (document.getElementById('menu-mesh').checked) {
       // draw all face points
@@ -584,9 +589,9 @@ async function runDeepDetect(image, video) {
   return runClassify('deepdetect', image, video);
 }
 
+// exports.facemesh = runFaceMesh;
 exports.cocossd = runCocoSSD;
 exports.faceapi = runFaceApi;
-exports.facemesh = runFaceMesh;
 exports.piface = runPiFace;
 exports.handpose = runHandPose;
 exports.posenet = runPoseNet;

@@ -1,11 +1,11 @@
 /* global tf, log, models, canvases, perf, params, results, extracted, detected */
 
-window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
+// window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
 const config = require('../shared/config.js');
 const draw = require('./draw.js');
 const gesture = require('./gesture.js');
-const fx = require('../../assets/webgl-image-filter.js');
 const run = require('./run.js');
+const fx = require('../../assets/webgl-image-filter.js');
 
 let fxFilter = null;
 
@@ -84,7 +84,7 @@ async function main() {
     if (perf.Frame === 0) {
       if (config.default.backEnd === 'wasm') tf.wasm.setPaths('/assets');
       tf.setBackend(config.default.backEnd);
-      tf.ENV.set('WEBGL_CPU_FORWARD', false);
+      // tf.ENV.set('WEBGL_CPU_FORWARD', false);
       if (config.default.backEnd === 'webgl') tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
       await tf.ready();
       await tf.enableProdMode();
