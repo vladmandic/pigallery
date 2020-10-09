@@ -1,7 +1,7 @@
-const jQuery = require('jquery');
-const log = require('../shared/log.js');
-const config = require('../shared/config.js');
-const user = require('../shared/user.js');
+import jQuery from 'jquery';
+import config from '../shared/config.js';
+import * as log from '../shared/log.js';
+import * as user from '../shared/user.js';
 
 async function main() {
   //

@@ -1,11 +1,11 @@
-/* global params, log */
+/* global params */
 
-const jQuery = require('jquery');
-window.log = require('../shared/log.js');
-const config = require('../shared/config.js');
-const user = require('../shared/user.js');
-const panzoom = require('../../assets/panzoom.js');
-const detect = require('./detect.js');
+import jQuery from 'jquery';
+import panzoom from '../../assets/panzoom.js';
+import * as log from '../shared/log.js';
+import * as user from '../shared/user.js';
+import * as detect from './detect.js';
+import config from '../shared/config.js';
 
 window.params = {
   facing: true,

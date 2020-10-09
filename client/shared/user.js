@@ -1,4 +1,4 @@
-const log = require('./log.js');
+import * as log from './log.js';
 
 async function getUser() {
   $('#progress').html('Authenticating');

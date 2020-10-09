@@ -1,6 +1,6 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/10/08 mandic00@live.com
+### **tfjs 2.6.0** 2020/10/08 mandic00@live.com
 - added iris model
 - implemented piface
 - disabled css scroll-snap due to chrome bug

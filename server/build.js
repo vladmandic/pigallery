@@ -78,7 +78,6 @@ async function compile() {
       logLevel: 'error',
       platform: 'browser',
       target: 'esnext',
-      // format: 'cjs',
       format: 'esm',
       metafile,
     });
