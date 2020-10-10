@@ -4,8 +4,7 @@ const gestures = [];
 const find = {};
 
 find.body = (res) => {
-  const posenet = res.find((a) => a.posenet);
-  const pose = (posenet && posenet.posenet && posenet.posenet[0]) ? posenet.posenet[0] : null;
+  const pose = (res.body && res.body[0]) ? res.body[0] : null;
   if (!pose) return;
 
   const leftWrist = pose.keypoints.find((a) => (a.score > params.minThreshold) && (a.part === 'leftWrist'));
@@ -20,8 +19,7 @@ find.body = (res) => {
 };
 
 find.face = (res) => {
-  const piface = res.find((a) => a.piface);
-  const face = (piface && piface.piface && piface.piface[0]) ? piface.piface[0] : null;
+  const face = (res.face && res.face[0]) ? res.face[0] : null;
   if (!face) return;
   if (face.annotations['rightCheek'] && face.annotations['leftCheek'] && (face.annotations['rightCheek'].length > 0) && (face.annotations['leftCheek'].length > 0)) {
     gestures.push(`facing ${((face.annotations['rightCheek'][0][2] > 0) || (face.annotations['leftCheek'][0][2] < 0)) ? 'right' : 'left'}`);
@@ -29,8 +27,7 @@ find.face = (res) => {
 };
 
 find.hand = (res) => {
-  const handpose = res.find((a) => a.handpose);
-  const hand = (handpose && handpose.handpose && handpose.handpose[0]) ? handpose.handpose[0] : null;
+  const hand = (res.hand && res.hand[0]) ? res.hand[0] : null;
   if (!hand) return;
   const fingers = [];
   for (const [finger, pos] of Object.entries(hand['annotations'])) {
@@ -42,13 +39,12 @@ find.hand = (res) => {
 };
 
 async function analyze(res) {
-  const t0 = performance.now();
   gestures.length = 0;
-  find.face(res);
-  find.body(res);
-  find.hand(res);
-  const t1 = performance.now();
-  window.perf.Gestures = Math.trunc(t1 - t0);
+  if (res && res[0] && res[0].piface) {
+    find.face(res[0].piface);
+    find.body(res[0].piface);
+    find.hand(res[0].piface);
+  }
   return gestures;
 }
 
