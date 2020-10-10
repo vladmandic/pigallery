@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/10/08 mandic00@live.com
+### **HEAD -> master** 2020/10/10 mandic00@live.com
+
+### **origin/master, origin/HEAD** 2020/10/08 mandic00@live.com
 - tfjs 2.6.0
 - added iris model
 - implemented piface
