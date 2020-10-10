@@ -1,10 +1,7 @@
 /* global models, canvases, perf, params, extracted, detected */
 
 import * as tf from '@tensorflow/tfjs';
-import * as faceapi from '@vladmandic/face-api';
 import piface from '@vladmandic/piface';
-import * as handpose from '@tensorflow-models/handpose/dist/handpose.esm.js';
-import * as posenet from '@tensorflow-models/posenet/dist/posenet.esm.js';
 import * as cocossd from '@tensorflow-models/coco-ssd/dist/coco-ssd.es2017.js';
 import * as log from '../shared/log.js';
 import * as draw from './draw.js';
@@ -22,247 +19,68 @@ function appendCanvas(name, width, height) {
   document.getElementById('drawcanvas').appendChild(canvases[name]);
 }
 
-async function runPoseNet(image, video) {
-  // https://github.com/tensorflow/tfjs-models/tree/master/posenet
-  const t0 = performance.now();
-  if (!models.posenet && !(video.paused || video.ended)) {
-    perf.Frame = 0;
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    models.posenet = await posenet.load({
-      architecture: document.getElementById('menu-complex').checked ? 'ResNet50' : 'MobileNetV1',
-      outputStride: 16,
-      multiplier: document.getElementById('menu-complex').checked ? 1 : 0.75,
-      quantBytes: params.quantBytes,
-      // inputResolution: { width: image.width, height: image.height },
-    });
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model PoseNet: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!models.posenet) {
-    log.div('log', true, 'Model PoseNet not loaded');
-    return {};
-  }
-  if (!canvases.posenet) appendCanvas('posenet', video.offsetWidth, video.offsetHeight);
-  const poses = await models.posenet.estimateMultiplePoses(image, {
-    maxDetections: params.maxObjects,
-    scoreThreshold: params.minThreshold,
-    nmsRadius: 20,
-  });
-  const t1 = performance.now();
-  perf.PoseNet = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.posenet) return { posenet: poses };
-  canvases.posenet.getContext('2d').clearRect(0, 0, canvases.posenet.width, canvases.posenet.height);
-  const labels = document.getElementById('menu-labels').checked;
-  const lines = document.getElementById('menu-lines').checked;
-  const highlight = document.getElementById('menu-points').checked;
-  for (const pose in poses) {
-    for (const point of poses[pose].keypoints) {
-      if (point.score > params.minThreshold) {
-        const label = `${(100 * point.score).toFixed(1)} ${point.part}`;
-        // detected.push(label);
-        if (highlight) {
-          draw.point({
-            canvas: canvases.posenet,
-            x: point.position.x * canvases.posenet.width / image.width,
-            y: point.position.y * canvases.posenet.height / image.height,
-            color: 'rgba(0, 200, 255, 0.5)',
-            radius: 4,
-            title: labels ? label : null,
-          });
-        }
-      }
-    }
-    if (lines) {
-      const points = [];
-      const line = [];
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftElbow'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftWrist'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightElbow'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightWrist'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftHip'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightHip'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftHip'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightHip'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftHip'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftKnee'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'leftAnkle'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
-      points.length = 0;
-      line.length = 0;
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightShoulder'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightHip'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightKnee'));
-      points.push(poses[pose].keypoints.find((a) => a.part === 'rightAnkle'));
-      for (const point of points) {
-        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.posenet.width / image.width, point.position.y * canvases.posenet.height / image.height]);
-      }
-      draw.spline({ canvas: canvases.posenet, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
-    }
-  }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { posenet: poses };
-}
-
-/*
-async function runFaceMesh(image, video) {
-  // https://github.com/tensorflow/tfjs-models/tree/master/facemesh
-  const t0 = performance.now();
-  if (!models.facemesh && !(video.paused || video.ended)) {
-    perf.Frame = 0;
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    models.facemesh = await facemesh.load({
-      maxContinuousChecks: params.skipFrames,
-      detectionConfidence: params.minThreshold,
-      maxFaces: params.maxObjects,
-      iouThreshold: params.minThreshold,
-      scoreThreshold: params.minThreshold,
-    });
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model FaceMesh: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!models.facemesh) {
-    log.div('log', true, 'Model FaceMesh not loaded');
-    return {};
-  }
-  if (!canvases.facemesh) appendCanvas('facemesh', video.offsetWidth, video.offsetHeight);
-  const faces = await models.facemesh.estimateFaces(image);
-  const t1 = performance.now();
-  perf.FaceMesh = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.facemesh) return { facemesh: faces };
-  canvases.facemesh.getContext('2d').clearRect(0, 0, canvases.facemesh.width, canvases.facemesh.height);
-  const labels = document.getElementById('menu-labels').checked;
-  const boxes = document.getElementById('menu-boxes').checked;
-  for (const face of faces) {
-    const x = face.boundingBox.topLeft[0];
-    const y = face.boundingBox.topLeft[1];
-    const width = face.boundingBox.bottomRight[0] - face.boundingBox.topLeft[0];
-    const height = face.boundingBox.bottomRight[1] - face.boundingBox.topLeft[1];
-    // add face thumbnails
-    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'face' }));
-    const label = `${(100 * face.faceInViewConfidence).toFixed(1)}% face`;
-    detected.push(label);
-    // draw border around detected faces
-    if (boxes) {
-      draw.rect({
-        canvas: canvases.facemesh,
-        x: x * canvases.facemesh.width / image.width,
-        y: y * canvases.facemesh.height / image.height,
-        width: width * canvases.facemesh.width / image.width,
-        height: height * canvases.facemesh.height / image.height,
-        lineWidth: 4,
-        color: 'rgba(125, 255, 255, 0.4)',
-        title: label,
-      });
-    }
-    // draw & label key face points
-    for (const [key, val] of Object.entries(face.annotations)) {
-      for (const point in val) {
-        draw.point({
-          canvas: canvases.facemesh,
-          x: val[point][0] * canvases.facemesh.width / image.width,
-          y: val[point][1] * canvases.facemesh.height / image.height,
-          color: `rgba(${125 + 2 * val[point][2]}, ${255 - 2 * val[point][2]}, 255, 0.5)`,
-          radius: 2,
-          alpha: 0.5,
-          title: ((point >= val.length - 1) && labels) ? key : null,
-        });
-      }
-    }
-    // draw all face points
-    if (document.getElementById('menu-mesh').checked) {
-      for (const point of face.scaledMesh) {
-        draw.point({
-          canvas: canvases.facemesh,
-          x: point[0] * canvases.facemesh.width / image.width,
-          y: point[1] * canvases.facemesh.height / image.height,
-          color: `rgba(${125 + 2 * point[2] * canvases.facemesh.height / image.height}, ${255 - 2 * point[2] * canvases.facemesh.height / image.height}, 255, 0.5)`,
-          blue: 255,
-          radius: 1,
-        });
-      }
-      // await facegl.draw({ points: face.scaledMesh, offsetX: x, offsetY: y, width, height });
-    }
-  }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { facemesh: faces };
-}
-*/
-
 async function runPiFace(image, video) {
   // https://github.com/@vladmandic/piface
   const t0 = performance.now();
-  if (!models.piface && !(video.paused || video.ended)) {
-    perf.Frame = 0;
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    piface.load({
-      mesh: document.getElementById('model-mesh').checked,
-      iris: document.getElementById('model-iris').checked,
-      ageGender: document.getElementById('model-agegender').checked,
-      modelPathBlazeFace: '/models/piface/blazeface/model.json',
-      modelPathFaceMesh: '/models/piface/facemesh/model.json',
-      modelPathIris: '/models/piface/iris/model.json',
-      modelPathSSRNetAge: '/models/piface/ssrnet-imdb-age/model.json',
-      modelPathSSRNetGender: '/models/piface/ssrnet-imdb-gender/model.json',
-      inputSize: 128,
-      maxContinuousChecks: params.skipFrames,
-      detectionConfidence: params.minThreshold,
-      maxFaces: params.maxObjects,
-      iouThreshold: params.minThreshold,
-      scoreThreshold: params.minThreshold,
-      cropSize: 128,
-      ageGenderStrict: false,
-    });
-    models.piface = piface;
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model piface: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!models.piface) {
-    log.div('log', true, 'Model piface not loaded');
-    return {};
-  }
+  if (video.paused || video.ended) return {};
   if (!canvases.piface) appendCanvas('piface', video.offsetWidth, video.offsetHeight);
-  const faces = await models.piface.detect(image);
+  const config = {
+    face: {
+      enabled: document.getElementById('model-face').checked,
+      minConfidence: parseFloat(document.getElementById('menu-confidence').value),
+      iouThreshold: parseFloat(document.getElementById('menu-overlap').value),
+      scoreThreshold: parseFloat(document.getElementById('menu-threshold').value),
+      detector: {
+        maxFaces: parseInt(document.getElementById('menu-objects').value),
+        skipFrames: parseInt(document.getElementById('menu-skip').value),
+      },
+      mesh: {
+        enabled: document.getElementById('model-mesh').checked,
+      },
+      iris: {
+        enabled: document.getElementById('model-iris').checked,
+      },
+      age: {
+        enabled: document.getElementById('model-agegender').checked,
+        skipFrames: parseInt(document.getElementById('menu-skip').value),
+      },
+      gender: {
+        enabled: document.getElementById('model-agegender').checked,
+      },
+    },
+    body: {
+      enabled: document.getElementById('model-posenet').checked,
+      maxDetections: parseInt(document.getElementById('menu-objects').value),
+      scoreThreshold: parseFloat(document.getElementById('menu-threshold').value),
+      nmsRadius: 20,
+    },
+    hand: {
+      enabled: document.getElementById('model-handpose').checked,
+      skipFrames: parseInt(document.getElementById('menu-skip').value),
+      minConfidence: parseFloat(document.getElementById('menu-confidence').value),
+      iouThreshold: parseFloat(document.getElementById('menu-overlap').value),
+      scoreThreshold: parseFloat(document.getElementById('menu-threshold').value),
+    },
+  };
+  const res = await piface.detect(image, config);
   const t1 = performance.now();
   perf.piface = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.piface) return { piface: faces };
+  if ((perf.Frame === 0) || !canvases.piface) return { piface: res };
+
   canvases.piface.getContext('2d').clearRect(0, 0, canvases.piface.width, canvases.piface.height);
-  const labels = document.getElementById('menu-labels').checked;
-  const boxes = document.getElementById('menu-boxes').checked;
-  const mesh = document.getElementById('model-mesh').checked;
-  for (const face of faces) {
+
+  // conditionals
+  const show = {
+    labels: document.getElementById('menu-labels').checked,
+    boxes: document.getElementById('menu-boxes').checked,
+    mesh: document.getElementById('model-mesh').checked,
+    lines: document.getElementById('menu-lines').checked,
+    highlight: document.getElementById('menu-points').checked,
+    grid: document.getElementById('menu-grid').checked,
+  };
+
+  // draw face elements
+  for (const face of res.face) {
     const x = face.box[0];
     const y = face.box[1];
     const width = face.box[2];
@@ -274,7 +92,7 @@ async function runPiFace(image, video) {
     if (face.iris && (face.iris > 0)) label += ` iris: ${face.iris}`;
     detected.push(label);
     // draw border around detected faces
-    if (boxes) {
+    if (show.boxes) {
       draw.rect({
         canvas: canvases.piface,
         x: x * canvases.piface.width / image.width,
@@ -286,11 +104,11 @@ async function runPiFace(image, video) {
         title: label,
       });
     }
-    if (mesh) {
+    if (show.mesh && face.mesh && face.mesh.length > 0) {
       const z = face.mesh.map((a) => a[2]);
-      const zfact = 255 / (Math.max(...z) - Math.min(...z)); // get the range for colors
+      const zfact = 255 / (Math.max(...z) - Math.min(...z) + 1); // get the range for colors
       // draw face lines
-      if (document.getElementById('menu-grid').checked) {
+      if (show.grid) {
         const ctx = canvases.piface.getContext('2d');
         for (let i = 0; i < piface.triangulation.length / 3; i++) {
           const points = [
@@ -323,7 +141,7 @@ async function runPiFace(image, video) {
         }
       }
       // draw & label key face points
-      if (labels) {
+      if (show.labels) {
         for (const [key, val] of Object.entries(face.annotations)) {
           for (const point in val) {
             draw.point({
@@ -340,9 +158,135 @@ async function runPiFace(image, video) {
       }
     }
   }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { piface: faces };
+
+  // draw body elements
+  for (const pose in res.body) {
+    for (const point of res.body[pose].keypoints) {
+      if (point.score > params.minThreshold) {
+        const label = `${(100 * point.score).toFixed(1)} ${point.part}`;
+        // detected.push(label);
+        if (show.highlight) {
+          draw.point({
+            canvas: canvases.piface,
+            x: point.position.x * canvases.piface.width / image.width,
+            y: point.position.y * canvases.piface.height / image.height,
+            color: 'rgba(0, 200, 255, 0.5)',
+            radius: 4,
+            title: show.labels ? label : null,
+          });
+        }
+      }
+    }
+    if (show.lines) {
+      const points = [];
+      const line = [];
+      points.length = 0;
+      line.length = 0;
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftShoulder'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftElbow'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftWrist'));
+      for (const point of points) {
+        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.piface.width / image.width, point.position.y * canvases.piface.height / image.height]);
+      }
+      draw.spline({ canvas: canvases.piface, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
+      points.length = 0;
+      line.length = 0;
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightShoulder'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightElbow'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightWrist'));
+      for (const point of points) {
+        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.piface.width / image.width, point.position.y * canvases.piface.height / image.height]);
+      }
+      draw.spline({ canvas: canvases.piface, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
+      points.length = 0;
+      line.length = 0;
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftHip'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftShoulder'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightShoulder'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightHip'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftHip'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightHip'));
+      for (const point of points) {
+        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.piface.width / image.width, point.position.y * canvases.piface.height / image.height]);
+      }
+      draw.spline({ canvas: canvases.piface, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
+      points.length = 0;
+      line.length = 0;
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftShoulder'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftHip'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftKnee'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'leftAnkle'));
+      for (const point of points) {
+        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.piface.width / image.width, point.position.y * canvases.piface.height / image.height]);
+      }
+      draw.spline({ canvas: canvases.piface, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
+      points.length = 0;
+      line.length = 0;
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightShoulder'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightHip'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightKnee'));
+      points.push(res.body[pose].keypoints.find((a) => a.part === 'rightAnkle'));
+      for (const point of points) {
+        if (point && point.score > params.minThreshold) line.push([point.position.x * canvases.piface.width / image.width, point.position.y * canvases.piface.height / image.height]);
+      }
+      draw.spline({ canvas: canvases.piface, points: line, lineWidth: 10, color: 'rgba(125, 255, 255, 0.2)', tension: params.lineTension });
+    }
+  }
+
+  // draw hand elements
+  for (const hand of res.hand) {
+    const x = hand.box[0];
+    const y = hand.box[1];
+    const width = hand.box[2];
+    const height = hand.box[3];
+    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'hand' }));
+    // hand bounding box
+    const label = `${(100 * hand.confidence).toFixed(1)}% hand`;
+    detected.push(label);
+    if (show.boxes) {
+      draw.rect({
+        canvas: canvases.piface,
+        x: x * canvases.piface.width / image.width,
+        y: y * canvases.piface.height / image.height,
+        width: width * canvases.piface.width / image.width,
+        height: height * canvases.piface.height / image.height,
+        lineWidth: 4,
+        color: 'rgba(125, 255, 255, 0.4)',
+        title: label,
+      });
+    }
+    const points = [];
+    for (const [key, val] of Object.entries(hand.annotations)) {
+      points.length = 0;
+      for (const point in val) points.push([val[point][0] * canvases.piface.width / image.width, val[point][1] * canvases.piface.height / image.height, val[point][2]]);
+      points.reverse();
+      // draw connected line between finger points
+      if (show.lines) {
+        draw.spline({
+          canvas: canvases.piface,
+          color: 'rgba(125, 255, 255, 0.2)',
+          points,
+          lineWidth: 10,
+          tension: params.lineTension,
+        });
+      }
+      // draw all finger hand points
+      if (show.highlight) {
+        for (let point = 0; point < points.length; point++) {
+          draw.point({
+            canvas: canvases.piface,
+            x: points[point][0],
+            y: points[point][1],
+            color: `rgba(${125 + 4 * points[point][2]}, ${125 - 4 * points[point][2]}, 255, 0.5)`,
+            radius: 3,
+            title: (show.labels && (point === 0)) ? key : null,
+          });
+        }
+      }
+    }
+  }
+
+  return { piface: res };
 }
 
 async function runCocoSSD(image, video) {
@@ -384,144 +328,7 @@ async function runCocoSSD(image, video) {
       color: 'rgba(125, 255, 255, 0.4)',
       title: label });
   }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
   return { cocossd: objects };
-}
-
-async function runHandPose(image, video) {
-  // https://github.com/tensorflow/tfjs-models/tree/master/handpose
-  const t0 = performance.now();
-  if (!models.handpose && !(video.paused || video.ended)) {
-    perf.Frame = 0;
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    models.handpose = await handpose.load({
-      maxContinuousChecks: params.skipFrames,
-      detectionConfidence: params.minThreshold,
-      iouThreshold: params.minThreshold,
-      scoreThreshold: params.minThreshold,
-    });
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model HandPose: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!models.handpose) {
-    log.div('log', true, 'Model HandPose not loaded');
-    return {};
-  }
-  if (!canvases.handpose) appendCanvas('handpose', video.offsetWidth, video.offsetHeight);
-  const hands = await models.handpose.estimateHands(image);
-  const t1 = performance.now();
-  perf.HandPose = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.handpose) return { handpose: hands };
-  canvases.handpose.getContext('2d').clearRect(0, 0, canvases.handpose.width, canvases.handpose.height);
-  const labels = document.getElementById('menu-labels').checked;
-  const lines = document.getElementById('menu-lines').checked;
-  const highlight = document.getElementById('menu-points').checked;
-  const boxes = document.getElementById('menu-boxes').checked;
-  for (const hand of hands) {
-    const x = hand.boundingBox.topLeft[0];
-    const y = hand.boundingBox.topLeft[1];
-    const width = hand.boundingBox.bottomRight[0] - hand.boundingBox.topLeft[0];
-    const height = hand.boundingBox.bottomRight[1] - hand.boundingBox.topLeft[1];
-    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: 'hand' }));
-    // hand bounding box
-    const label = `${(100 * hand.handInViewConfidence).toFixed(1)}% hand`;
-    detected.push(label);
-    if (boxes) {
-      draw.rect({
-        canvas: canvases.handpose,
-        x: x * canvases.handpose.width / image.width,
-        y: y * canvases.handpose.height / image.height,
-        width: width * canvases.handpose.width / image.width,
-        height: height * canvases.handpose.height / image.height,
-        lineWidth: 4,
-        color: 'rgba(125, 255, 255, 0.4)',
-        title: label,
-      });
-    }
-    const points = [];
-    for (const [key, val] of Object.entries(hand.annotations)) {
-      points.length = 0;
-      for (const point in val) points.push([val[point][0] * canvases.handpose.width / image.width, val[point][1] * canvases.handpose.height / image.height, val[point][2]]);
-      points.reverse();
-      // draw connected line between finger points
-      if (lines) draw.spline({ canvas: canvases.handpose, color: 'rgba(125, 255, 255, 0.2)', points, lineWidth: 10, tension: params.lineTension });
-      // draw all finger hand points
-      if (highlight) {
-        for (let point = 0; point < points.length; point++) {
-          draw.point({
-            canvas: canvases.handpose,
-            x: points[point][0],
-            y: points[point][1],
-            color: `rgba(${125 + 4 * points[point][2]}, ${125 - 4 * points[point][2]}, 255, 0.5)`,
-            radius: 3,
-            title: (labels && (point === 0)) ? key : null,
-          });
-        }
-      }
-    }
-  }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { handpose: hands };
-}
-
-async function runFaceApi(image, video) {
-  // https://github.com/vladmandic/face-api
-  const t0 = performance.now();
-  if (!models.faceapi && !(video.paused || video.ended)) {
-    perf.Frame = 0;
-    document.getElementById('status').innerHTML = 'Loading models ...';
-    const memory0 = await tf.memory();
-    const opt = definitions.models.video.person;
-    $('#video-status').text('Loading Face Recognition model ...');
-    const complex = document.getElementById('menu-complex').checked;
-    if (complex) await faceapi.nets.ssdMobilenetv1.load(opt.modelPath);
-    else await faceapi.nets.tinyFaceDetector.load(opt.modelPath);
-    await faceapi.nets.ageGenderNet.load(opt.modelPath);
-    // await faceapi.nets.faceLandmark68Net.load(opt.modelPath);
-    if (complex) models.faceapi = new faceapi.SsdMobilenetv1Options({ minConfidence: params.minThreshold, maxResults: params.maxObjects });
-    else models.faceapi = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: params.minThreshold, inputSize: opt.tensorSize });
-    const memory1 = await tf.memory();
-    log.div('log', true, `Loaded model FaceAPI: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
-  }
-  if (!models.faceapi) {
-    log.div('log', true, 'Model FaceAPI not loaded');
-    return {};
-  }
-  if (!canvases.faceapi) appendCanvas('faceapi', video.offsetWidth, video.offsetHeight);
-  const tensor = tf.browser.fromPixels(image);
-  const faces = await faceapi.detectAllFaces(tensor, models.faceapi).withAgeAndGender();
-  const t1 = performance.now();
-  perf.FaceAPI = Math.trunc(t1 - t0);
-  if ((perf.Frame === 0) || !canvases.faceapi) return { faceapi: faces };
-  canvases.faceapi.getContext('2d').clearRect(0, 0, canvases.faceapi.width, canvases.faceapi.height);
-  const boxes = document.getElementById('menu-boxes').checked;
-  for (const face of faces) {
-    const x = face.detection.box.x;
-    const y = face.detection.box.y;
-    const width = face.detection.box.width;
-    const height = face.detection.box.height;
-    if (document.getElementById('menu-extract').checked) extracted.push(draw.crop(image, x, y, width, height, { title: `${face.gender} ${face.age.toFixed(1)}y` }));
-    const title = `${(100 * face.genderProbability).toFixed(1)}% ${face.gender} ${face.age.toFixed(1)}y`;
-    detected.push(title);
-    if (boxes) {
-      draw.rect({
-        canvas: canvases.faceapi,
-        x: x * canvases.faceapi.width / image.width,
-        y: y * canvases.faceapi.height / image.height,
-        width: width * canvases.faceapi.width / image.width,
-        height: height * canvases.faceapi.height / image.height,
-        lineWidth: 4,
-        color: 'rgba(125, 255, 255, 0.4)',
-        title,
-      });
-    }
-  }
-  const t2 = performance.now();
-  perf.Canvas += t2 - t1;
-  return { faceapi: faces };
 }
 
 async function runClassify(name, image, video) {
@@ -591,10 +398,7 @@ async function runDeepDetect(image, video) {
 
 // exports.facemesh = runFaceMesh;
 exports.cocossd = runCocoSSD;
-exports.faceapi = runFaceApi;
 exports.piface = runPiFace;
-exports.handpose = runHandPose;
-exports.posenet = runPoseNet;
 exports.food = runFood;
 exports.plants = runPlants;
 exports.birds = runBirds;

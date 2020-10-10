@@ -137,32 +137,8 @@ async function main() {
       else promises.push(await run.insects(image, video));
     } else draw.clear(canvases.insects);
 
-    /*
-    if (document.getElementById('model-facemesh').checked) {
-      if (params.async) promises.push(run.facemesh(image, video));
-      else promises.push(await run.facemesh(image, video));
-    } else draw.clear(canvases.facemesh);
-    */
-
-    if (document.getElementById('model-piface').checked) {
-      if (params.async) promises.push(run.piface(image, video));
-      else promises.push(await run.piface(image, video));
-    } else draw.clear(canvases.piface);
-
-    if (document.getElementById('model-posenet').checked) {
-      if (params.async) promises.push(run.posenet(image, video));
-      else promises.push(await run.posenet(image, video));
-    } else draw.clear(canvases.posenet);
-
-    if (document.getElementById('model-handpose').checked) {
-      if (params.async) promises.push(run.handpose(image, video));
-      promises.push(await run.handpose(image, video));
-    } else draw.clear(canvases.handpose);
-
-    if (document.getElementById('model-faceapi').checked) {
-      if (params.async) promises.push(run.faceapi(image, video));
-      promises.push(await run.faceapi(image, video));
-    } else draw.clear(canvases.faceapi);
+    if (params.async) promises.push(run.piface(image, video));
+    else promises.push(await run.piface(image, video));
 
     window.results = (params.async ? await Promise.all(promises) : promises).filter((a) => ((a !== null) && (a !== undefined)));
 
