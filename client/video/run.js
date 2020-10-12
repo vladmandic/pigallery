@@ -1,7 +1,7 @@
 /* global models, canvases, perf, params, extracted, detected */
 
+import * as human from '@vladmandic/human/src/index';
 import * as tf from '@tensorflow/tfjs';
-import piface from '@vladmandic/piface';
 import * as cocossd from '@tensorflow-models/coco-ssd/dist/coco-ssd.es2017.js';
 import * as log from '../shared/log.js';
 import * as draw from './draw.js';
@@ -19,8 +19,8 @@ function appendCanvas(name, width, height) {
   document.getElementById('drawcanvas').appendChild(canvases[name]);
 }
 
-async function runPiFace(image, video) {
-  // https://github.com/@vladmandic/piface
+async function runHuman(image, video) {
+  // https://github.com/@vladmandic/human
   const t0 = performance.now();
   if (video.paused || video.ended) return {};
   if (!canvases.piface) appendCanvas('piface', video.offsetWidth, video.offsetHeight);
@@ -31,21 +31,26 @@ async function runPiFace(image, video) {
       iouThreshold: parseFloat(document.getElementById('menu-overlap').value),
       scoreThreshold: parseFloat(document.getElementById('menu-threshold').value),
       detector: {
+        modelPath: '/models/human/blazeface/model.json',
         maxFaces: parseInt(document.getElementById('menu-objects').value),
         skipFrames: parseInt(document.getElementById('menu-skip').value),
       },
       mesh: {
         enabled: document.getElementById('model-mesh').checked,
+        modelPath: '/models/human/facemesh/model.json',
       },
       iris: {
         enabled: document.getElementById('model-iris').checked,
+        modelPath: '/models/human/iris/model.json',
       },
       age: {
         enabled: document.getElementById('model-agegender').checked,
         skipFrames: parseInt(document.getElementById('menu-skip').value),
+        modelPath: '/models/human/ssrnet-age/imdb/model.json',
       },
       gender: {
         enabled: document.getElementById('model-agegender').checked,
+        modelPath: '/models/human/ssrnet-gender/imdb/model.json',
       },
     },
     body: {
@@ -53,6 +58,7 @@ async function runPiFace(image, video) {
       maxDetections: parseInt(document.getElementById('menu-objects').value),
       scoreThreshold: parseFloat(document.getElementById('menu-threshold').value),
       nmsRadius: 20,
+      modelPath: '/models/human/posenet/model.json',
     },
     hand: {
       enabled: document.getElementById('model-handpose').checked,
@@ -60,9 +66,16 @@ async function runPiFace(image, video) {
       minConfidence: parseFloat(document.getElementById('menu-confidence').value),
       iouThreshold: parseFloat(document.getElementById('menu-overlap').value),
       scoreThreshold: parseFloat(document.getElementById('menu-threshold').value),
+      detector: {
+        anchors: '/models/human/handdetect/anchors.json',
+        modelPath: '/models/human/handdetect/model.json',
+      },
+      skeleton: {
+        modelPath: '/models/human/handskeleton/model.json',
+      },
     },
   };
-  const res = await piface.detect(image, config);
+  const res = await human.detect(image, config);
   const t1 = performance.now();
   perf.piface = Math.trunc(t1 - t0);
   if ((perf.Frame === 0) || !canvases.piface) return { piface: res };
@@ -110,11 +123,11 @@ async function runPiFace(image, video) {
       // draw face lines
       if (show.grid) {
         const ctx = canvases.piface.getContext('2d');
-        for (let i = 0; i < piface.triangulation.length / 3; i++) {
+        for (let i = 0; i < human.facemesh.triangulation.length / 3; i++) {
           const points = [
-            piface.triangulation[i * 3 + 0],
-            piface.triangulation[i * 3 + 1],
-            piface.triangulation[i * 3 + 2],
+            human.facemesh.triangulation[i * 3 + 0],
+            human.facemesh.triangulation[i * 3 + 1],
+            human.facemesh.triangulation[i * 3 + 2],
           ].map((index) => face.mesh[index]);
           const path = new Path2D();
           path.moveTo(points[0][0] * canvases.piface.width / image.width, points[0][1] * canvases.piface.height / image.height);
@@ -135,7 +148,6 @@ async function runPiFace(image, video) {
             x: point[0] * canvases.piface.width / image.width,
             y: point[1] * canvases.piface.height / image.height,
             color: `rgba(${127.5 + (zfact * point[2])}, ${127.5 - (zfact * point[2])}, 255, 0.5)`,
-            blue: 255,
             radius: 1,
           });
         }
@@ -398,7 +410,7 @@ async function runDeepDetect(image, video) {
 
 // exports.facemesh = runFaceMesh;
 exports.cocossd = runCocoSSD;
-exports.piface = runPiFace;
+exports.human = runHuman;
 exports.food = runFood;
 exports.plants = runPlants;
 exports.birds = runBirds;

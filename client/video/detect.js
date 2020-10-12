@@ -137,8 +137,8 @@ async function main() {
       else promises.push(await run.insects(image, video));
     } else draw.clear(canvases.insects);
 
-    if (params.async) promises.push(run.piface(image, video));
-    else promises.push(await run.piface(image, video));
+    if (params.async) promises.push(run.human(image, video));
+    else promises.push(await run.human(image, video));
 
     window.results = (params.async ? await Promise.all(promises) : promises).filter((a) => ((a !== null) && (a !== undefined)));
 

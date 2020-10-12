@@ -34,12 +34,11 @@
     label { width: 1.3rem; height: 0.8rem; cursor: pointer; position: absolute; top: 0.1rem; left: 0.1rem; z-index: 1; background: lightcoral; border-radius: 1rem; transition: left 0.6s ease; }
     input[type=checkbox] { visibility: hidden; }
     input[type=checkbox]:checked + label { left: 1.4rem; background: lightgreen; }
-    .range { margin: 0 0.8rem 0 0; width: 5rem; background: var(--color); }
+    .range { margin: 0 0.8rem 0 0; width: 5rem; background: var(--color); color: lightblue; }
     .range:before { content: attr(data-value); color: var(--text); margin: 0 0.4rem 0 0; font-weight: 800; font-size: 0.6rem; }
     input[type=range] { -webkit-appearance: none; }
     input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: black; border-radius: 1rem; border: 1px; }
-    input[type=range]::-webkit-slider-thumb { border: 1px solid #000000; height: 1rem; width: 1.5rem; border-radius: 1rem; background: #FFFFFF; cursor: pointer; -webkit-appearance: none; }
-    input[type=range]:focus::-webkit-slider-runnable-track { background: lightgreen; }
+    input[type=range]::-webkit-slider-thumb { border: 1px solid #000000; margin-top: 0.05rem; height: 0.9rem; width: 1.5rem; border-radius: 1rem; background: lightblue; cursor: pointer; -webkit-appearance: none; }
   </style>
   <!-- Script Module -->
   <script type="text/javascript" src="/dist/video/video.js"></script>
@@ -55,7 +54,7 @@
     <span><i id="menu-options" class="navbarbutton fad fa-chevron-circle-down" title="Image Options"></i><p id="menu-options">image<br>options</p></span>
   </div>
   <!-- Body -->
-  <div id="status" style="padding: 4px; position: absolute; white-space: nowrap; top: 0.2rem; overflow: hidden; z-index: 20; width: calc(100% - 30rem)"><a href="https://github.com/vladmandic/pihuman" target="_blank">PiHuman</a></div>
+  <div id="status" style="padding: 4px; position: absolute; white-space: nowrap; top: 0.2rem; overflow: hidden; z-index: 20; width: calc(100% - 30rem)"><a href="https://github.com/vladmandic/human" target="_blank"></a></div>
   <div id="detected" style="padding: 4px; position: absolute; white-space: nowrap; top: 1.5rem; overflow: hidden; z-index: 20; width: calc(100% - 30rem)"></div>
   <div id="perf" style="padding: 4px; position: absolute; white-space: nowrap; top: 2.8rem; overflow: hidden; z-index: 20; width: calc(100% - 30rem)"></div>
   <div id="pull-models" class="pulldown">
