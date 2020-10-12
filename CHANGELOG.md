@@ -1,8 +1,12 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/10/10 mandic00@live.com
+### **HEAD -> master** 2020/10/12 mandic00@live.com
 
-### **origin/master, origin/HEAD** 2020/10/08 mandic00@live.com
+### **origin/master, origin/HEAD** 2020/10/10 mandic00@live.com
+
+### **2.1.7** 2020/10/10 mandic00@live.com
+- switched video to piface
+- switched to esnext imports
 - tfjs 2.6.0
 - added iris model
 - implemented piface
