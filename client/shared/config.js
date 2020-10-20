@@ -20,7 +20,6 @@ const config = {
   ui: {
     maxFrames: 10,
     overlay: true,
-    thumbnails: true,
     useDepth: true,
     drawBoxes: true,
     drawPoints: false,
@@ -28,6 +27,7 @@ const config = {
     fillPolygons: true,
     lineWidth: 8,
     lineColor: 'rgba(125, 255, 255, 0.6)',
+    font: 'small-caps 1rem "Segoe UI"',
   },
   classify: {
     minThreshold: 0.3,

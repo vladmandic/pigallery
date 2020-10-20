@@ -127,6 +127,7 @@ async function menuSetup() {
   menuModels.toggle();
 
   const menuParams = new Menu(document.body, '');
+  menuParams.addLabel('Model parameters');
   menuParams.addRange('Max Objects', config.human.face.detector, 'maxFaces', 0, 50, 1, (val) => {
     config.human.face.detector.maxFaces = parseInt(val);
     config.human.body.maxDetections = parseInt(val);
@@ -155,10 +156,17 @@ async function menuSetup() {
     config.human.face.detector.iouThreshold = parseFloat(val);
     config.human.hand.iouThreshold = parseFloat(val);
   });
+  menuParams.addHTML('<hr style="min-width: 200px; border-style: inset; border-color: dimgray">');
+  menuParams.addLabel('Display options');
+  menuParams.addBool('Use 3D Depth', config.ui, 'useDepth');
+  menuParams.addBool('Hide Overlay', config.ui, 'overlay');
+  menuParams.addBool('Draw Boxes', config.ui, 'drawBoxes');
+  menuParams.addBool('Draw Points', config.ui, 'drawPoints');
+  menuParams.addBool('Draw Polygons', config.ui, 'drawPolygons');
+  menuParams.addBool('Fill Polygons', config.ui, 'fillPolygons');
   menuParams.toggle();
 
   const menuFilters = new Menu(document.body, '');
-  menuFilters.addBool('Enabled', config.human.filter, 'enabled');
   menuFilters.addRange('Brightness', config.human.filter, 'brightness', -1.0, 1.0, 0.05, (val) => config.human.filter.brightness = parseFloat(val));
   menuFilters.addRange('Contrast', config.human.filter, 'contrast', -1.0, 1.0, 0.05, (val) => config.human.filter.contrast = parseFloat(val));
   menuFilters.addRange('Sharpness', config.human.filter, 'sharpness', 0, 1.0, 0.05, (val) => config.human.filter.sharpness = parseFloat(val));
@@ -174,16 +182,6 @@ async function menuSetup() {
   menuFilters.addBool('polaroid', config.human.filter, 'polaroid');
   menuFilters.toggle();
 
-  const menuDisplay = new Menu(document.body, '');
-  menuDisplay.addBool('Thumbnails', config.ui, 'thumbnails');
-  menuDisplay.addBool('Use 3D Depth', config.ui, 'useDepth');
-  menuDisplay.addBool('Hide Overlay', config.ui, 'overlay');
-  menuDisplay.addBool('Draw Boxes', config.ui, 'drawBoxes');
-  menuDisplay.addBool('Draw Points', config.ui, 'drawPoints');
-  menuDisplay.addBool('Draw Polygons', config.ui, 'drawPolygons');
-  menuDisplay.addBool('Fill Polygons', config.ui, 'fillPolygons');
-  menuDisplay.toggle();
-
   menuPerf = new Menu(document.body, '');
   menuPerf.toggle();
   menuPerf.addChart('FPS', 'FPS');
@@ -193,7 +191,6 @@ async function menuSetup() {
     if (evt.target.id !== 'menu-models') menuModels.hide();
     if (evt.target.id !== 'menu-parameters') menuParams.hide();
     if (evt.target.id !== 'menu-filters') menuFilters.hide();
-    if (evt.target.id !== 'menu-display') menuDisplay.hide();
     switch (evt.target.id) {
       case 'video-start': cameraRestart(); break;
       case 'menu-startstop': cameraRestart(); break;
@@ -201,7 +198,6 @@ async function menuSetup() {
       case 'menu-models': menuModels.toggle(evt); break;
       case 'menu-parameters': menuParams.toggle(evt); break;
       case 'menu-filters': menuFilters.toggle(evt); break;
-      case 'menu-display': menuDisplay.toggle(evt); break;
       case 'menu-performance': menuPerf.toggle(evt); break;
       default:
     }
@@ -225,7 +221,7 @@ window.onload = main;
 window.onresize = cameraResize;
 
 /*
-  human: draw
+  human: roundrect vs rect
   classify: test
   detect: switch to centernet
 */

@@ -63,7 +63,7 @@ async function runCocoSSD(input, config) {
       title: label,
     });
   }
-  return { cocossd: objects };
+  return { cocossd: res };
 }
 
 async function runClassify(name, input, config) {
@@ -81,7 +81,6 @@ async function runClassify(name, input, config) {
     log.div('log', true, `Model ${name} not loaded`);
     return {};
   }
-  if (!objects.canvases[name]) appendCanvas(name, input.width, input.height);
   const res = await modelClassify.classify(objects.models[name], input);
   if (res && res.lenght > 0) {
     for (const item of res) {
@@ -93,9 +92,7 @@ async function runClassify(name, input, config) {
   }
   const t1 = performance.now();
   objects.perf[name] = Math.trunc(t1 - t0);
-  const obj = {};
-  obj[name] = res;
-  return obj;
+  return { name: res };
 }
 
 async function runFood(input, config) {
