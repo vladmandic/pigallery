@@ -21,7 +21,13 @@ function rect({ canvas = null, x = 0, y = 0, width = 0, height = 0, radius = 8, 
   ctx.lineWidth = 1;
   ctx.fillStyle = color;
   ctx.font = font || defaultFont;
-  if (title) ctx.fillText(title, x + lineWidth, y + lineWidth + 16);
+  if (title) {
+    if (Array.isArray(title)) {
+      for (const i in title) ctx.fillText(title[i], x + lineWidth, y + (2 * lineWidth) + ((i + 1) * lineWidth / 4));
+    } else {
+      ctx.fillText(title, x + lineWidth, y + lineWidth + 16);
+    }
+  }
 }
 
 function point({ canvas = null, x = 0, y = 0, color = 'white', radius = 2, title = null, font = null }) {
@@ -78,8 +84,6 @@ function crop(image, x, y, width, height, { color = 'white', title = null, font 
   const canvas = document.createElement('canvas', { desynchronized: true });
   canvas.width = extractSize * width / height;
   canvas.height = extractSize;
-  // canvas.style.width = `${canvas.width}px`;
-  // canvas.style.height = `${canvas.height}px`;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
   ctx.fillStyle = color;

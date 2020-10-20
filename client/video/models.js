@@ -51,7 +51,6 @@ async function runCocoSSD(input, config) {
     const height = object.bbox[3];
     const label = `${(100 * object.score).toFixed(1)}% ${object.class}`;
     objects.detected.push(label);
-    ctx.fillStyle = 'rgba(100, 100, 100, 0.5)';
     draw.rect({
       canvas: objects.canvases.cocossd,
       x, // : x * objects.canvases.cocossd.width / video.videoWidth,

@@ -11,7 +11,7 @@ const css = `
   .menu-hr { margin: 0.2rem; border: 1px solid rgba(0, 0, 0, 0.5) }
   .menu-label { padding: 0; }
 
-  .menu-chart-title { padding: 0 0 0 0.4rem; font-size: 0.8rem; font-weight: 800; align-items: center}
+  .menu-chart-title { padding: 0; font-size: 0.8rem; font-weight: 800; align-items: center}
   .menu-chart-canvas { background: transparent; margin: 0.2rem 0 0.2rem 0.6rem; }
   
   .menu-button { border: 0; background: lightblue; width: -webkit-fill-available; padding: 8px; margin: 8px 0 8px 0; cursor: pointer; box-shadow: 4px 4px 4px 0 dimgrey; }
@@ -79,6 +79,8 @@ class Menu {
     instance++;
     this._maxFPS = 0;
     this.hidden = 0;
+    this.chartFGcolor = 'lightblue';
+    this.chartBGcolor = 'lightgray';
   }
 
   get newID() {
@@ -209,11 +211,13 @@ class Menu {
     else this.addValue(title, val);
   }
 
-  addChart(title, id) {
+  addChart(title, id, width = 200, height = 40, fgColor, bgColor) {
+    if (fgColor) this.chartFGcolor = fgColor;
+    if (bgColor) this.chartBGcolor = bgColor;
     const el = document.createElement('div');
     el.className = 'menu-item menu-chart-title';
     el.id = this.newID;
-    el.innerHTML = `${title}<canvas id="menu-canvas-${id}" class="menu-chart-canvas" width="200px" height="40px"></canvas>`;
+    el.innerHTML = `<font color=${this.chartFGcolor}>${title}</font><canvas id="menu-canvas-${id}" class="menu-chart-canvas" width="${width}px" height="${height}px"></canvas>`;
     this.container.appendChild(el);
   }
 
@@ -223,20 +227,20 @@ class Menu {
     const canvas = document.getElementById(`menu-canvas-${id}`);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'rgb(100, 100, 100)';
+    ctx.fillStyle = this.chartBGcolor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     const width = canvas.width / values.length;
     const max = 1 + Math.max(...values);
     const height = canvas.height / max;
     for (const i in values) {
       const gradient = ctx.createLinearGradient(0, (max - values[i]) * height, 0, 0);
-      gradient.addColorStop(0.1, 'lightblue');
-      gradient.addColorStop(0.4, 'rgb(100, 100, 100)');
+      gradient.addColorStop(0.1, this.chartFGcolor);
+      gradient.addColorStop(0.4, this.chartBGcolor);
       ctx.fillStyle = gradient;
       ctx.fillRect(i * width, 0, width - 4, canvas.height);
-      ctx.fillStyle = 'rgb(100, 100, 100)';
-      ctx.font = '12px "Segoe UI"';
-      ctx.fillText(Math.round(values[i]), i * width, canvas.height - 2, width);
+      ctx.fillStyle = this.chartBGcolor;
+      ctx.font = `${width / 1.4}px "Segoe UI"`;
+      ctx.fillText(Math.round(values[i]), i * width + 1, canvas.height - 1, width - 1);
     }
   }
 }

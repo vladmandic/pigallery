@@ -31,6 +31,20 @@ async function clearAll(canvases) {
   canvases = [];
 }
 
+const fps = [];
+async function updatePerf(config, objects) {
+  if (objects.perf.Total) fps.push(1000 / objects.perf.Total);
+  if (fps.length > config.ui.maxFrames) fps.shift();
+  if (objects.menus.perf.visible) {
+    if (objects.menus.perf) objects.menus.perf.updateChart('FPS', fps);
+    for (const key of Object.keys(objects.perf)) {
+      if (key.toLowerCase().startsWith('memory')) objects.menus.perf.updateValue(key, objects.perf[key], ' MB');
+      else if (key.toLowerCase().startsWith('tensor')) objects.menus.perf.updateValue(key, objects.perf[key]);
+      else objects.menus.perf.updateValue(key, objects.perf[key], 'ms');
+    }
+  }
+}
+
 async function init(config) {
   document.getElementById('status').innerText = 'initializing';
   if (config.backEnd === 'wasm') tf.wasm.setPaths('/assets');
@@ -99,9 +113,19 @@ async function main(config, objects) {
   const gestures = await gesture.analyze(objects.results);
 
   const t1 = performance.now();
-  objects.perf.Total = Math.trunc(t1 - t0);
+  if (objects.results && objects.results[0] && objects.results[0].human) {
+    const item = objects.results[0].human.performance;
+    for (const [key, val] of Object.entries(item)) {
+      if (val >= 10 && key !== 'total') objects.perf[`Human:${key}`] = val;
+    }
+  }
   document.getElementById('detected').innerText = `Detected: ${log.str([...objects.detected, ...gestures])}`;
   document.getElementById('status').innerText = '';
+  objects.perf.Total = Math.trunc(t1 - t0);
+  objects.perf.Memory = Math.trunc(tf.memory().numBytes / 1024 / 1024).toLocaleString();
+  objects.perf.Tensors = tf.memory().numTensors;
+  if (objects.perf.Total > (objects.perf.FirstFrame || 0)) objects.perf.FirstFrame = objects.perf.Total;
+  updatePerf(config, objects);
   requestAnimationFrame(() => main(config, objects));
 }
 

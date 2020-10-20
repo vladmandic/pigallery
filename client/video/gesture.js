@@ -38,10 +38,10 @@ find.hand = (res) => {
 
 async function analyze(res) {
   gestures.length = 0;
-  if (res && res[0] && res[0].piface) {
-    find.face(res[0].piface);
-    find.body(res[0].piface);
-    find.hand(res[0].piface);
+  if (res && res[0] && res[0].human) {
+    find.face(res[0].human);
+    find.body(res[0].human);
+    find.hand(res[0].human);
   }
   return gestures;
 }
