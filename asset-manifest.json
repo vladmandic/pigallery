@@ -470,46 +470,46 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9627879
+      "bytes": 9414302
     },
     "dist/compare/compare.js": {
       "imports": [],
       "inputs": {
         "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 18
+          "bytesInOutput": 13
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 890579
+          "bytesInOutput": 890574
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 1096144
+          "bytesInOutput": 1096147
         },
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 93642
+          "bytesInOutput": 93637
         },
         "client/shared/log.js": {
-          "bytesInOutput": 994
+          "bytesInOutput": 989
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7739
+          "bytesInOutput": 7734
         },
         "client/process/modelClassify.js": {
-          "bytesInOutput": 1949
+          "bytesInOutput": 1944
         },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 3218
+          "bytesInOutput": 3213
         },
         "client/process/modelYolo.js": {
-          "bytesInOutput": 5361
+          "bytesInOutput": 5356
         },
         "client/shared/blockhash.js": {
-          "bytesInOutput": 2072
+          "bytesInOutput": 2067
         },
         "client/shared/models.js": {
-          "bytesInOutput": 2266
+          "bytesInOutput": 2261
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 6152
+          "bytesInOutput": 6148
         },
         "client/compare/compare.js": {
           "bytesInOutput": 4246
@@ -518,78 +518,78 @@
           "bytesInOutput": 3387
         }
       },
-      "bytes": 2125036
+      "bytes": 2125126
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 10128322
+      "bytes": 9903860
     },
     "dist/index/index.js": {
       "imports": [],
       "inputs": {
         "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 18
+          "bytesInOutput": 13
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 891085
+          "bytesInOutput": 891080
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 1096710
+          "bytesInOutput": 1096713
         },
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 94626
+          "bytesInOutput": 94621
         },
         "assets/marked.esm.js": {
-          "bytesInOutput": 33389
+          "bytesInOutput": 33384
         },
         "client/shared/log.js": {
-          "bytesInOutput": 994
+          "bytesInOutput": 989
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7739
+          "bytesInOutput": 7734
         },
         "client/index/indexdb.js": {
-          "bytesInOutput": 3773
+          "bytesInOutput": 3768
         },
         "node_modules/moment/moment.js": {
-          "bytesInOutput": 61523
+          "bytesInOutput": 61518
         },
         "assets/color-thief.umd.js": {
-          "bytesInOutput": 7382
+          "bytesInOutput": 7377
         },
         "client/index/iv-viewer.js": {
-          "bytesInOutput": 19703
+          "bytesInOutput": 19698
         },
         "client/index/details.js": {
-          "bytesInOutput": 10913
+          "bytesInOutput": 10908
         },
         "client/shared/blockhash.js": {
-          "bytesInOutput": 2072
+          "bytesInOutput": 2067
         },
         "client/shared/user.js": {
-          "bytesInOutput": 698
+          "bytesInOutput": 693
         },
         "client/index/list.js": {
-          "bytesInOutput": 5750
+          "bytesInOutput": 5745
         },
         "client/index/nearest.js": {
-          "bytesInOutput": 1522
+          "bytesInOutput": 1517
         },
         "client/index/map.js": {
-          "bytesInOutput": 1981
+          "bytesInOutput": 1976
         },
         "client/index/enumerate.js": {
-          "bytesInOutput": 4046
+          "bytesInOutput": 4041
         },
         "client/shared/models.js": {
-          "bytesInOutput": 2266
+          "bytesInOutput": 2261
         },
         "client/index/options.js": {
-          "bytesInOutput": 6038
+          "bytesInOutput": 6033
         },
         "client/index/pwa-register.js": {
-          "bytesInOutput": 887
+          "bytesInOutput": 883
         },
         "client/index/index.js": {
           "bytesInOutput": 418
@@ -598,142 +598,142 @@
           "bytesInOutput": 21572
         }
       },
-      "bytes": 2282505
+      "bytes": 2282559
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9578004
+      "bytes": 9365367
     },
     "dist/process/process.js": {
       "imports": [],
       "inputs": {
         "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 18
+          "bytesInOutput": 13
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 890579
+          "bytesInOutput": 890574
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 1096118
+          "bytesInOutput": 1096121
         },
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 93642
+          "bytesInOutput": 93637
         },
         "client/shared/log.js": {
-          "bytesInOutput": 994
+          "bytesInOutput": 989
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7739
+          "bytesInOutput": 7734
         },
         "client/process/modelClassify.js": {
-          "bytesInOutput": 1949
+          "bytesInOutput": 1944
         },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 3218
+          "bytesInOutput": 3213
         },
         "client/shared/blockhash.js": {
-          "bytesInOutput": 2072
+          "bytesInOutput": 2067
         },
         "client/shared/models.js": {
-          "bytesInOutput": 2266
+          "bytesInOutput": 2261
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 6152
+          "bytesInOutput": 6147
         },
         "client/shared/user.js": {
-          "bytesInOutput": 698
+          "bytesInOutput": 694
         },
         "client/process/process.js": {
           "bytesInOutput": 3252
         }
       },
-      "bytes": 2115966
+      "bytes": 2116056
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 447409
+      "bytes": 437820
     },
     "dist/prototype/prototype.js": {
       "imports": [],
       "inputs": {
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 90422
+          "bytesInOutput": 90417
         },
         "client/shared/log.js": {
-          "bytesInOutput": 1010
+          "bytesInOutput": 1005
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7701
+          "bytesInOutput": 7696
         },
         "client/shared/user.js": {
-          "bytesInOutput": 696
+          "bytesInOutput": 692
         },
         "client/prototype/prototype.js": {
           "bytesInOutput": 325
         }
       },
-      "bytes": 100850
+      "bytes": 100960
     },
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 12276928
+      "bytes": 12033949
     },
     "dist/video/video.js": {
       "imports": [],
       "inputs": {
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 96341
+          "bytesInOutput": 96336
         },
         "assets/panzoom.js": {
-          "bytesInOutput": 18993
+          "bytesInOutput": 18988
         },
         "client/shared/log.js": {
-          "bytesInOutput": 990
+          "bytesInOutput": 985
         },
         "client/shared/user.js": {
-          "bytesInOutput": 696
+          "bytesInOutput": 691
         },
         "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 18
+          "bytesInOutput": 13
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 896604
+          "bytesInOutput": 896599
         },
         "client/video/draw.js": {
-          "bytesInOutput": 3904
+          "bytesInOutput": 3899
         },
         "client/video/gesture.js": {
-          "bytesInOutput": 1345
+          "bytesInOutput": 1340
         },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js": {
-          "bytesInOutput": 298493
+          "bytesInOutput": 298496
         },
         "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.node.js": {
-          "bytesInOutput": 109908
+          "bytesInOutput": 109903
         },
         "node_modules/@tensorflow-models/coco-ssd/dist/coco-ssd.es2017.js": {
-          "bytesInOutput": 6407
+          "bytesInOutput": 6402
         },
         "client/process/modelClassify.js": {
-          "bytesInOutput": 1947
+          "bytesInOutput": 1942
         },
         "client/shared/models.js": {
-          "bytesInOutput": 2266
+          "bytesInOutput": 2261
         },
         "client/video/models.js": {
-          "bytesInOutput": 2825
+          "bytesInOutput": 2820
         },
         "client/video/human.js": {
-          "bytesInOutput": 4873
+          "bytesInOutput": 4868
         },
         "client/video/detect.js": {
-          "bytesInOutput": 3763
+          "bytesInOutput": 3758
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7739
+          "bytesInOutput": 7735
         },
         "client/video/video.js": {
           "bytesInOutput": 54
@@ -754,29 +754,29 @@
           "bytesInOutput": 8007
         }
       },
-      "bytes": 2622023
+      "bytes": 2622089
     },
     "dist/index/worker.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 10079
+      "bytes": 9631
     },
     "dist/index/worker.js": {
       "imports": [],
       "inputs": {
         "client/shared/blockhash.js": {
-          "bytesInOutput": 1943
+          "bytesInOutput": 1939
         },
         "client/index/worker.js": {
           "bytesInOutput": 351
         }
       },
-      "bytes": 2394
+      "bytes": 2390
     },
     "dist/index/pwa-serviceworker.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4649
+      "bytes": 4551
     },
     "dist/index/pwa-serviceworker.js": {
       "imports": [],

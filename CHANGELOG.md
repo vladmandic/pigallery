@@ -1,6 +1,12 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/10/12 mandic00@live.com
+### **HEAD -> master** 2020/10/20 mandic00@live.com
+- work on video module
+
+### **origin/master, origin/HEAD** 2020/10/20 mandic00@live.com
+- redo video moduls
+
+### **2.1.9** 2020/10/14 mandic00@live.com
 
 ### **2.1.8** 2020/10/12 mandic00@live.com
 - switch from piface to human library
