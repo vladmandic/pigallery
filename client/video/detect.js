@@ -6,18 +6,21 @@ import * as models from './models.js';
 import * as human from './human.js';
 import * as definitions from '../shared/models.js';
 
-async function drawOverlay(video, canvases) {
+async function getVideoCanvas(video, canvases, config) {
+  if (config.ui.overlay) document.getElementById('video').style.visibility = 'hidden';
+  else document.getElementById('video').style.visibility = 'visible';
+  if (video.paused || video.ended || (video.readyState <= 2)) return null;
   if (!canvases.process) {
-    canvases.process = document.createElement('canvas', { desynchronized: true });
+    canvases.process = document.createElement('canvas');
     canvases.process.id = 'canvas-process';
-    canvases.process.width = video.offsetWidth;
-    canvases.process.height = video.offsetHeight;
-    canvases.process.style.position = 'absolute';
-    canvases.process.style.top = 0;
-    canvases.process.style.filter = 'opacity(0.5) grayscale(1)';
-    document.getElementById('canvases').appendChild(canvases.process);
+  } else {
+    draw.clear(canvases.process);
   }
-  canvases.process.getContext('2d').drawImage(video, 0, 0, canvases.process.width, canvases.process.height);
+  canvases.process.width = video.offsetWidth;
+  canvases.process.height = video.offsetHeight;
+  const matrix = video.style.transform.match(/matrix\((.*)\)/)[1].split(',').map((a) => parseFloat(a));
+  canvases.process.getContext('2d').drawImage(video, matrix[4], matrix[5], matrix[0] * video.videoWidth, matrix[0] * video.videoHeight, 0, 0, canvases.process.width, canvases.process.height);
+  return canvases.process;
 }
 
 async function clearAll(canvases) {
@@ -28,111 +31,79 @@ async function clearAll(canvases) {
   canvases = [];
 }
 
+async function init(config) {
+  document.getElementById('status').innerText = 'initializing';
+  if (config.backEnd === 'wasm') tf.wasm.setPaths('/assets');
+  tf.setBackend(config.backEnd);
+  // tf.ENV.set('WEBGL_CPU_FORWARD', false);
+  if (config.backEnd === 'webgl') tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
+  await tf.ready();
+  await tf.enableProdMode();
+  log.div('log', true, `Using TensorFlow/JS: ${tf.version_core} Backend: ${tf.getBackend().toUpperCase()}`);
+
+  const engine = await tf.engine();
+  log.div('log', true, `TF State: ${engine.state.numBytes.toLocaleString()} bytes ${engine.state.numDataBuffers.toLocaleString()} buffers ${engine.state.numTensors.toLocaleString()} tensors`);
+  log.div('log', true, `TF GPU Memory: used ${engine.backendInstance.numBytesInGPU.toLocaleString()} bytes free ${Math.floor(1024 * 1024 * engine.backendInstance.numMBBeforeWarning).toLocaleString()} bytes`);
+  // eslint-disable-next-line no-console
+  log.debug('TF Flags:', engine.ENV.flags);
+  // eslint-disable-next-line no-console
+  log.debug('TF Models:', definitions.models);
+  // eslint-disable-next-line no-console
+}
+
 async function main(config, objects) {
   const video = document.getElementById('video');
-  if (video.paused || video.ended) {
-    log.div('log', true, `Video status: paused:${video.paused} ended:${video.ended} ready:${video.readyState}`);
-    return;
-  }
-  if (video.readyState > 2) {
-    const t0 = performance.now();
-    const promises = [];
-    objects.detected.length = 0;
-    objects.perf.Canvas = 0;
+  const t0 = performance.now();
+  objects.detected = [];
+  objects.results = [];
 
-    if (objects.perf.Frame === 0) {
-      if (config.backEnd === 'wasm') tf.wasm.setPaths('/assets');
-      tf.setBackend(config.backEnd);
-      // tf.ENV.set('WEBGL_CPU_FORWARD', false);
-      if (config.backEnd === 'webgl') tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
-      await tf.ready();
-      await tf.enableProdMode();
-      log.div('log', true, `Using TensorFlow/JS: ${tf.version_core} Backend: ${tf.getBackend().toUpperCase()}`);
-      objects.fps.length = 0;
-    }
+  let input = await getVideoCanvas(video, objects.canvases, config);
+  if (!input) return;
 
-    if (config.ui.overlay) await drawOverlay(video, objects.canvases);
-    else draw.clear(objects.canvases.process);
+  models.set(objects);
 
-    models.set(objects);
+  // this is not optional as we need return canvas with filters applied
+  const res = await human.run(input, config.human, objects);
+  if (res.canvas) input = res.canvas;
+  input.className = 'canvases';
+  input.style.display = 'block';
+  document.getElementById('canvases').appendChild(input);
 
-    if (config.classify.imagenet) {
-      if (config.async) promises.push(models.imagenet(video, config));
-      else promises.push(await models.imagenet(video, config));
-    } else draw.clear(objects.canvases.imagenet);
+  objects.results.push(res);
 
-    if (config.classify.deepdetect) {
-      if (config.async) promises.push(models.deepdetect(video, config));
-      else promises.push(await models.deepdetect(video, config));
-    } else draw.clear(objects.canvases.deepdetect);
+  if (config.classify.imagenet) objects.results.push(await models.imagenet(input, config));
+  else draw.clear(objects.canvases.imagenet);
 
-    if (config.detect.coco) {
-      if (config.async) promises.push(models.cocossd(video, config));
-      else promises.push(await models.cocossd(video, config));
-    } else draw.clear(objects.canvases.cocossd);
+  if (config.classify.deepdetect) objects.results.push(await models.deepdetect(input, config));
+  else draw.clear(objects.canvases.deepdetect);
 
-    if (config.classify.nsfw) {
-      if (config.async) promises.push(models.nsfw(video, config));
-      else promises.push(await models.nsfw(video, config));
-    } else draw.clear(objects.canvases.nsfw);
+  if (config.detect.coco) objects.results.push(await models.cocossd(input, config));
+  else draw.clear(objects.canvases.cocossd);
 
-    if (config.classify.food) {
-      if (config.async) promises.push(models.food(video, config));
-      else promises.push(await models.food(video, config));
-    } else draw.clear(objects.canvases.food);
+  if (config.classify.nsfw) objects.results.push(await models.nsfw(input, config));
+  else draw.clear(objects.canvases.nsfw);
 
-    if (config.classify.plants) {
-      if (config.async) promises.push(models.plants(video, config));
-      else promises.push(await models.plants(video, config));
-    } else draw.clear(objects.canvases.plants);
+  if (config.classify.food) objects.results.push(await models.food(input, config));
+  else draw.clear(objects.canvases.food);
 
-    if (config.classify.birds) {
-      if (config.async) promises.push(models.birds(video, config));
-      else promises.push(await models.birds(video, config));
-    } else draw.clear(objects.canvases.birds);
+  if (config.classify.plants) objects.results.push(await models.plants(input, config));
+  else draw.clear(objects.canvases.plants);
 
-    if (config.classify.insects) {
-      if (config.async) promises.push(models.insects(video, config));
-      else promises.push(await models.insects(video, config));
-    } else draw.clear(objects.canvases.insects);
+  if (config.classify.birds) objects.results.push(await models.birds(input, config));
+  else draw.clear(objects.canvases.birds);
 
-    if (config.human.enabled) {
-      if (config.async) promises.push(human.run(video, config.human));
-      else promises.push(await human.run(video, config.human));
-    } else draw.clear(objects.canvases.human);
+  if (config.classify.insects) objects.results.push(await models.insects(input, config));
+  else draw.clear(objects.canvases.insects);
 
-    window.results = (config.async ? await Promise.all(promises) : promises).filter((a) => ((a !== null) && (a !== undefined)));
+  const gestures = await gesture.analyze(objects.results);
 
-    const div = document.getElementById('objects');
-    div.innerHTML = '';
-    for (const object of objects.extracted) div.appendChild(object);
-    objects.extracted.length = 0;
-
-    if (objects.perf.Frame === 0) {
-      const engine = await tf.engine();
-      log.div('log', true, `TF State: ${engine.state.numBytes.toLocaleString()} bytes ${engine.state.numDataBuffers.toLocaleString()} buffers ${engine.state.numTensors.toLocaleString()} tensors`);
-      log.div('log', true, `TF GPU Memory: used ${engine.backendInstance.numBytesInGPU.toLocaleString()} bytes free ${Math.floor(1024 * 1024 * engine.backendInstance.numMBBeforeWarning).toLocaleString()} bytes`);
-      // eslint-disable-next-line no-console
-      log.debug('TF Flags:', engine.ENV.flags);
-      // eslint-disable-next-line no-console
-      log.debug('TF Models:', definitions.models);
-      // eslint-disable-next-line no-console
-      if (objects.results) {
-        for (const result of objects.results) log.debug('TF Results: ', result);
-      }
-    }
-
-    const gestures = await gesture.analyze(objects.results);
-
-    const t1 = performance.now();
-    objects.perf.Total = Math.trunc(t1 - t0);
-    objects.perf.Frame += 1;
-    objects.perf.Canvas = Math.round(objects.perf.Canvas);
-    document.getElementById('detected').innerText = `Detected: ${log.str([...objects.detected, ...gestures])}`;
-    document.getElementById('perf').innerText = `Performance: ${log.str(objects.perf)}`;
-  }
+  const t1 = performance.now();
+  objects.perf.Total = Math.trunc(t1 - t0);
+  document.getElementById('detected').innerText = `Detected: ${log.str([...objects.detected, ...gestures])}`;
+  document.getElementById('status').innerText = '';
   requestAnimationFrame(() => main(config, objects));
 }
 
 exports.main = main;
 exports.clear = clearAll;
+exports.init = init;

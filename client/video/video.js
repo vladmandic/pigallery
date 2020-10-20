@@ -7,11 +7,24 @@ import Menu from './menu.js';
 import shared from '../shared/config.js';
 
 const config = shared.default;
+let perfMonitor;
+let menuPerf;
+const fps = [];
 
 // using window globals for debugging purposes
-const objects = { perf: { Frame: 0 }, models: [], canvases: [], extracted: [], detected: [], fps: [] };
+const objects = { perf: { }, models: [], canvases: [], detected: [] };
+
+async function updatePerf() {
+  if (objects.perf.Total) fps.push(1000 / objects.perf.Total);
+  if (fps.length > config.ui.maxFrames) fps.shift();
+  if (menuPerf.visible) {
+    if (menuPerf) menuPerf.updateChart('FPS', fps);
+    for (const key of Object.keys(objects.perf)) menuPerf.updateValue(key, objects.perf[key], 'ms');
+  }
+}
 
 async function cameraStart(play = true) {
+  document.getElementById('status').innerText = 'starting camera';
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     document.getElementById('status').innerHTML = 'no camera access';
     document.getElementById('video-start').style.display = 'block';
@@ -36,10 +49,13 @@ async function cameraStart(play = true) {
     $('#btn-startstop').text('stop');
     // catch block for overlapping events
     video.play().then(() => {}).catch(() => {});
+    perfMonitor = setInterval(updatePerf, 250);
   }
 }
 
 async function cameraStop() {
+  document.getElementById('status').innerText = 'paused';
+  if (perfMonitor) clearInterval(perfMonitor);
   const video = document.getElementById('video');
   video.pause();
   const tracks = video.srcObject ? video.srcObject.getTracks() : null;
@@ -51,6 +67,7 @@ async function cameraStop() {
 
 let resizeTimer;
 async function cameraResize() {
+  document.getElementById('status').innerText = 'resizing';
   if (resizeTimer) clearTimeout(resizeTimer);
   resizeTimer = setTimeout(async () => {
     const video = document.getElementById('video');
@@ -78,8 +95,8 @@ async function cameraSetup() {
     const settings = video.srcObject.getVideoTracks()[0].getSettings();
     log.div('div', true, `Start video: ${track.label} camera ${settings.width} x ${settings.height} display ${video.offsetWidth} x ${video.offsetHeight} facing ${settings.facingMode}`);
     log.debug('Camera Settings: ', settings);
-    document.getElementById('objects').style.top = `${video.offsetTop + video.offsetHeight}px`;
     event.stopPropagation();
+    detect.init(config);
     detect.main(config, objects);
   }, true);
 }
@@ -87,7 +104,6 @@ async function cameraSetup() {
 async function menuSetup() {
   const menuModels = new Menu(document.body, '');
   menuModels.addLabel('Human Detection');
-  menuModels.addBool('Enabled', config.human, 'enabled');
   menuModels.addBool('Face Detect', config.human.face, 'enabled');
   menuModels.addBool('Face Mesh', config.human.face.mesh, 'enabled');
   menuModels.addBool('Face Iris', config.human.face.iris, 'enabled');
@@ -161,18 +177,23 @@ async function menuSetup() {
   const menuDisplay = new Menu(document.body, '');
   menuDisplay.addBool('Thumbnails', config.ui, 'thumbnails');
   menuDisplay.addBool('Use 3D Depth', config.ui, 'useDepth');
-  menuDisplay.addBool('Draw Overlay', config.ui, 'overlay');
+  menuDisplay.addBool('Hide Overlay', config.ui, 'overlay');
   menuDisplay.addBool('Draw Boxes', config.ui, 'drawBoxes');
   menuDisplay.addBool('Draw Points', config.ui, 'drawPoints');
   menuDisplay.addBool('Draw Polygons', config.ui, 'drawPolygons');
   menuDisplay.addBool('Fill Polygons', config.ui, 'fillPolygons');
   menuDisplay.toggle();
 
-  const menuPerf = new Menu(document.body, '');
+  menuPerf = new Menu(document.body, '');
   menuPerf.toggle();
+  menuPerf.addChart('FPS', 'FPS');
 
   const click = ('ontouchstart' in window) ? 'touchstart' : 'click';
   document.addEventListener(click, (evt) => {
+    if (evt.target.id !== 'menu-models') menuModels.hide();
+    if (evt.target.id !== 'menu-parameters') menuParams.hide();
+    if (evt.target.id !== 'menu-filters') menuFilters.hide();
+    if (evt.target.id !== 'menu-display') menuDisplay.hide();
     switch (evt.target.id) {
       case 'video-start': cameraRestart(); break;
       case 'menu-startstop': cameraRestart(); break;
@@ -185,6 +206,8 @@ async function menuSetup() {
       default:
     }
   });
+
+  document.getElementById('detected').style.width = `${document.getElementById('btn-user').offsetLeft - 10}px`;
 }
 
 async function main() {
@@ -202,8 +225,7 @@ window.onload = main;
 window.onresize = cameraResize;
 
 /*
-  fps from perf object?
-  human.js:run
-  classify: minconfidence
-  panzoom
+  human: draw
+  classify: test
+  detect: switch to centernet
 */

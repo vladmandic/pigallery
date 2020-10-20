@@ -1,7 +1,7 @@
 let instance = 0;
 
 const css = `
-  .menu { position: fixed; top: 0rem; right: 0; width: fit-content; padding: 0 0.8rem 0 0.8rem; line-height: 1.8rem; z-index: 10; max-height: calc(100% - 4rem); box-shadow: 0 0 8px dimgrey; background: var(--body); display: block}
+  .menu { position: fixed; top: 0rem; right: 0; width: fit-content; padding: 0 0.6rem 0 0.4rem; line-height: 1.8rem; z-index: 10; max-height: calc(100% - 4rem); box-shadow: 0 0 8px dimgrey; background: var(--body); display: block}
   .menu:hover { box-shadow: 0 0 8px lightgrey; }
   .menu-container { display: block; max-height: 100vh; }
   .menu-container-fadeout { max-height: 0; overflow: hidden; transition: max-height, 0.5s ease; }
@@ -11,8 +11,8 @@ const css = `
   .menu-hr { margin: 0.2rem; border: 1px solid rgba(0, 0, 0, 0.5) }
   .menu-label { padding: 0; }
 
-  .menu-chart-title { align-items: center; }
-  .menu-chart-canvas { background: transparent; height: 40px; width: 180px; margin: 0.2rem 0.2rem 0.2rem 1rem; }
+  .menu-chart-title { padding: 0 0 0 0.4rem; font-size: 0.8rem; font-weight: 800; align-items: center}
+  .menu-chart-canvas { background: transparent; margin: 0.2rem 0 0.2rem 0.6rem; }
   
   .menu-button { border: 0; background: lightblue; width: -webkit-fill-available; padding: 8px; margin: 8px 0 8px 0; cursor: pointer; box-shadow: 4px 4px 4px 0 dimgrey; }
   .menu-button:hover { background: lightgreen; box-shadow: 4px 4px 4px 0 black; }
@@ -98,16 +98,32 @@ class Menu {
     return this.menu.offsetHeight;
   }
 
-  async toggle(evt) {
-    this.container.classList.toggle('menu-container-fadeout');
-    this.container.classList.toggle('menu-container-fadein');
+  hide() {
     if (this.container.classList.contains('menu-container-fadein')) {
-      if (evt && evt.x) this.menu.style.left = `${evt.x - 32}px`;
-      if (evt && evt.y) this.menu.style.top = `${evt.y + 32}px`;
+      this.container.classList.toggle('menu-container-fadeout');
+      this.container.classList.toggle('menu-container-fadein');
     }
   }
 
-  async addTitle(title) {
+  visible() {
+    return (this.container.classList.contains('menu-container-fadein'));
+  }
+
+  toggle(evt) {
+    this.container.classList.toggle('menu-container-fadeout');
+    this.container.classList.toggle('menu-container-fadein');
+    if (this.container.classList.contains('menu-container-fadein')) {
+      if (evt && evt.x) this.menu.style.left = `${evt.x - 105}px`;
+      if (evt && evt.y) this.menu.style.top = '5rem'; // `${evt.y + 55}px`;
+      if (this.menu.offsetLeft < 0) this.menu.style.left = 0;
+      if ((this.menu.offsetLeft + this.menu.offsetWidth) > window.innerWidth) {
+        this.menu.style.left = null;
+        this.menu.style.right = 0;
+      }
+    }
+  }
+
+  addTitle(title) {
     const el = document.createElement('div');
     el.className = 'menu-title';
     el.id = this.newID;
@@ -122,7 +138,7 @@ class Menu {
     });
   }
 
-  async addLabel(title) {
+  addLabel(title) {
     const el = document.createElement('div');
     el.className = 'menu-item menu-label';
     el.id = this.newID;
@@ -130,7 +146,7 @@ class Menu {
     this.container.appendChild(el);
   }
 
-  async addBool(title, object, variable, callback) {
+  addBool(title, object, variable, callback) {
     const el = document.createElement('div');
     el.className = 'menu-item';
     el.innerHTML = `<div class="menu-checkbox"><input class="menu-checkbox" type="checkbox" id="${this.newID}" ${object[variable] ? 'checked' : ''}/><label class="menu-checkbox-label" for="${this.ID}"></label></div>${title}`;
@@ -141,7 +157,7 @@ class Menu {
     });
   }
 
-  async addRange(title, object, variable, min, max, step, callback) {
+  addRange(title, object, variable, min, max, step, callback) {
     const el = document.createElement('div');
     el.className = 'menu-item';
     el.innerHTML = `<input class="menu-range" type="range" id="${this.newID}" min="${min}" max="${max}" step="${step}" value="${object[variable]}">${title}`;
@@ -153,7 +169,7 @@ class Menu {
     });
   }
 
-  async addHTML(html) {
+  addHTML(html) {
     const el = document.createElement('div');
     el.className = 'menu-item';
     el.id = this.newID;
@@ -161,7 +177,7 @@ class Menu {
     this.container.appendChild(el);
   }
 
-  async addButton(titleOn, titleOff, callback) {
+  addButton(titleOn, titleOff, callback) {
     const el = document.createElement('button');
     el.className = 'menu-item menu-button';
     el.style.fontFamily = document.body.style.fontFamily;
@@ -178,25 +194,26 @@ class Menu {
     });
   }
 
-  async addValue(title, val) {
+  addValue(title, val, suffix = '') {
     const el = document.createElement('div');
     el.className = 'menu-item';
-    el.id = title;
-    el.innerText = `${title}: ${val}`;
-    this.contaner.appendChild(el);
+    el.id = `menu-val-${title}`;
+    el.innerText = `${title}: ${val}${suffix}`;
+    this.container.appendChild(el);
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async updateValue(title, val) {
-    const el = document.getElementById(title);
-    el.innerText = `${title}: ${val}`;
+  updateValue(title, val, suffix = '') {
+    const el = document.getElementById(`menu-val-${title}`);
+    if (el) el.innerText = `${title}: ${val}${suffix}`;
+    else this.addValue(title, val);
   }
 
-  async addChart(title, id) {
+  addChart(title, id) {
     const el = document.createElement('div');
     el.className = 'menu-item menu-chart-title';
     el.id = this.newID;
-    el.innerHTML = `${title}<canvas id="menu-canvas-${id}" class="menu-chart-canvas" width="180px" height="40px"></canvas>`;
+    el.innerHTML = `${title}<canvas id="menu-canvas-${id}" class="menu-chart-canvas" width="200px" height="40px"></canvas>`;
     this.container.appendChild(el);
   }
 
@@ -206,7 +223,7 @@ class Menu {
     const canvas = document.getElementById(`menu-canvas-${id}`);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'var(--body)';
+    ctx.fillStyle = 'rgb(100, 100, 100)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     const width = canvas.width / values.length;
     const max = 1 + Math.max(...values);
@@ -214,10 +231,10 @@ class Menu {
     for (const i in values) {
       const gradient = ctx.createLinearGradient(0, (max - values[i]) * height, 0, 0);
       gradient.addColorStop(0.1, 'lightblue');
-      gradient.addColorStop(0.4, 'var(--body)');
+      gradient.addColorStop(0.4, 'rgb(100, 100, 100)');
       ctx.fillStyle = gradient;
       ctx.fillRect(i * width, 0, width - 4, canvas.height);
-      ctx.fillStyle = 'black';
+      ctx.fillStyle = 'rgb(100, 100, 100)';
       ctx.font = '12px "Segoe UI"';
       ctx.fillText(Math.round(values[i]), i * width, canvas.height - 2, width);
     }
