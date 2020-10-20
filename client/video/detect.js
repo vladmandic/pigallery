@@ -49,6 +49,7 @@ async function init(config) {
   // eslint-disable-next-line no-console
   log.debug('TF Models:', definitions.models);
   // eslint-disable-next-line no-console
+  document.getElementById('status').innerText = 'loading model: Human ...';
 }
 
 async function main(config, objects) {
@@ -63,7 +64,7 @@ async function main(config, objects) {
   models.set(objects);
 
   // this is not optional as we need return canvas with filters applied
-  const res = await human.run(input, config.human, objects);
+  const res = await human.run(input, config, objects);
   if (res.canvas) input = res.canvas;
   input.className = 'canvases';
   input.style.display = 'block';

@@ -297,7 +297,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 13393,
+      "bytes": 13411,
       "imports": [
         {
           "path": "client/shared/log.js"
@@ -321,7 +321,7 @@
       ]
     },
     "client/video/detect.js": {
-      "bytes": 4594,
+      "bytes": 4664,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -355,7 +355,7 @@
       "imports": []
     },
     "client/video/human.js": {
-      "bytes": 306,
+      "bytes": 8221,
       "imports": [
         {
           "path": "../human/dist/human.esm.js"
@@ -367,7 +367,7 @@
       "imports": []
     },
     "client/video/models.js": {
-      "bytes": 5483,
+      "bytes": 5374,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -390,7 +390,7 @@
       ]
     },
     "client/video/video.js": {
-      "bytes": 10857,
+      "bytes": 10723,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js"
@@ -467,7 +467,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9627858
+      "bytes": 9627879
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -488,7 +488,7 @@
           "bytesInOutput": 994
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7719
+          "bytesInOutput": 7739
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 1949
@@ -515,12 +515,12 @@
           "bytesInOutput": 3387
         }
       },
-      "bytes": 2125016
+      "bytes": 2125036
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 10128301
+      "bytes": 10128322
     },
     "dist/index/index.js": {
       "imports": [],
@@ -544,7 +544,7 @@
           "bytesInOutput": 994
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7719
+          "bytesInOutput": 7739
         },
         "client/index/indexdb.js": {
           "bytesInOutput": 3773
@@ -595,12 +595,12 @@
           "bytesInOutput": 21572
         }
       },
-      "bytes": 2282485
+      "bytes": 2282505
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9577983
+      "bytes": 9578004
     },
     "dist/process/process.js": {
       "imports": [],
@@ -621,7 +621,7 @@
           "bytesInOutput": 994
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7719
+          "bytesInOutput": 7739
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 1949
@@ -645,12 +645,12 @@
           "bytesInOutput": 3252
         }
       },
-      "bytes": 2115946
+      "bytes": 2115966
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 447388
+      "bytes": 447409
     },
     "dist/prototype/prototype.js": {
       "imports": [],
@@ -662,7 +662,7 @@
           "bytesInOutput": 1010
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7681
+          "bytesInOutput": 7701
         },
         "client/shared/user.js": {
           "bytesInOutput": 696
@@ -671,12 +671,12 @@
           "bytesInOutput": 325
         }
       },
-      "bytes": 100830
+      "bytes": 100850
     },
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 12260927
+      "bytes": 12273332
     },
     "dist/video/video.js": {
       "imports": [],
@@ -697,7 +697,7 @@
           "bytesInOutput": 18
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 896600
+          "bytesInOutput": 896604
         },
         "client/video/draw.js": {
           "bytesInOutput": 3823
@@ -706,7 +706,7 @@
           "bytesInOutput": 1349
         },
         "node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js": {
-          "bytesInOutput": 298485
+          "bytesInOutput": 298483
         },
         "node_modules/@tensorflow/tfjs-converter/dist/tf-converter.node.js": {
           "bytesInOutput": 109908
@@ -721,16 +721,16 @@
           "bytesInOutput": 2266
         },
         "client/video/models.js": {
-          "bytesInOutput": 2911
+          "bytesInOutput": 2862
         },
         "client/video/human.js": {
-          "bytesInOutput": 179
+          "bytesInOutput": 4860
         },
         "client/video/detect.js": {
-          "bytesInOutput": 2918
+          "bytesInOutput": 2983
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7719
+          "bytesInOutput": 7739
         },
         "client/video/video.js": {
           "bytesInOutput": 54
@@ -748,10 +748,10 @@
           "bytesInOutput": 7482
         },
         "client/video/video.js": {
-          "bytesInOutput": 7437
+          "bytesInOutput": 7375
         }
       },
-      "bytes": 2615735
+      "bytes": 2620392
     },
     "dist/index/worker.js.map": {
       "imports": [],
