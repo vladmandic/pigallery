@@ -78,8 +78,8 @@ function crop(image, x, y, width, height, { color = 'white', title = null, font 
   const canvas = document.createElement('canvas', { desynchronized: true });
   canvas.width = extractSize * width / height;
   canvas.height = extractSize;
-  canvas.style.width = `${canvas.width}px`;
-  canvas.style.height = `${canvas.height}px`;
+  // canvas.style.width = `${canvas.width}px`;
+  // canvas.style.height = `${canvas.height}px`;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
   ctx.fillStyle = color;

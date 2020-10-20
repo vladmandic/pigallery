@@ -39,6 +39,7 @@
     input[type=range] { -webkit-appearance: none; }
     input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: black; border-radius: 1rem; border: 1px; }
     input[type=range]::-webkit-slider-thumb { border: 1px solid #000000; margin-top: 0.05rem; height: 0.9rem; width: 1.5rem; border-radius: 1rem; background: lightblue; cursor: pointer; -webkit-appearance: none; }
+    .canvases { pointer-events: none; position: absolute; top: 0; }
   </style>
   <!-- Script Module -->
   <script type="text/javascript" src="/dist/video/video.js"></script>
@@ -50,22 +51,20 @@
     <span onclick="location.replace('/auth')"><i id="btn-user" class="navbarbutton fad fa-user-slash"></i><p id="user">User</p></span>
     <span><i id="menu-startstop" class="navbarbutton fad fa-play-circle" title="Start & Stop Video Camera"></i><p id="btn-startstop">play</p></span>
     <span><i id="menu-facing" class="navbarbutton fad fa-sort-circle" title="Switch Camera View"></i><p id="btn-facing">front</p></span>
-    <span><i id="menu-models" class="navbarbutton fad fa-sort-circle" title="Models"></i><p id="btn-models">Models</p></span>
-    <span><i id="menu-parameters" class="navbarbutton fad fa-sort-circle" title="Parameters"></i><p id="btn-params">Parameters</p></span>
-    <span><i id="menu-filters" class="navbarbutton fad fa-sort-circle" title="Filters"></i><p id="btn-filters">Filters</p></span>
-    <span><i id="menu-display" class="navbarbutton fad fa-sort-circle" title="Display"></i><p id="btn-display">Display</p></span>
-    <span><i id="menu-performance" class="navbarbutton fad fa-sort-circle" title="Performance"></i><p id="btn-perf">Performance</p></span>
+    <span><i id="menu-models" class="navbarbutton fad fa-question-circle" title="Models"></i><p id="btn-models">Models</p></span>
+    <span><i id="menu-parameters" class="navbarbutton fad fa-info-circle" title="Parameters"></i><p id="btn-params">Parameters</p></span>
+    <span><i id="menu-display" class="navbarbutton fad fa-circle" title="Display"></i><p id="btn-display">Display</p></span>
+    <span><i id="menu-filters" class="navbarbutton fad fa-draw-circle" title="Filters"></i><p id="btn-filters">Filters</p></span>
+    <span><i id="menu-performance" class="navbarbutton fad fa-spinner" title="Performance"></i><p id="btn-perf">Performance</p></span>
   </div>
   <!-- Body -->
-  <div id="status" style="pointer-events: none; padding: 4px; position: absolute; white-space: nowrap; top: 0.2rem; overflow: hidden; width: calc(100% - 30rem)"><a href="https://github.com/vladmandic/human" target="_blank"></a></div>
-  <div id="detected" style="pointer-events: none; padding: 4px; position: absolute; white-space: nowrap; top: 1.5rem; overflow: hidden; width: calc(100% - 30rem)"></div>
-  <div id="perf" style="pointer-events: none; padding: 4px; position: absolute; white-space: nowrap; top: 2.8rem; overflow: hidden; width: calc(100% - 30rem)"></div>
+  <div id="detected" style="pointer-events: none; padding: 4px; position: absolute; white-space: nowrap; top: 0.2rem; height: fit-content; overflow: auto; overflow-wrap: break-word; white-space: normal"></div>
   <div style="display: block; position: fixed; top: 5rem; ">
+    <div id="status" style="font-size: 6rem; width: -webkit-fill-available; text-align: center; position: fixed; z-index: 50">Ready</div>
     <div id="video-start" class="fad fa-play-circle" style="font-size: 15rem; width: 100vw; text-align: center; position: fixed; top: 4rem; margin-top: 10rem; z-index: 50; cursor: pointer"></div>
     <video id="video" style="width: 100vw; position: fixed" nocontrols loop controlslist="nodownload,nofullscreen,noremoteplayback"></video>
     <div id="canvases" style="position: relative"></div>
   </div>
-  <div id="objects" style="display: flex; width: 100vw; position: fixed; background: var(--body)"></div>
   <div id="log" style="display: none; font-size: 0.9rem; overflow-y: scroll; padding: 4px; height: 12rem; position: fixed; bottom: 0; width: 99%"></div>
 </body>
 </html>

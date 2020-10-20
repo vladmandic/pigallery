@@ -10,7 +10,6 @@ window.debug = true;
 // TFJS Configuration
 const config = {
   backEnd: 'webgl',        // back-end used by tensorflow for image processing: webgl, cpu, wasm, webgpu
-  async: false,            // use async operations for prediction
   floatPrecision: true,    // use 32bit or 16bit float precision
   maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
   renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
@@ -19,7 +18,8 @@ const config = {
   registerPWA: true,       // register PWA service worker?
   facing: true,            // webcam facing front or back
   ui: {
-    overlay: false,
+    maxFrames: 10,
+    overlay: true,
     thumbnails: true,
     useDepth: true,
     drawBoxes: true,
@@ -42,10 +42,9 @@ const config = {
   detect: {
     coco: false,
     maxObjects: 10,
-    minThreshold: 0.3,
+    minThreshold: 0.7,
   },
   human: {
-    enabled: true,
     backend: 'webgl', // select tfjs backend to use
     console: true, // enable debugging output to console
     scoped: false, // enable scoped runs
@@ -172,7 +171,7 @@ window.themes = [
     name: 'Dark',
     map: 'dark',
     // body: colorHex('#555555'),
-    body: 'rgba(100, 100, 100, 0.9)',
+    body: 'rgba(100, 100, 100, 1.0)',
     background: colorHex('black'),
     foreground: colorHex('ivory'),
     text: colorHex('#ebebeb'),
