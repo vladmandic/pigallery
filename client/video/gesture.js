@@ -1,5 +1,3 @@
-/* global params */
-
 const gestures = [];
 const find = {};
 
@@ -7,14 +5,14 @@ find.body = (res) => {
   const pose = (res.body && res.body[0]) ? res.body[0] : null;
   if (!pose) return;
 
-  const leftWrist = pose.keypoints.find((a) => (a.score > params.minThreshold) && (a.part === 'leftWrist'));
-  const rightWrist = pose.keypoints.find((a) => (a.score > params.minThreshold) && (a.part === 'rightWrist'));
-  const nose = pose.keypoints.find((a) => (a.score > params.minThreshold) && (a.part === 'nose'));
+  const leftWrist = pose.keypoints.find((a) => (a.part === 'leftWrist'));
+  const rightWrist = pose.keypoints.find((a) => (a.part === 'rightWrist'));
+  const nose = pose.keypoints.find((a) => (a.part === 'nose'));
   if (nose && leftWrist && rightWrist && (leftWrist.position.y < nose.position.y) && (rightWrist.position.y < nose.position.y)) gestures.push('i give up');
   else if (nose && (leftWrist || rightWrist) && ((leftWrist?.position.y < nose.position.y) || (rightWrist?.position.y < nose.position.y))) gestures.push('raise hand');
 
-  const leftShoulder = pose.keypoints.find((a) => (a.score > params.minThreshold) && (a.part === 'leftShoulder'));
-  const rightShoulder = pose.keypoints.find((a) => (a.score > params.minThreshold) && (a.part === 'rightShoulder'));
+  const leftShoulder = pose.keypoints.find((a) => (a.part === 'leftShoulder'));
+  const rightShoulder = pose.keypoints.find((a) => (a.part === 'rightShoulder'));
   if (leftShoulder && rightShoulder) gestures.push(`leaning ${(leftShoulder.position.y > rightShoulder.position.y) ? 'left' : 'right'}`);
 };
 
