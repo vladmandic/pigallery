@@ -1,29 +1,15 @@
-/* global params */
-
 import jQuery from 'jquery';
 import panzoom from '../../assets/panzoom.js';
 import * as log from '../shared/log.js';
 import * as user from '../shared/user.js';
 import * as detect from './detect.js';
-import config from '../shared/config.js';
+import Menu from './menu.js';
+import shared from '../shared/config.js';
 
-window.params = {
-  facing: true,
-  minThreshold: 0.4,
-  maxObjects: 5,
-  quantBytes: 4,
-  skipFrames: 20,
-  async: false, // slightly faster, but atomic per-model performance and memory consumption is unreliable
-  resolution: { width: 0, height: 0 }, // if 0, use camera resolution
-  extractSize: 100, // width of extracted image, height is autocalculated
-  imageContrast: 0,
-  imageBlur: 0,
-  imageSharpness: 0,
-  imageSaturation: 0,
-  imageBrightness: 0,
-  imageHue: 0,
-  lineTension: 0.25,
-};
+const config = shared.default;
+
+// using window globals for debugging purposes
+const objects = { perf: { Frame: 0 }, models: [], canvases: [], extracted: [], detected: [], fps: [] };
 
 async function cameraStart(play = true) {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -33,11 +19,10 @@ async function cameraStart(play = true) {
     document.getElementById('video-start').classList.add('fa-times-circle');
     return;
   }
-  log.div('div', true, 'Model parameters: ', document.getElementById('menu-complex').checked ? ' full models ' : ' simple models ', params);
-  const video = document.getElementById('videocanvas');
+  const video = document.getElementById('video');
   const constraints = {
     audio: false,
-    video: { width: { ideal: window.innerWidth, max: 3840 }, height: { ideal: window.innerHeight, max: 3840 }, facingMode: params.facing ? 'user' : 'environment' },
+    video: { width: { ideal: window.innerWidth, max: 3840 }, height: { ideal: window.innerHeight, max: 3840 }, facingMode: config.facing ? 'user' : 'environment' },
   };
   // const devices = await navigator.mediaDevices.enumerateDevices();
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -45,16 +30,17 @@ async function cameraStart(play = true) {
   if (track.getCapabilities && track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: 0 });
   video.srcObject = stream;
   if (play) {
-    panzoom(document.getElementById('videocanvas'), { zoomSpeed: 0.025, minZoom: 0.5, maxZoom: 2.0 });
+    panzoom(document.getElementById('video'), { zoomSpeed: 0.025, minZoom: 0.5, maxZoom: 2.0 });
     document.getElementById('menu-startstop').classList.remove('fa-play-circle');
     document.getElementById('menu-startstop').classList.add('fa-pause-circle');
     $('#btn-startstop').text('stop');
+    // catch block for overlapping events
     video.play().then(() => {}).catch(() => {});
   }
 }
 
 async function cameraStop() {
-  const video = document.getElementById('videocanvas');
+  const video = document.getElementById('video');
   video.pause();
   const tracks = video.srcObject ? video.srcObject.getTracks() : null;
   if (tracks) tracks.forEach((track) => track.stop());
@@ -63,48 +49,30 @@ async function cameraStop() {
   $('#btn-startstop').text('play');
 }
 
+let resizeTimer;
 async function cameraResize() {
-  clearTimeout(window.resizeTimer);
-  window.resizeTimer = setTimeout(async () => {
-    const video = document.getElementById('videocanvas');
+  if (resizeTimer) clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(async () => {
+    const video = document.getElementById('video');
     const live = !video.paused && (video.srcObject ? (video.srcObject.getVideoTracks()[0].readyState === 'live') : false);
     log.div('div', true, `Resize display: ${video.offsetWidth} x ${video.offsetHeight}`);
     await cameraStop();
-    detect.clear();
-    window.canvases = [];
-    document.getElementById('drawcanvas').innerHTML = '';
+    detect.clear(objects.canvases);
+    document.getElementById('canvases').innerHTML = '';
     cameraStart(live);
   }, 200);
 }
 
-async function cameraStartStop() {
-  const video = document.getElementById('videocanvas');
+async function cameraRestart() {
+  const video = document.getElementById('video');
   const live = !video.paused && (video.srcObject ? (video.srcObject.getVideoTracks()[0].readyState === 'live') : false);
   document.getElementById('video-start').style.display = live ? 'block' : 'none';
   if (!live) await cameraStart();
   else await cameraStop();
 }
 
-async function cameraFacing() {
-  params.facing = !params.facing;
-  $('#btn-facing').text(params.facing ? 'front' : 'back');
-  const video = document.getElementById('videocanvas');
-  const live = video.srcObject ? ((video.srcObject.getVideoTracks()[0].readyState === 'live') && (video.readyState > 2) && (!video.paused)) : false;
-  await cameraStop();
-  detect.clear();
-  await cameraStart(live);
-}
-
-async function modelsReload() {
-  log.div('div', true, `Changing to ${document.getElementById('menu-complex').checked ? 'full' : 'simple'} models`);
-  window.models = [];
-  window.canvases = [];
-  window.perf = { Frame: 0 };
-  document.getElementById('drawcanvas').innerHTML = '';
-}
-
-async function cameraListen() {
-  const video = document.getElementById('videocanvas');
+async function cameraSetup() {
+  const video = document.getElementById('video');
   video.addEventListener('loadeddata', (event) => {
     const track = video.srcObject.getVideoTracks()[0];
     const settings = video.srcObject.getVideoTracks()[0].getSettings();
@@ -112,63 +80,130 @@ async function cameraListen() {
     log.debug('Camera Settings: ', settings);
     document.getElementById('objects').style.top = `${video.offsetTop + video.offsetHeight}px`;
     event.stopPropagation();
-    detect.main();
+    detect.main(config, objects);
   }, true);
 }
 
-async function initControls() {
-  document.getElementById('log').style.display = document.getElementById('menu-log').checked ? 'block' : 'none';
-  for (const el of document.getElementsByClassName('range')) el.dataset.value = el.value;
-  document.addEventListener('resize', () => cameraResize(false));
-  document.addEventListener('change', (evt) => {
-    if (evt.target.classList.contains('range')) evt.target.dataset.value = evt.target.value;
-    switch (evt.target.id) {
-      case 'menu-complex': modelsReload(); break;
-      case 'menu-objects': params.maxObjects = parseInt(evt.target.value); break;
-      case 'menu-log': $('#log').slideToggle(); break;
-      case 'menu-threshold': params.minThreshold = parseFloat(evt.target.value); break;
-      case 'menu-tension': params.lineTension = parseFloat(evt.target.value); break;
-      case 'menu-brightness': params.imageBrightness = parseFloat(evt.target.value); break;
-      case 'menu-contrast': params.imageContrast = parseFloat(evt.target.value); break;
-      case 'menu-sharpness': params.imageSharpness = parseFloat(evt.target.value); break;
-      case 'menu-blur': params.imageBlur = parseInt(evt.target.value); break;
-      case 'menu-saturation': params.imageSaturation = parseFloat(evt.target.value); break;
-      case 'menu-hue': params.imageHue = parseInt(evt.target.value); break;
-      default:
-    }
+async function menuSetup() {
+  const menuModels = new Menu(document.body, '');
+  menuModels.addLabel('Human Detection');
+  menuModels.addBool('Enabled', config.human, 'enabled');
+  menuModels.addBool('Face Detect', config.human.face, 'enabled');
+  menuModels.addBool('Face Mesh', config.human.face.mesh, 'enabled');
+  menuModels.addBool('Face Iris', config.human.face.iris, 'enabled');
+  menuModels.addBool('Face Age', config.human.face.age, 'enabled');
+  menuModels.addBool('Face Gender', config.human.face.gender, 'enabled');
+  menuModels.addBool('Face Emotion', config.human.face.emotion, 'enabled');
+  menuModels.addBool('Body Pose', config.human.body, 'enabled');
+  menuModels.addBool('Hand Pose', config.human.hand, 'enabled');
+
+  menuModels.addLabel('Object Detection');
+  menuModels.addBool('COCO Objects', config.detect, 'coco');
+
+  menuModels.addLabel('Image Detection');
+  menuModels.addBool('ImageNet', config.classify, 'imagenet');
+  menuModels.addBool('DeepDetect', config.classify, 'deepdetect');
+  menuModels.addBool('NSFW Detect', config.classify, 'nsfw');
+  menuModels.addBool('Food Items', config.classify, 'food');
+  menuModels.addBool('Nature: Plants', config.classify, 'plants');
+  menuModels.addBool('Nature: Birds', config.classify, 'birds');
+  menuModels.addBool('Nature: Insects', config.classify, 'insects');
+  menuModels.toggle();
+
+  const menuParams = new Menu(document.body, '');
+  menuParams.addRange('Max Objects', config.human.face.detector, 'maxFaces', 0, 50, 1, (val) => {
+    config.human.face.detector.maxFaces = parseInt(val);
+    config.human.body.maxDetections = parseInt(val);
+    config.human.hand.maxHands = parseInt(val);
+    config.detect.maxObjects = parseInt(val);
   });
+  menuParams.addRange('Skip Frames', config.human.face.detector, 'skipFrames', 0, 50, 1, (val) => {
+    config.human.face.detector.skipFrames = parseInt(val);
+    config.human.face.emotion.skipFrames = parseInt(val);
+    config.human.face.age.skipFrames = parseInt(val);
+    config.human.hand.skipFrames = parseInt(val);
+  });
+  menuParams.addRange('Min Confidence', config.human.face.detector, 'minConfidence', 0.0, 1.0, 0.05, (val) => {
+    config.human.face.detector.minConfidence = parseFloat(val);
+    config.human.face.emotion.minConfidence = parseFloat(val);
+    config.human.hand.minConfidence = parseFloat(val);
+  });
+  menuParams.addRange('Score Threshold', config.human.face.detector, 'scoreThreshold', 0.1, 1.0, 0.05, (val) => {
+    config.human.face.detector.scoreThreshold = parseFloat(val);
+    config.human.hand.scoreThreshold = parseFloat(val);
+    config.human.body.scoreThreshold = parseFloat(val);
+    config.detect.minThreshold = parseFloat(val);
+    config.classify.minThreshold = parseFloat(val);
+  });
+  menuParams.addRange('IOU Threshold', config.human.face.detector, 'iouThreshold', 0.1, 1.0, 0.05, (val) => {
+    config.human.face.detector.iouThreshold = parseFloat(val);
+    config.human.hand.iouThreshold = parseFloat(val);
+  });
+  menuParams.toggle();
+
+  const menuFilters = new Menu(document.body, '');
+  menuFilters.addBool('Enabled', config.human.filter, 'enabled');
+  menuFilters.addRange('Brightness', config.human.filter, 'brightness', -1.0, 1.0, 0.05, (val) => config.human.filter.brightness = parseFloat(val));
+  menuFilters.addRange('Contrast', config.human.filter, 'contrast', -1.0, 1.0, 0.05, (val) => config.human.filter.contrast = parseFloat(val));
+  menuFilters.addRange('Sharpness', config.human.filter, 'sharpness', 0, 1.0, 0.05, (val) => config.human.filter.sharpness = parseFloat(val));
+  menuFilters.addRange('Blur', config.human.filter, 'blur', 0, 20, 1, (val) => config.human.filter.blur = parseInt(val));
+  menuFilters.addRange('Saturation', config.human.filter, 'saturation', -1.0, 1.0, 0.05, (val) => config.human.filter.saturation = parseFloat(val));
+  menuFilters.addRange('Hue', config.human.filter, 'hue', 0, 360, 5, (val) => config.human.filter.hue = parseInt(val));
+  menuFilters.addRange('Pixelate', config.human.filter, 'pixelate', 0, 32, 1, (val) => config.human.filter.pixelate = parseInt(val));
+  menuFilters.addBool('negative', config.human.filter, 'negative');
+  menuFilters.addBool('sepia', config.human.filter, 'sepia');
+  menuFilters.addBool('vintage', config.human.filter, 'vintage');
+  menuFilters.addBool('kodachrome', config.human.filter, 'kodachrome');
+  menuFilters.addBool('technicolor', config.human.filter, 'technicolor');
+  menuFilters.addBool('polaroid', config.human.filter, 'polaroid');
+  menuFilters.toggle();
+
+  const menuDisplay = new Menu(document.body, '');
+  menuDisplay.addBool('Thumbnails', config.ui, 'thumbnails');
+  menuDisplay.addBool('Use 3D Depth', config.ui, 'useDepth');
+  menuDisplay.addBool('Draw Overlay', config.ui, 'overlay');
+  menuDisplay.addBool('Draw Boxes', config.ui, 'drawBoxes');
+  menuDisplay.addBool('Draw Points', config.ui, 'drawPoints');
+  menuDisplay.addBool('Draw Polygons', config.ui, 'drawPolygons');
+  menuDisplay.addBool('Fill Polygons', config.ui, 'fillPolygons');
+  menuDisplay.toggle();
+
+  const menuPerf = new Menu(document.body, '');
+  menuPerf.toggle();
+
   const click = ('ontouchstart' in window) ? 'touchstart' : 'click';
   document.addEventListener(click, (evt) => {
     switch (evt.target.id) {
-      case 'video-start': cameraStartStop(); break;
-      case 'menu-startstop': cameraStartStop(); break;
-      case 'menu-facing': cameraFacing(); break;
-      case 'menu-models':
-        $('#pull-options').hide();
-        $('#pull-models').slideToggle();
-        break;
-      case 'menu-options':
-        $('#pull-models').hide();
-        $('#pull-options').slideToggle();
-        break;
+      case 'video-start': cameraRestart(); break;
+      case 'menu-startstop': cameraRestart(); break;
+      case 'menu-facing': config.facing = !config.facing; cameraRestart(); break;
+      case 'menu-models': menuModels.toggle(evt); break;
+      case 'menu-parameters': menuParams.toggle(evt); break;
+      case 'menu-filters': menuFilters.toggle(evt); break;
+      case 'menu-display': menuDisplay.toggle(evt); break;
+      case 'menu-performance': menuPerf.toggle(evt); break;
       default:
     }
   });
 }
 
 async function main() {
-  await cameraListen();
-  await initControls();
-  // cameraStartStop();
-}
-
-async function init() {
   log.debug(window.location.href);
   window.$ = jQuery;
   await user.get();
-  await config.theme();
-  await config.done();
-  await main();
+  await shared.theme();
+  await shared.done();
+  await menuSetup();
+  await cameraSetup();
+  // cameraStartStop();
 }
 
-window.onload = init;
+window.onload = main;
+window.onresize = cameraResize;
+
+/*
+  fps from perf object?
+  human.js:run
+  classify: minconfidence
+  panzoom
+*/

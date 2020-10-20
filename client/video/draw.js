@@ -1,6 +1,5 @@
-/* global params */
-
 const defaultFont = 'small-caps 1rem "Segoe UI"';
+const extractSize = 100;
 
 function rect({ canvas = null, x = 0, y = 0, width = 0, height = 0, radius = 8, lineWidth = 2, color = 'white', title = null, font = null }) {
   if (!canvas) return;
@@ -22,7 +21,7 @@ function rect({ canvas = null, x = 0, y = 0, width = 0, height = 0, radius = 8, 
   ctx.lineWidth = 1;
   ctx.fillStyle = color;
   ctx.font = font || defaultFont;
-  if (title) ctx.fillText(title, x + 4, y + 16);
+  if (title) ctx.fillText(title, x + lineWidth, y + lineWidth + 16);
 }
 
 function point({ canvas = null, x = 0, y = 0, color = 'white', radius = 2, title = null, font = null }) {
@@ -77,8 +76,8 @@ function curve({ points = [], canvas = null, lineWidth = 2, color = 'white', tit
 
 function crop(image, x, y, width, height, { color = 'white', title = null, font = null }) {
   const canvas = document.createElement('canvas', { desynchronized: true });
-  canvas.width = params.extractSize * width / height;
-  canvas.height = params.extractSize;
+  canvas.width = extractSize * width / height;
+  canvas.height = extractSize;
   canvas.style.width = `${canvas.width}px`;
   canvas.style.height = `${canvas.height}px`;
   const ctx = canvas.getContext('2d');
