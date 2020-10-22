@@ -81,7 +81,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 33811,
+      "bytes": 36532,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -297,7 +297,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 13629,
+      "bytes": 13630,
       "imports": [
         {
           "path": "client/shared/log.js"
@@ -470,7 +470,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9414622
+      "bytes": 9414623
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -523,7 +523,7 @@
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9904179
+      "bytes": 9909884
     },
     "dist/index/index.js": {
       "imports": [],
@@ -532,10 +532,10 @@
           "bytesInOutput": 13
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 891080
+          "bytesInOutput": 891084
         },
         "../face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 1096713
+          "bytesInOutput": 1096707
         },
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 94621
@@ -595,15 +595,15 @@
           "bytesInOutput": 418
         },
         "client/index/index.js": {
-          "bytesInOutput": 21572
+          "bytesInOutput": 21818
         }
       },
-      "bytes": 2283044
+      "bytes": 2283288
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9365687
+      "bytes": 9365688
     },
     "dist/process/process.js": {
       "imports": [],
@@ -653,7 +653,7 @@
     "dist/prototype/prototype.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 438140
+      "bytes": 438141
     },
     "dist/prototype/prototype.js": {
       "imports": [],
@@ -679,7 +679,7 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 12034540
+      "bytes": 12034541
     },
     "dist/video/video.js": {
       "imports": [],

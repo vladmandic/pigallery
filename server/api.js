@@ -99,31 +99,53 @@ function api(app) {
     }
   });
 
+  let pagedData = [];
+  let pagedSize = 0;
+  let pagedCount = 0;
   app.get('/api/get', async (req, res) => {
     if (!req.query.find) {
       res.status(400).json([]);
       return;
     }
-    const data = [];
-    if (!req.session.share || req.session.share === '') {
-      const root = new RegExp(`^${req.session.root || 'media/'}`);
-      const limit = req.query.limit || global.config.server.resultsLimit;
-      const time = req.query.time ? new Date(parseInt(req.query.time)) : new Date(0);
-      const records = await global.db
-        .find({ image: root, processed: { $gte: time } })
-        .sort({ processed: -1 })
-        .limit(limit);
-      for (const record of records) data.push(record);
-      log.info(`API Get ${sign(req)} root: ${req.session.root} data:`, data.length, 'limit:', limit, 'since:', new Date(time));
-    } else {
-      const records = await global.db.findOne({ share: req.session.share });
-      for (const image of records.images) {
-        data.push(await global.db.findOne({ image }));
+    const chunks = req.query.chunks ? parseInt(req.query.chunks) : 2000;
+    const page = req.query.page ? parseInt(req.query.page) : 0;
+    if (page === 0) {
+      const data = [];
+      if (!req.session.share || req.session.share === '') {
+        const root = new RegExp(`^${req.session.root || 'media/'}`);
+        const limit = req.query.limit || global.config.server.resultsLimit;
+        const time = req.query.time ? new Date(parseInt(req.query.time)) : new Date(0);
+        const records = await global.db
+          .find({ image: root, processed: { $gte: time } })
+          .sort({ processed: -1 })
+          .limit(limit);
+        for (const i in records) data.push(records[i]);
+        log.info(`API Get ${sign(req)} root: ${req.session.root} images:`, data.length, 'limit:', limit, 'chunk:', chunks, 'since:', new Date(time));
+      } else {
+        const records = await global.db.findOne({ share: req.session.share });
+        for (const image of records.images) {
+          data.push(await global.db.findOne({ image }));
+        }
+        log.info(`API Get Share ${sign(req)} creator: ${data.creator} name: "${data.name}" key: ${data.share} images: ${data.length}`);
       }
-      log.info(`API Share Get ${sign(req)} creator: ${data.creator} name: "${data.name}" key: ${data.share} images: ${data.length}`);
+      pagedData = data;
+      pagedSize = JSON.stringify(pagedData).length;
+      pagedCount = Math.trunc((data.length + chunks) / chunks);
     }
-    res.set('content-Size', JSON.stringify(data).length);
-    res.json(data);
+    res.set('content-TotalSize', pagedSize);
+    res.set('content-Pages', pagedCount);
+    const data = [];
+    for (let i = (page * chunks); i < (page * chunks + chunks); i++) {
+      if (pagedData[i]) data.push(pagedData[i]);
+    }
+    const json = JSON.stringify(data);
+    res.send(json);
+    log.info('API Get Chunk:', 'page:', page, 'of', pagedCount, 'size:', json.length, 'total:', pagedSize);
+    if (page === pagedCount) {
+      pagedData = [];
+      pagedSize = 0;
+      pagedCount = 0;
+    }
   });
 
   app.post('/api/metadata', async (req, res) => {
