@@ -47,7 +47,7 @@
 <body style="overflow: hidden">
   <noscript><h1>You really need JS enabled...</h1></noscript>
   <!-- Menu Bar -->
-  <div id="navbar" class="row navbar text-center" style="justify-content: flex-end">
+  <div id="navbar" class="row navbar text-center">
     <span onclick="location.replace('/auth')"><i id="btn-user" class="navbarbutton fad fa-user-slash"></i><p id="user">User</p></span>
     <span><i id="menu-startstop" class="navbarbutton fad fa-play-circle" title="Start & Stop Video Camera"></i><p id="btn-startstop">play</p></span>
     <span><i id="menu-facing" class="navbarbutton fad fa-sort-circle" title="Switch Camera View"></i><p id="btn-facing">front</p></span>
@@ -57,7 +57,7 @@
     <span><i id="menu-performance" class="navbarbutton fad fa-spinner" title="Performance"></i><p id="btn-perf">Performance</p></span>
   </div>
   <!-- Body -->
-  <div id="detected" style="pointer-events: none; padding: 4px; position: absolute; white-space: nowrap; top: 0.2rem; height: fit-content; overflow: auto; overflow-wrap: break-word; white-space: normal"></div>
+  <div id="detected" style="pointer-events: none; padding: 4px; position: fixed; white-space: nowrap; z-index:99; height: fit-content; width: -webkit-fill-available; overflow: auto; overflow-wrap: break-word; white-space: normal; color: white"></div>
   <div style="display: block; position: fixed; top: 5rem; ">
     <div id="status" style="font-size: 6rem; width: -webkit-fill-available; text-align: center; position: fixed; z-index: 50">Ready</div>
     <div id="video-start" class="fad fa-play-circle" style="font-size: 15rem; width: 100vw; text-align: center; position: fixed; top: 4rem; margin-top: 10rem; z-index: 50; cursor: pointer"></div>

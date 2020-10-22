@@ -81,7 +81,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 34038,
+      "bytes": 33811,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -297,7 +297,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 13411,
+      "bytes": 13426,
       "imports": [
         {
           "path": "client/shared/log.js"
@@ -321,7 +321,7 @@
       ]
     },
     "client/video/detect.js": {
-      "bytes": 5853,
+      "bytes": 5875,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -366,7 +366,7 @@
       ]
     },
     "client/video/menu.js": {
-      "bytes": 10103,
+      "bytes": 10337,
       "imports": []
     },
     "client/video/models.js": {
@@ -393,7 +393,7 @@
       ]
     },
     "client/video/video.js": {
-      "bytes": 10866,
+      "bytes": 10817,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js"
@@ -470,7 +470,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9414302
+      "bytes": 9414328
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -491,7 +491,7 @@
           "bytesInOutput": 989
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7734
+          "bytesInOutput": 7741
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 1944
@@ -518,12 +518,12 @@
           "bytesInOutput": 3387
         }
       },
-      "bytes": 2125126
+      "bytes": 2125133
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9903860
+      "bytes": 9903424
     },
     "dist/index/index.js": {
       "imports": [],
@@ -547,7 +547,7 @@
           "bytesInOutput": 989
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7734
+          "bytesInOutput": 7741
         },
         "client/index/indexdb.js": {
           "bytesInOutput": 3768
@@ -598,12 +598,12 @@
           "bytesInOutput": 21572
         }
       },
-      "bytes": 2282559
+      "bytes": 2282566
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9365367
+      "bytes": 9365393
     },
     "dist/process/process.js": {
       "imports": [],
@@ -624,7 +624,7 @@
           "bytesInOutput": 989
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7734
+          "bytesInOutput": 7741
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 1944
@@ -648,12 +648,12 @@
           "bytesInOutput": 3252
         }
       },
-      "bytes": 2116056
+      "bytes": 2116063
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 437820
+      "bytes": 437846
     },
     "dist/prototype/prototype.js": {
       "imports": [],
@@ -665,7 +665,7 @@
           "bytesInOutput": 1005
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7696
+          "bytesInOutput": 7703
         },
         "client/shared/user.js": {
           "bytesInOutput": 692
@@ -674,12 +674,12 @@
           "bytesInOutput": 325
         }
       },
-      "bytes": 100960
+      "bytes": 100967
     },
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 12033949
+      "bytes": 12034246
     },
     "dist/video/video.js": {
       "imports": [],
@@ -730,10 +730,10 @@
           "bytesInOutput": 4868
         },
         "client/video/detect.js": {
-          "bytesInOutput": 3758
+          "bytesInOutput": 3771
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7735
+          "bytesInOutput": 7742
         },
         "client/video/video.js": {
           "bytesInOutput": 54
@@ -748,13 +748,13 @@
           "bytesInOutput": 18
         },
         "client/video/menu.js": {
-          "bytesInOutput": 7646
+          "bytesInOutput": 7883
         },
         "client/video/video.js": {
-          "bytesInOutput": 8007
+          "bytesInOutput": 7952
         }
       },
-      "bytes": 2622089
+      "bytes": 2622291
     },
     "dist/index/worker.js.map": {
       "imports": [],

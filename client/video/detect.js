@@ -119,7 +119,7 @@ async function main(config, objects) {
       if (val >= 10 && key !== 'total') objects.perf[`Human:${key}`] = val;
     }
   }
-  document.getElementById('detected').innerText = `Detected: ${log.str([...objects.detected, ...gestures])}`;
+  document.getElementById('detected').innerText = config.ui.text ? `Detected: ${log.str([...objects.detected, ...gestures])}` : '';
   document.getElementById('status').innerText = '';
   objects.perf.Total = Math.trunc(t1 - t0);
   objects.perf.Memory = Math.trunc(tf.memory().numBytes / 1024 / 1024).toLocaleString();

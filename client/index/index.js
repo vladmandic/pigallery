@@ -715,13 +715,6 @@ async function initMenuHandlers() {
   $('#btn-video').on('click', async () => {
     showNavbar($('#iframe'));
     $('#iframe').attr('src', '/video');
-    // if ($('#video').css('display') === 'none') video.init();
-    // else video.stop();
-    // await showNavbar($('#video'));
-    // 'media/Samples/Videos/video-appartment.mp4'
-    // 'media/Samples/Videos/video-jen.mp4'
-    // 'media/Samples/Videos/video-dash.mp4'
-    // 'media/Samples/Videos/video-r1.mp4'
   });
 
   // navbar images number
@@ -732,7 +725,6 @@ async function initMenuHandlers() {
   });
 
   $('#btn-number').on('mouseover', async () => { /**/ });
-  await config.done();
 }
 
 async function hashChange(evt) {
@@ -827,10 +819,13 @@ async function main() {
   await resizeViewport();
   await perfDetails();
   await list.resize();
-  await sortResults(window.options.listSortOrder);
 
-  await initSharesHandler();
+  // init main menu
   await initMenuHandlers();
+  // load images
+  await sortResults(window.options.listSortOrder);
+  // init sidebar only after images are loaded
+  await initSharesHandler();
   await initSidebarHandlers();
 
   // log.debug('TensorFlow/JS', tf.version_core);
@@ -842,6 +837,7 @@ async function main() {
     log.div('log', true, 'Ready: ', stats.ready, 'ms');
     log.server('Stats: ', stats);
   }
+  await config.done();
 }
 
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
