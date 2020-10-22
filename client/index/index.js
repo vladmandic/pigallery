@@ -898,4 +898,3 @@ async function main() {
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
 window.onhashchange = (evt) => hashChange(evt);
 window.onload = main;
-console.log('blaa');

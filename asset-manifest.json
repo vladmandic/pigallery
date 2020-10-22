@@ -8,14 +8,6 @@
       "bytes": 1118695,
       "imports": []
     },
-    "assets/color-thief.umd.js": {
-      "bytes": 6926,
-      "imports": []
-    },
-    "assets/marked.esm.js": {
-      "bytes": 64471,
-      "imports": []
-    },
     "assets/panzoom.js": {
       "bytes": 47577,
       "imports": []
@@ -55,146 +47,9 @@
         }
       ]
     },
-    "client/index/details.js": {
-      "bytes": 18109,
-      "imports": [
-        {
-          "path": "node_modules/moment/moment.js"
-        },
-        {
-          "path": "assets/color-thief.umd.js"
-        },
-        {
-          "path": "client/index/iv-viewer.js"
-        },
-        {
-          "path": "client/shared/log.js"
-        }
-      ]
-    },
-    "client/index/enumerate.js": {
-      "bytes": 6304,
-      "imports": [
-        {
-          "path": "client/shared/log.js"
-        }
-      ]
-    },
     "client/index/index.js": {
-      "bytes": 36364,
-      "imports": [
-        {
-          "path": "node_modules/jquery/dist/jquery.js"
-        },
-        {
-          "path": "assets/marked.esm.js"
-        },
-        {
-          "path": "client/shared/config.js"
-        },
-        {
-          "path": "client/index/indexdb.js"
-        },
-        {
-          "path": "client/index/details.js"
-        },
-        {
-          "path": "client/shared/blockhash.js"
-        },
-        {
-          "path": "client/shared/user.js"
-        },
-        {
-          "path": "client/index/list.js"
-        },
-        {
-          "path": "client/shared/log.js"
-        },
-        {
-          "path": "client/index/map.js"
-        },
-        {
-          "path": "client/index/enumerate.js"
-        },
-        {
-          "path": "client/index/options.js"
-        },
-        {
-          "path": "client/index/pwa-register.js"
-        }
-      ]
-    },
-    "client/index/indexdb.js": {
-      "bytes": 6012,
-      "imports": [
-        {
-          "path": "client/shared/log.js"
-        }
-      ]
-    },
-    "client/index/iv-viewer.js": {
-      "bytes": 46696,
+      "bytes": 0,
       "imports": []
-    },
-    "client/index/list.js": {
-      "bytes": 8623,
-      "imports": [
-        {
-          "path": "node_modules/moment/moment.js"
-        },
-        {
-          "path": "client/index/details.js"
-        },
-        {
-          "path": "client/shared/log.js"
-        }
-      ]
-    },
-    "client/index/map.js": {
-      "bytes": 3219,
-      "imports": [
-        {
-          "path": "client/index/indexdb.js"
-        },
-        {
-          "path": "client/shared/log.js"
-        },
-        {
-          "path": "client/index/nearest.js"
-        },
-        {
-          "path": "client/index/list.js"
-        }
-      ]
-    },
-    "client/index/nearest.js": {
-      "bytes": 3046,
-      "imports": []
-    },
-    "client/index/options.js": {
-      "bytes": 7483,
-      "imports": [
-        {
-          "path": "client/shared/log.js"
-        },
-        {
-          "path": "client/index/list.js"
-        },
-        {
-          "path": "client/shared/config.js"
-        },
-        {
-          "path": "client/shared/models.js"
-        }
-      ]
-    },
-    "client/index/pwa-register.js": {
-      "bytes": 1395,
-      "imports": [
-        {
-          "path": "client/shared/log.js"
-        }
-      ]
     },
     "client/index/pwa-serviceworker.js": {
       "bytes": 3003,
@@ -451,10 +306,6 @@
       "bytes": 287630,
       "imports": []
     },
-    "node_modules/moment/moment.js": {
-      "bytes": 173902,
-      "imports": []
-    },
     "empty:/home/vlado/dev/pigallery/node_modules/node-fetch/browser.js": {
       "bytes": 0,
       "imports": []
@@ -517,73 +368,12 @@
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 1074214
+      "bytes": 93
     },
     "dist/index/index.js": {
       "imports": [],
-      "inputs": {
-        "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 219594
-        },
-        "assets/marked.esm.js": {
-          "bytesInOutput": 61174
-        },
-        "client/shared/log.js": {
-          "bytesInOutput": 1577
-        },
-        "client/shared/config.js": {
-          "bytesInOutput": 11461
-        },
-        "client/index/indexdb.js": {
-          "bytesInOutput": 6195
-        },
-        "node_modules/moment/moment.js": {
-          "bytesInOutput": 134418
-        },
-        "assets/color-thief.umd.js": {
-          "bytesInOutput": 11533
-        },
-        "client/index/iv-viewer.js": {
-          "bytesInOutput": 44519
-        },
-        "client/index/details.js": {
-          "bytesInOutput": 16954
-        },
-        "client/shared/blockhash.js": {
-          "bytesInOutput": 5605
-        },
-        "client/shared/user.js": {
-          "bytesInOutput": 947
-        },
-        "client/index/list.js": {
-          "bytesInOutput": 8580
-        },
-        "client/index/nearest.js": {
-          "bytesInOutput": 3229
-        },
-        "client/index/map.js": {
-          "bytesInOutput": 3088
-        },
-        "client/index/enumerate.js": {
-          "bytesInOutput": 6507
-        },
-        "client/shared/models.js": {
-          "bytesInOutput": 2728
-        },
-        "client/index/options.js": {
-          "bytesInOutput": 7236
-        },
-        "client/index/pwa-register.js": {
-          "bytesInOutput": 1540
-        },
-        "client/index/index.js": {
-          "bytesInOutput": 786
-        },
-        "client/index/index.js": {
-          "bytesInOutput": 29859
-        }
-      },
-      "bytes": 579366
+      "inputs": {},
+      "bytes": 34
     },
     "dist/process/process.js.map": {
       "imports": [],
