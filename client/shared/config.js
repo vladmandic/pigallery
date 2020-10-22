@@ -209,6 +209,9 @@ window.options = {
   get cacheModels() { return localStorage.getItem('cacheModels') ? localStorage.getItem('cacheModels') === 'true' : true; },
   set cacheModels(val) { return localStorage.setItem('cacheModels', val); },
 
+  get cacheAssets() { return localStorage.getItem('cacheAssets') ? localStorage.getItem('cacheAssets') === 'true' : true; },
+  set cacheAssets(val) { return localStorage.setItem('cacheAssets', val); },
+
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
   set listFolders(val) { return localStorage.setItem('listFolders', val); },
 

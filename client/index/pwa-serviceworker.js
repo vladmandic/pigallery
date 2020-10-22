@@ -3,6 +3,8 @@
 const cacheName = 'pigallery';
 const cacheFiles = ['/favicon.ico', '/manifest.json', '/client/offline.html']; // assets and models are cached on first access
 let cacheModels = false;
+let cacheAssets = false;
+
 let listening = false;
 const stats = { hit: 0, miss: 0 };
 const skip = false;
@@ -24,7 +26,7 @@ async function cached(evt) {
 
   if (found && found.type === 'basic' && found.ok) {
     const clone = found.clone();
-    if (evt.request.url.includes('/assets/')) evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
+    if (cacheAssets && evt.request.url.includes('/assets/')) evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
     if (cacheModels && evt.request.url.includes('/models/')) evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
   }
 
@@ -44,7 +46,8 @@ function refresh() {
 if (!listening) {
   self.addEventListener('message', (evt) => {
     if (evt.data.key === 'cacheModels') cacheModels = evt.data.val;
-    else console.log(ts(), 'PWA event message:', evt);
+    if (evt.data.key === 'cacheAssets') cacheAssets = evt.data.val;
+    console.log(ts(), 'PWA event message:', evt.data);
   });
 
   self.addEventListener('install', (evt) => {
