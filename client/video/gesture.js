@@ -9,7 +9,7 @@ find.body = (res) => {
   const rightWrist = pose.keypoints.find((a) => (a.part === 'rightWrist'));
   const nose = pose.keypoints.find((a) => (a.part === 'nose'));
   if (nose && leftWrist && rightWrist && (leftWrist.position.y < nose.position.y) && (rightWrist.position.y < nose.position.y)) gestures.push('i give up');
-  else if (nose && (leftWrist || rightWrist) && ((leftWrist?.position.y < nose.position.y) || (rightWrist?.position.y < nose.position.y))) gestures.push('raise hand');
+  else if (nose && (leftWrist || rightWrist) && ((leftWrist.position.y < nose.position.y) || (rightWrist.position.y < nose.position.y))) gestures.push('raise hand');
 
   const leftShoulder = pose.keypoints.find((a) => (a.part === 'leftShoulder'));
   const rightShoulder = pose.keypoints.find((a) => (a.part === 'rightShoulder'));
