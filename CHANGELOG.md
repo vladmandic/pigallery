@@ -1,9 +1,14 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/10/20 mandic00@live.com
-- work on video module
+### **HEAD -> master** 2020/10/22 mandic00@live.com
 
-### **origin/master, origin/HEAD** 2020/10/20 mandic00@live.com
+### **origin/master, origin/HEAD** 2020/10/22 mandic00@live.com
+- rebuild
+
+### **2.2.1** 2020/10/20 mandic00@live.com
+- work on video modules
+- work on video module
+- work on video player
 - redo video moduls
 
 ### **2.1.9** 2020/10/14 mandic00@live.com

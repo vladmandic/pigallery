@@ -19,7 +19,7 @@ const pwa = require('./pwa-register.js');
 // global variables
 window.$ = jQuery;
 window.filtered = [];
-const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, size: 0, speed: 0, store: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0 };
+const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, store: 0, size: 0, speed: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0 };
 
 async function busy(text) {
   if (text) {
@@ -313,37 +313,77 @@ async function findDuplicates() {
   worker.postMessage(all);
 }
 
-async function fetchChunks(response) {
+/*
+async function fetchChunks(url, since, limit) {
+  log.debug('Download request:', since, limit);
+  const response = await fetch(`${url}&limit=${limit}&time=${since}&chunks=1000`);
+  if (!response || !response.ok) return {};
   const t0 = window.performance.now();
   const reader = response.body.getReader();
   const size = parseInt(response.headers.get('content-Size') || response.headers.get('content-Length'));
-  let received = 0;
+  log.debug('Download start:', size);
+  let chunksTotal = 0;
+  let chunksCurrent = 0;
   const chunks = [];
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-    received += value.length;
+  let chunk = { done: false };
+  let json = {};
+  while (!chunk.done) {
+    chunk = await reader.read();
+    // chunk delimiter is 00 00 00, break if no data to read or chunk lenght < 3 bytes
+    const end = chunk.done ? true : chunk.value.find((val, i, arr) => ((arr.lenght < 3) || (val === 0) && (arr[i + 1] === 0) && (arr[i + 2] === 0))) === 0;
+    console.log('received', chunksTotal, end);
+    if (chunk.value) {
+      chunks.push(chunk.value);
+      chunksTotal += chunk.value.length;
+      chunksCurrent += chunk.value.length;
+    }
     const t1 = window.performance.now();
-    const perf = Math.round(received / (t1 - t0));
-    const progress = Math.round(100 * received / size);
-    $('#progress').html(`Downloading ${progress}%:<br>${received.toLocaleString()} / ${size.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+    const perf = Math.round(chunksTotal / (t1 - t0));
+    const progress = Math.round(100 * chunksTotal / size);
+    $('#progress').html(`Downloading ${progress}%:<br>${chunksTotal.toLocaleString()} / ${size.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+    if (end) {
+      $('#progress').html(`Parsing ${progress}%:<br>${chunksTotal.toLocaleString()} / ${size.toLocaleString()} bytes<br>parsing received data`);
+      console.log('parsing', chunksCurrent);
+      const all = new Uint8Array(chunksCurrent);
+      let position = 0;
+      for (const item of chunks) {
+        all.set(item, position);
+        position += item.length;
+      }
+      const result = new TextDecoder().decode(all);
+      console.log(result);
+      json = JSON.parse(result.substr(0, result.length - 3));
+      $('#progress').text('Indexing');
+      await db.store(json);
+      chunks.lenght = 0;
+      chunksCurrent = 0;
+    }
+    if (chunk.done) break;
   }
   $('#progress').html(`Download complete<br>${size.toLocaleString()} bytes`);
+  /*
   const all = new Uint8Array(received);
   let position = 0;
-  for (const chunk of chunks) {
+  for (chunk of chunks) {
     all.set(chunk, position);
     position += chunk.length;
   }
-  const result = new TextDecoder('utf-8').decode(all);
+  const result = new TextDecoder().decode(all);
   const json = JSON.parse(result);
+  $('#progress').text('Indexing');
+  await db.store(json);
+  // stats.load = Math.floor(t1 - t0);
+  // const t2 = window.performance.now();
+  // stats.store = Math.floor(t2 - t1);
+
   return json;
 }
+*/
 
 // loads imagesm, displays gallery and enumerates sidebar
 async function loadGallery(limit, refresh = false) {
+  const chunkSize = 200;
+  const cached = await db.count();
   if (window.share) return;
   if (!window.user.user) return;
   $('#progress').text('Requesting');
@@ -360,33 +400,52 @@ async function loadGallery(limit, refresh = false) {
   }
   const updated = new Date().getTime();
   const since = refresh ? window.options.lastUpdated : 0;
-  const res = await fetch(`/api/get?find=all&limit=${limit}&time=${since}`);
-  let json = [];
-  // if (res && res.ok) json = await res.json();
-  if (res && res.ok) json = await fetchChunks(res);
-
+  const first = await fetch(`/api/get?find=all&limit=${limit}&time=${since}&chunks=${chunkSize}&page=0`);
+  if (!first || !first.ok) return;
+  const totalSize = parseFloat(first.headers.get('content-TotalSize'));
+  const pages = parseInt(first.headers.get('content-Pages'));
+  const json0 = await first.json();
+  let dlSize = JSON.stringify(json0).length;
+  db.store(json0);
+  const promisesReq = [];
+  const promisesData = [];
+  let progress = Math.min(100, Math.round(100 * dlSize / totalSize));
+  let perf = Math.round(dlSize / (performance.now() - t0));
+  $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+  for (let page = 1; page < pages; page++) {
+    const promise = fetch(`/api/get?find=all&limit=${limit}&time=${since}&chunks=${chunkSize}&page=${page}`);
+    promisesReq.push(promise);
+    promise.then((result) => {
+      const req = result.json();
+      promisesData.push(req);
+      req.then(async (json) => {
+        dlSize += JSON.stringify(json).length;
+        progress = Math.min(100, Math.round(100 * dlSize / totalSize));
+        perf = Math.round(dlSize / (performance.now() - t0));
+        const t2 = performance.now();
+        await db.store(json);
+        const t3 = performance.now();
+        stats.store += t3 - t2;
+        log.debug('Donwloading', `page:${page} progress:${progress}% bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
+        if (progress === 100) $('#progress').html(`Creating cache<br>${totalSize.toLocaleString()} bytes`);
+        else $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+      });
+    });
+  }
+  await Promise.all(promisesReq);
+  await Promise.all(promisesData);
   const t1 = window.performance.now();
-  stats.load = Math.floor(t1 - t0);
-  $('#progress').text('Indexing');
-  await db.store(json);
-  const t2 = window.performance.now();
-  stats.store = Math.floor(t2 - t1);
-  if (window.debug) {
-    const size = JSON.stringify(json).length;
-    stats.size = size;
-    stats.speed = Math.round(size / (t1 - t0));
-    log.debug(t0, 'Cache download:', json.length, `images ${size.toLocaleString()} bytes ${Math.round(size / (t1 - t0)).toLocaleString()} KB/sec`);
-  } else {
-    // eslint-disable-next-line no-lonely-if
-    if (!refresh) log.div('log', true, `Downloaded cache: ${await db.count()} images in ${Math.round(t1 - t0).toLocaleString()} ms stored in ${Math.round(t2 - t1).toLocaleString()} ms`);
-  }
-  if (refresh && (json.length > 0)) {
-    // const dt = window.options.lastUpdated === 0 ? 'start' : moment(window.options.lastUpdated).format('YYYY-MM-DD HH:mm:ss');
-    const dt = window.options.lastUpdated === 0 ? 'start' : new Date(window.options.lastUpdated).toLocaleDateString();
-    log.div('log', true, `Refreshed cache: ${json.length} images updated since ${dt}`);
-  }
+
+  const dt = window.options.lastUpdated === 0 ? 'start' : new Date(window.options.lastUpdated).toLocaleDateString();
+  const current = await db.count();
+  perf = (current - cached) > 0 ? `performance: ${Math.round(dlSize / (t1 - t0)).toLocaleString()} KB/sec ` : '';
+  log.div('log', true, `Download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${perf}updated since ${dt}`);
   // window.filtered = await db.all();
   window.options.lastUpdated = updated;
+  stats.size = dlSize;
+  stats.load = Math.round(t1 - t0);
+  stats.store = Math.round(stats.store);
+  stats.speed = Math.round(dlSize / (t1 - t0 - stats.store));
   $('#progress').text('Almost done');
   if (!refresh) sortResults(window.options.listSortOrder);
 }

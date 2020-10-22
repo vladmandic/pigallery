@@ -233,7 +233,7 @@ window.options = {
   get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 180); },
   set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
 
-  get listLimit() { return parseInt(localStorage.getItem('listLimit') || 10000); },
+  get listLimit() { return parseInt(localStorage.getItem('listLimit') || 100000); },
   set listLimit(val) { return localStorage.setItem('listLimit', val); },
 
   get viewDetails() { return localStorage.getItem('viewDetails') ? localStorage.getItem('viewDetails') === 'true' : true; },
