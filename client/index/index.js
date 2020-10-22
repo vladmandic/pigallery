@@ -288,7 +288,7 @@ async function sortResults(sort) {
   enumerate.enumerate().then(() => folderHandlers());
   stats.enumerate = Math.floor(window.performance.now() - t1);
   list.scroll();
-  log.div('log', true, 'Displaying: ', window.filtered.length, ' images');
+  // log.div('log', true, 'Displaying: ', window.filtered.length, ' images');
   busy();
 }
 
@@ -883,15 +883,15 @@ async function main() {
   await initSharesHandler();
   await initSidebarHandlers();
 
-  // log.debug('TensorFlow/JS', tf.version_core);
   stats.images = window.filtered.length;
   stats.ready = Math.floor(window.performance.now() - t0);
+  stats.pageMode = parent.location.href === location.href ? 'Standalone' : 'Frame';
+  stats.appMode = matchMedia('(display-mode: standalone)').matches ? 'Standalone' : 'Browser';
+
   const cache = caches ? await caches.open('pigallery') : null;
   stats.cache = cache ? (await cache.matchAll()).length : 0;
-  if (window.filtered.length > 0) {
-    log.div('log', true, 'Ready: ', stats.ready, 'ms');
-    log.server('Stats: ', stats);
-  }
+  log.div('log', true, 'Ready: ', stats.ready, 'ms');
+  log.server('Stats: ', stats);
   await config.done();
 }
 

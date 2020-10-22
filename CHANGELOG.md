@@ -1,10 +1,12 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/10/22 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/10/22 mandic00@live.com
+
+### **2.2.2** 2020/10/22 mandic00@live.com
+- reduces bundle dependencies
 - implemented paged fetch
 - pwa caching
-
-### **origin/master, origin/HEAD** 2020/10/22 mandic00@live.com
+- mobile optimizations
 - rebuild
 
 ### **2.2.1** 2020/10/20 mandic00@live.com
