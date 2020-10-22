@@ -38,42 +38,10 @@ function createCSS() {
   document.getElementsByTagName('head')[0].appendChild(el);
 }
 
-function createMenu(parent, title = '', position = { top: null, left: null, bottom: null, right: null }) {
-  const el = document.createElement('div');
-  el.id = `menu-${instance}`;
-  el.className = 'menu';
-  if (position) {
-    if (position.top) el.style.top = position.top;
-    if (position.bottom) el.style.bottom = position.bottom;
-    if (position.left) el.style.left = position.left;
-    if (position.right) el.style.right = position.right;
-  }
-
-  const elContainer = document.createElement('div');
-  elContainer.id = `menu-container-${instance}`;
-  elContainer.className = 'menu-container menu-container-fadein';
-
-  if (title !== '') {
-    const elTitle = document.createElement('div');
-    elTitle.className = 'menu-title';
-    elTitle.id = `menu-title-${instance}`;
-    elTitle.innerHTML = title;
-    el.appendChild(elTitle);
-    elTitle.addEventListener('click', () => {
-      elContainer.classList.toggle('menu-container-fadeout');
-      elContainer.classList.toggle('menu-container-fadein');
-    });
-  }
-  el.appendChild(elContainer);
-  if (typeof parent === 'object') parent.appendChild(el);
-  else document.getElementById(parent).appendChild(el);
-  return [el, elContainer];
-}
-
 class Menu {
   constructor(parent, title, position) {
     createCSS();
-    [this.menu, this.container] = createMenu(parent, title, position);
+    this.createMenu(parent, title, position);
     this.id = 0;
     this.instance = instance;
     instance++;
@@ -81,6 +49,37 @@ class Menu {
     this.hidden = 0;
     this.chartFGcolor = 'lightblue';
     this.chartBGcolor = 'lightgray';
+  }
+
+  createMenu(parent, title = '', position = { top: null, left: null, bottom: null, right: null }) {
+    this.menu = document.createElement('div');
+    this.menu.id = `menu-${instance}`;
+    this.menu.className = 'menu';
+    if (position) {
+      if (position.top) this.menu.style.top = position.top;
+      if (position.bottom) this.menu.style.bottom = position.bottom;
+      if (position.left) this.menu.style.left = position.left;
+      if (position.right) this.menu.style.right = position.right;
+    }
+
+    this.container = document.createElement('div');
+    this.container.id = `menu-container-${instance}`;
+    this.container.className = 'menu-container menu-container-fadein';
+
+    if (title !== '') {
+      const elTitle = document.createElement('div');
+      elTitle.className = 'menu-title';
+      elTitle.id = `menu-title-${instance}`;
+      elTitle.innerHTML = title;
+      this.menu.appendChild(elTitle);
+      elTitle.addEventListener('click', () => {
+        this.container.classList.toggle('menu-container-fadeout');
+        this.container.classList.toggle('menu-container-fadein');
+      });
+    }
+    this.menu.appendChild(this.container);
+    if (typeof parent === 'object') parent.appendChild(this.menu);
+    else document.getElementById(parent).appendChild(this.menu);
   }
 
   get newID() {
@@ -114,9 +113,11 @@ class Menu {
   toggle(evt) {
     this.container.classList.toggle('menu-container-fadeout');
     this.container.classList.toggle('menu-container-fadein');
-    if (this.container.classList.contains('menu-container-fadein')) {
-      if (evt && evt.x) this.menu.style.left = `${evt.x - 105}px`;
-      if (evt && evt.y) this.menu.style.top = '5rem'; // `${evt.y + 55}px`;
+    if (this.container.classList.contains('menu-container-fadein') && evt) {
+      const x = evt.x || (evt.touches && evt.touches[0] ? evt.touches[0].pageX : null);
+      const y = evt.y || (evt.touches && evt.touches[0] ? evt.touches[0].pageY : null);
+      if (x) this.menu.style.left = `${x - 105}px`;
+      if (y) this.menu.style.top = '5rem'; // `${evt.y + 55}px`;
       if (this.menu.offsetLeft < 0) this.menu.style.left = 0;
       if ((this.menu.offsetLeft + this.menu.offsetWidth) > window.innerWidth) {
         this.menu.style.left = null;

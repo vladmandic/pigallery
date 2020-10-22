@@ -70,7 +70,7 @@ p { margin: 0; }
 .docs { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; border: none; }
 .iframe { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 0; z-index: 10; display: none; border: none; }
 .btn-close { float: right; }
-.install { font-size: 0.8rem; font-weight: bold; background: var(--foreground); color: black; position: relative; width: fit-content; float: right; padding: 4px; text-align: center; cursor: pointer; z-index: 90; display: none; }
+.install { font-size: 0.8rem; font-weight: bold; background: var(--foreground); color: black; position: fixed; bottom: 0; right: 0; width: fit-content; padding: 4px; text-align: center; cursor: pointer; z-index: 1; display: none; }
 .video { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
 .video-label { margin: 0; margin-right: 10px; display: block; }
 .video-models { margin-right: 10px; }
