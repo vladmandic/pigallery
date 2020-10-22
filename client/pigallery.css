@@ -15,7 +15,7 @@ a:hover { color: var(--link); text-decoration: none; }
 p { margin: 0; }
 .row { width: 100%; margin: 0; align-content: start; }
 .col { text-align: left; margin: 0.5rem; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
-.log { width: 100vw; height: 4rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; }
+.log { width: 100vw; height: 4rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; pointer-events: none; }
 .popper { padding: 8px; background: var(--text); color: var(--body); box-shadow: 2px 2px var(--background); border-radius: 4px; z-index: 50; }
 .navbar { background: var(--body); height: 5rem; top: 0; position: sticky; }
 .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); opacity: 0.1; }
@@ -70,7 +70,7 @@ p { margin: 0; }
 .docs { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; border: none; }
 .iframe { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 0; z-index: 10; display: none; border: none; }
 .btn-close { float: right; }
-.install { font-size: 0.8rem; font-weight: bold; background: var(--foreground); color: black; position: fixed; bottom: 0; right: 0; width: fit-content; padding: 4px; text-align: center; cursor: pointer; z-index: 1; display: none; }
+.install { font-size: 0.8rem; font-weight: bold; background: var(--foreground); color: black; position: fixed; bottom: 0; right: 0; width: fit-content; padding: 6px 23px 4px 4px; text-align: center; cursor: pointer; z-index: 1; display: none; }
 .video { background: var(--body); height: 87vh; color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
 .video-label { margin: 0; margin-right: 10px; display: block; }
 .video-models { margin-right: 10px; }

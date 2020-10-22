@@ -281,7 +281,8 @@ window.options = {
 
 async function initTheme() {
   window.theme = window.themes[window.options.theme];
-  log.debug(null, `Theme: ${window.theme?.name}`);
+  if (!window.theme) return;
+  log.debug(null, `Theme: ${window.theme.name}`);
   document.documentElement.style.setProperty('--body', window.theme.body);
   document.documentElement.style.setProperty('--background', window.theme.background);
   document.documentElement.style.setProperty('--gradient', window.theme.gradient);
@@ -296,7 +297,9 @@ async function initTheme() {
 
 async function doneLoading() {
   // $('.navbarbutton').css('opacity', 1);
-  log.debug(parent.location.href === location.href ? 'Running in standalone mode' : 'Running in frame');
+  log.debug(parent.location.href === location.href ? 'Page mode: Standalone' : 'Page mode: Standalone');
+  log.debug(matchMedia('(display-mode: standalone)').matches ? 'App mode: Standalone' : 'App mode: Browser');
+
   $('.navbarbutton').animate({ opacity: 1.0 }, 1000);
   $('#btn-user').prop('title', '');
   if (parent.location.href !== location.href) {

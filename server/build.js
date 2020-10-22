@@ -66,12 +66,13 @@ async function compile() {
   for (const dir of dirs) {
     if (fs.lstatSync(`${root}/${dir}`).isDirectory() && fs.existsSync(`${root}/${dir}/${dir}.js`)) files.push(`${root}/${dir}/${dir}.js`);
   }
+  log.data('Build sources:', files, jsFiles);
   try {
     const t0 = process.hrtime.bigint();
     await service.build({
       entryPoints: [...files, ...jsFiles],
       outdir: './dist',
-      minify: true,
+      minify: false,
       bundle: true,
       sourcemap: true,
       external: ['fs', 'crypto', 'util', 'string_decoder'],

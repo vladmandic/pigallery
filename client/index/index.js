@@ -1,5 +1,3 @@
-window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
-window.faceapi = require('@vladmandic/face-api');
 const jQuery = require('jquery');
 const marked = require('../../assets/marked.esm.js').default;
 const config = require('../shared/config.js');
@@ -13,8 +11,6 @@ const map = require('./map.js');
 const enumerate = require('./enumerate.js');
 const options = require('./options.js');
 const pwa = require('./pwa-register.js');
-// const video = require('../video/video.js');
-// const process = require('../process/process.js');
 
 // global variables
 window.$ = jQuery;
@@ -180,6 +176,10 @@ async function simmilarImage(image) {
 }
 
 async function simmilarPerson(image) {
+  function euclideanDistance(desc1, desc2) {
+    if (desc1.length !== desc2.length) return 0;
+    return Math.sqrt(desc1.map((val, i) => val - desc2[i]).reduce((res, diff) => res + (diff ** 2), 0));
+  }
   busy('Searching for<br>simmilar people');
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
@@ -192,7 +192,7 @@ async function simmilarPerson(image) {
   }
   for (const i in window.filtered) {
     const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
-    window.filtered[i].simmilarity = target ? Math.round(100 * window.faceapi.euclideanDistance(target, descriptor)) : 100;
+    window.filtered[i].simmilarity = target ? Math.round(100 * euclideanDistance(target, descriptor)) : 100;
   }
   window.filtered = window.filtered
     .filter((a) => ((a.person && a.person[0]) && (a.simmilarity < 55) && (a.person[0].gender === object.person[0].gender)))
@@ -840,13 +840,9 @@ async function perfDetails() {
 async function installable(evt) {
   evt.preventDefault();
   const deferredPrompt = evt;
-  document.getElementById('install').style.display = 'block';
+  // show only if not yet installed
+  if (!matchMedia('(display-mode: standalone)').matches) document.getElementById('install').style.display = 'block';
   document.getElementById('install').addEventListener('click', () => {
-    document.getElementById('install').style.display = 'none';
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((res) => log.debug('Application Install: ', res.outcome));
-  });
-  document.getElementById('log').addEventListener('click', () => {
     document.getElementById('install').style.display = 'none';
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((res) => log.debug('Application Install: ', res.outcome));
@@ -902,3 +898,4 @@ async function main() {
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
 window.onhashchange = (evt) => hashChange(evt);
 window.onload = main;
+console.log('blaa');

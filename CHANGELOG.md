@@ -1,6 +1,7 @@
 # PiGallery Change Log
 
 ### **HEAD -> master** 2020/10/22 mandic00@live.com
+- pwa caching
 
 ### **origin/master, origin/HEAD** 2020/10/22 mandic00@live.com
 - rebuild
