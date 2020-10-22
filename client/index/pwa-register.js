@@ -21,6 +21,7 @@ async function register(path) {
     }
     if (navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({ key: 'cacheModels', val: window.options.cacheModels });
+      navigator.serviceWorker.controller.postMessage({ key: 'cacheAssets', val: window.options.cacheAssets });
       log.debug(t0, 'PWA Active:', navigator.serviceWorker.controller.scriptURL);
       const cache = await caches.open('pigallery');
       if (cache) {

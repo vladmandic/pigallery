@@ -178,7 +178,7 @@
       "imports": []
     },
     "client/index/options.js": {
-      "bytes": 7270,
+      "bytes": 7483,
       "imports": [
         {
           "path": "client/shared/log.js"
@@ -195,7 +195,7 @@
       ]
     },
     "client/index/pwa-register.js": {
-      "bytes": 1284,
+      "bytes": 1395,
       "imports": [
         {
           "path": "client/shared/log.js"
@@ -203,7 +203,7 @@
       ]
     },
     "client/index/pwa-serviceworker.js": {
-      "bytes": 2894,
+      "bytes": 3003,
       "imports": []
     },
     "client/index/worker.js": {
@@ -297,7 +297,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 13426,
+      "bytes": 13629,
       "imports": [
         {
           "path": "client/shared/log.js"
@@ -470,7 +470,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9414328
+      "bytes": 9414622
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -491,7 +491,7 @@
           "bytesInOutput": 989
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7741
+          "bytesInOutput": 7916
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 1944
@@ -518,12 +518,12 @@
           "bytesInOutput": 3387
         }
       },
-      "bytes": 2125133
+      "bytes": 2125308
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9903424
+      "bytes": 9904179
     },
     "dist/index/index.js": {
       "imports": [],
@@ -547,7 +547,7 @@
           "bytesInOutput": 989
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7741
+          "bytesInOutput": 7916
         },
         "client/index/indexdb.js": {
           "bytesInOutput": 3768
@@ -586,10 +586,10 @@
           "bytesInOutput": 2261
         },
         "client/index/options.js": {
-          "bytesInOutput": 6033
+          "bytesInOutput": 6237
         },
         "client/index/pwa-register.js": {
-          "bytesInOutput": 883
+          "bytesInOutput": 982
         },
         "client/index/index.js": {
           "bytesInOutput": 418
@@ -598,12 +598,12 @@
           "bytesInOutput": 21572
         }
       },
-      "bytes": 2282566
+      "bytes": 2283044
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 9365393
+      "bytes": 9365687
     },
     "dist/process/process.js": {
       "imports": [],
@@ -624,7 +624,7 @@
           "bytesInOutput": 989
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7741
+          "bytesInOutput": 7916
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 1944
@@ -648,12 +648,12 @@
           "bytesInOutput": 3252
         }
       },
-      "bytes": 2116063
+      "bytes": 2116238
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 437846
+      "bytes": 438140
     },
     "dist/prototype/prototype.js": {
       "imports": [],
@@ -665,7 +665,7 @@
           "bytesInOutput": 1005
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7703
+          "bytesInOutput": 7878
         },
         "client/shared/user.js": {
           "bytesInOutput": 692
@@ -674,12 +674,12 @@
           "bytesInOutput": 325
         }
       },
-      "bytes": 100967
+      "bytes": 101142
     },
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 12034246
+      "bytes": 12034540
     },
     "dist/video/video.js": {
       "imports": [],
@@ -733,7 +733,7 @@
           "bytesInOutput": 3771
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7742
+          "bytesInOutput": 7917
         },
         "client/video/video.js": {
           "bytesInOutput": 54
@@ -754,7 +754,7 @@
           "bytesInOutput": 7952
         }
       },
-      "bytes": 2622291
+      "bytes": 2622466
     },
     "dist/index/worker.js.map": {
       "imports": [],
@@ -776,16 +776,16 @@
     "dist/index/pwa-serviceworker.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 4551
+      "bytes": 4724
     },
     "dist/index/pwa-serviceworker.js": {
       "imports": [],
       "inputs": {
         "client/index/pwa-serviceworker.js": {
-          "bytesInOutput": 1705
+          "bytesInOutput": 1764
         }
       },
-      "bytes": 1752
+      "bytes": 1811
     }
   }
 }
