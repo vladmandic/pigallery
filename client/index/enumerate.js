@@ -1,4 +1,5 @@
-const log = require('../shared/log.js');
+import $ from 'jquery';
+import * as log from '../shared/log.js';
 
 // exctract top classe from classification & detection and builds sidebar menu
 async function enumerateClasses() {

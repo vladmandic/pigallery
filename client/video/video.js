@@ -1,8 +1,8 @@
-import jQuery from 'jquery';
+import $ from 'jquery';
 import panzoom from '../../assets/panzoom.js';
 import * as log from '../shared/log.js';
 import * as user from '../shared/user.js';
-import * as detect from './detect.js';
+import * as run from './run.js';
 import Menu from './menu.js';
 import shared from '../shared/config.js';
 
@@ -62,7 +62,7 @@ async function cameraResize() {
     const live = !video.paused && (video.srcObject ? (video.srcObject.getVideoTracks()[0].readyState === 'live') : false);
     log.div('div', true, `Resize display: ${video.offsetWidth} x ${video.offsetHeight}`);
     await cameraStop();
-    detect.clear(objects.canvases);
+    run.clear(objects.canvases);
     document.getElementById('canvases').innerHTML = '';
     cameraStart(live);
   }, 200);
@@ -84,8 +84,8 @@ async function cameraSetup() {
     log.div('div', true, `Start video: ${track.label} camera ${settings.width} x ${settings.height} display ${video.offsetWidth} x ${video.offsetHeight} facing ${settings.facingMode}`);
     log.debug('Camera Settings: ', settings);
     event.stopPropagation();
-    detect.init(config);
-    detect.main(config, objects);
+    run.init(config);
+    run.main(config, objects);
   }, true);
 }
 
@@ -102,12 +102,12 @@ async function menuSetup() {
   objects.menus.model.addBool('Hand Pose', config.human.hand, 'enabled');
 
   objects.menus.model.addLabel('Object Detection');
-  objects.menus.model.addBool('COCO Objects', config.detect, 'coco');
+  // TBD
 
-  objects.menus.model.addLabel('Image Detection');
+  objects.menus.model.addLabel('Image Classification');
+  // TBD
   objects.menus.model.addBool('ImageNet', config.classify, 'imagenet');
   objects.menus.model.addBool('DeepDetect', config.classify, 'deepdetect');
-  objects.menus.model.addBool('NSFW Detect', config.classify, 'nsfw');
   objects.menus.model.addBool('Food Items', config.classify, 'food');
   objects.menus.model.addBool('Nature: Plants', config.classify, 'plants');
   objects.menus.model.addBool('Nature: Birds', config.classify, 'birds');
@@ -195,7 +195,6 @@ async function menuSetup() {
 
 async function main() {
   log.debug(window.location.href);
-  window.$ = jQuery;
   await user.get();
   await shared.theme();
   await shared.done();

@@ -1,6 +1,7 @@
-const moment = require('moment');
-const details = require('./details.js');
-const log = require('../shared/log.js');
+import $ from 'jquery';
+import moment from 'moment';
+import * as log from '../shared/log.js';
+import * as details from './details.js';
 
 // adds dividiers to list view based on sort order
 let previous;
@@ -186,8 +187,7 @@ async function resizeResults() {
   $('body').get(0).style.setProperty('--btntiny', `${Math.round(window.options.listThumbSize / 5)}px`);
 }
 
-exports.previous = previous;
-exports.current = current;
 exports.redraw = redrawResults;
 exports.resize = resizeResults;
 exports.scroll = scrollResults;
+exports.clearPrevious = () => { previous = null; };

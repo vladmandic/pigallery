@@ -1,4 +1,4 @@
-const log = require('../shared/log.js');
+import * as log from '../shared/log.js';
 
 let db;
 let id = 0;

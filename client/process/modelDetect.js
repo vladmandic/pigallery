@@ -1,4 +1,4 @@
-/* global tf */
+import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
 
 let config = {
   modelPath: null,
@@ -29,148 +29,68 @@ async function load(cfg) {
   return model;
 }
 
-function buildDetectedObjects(model, batched, result, maxScores, classes, index) {
-  const width = batched.shape[2];
-  const height = batched.shape[1];
-  const boxes = result[1].dataSync();
-  const indexes = index.dataSync();
-  tf.dispose(batched);
-  tf.dispose(result);
-  tf.dispose(index);
-  const count = indexes.length;
-  const objects = [];
-  for (let i = 0; i < count; i++) {
-    const box = [];
-    for (let j = 0; j < 4; j++) {
-      box[j] = boxes[indexes[i] * 4 + j];
-    }
-    const minY = box[0] * height;
-    const minX = box[1] * width;
-    const maxY = box[2] * height;
-    const maxX = box[3] * width;
-    box[0] = minX;
-    box[1] = minY;
-    box[2] = maxX - minX;
-    box[3] = maxY - minY;
-    const id = classes[indexes[i]] + 1;
-    objects.push({ box, class: model.labels[id].displayName, score: maxScores[indexes[i]], id });
-  }
-  return objects;
-}
+async function detect(model, image) {
+  // set variables
+  const maxResults = model.config.maxResults || 50;
+  const iouThreshold = model.config.iouThreshold || 0.5;
+  const minScore = model.config.minScore || 0.1;
+  const normalizeInput = model.config.normalizeInput || 1;
+  const scaleOutput = model.config.scaleOutput || false;
+  const scaleScore = model.config.scaleScore || 1;
 
-function calculateMaxScores(result) {
-  const allScores = result[0].dataSync();
-  const numBoxes = result[0].shape[1];
-  const numClasses = result[0].shape[2];
-  const scores = [];
-  const classes = [];
-  for (let i = 0; i < numBoxes; i++) {
-    let max = Number.MIN_VALUE;
-    let index = -1;
-    for (let j = 0; j < numClasses; j++) {
-      if (allScores[i * numClasses + j] > max) {
-        max = allScores[i * numClasses + j];
-        index = j;
-      }
-    }
-    scores[i] = max;
-    classes[i] = index;
-  }
-  return [scores, classes];
-}
+  // get image tensor
+  // casting and normalization is on-demand
 
-async function detectEfficientDet(model, image) {
-  const imgBuf = tf.browser.fromPixels(image, 3);
-  const expanded = tf.expandDims(imgBuf, 0);
-  tf.dispose(imgBuf);
-  const result = await model.executeAsync(expanded);
-  const [scores, classes] = calculateMaxScores(result);
-  const reshaped = tf.tensor2d(result[1].dataSync(), [result[1].shape[1], result[1].shape[3]]);
-  const index = await tf.image.nonMaxSuppressionAsync(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma);
-  const results = buildDetectedObjects(model, expanded, result, scores, classes, index); // disposes of batched, result, index
-  tf.dispose(reshaped);
-  return results;
-}
+  const bufferT = image instanceof tf.Tensor ? tf.clone(image) : tf.browser.fromPixels(image, 3);
+  const expandedT = bufferT.shape.length < 4 ? tf.expandDims(bufferT, 0) : tf.clone(bufferT);
+  bufferT.dispose();
+  const castedT = model.inputs[0].dtype === 'int32' ? tf.clone(expandedT) : tf.cast(expandedT, 'float32');
+  expandedT.dispose();
+  const imageT = normalizeInput === 1 ? tf.clone(castedT) : tf.mul(castedT, [normalizeInput]);
+  castedT.dispose();
+  const width = imageT.shape[2];
+  const height = imageT.shape[1];
 
-async function detectCOCO(model, image) {
-  const imgBuf = tf.browser.fromPixels(image, 3);
-  const expanded = tf.expandDims(imgBuf, 0);
-  let batched;
-  if (!model.config.useFloat) {
-    batched = expanded;
-  } else {
-    const cast = tf.cast(expanded, 'float32');
-    batched = tf.mul(cast, [1.0 / 255.0]);
-    tf.dispose(expanded);
-    tf.dispose(cast);
-  }
-  const result = await model.executeAsync(batched);
-  const [scores, classes] = calculateMaxScores(result);
-  const reshaped = tf.tensor2d(result[1].dataSync(), [result[1].shape[1], result[1].shape[3]]);
-  // const index = tf.image.nonMaxSuppression(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma); // async version leaks 2 tensors
-  const index = await tf.image.nonMaxSuppressionAsync(reshaped, scores, model.config.topK, model.config.overlap, model.config.score, model.config.softNmsSigma);
-  const results = buildDetectedObjects(model, batched, result, scores, classes, index); // disposes of batched, result, index
-  tf.dispose(imgBuf);
-  tf.dispose(reshaped);
-  return results;
-}
+  // execute model
+  const res = await model.executeAsync(imageT);
+  imageT.dispose();
 
-async function detectSSD(model, image) {
-  const imgBuf = tf.browser.fromPixels(image, 3);
-  const expanded = tf.expandDims(imgBuf, 0);
-  let batched;
-  if (!model.config.useFloat) {
-    batched = expanded;
-  } else {
-    const cast = tf.cast(expanded, 'float32');
-    batched = tf.mul(cast, [1.0 / 255.0]);
-    tf.dispose(cast);
-    tf.dispose(expanded);
-    tf.dispose(cast);
-  }
-  // look at model.inputs and model.outputs on how to execute a model
-  const result = await model.executeAsync({ images: batched }, ['module_apply_default/hub_input/strided_slice_1', 'module_apply_default/hub_input/strided_slice_2', 'module_apply_default/hub_input/strided_slice']); // scores, classes, boxes
-  const scores = result[0].dataSync();
-  const classes = result[1].dataSync();
-  const boxes = result[2].dataSync();
-  const width = batched.shape[2];
-  const height = batched.shape[1];
-  tf.dispose(batched);
-  tf.dispose(result);
-  tf.dispose(imgBuf);
-  let objects = [];
-  for (const i in scores) {
-    const box = [];
-    const minY = boxes[i * 4 + 0] * height;
-    const minX = boxes[i * 4 + 1] * width;
-    const maxY = boxes[i * 4 + 2] * height;
-    const maxX = boxes[i * 4 + 3] * width;
-    box[0] = minX;
-    box[1] = minY;
-    box[2] = maxX - minX;
-    box[3] = maxY - minY;
-    const label = model.labels[classes[i]].displayName.toLowerCase();
-    objects.push({ class: label, score: scores[i], box, id: classes[i] });
-  }
-  objects = objects
-    .filter((a) => a.score > model.config.score)
-    .sort((a, b) => b.score - a.score);
-  if (objects.length > model.config.topK) objects.length = model.config.topK;
-  return objects;
-}
+  // find results
+  res.sort((a, b) => b.shape.length - a.shape.length); // sort results by complexity of tensors
+  const boxesT = res[0]; // boxes is largest tensor, but remove extra dimension if present
+  const scoresT = res[1]; // scores are next
+  const classesT = res[2]; // classes are last
 
-async function exec(model, image) {
-  let result;
-  if (model.config.exec === 'coco') result = await detectCOCO(model, image);
-  if (model.config.exec === 'ssd') result = await detectSSD(model, image);
-  if (model.config.exec === 'efficientdet') result = await detectEfficientDet(model, image);
-  return result;
+  const boxes = await boxesT.array(); // boxes data is as-is
+  const scores = await scoresT.data();
+  const classes = await classesT.data();
+
+  // sort & filter results
+  const filteredT = await tf.image.nonMaxSuppressionAsync(boxes, scores, maxResults, iouThreshold, minScore || 0.1);
+  const filtered = await filteredT.data();
+  filteredT.dispose();
+  const detected = [];
+
+  // create result object
+  for (const i in filtered) {
+    const id = parseInt(i);
+    detected.push({
+      score: (scaleScore) * Math.trunc(10000 * scores[i]) / 10000,
+      id: classes[id],
+      class: model.labels[classes[id]].displayName,
+      bbox: {
+        x: Math.trunc(boxes[0][id][0]) * (scaleOutput ? width : 1),
+        y: Math.trunc(boxes[0][id][1]) * (scaleOutput ? height : 1),
+        width: (Math.trunc((boxes[0][id][3] * (scaleOutput ? width : 1)) - (boxes[0][id][1])) * (scaleOutput ? width : 1)),
+        height: (Math.trunc((boxes[0][id][2] * (scaleOutput ? height : 1)) - (boxes[0][id][0])) * (scaleOutput ? height : 1)),
+      },
+    });
+  }
+  return detected;
 }
 
 module.exports = {
   config,
   load,
-  exec,
-  detectCOCO,
-  detectSSD,
+  exec: detect,
 };

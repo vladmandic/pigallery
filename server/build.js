@@ -86,7 +86,7 @@ async function compile() {
     const s = await buildStats();
     log.state('Client application rebuild:', Math.trunc(parseInt(t1 - t0) / 1000 / 1000), 'ms', s.imports, 'imports in', s.importBytes, 'bytes', s.modules, 'modules in', s.moduleBytes, 'bytes', s.outputs, 'outputs in', s.outputBytes, 'bytes');
   } catch (err) {
-    log.error('Client application build error', err.errors || err);
+    log.error('Client application build error', JSON.stringify(err.errors || err, null, 2));
   }
   try {
     const data = [];

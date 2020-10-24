@@ -1,9 +1,10 @@
 /* global L */
 
-const db = require('./indexdb.js');
-const log = require('../shared/log.js');
-const nearest = require('./nearest.js');
-const list = require('./list.js');
+import $ from 'jquery';
+import * as db from './indexdb.js';
+import * as log from '../shared/log.js';
+import * as nearest from './nearest.js';
+import * as list from './list.js';
 
 let mapContainer;
 

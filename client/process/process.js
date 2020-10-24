@@ -1,14 +1,9 @@
-/* global tf */
-
-window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
-window.faceapi = require('@vladmandic/face-api');
-const jQuery = require('jquery');
-const log = require('../shared/log.js');
-const config = require('../shared/config.js');
-const process = require('./processImage.js');
-const user = require('../shared/user.js');
-
-window.$ = jQuery;
+import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
+import $ from 'jquery';
+import * as log from '../shared/log.js';
+import * as config from '../shared/config.js';
+import * as process from './processImage.js';
+import * as user from '../shared/user.js';
 
 const results = [];
 let id = 0;
