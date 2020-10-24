@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import * as log from './log.js';
 
 async function getUser() {

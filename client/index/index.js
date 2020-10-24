@@ -1,19 +1,18 @@
-const jQuery = require('jquery');
-const marked = require('../../assets/marked.esm.js').default;
-const config = require('../shared/config.js');
-const db = require('./indexdb.js');
-const details = require('./details.js');
-const hash = require('../shared/blockhash.js');
-const user = require('../shared/user.js');
-const list = require('./list.js');
-const log = require('../shared/log.js');
-const map = require('./map.js');
-const enumerate = require('./enumerate.js');
-const options = require('./options.js');
-const pwa = require('./pwa-register.js');
+import $ from 'jquery';
+import * as log from '../shared/log.js';
+import * as marked from '../../assets/marked.esm.js';
+import * as config from '../shared/config.js';
+import * as db from './indexdb.js';
+import * as details from './details.js';
+import * as hash from '../shared/blockhash.js';
+import * as user from '../shared/user.js';
+import * as list from './list.js';
+import * as map from './map.js';
+import * as enumerate from './enumerate.js';
+import * as options from './options.js';
+import * as pwa from './pwa-register.js';
 
 // global variables
-window.$ = jQuery;
 window.filtered = [];
 const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, store: 0, size: 0, speed: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0 };
 
@@ -111,7 +110,7 @@ function filterWord(word) {
 // filters images based on search strings
 async function filterResults(input) {
   busy(`Searching for<br>${input}`);
-  list.previous = null;
+  list.clearPrevious();
   const t0 = window.performance.now();
   const words = [];
   let selective = null;
@@ -244,7 +243,7 @@ async function sortResults(sort) {
     window.filtered = await db.all();
     shuffle(window.filtered);
   }
-  list.previous = null;
+  list.clearPrevious();
   // sort by
   busy('Sorting images');
   if (sort.includes('alpha-down')) window.filtered = await db.all('name', true, 1, window.options.listItemCount);
@@ -298,7 +297,7 @@ async function findDuplicates() {
 
   log.div('log', true, 'Analyzing images for simmilarity ...');
   const t0 = window.performance.now();
-  list.previous = null;
+  list.clearPrevious();
 
   const f = '/dist/index/worker.js';
   const worker = new Worker(f);

@@ -1,11 +1,11 @@
-/* global tf, faceapi */
-
-const modelClassify = require('./modelClassify.js');
-const modelDetect = require('./modelDetect.js');
-const log = require('../shared/log.js');
-const config = require('../shared/config.js').default;
-const hash = require('../shared/blockhash.js');
-const definitions = require('../shared/models.js').models;
+import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
+import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
+import * as log from '../shared/log.js';
+import * as modelClassify from './modelClassify.js';
+import * as modelDetect from './modelDetect.js';
+import * as config from '../shared/config.js';
+import * as hash from '../shared/blockhash.js';
+import * as definitions from '../shared/models.js';
 
 const models = {};
 let error = false;
@@ -65,7 +65,7 @@ async function loadModels() {
   }
 
   // eslint-disable-next-line no-use-before-define
-  faceapi.classify = faceapiClassify;
+  models.faceapi.classify = faceapiClassify;
   if (definitions.person[0]) {
     const options = definitions.person[0];
     if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
@@ -74,9 +74,9 @@ async function loadModels() {
     await faceapi.nets.faceLandmark68Net.load(options.modelPath);
     await faceapi.nets.faceRecognitionNet.load(options.modelPath);
     await faceapi.nets.faceExpressionNet.load(options.modelPath);
-    if (options.exec === 'yolo') faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
-    if (options.exec === 'ssd') faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
     models.faceapi = faceapi;
+    if (options.exec === 'yolo') models.faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
+    if (options.exec === 'ssd') models.faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
   }
 
   /* working but unreliable
@@ -103,7 +103,7 @@ function flattenObject(object) {
 }
 
 async function faceapiClassify(image) {
-  const results = await faceapi.detectAllFaces(image, faceapi.options)
+  const results = await faceapi.detectAllFaces(image, models.faceapi.options)
     .withFaceLandmarks()
     .withFaceExpressions()
     .withFaceDescriptors()

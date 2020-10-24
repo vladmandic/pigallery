@@ -1,20 +1,18 @@
-/* global tf, faceapi */
 // import ndarray from 'ndarray';
 // import ops from 'ndarray-ops';
 // import KerasJS from '../assets/keras.min.js';
 
-window.tf = require('@tensorflow/tfjs/dist/tf.es2017.js');
-window.faceapi = require('@vladmandic/face-api');
-const jquery = require('jquery');
-const log = require('../shared/log.js');
-const config = require('../shared/config.js');
-const modelClassify = require('../process/modelClassify.js');
-const modelDetect = require('../process/modelDetect.js');
-const modelYolo = require('../process/modelYolo.js');
-const processImage = require('../process/processImage.js');
-const definitions = require('../shared/models.js');
+import $ from 'jquery';
+import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
+import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
+import * as log from '../shared/log.js';
+import * as modelClassify from '../process/modelClassify.js';
+import * as modelDetect from '../process/modelDetect.js';
+// import * as modelYolo from '../process/modelYolo.js';
+import * as definitions from '../shared/models.js';
+import * as processImage from '../process/processImage.js';
+import config from '../shared/config.js';
 
-window.$ = jquery;
 const models = [];
 window.cache = [];
 let stop = false;
@@ -119,7 +117,7 @@ async function print(file, image, results) {
   item.style = `min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px; contain-intrinsic-size: ${16 + window.options.listThumbSize}px`;
   item.innerHTML = `
     <div class="col thumbnail">
-      <img class="thumbnail" src="${image.thumbnail}" align="middle" tag="${file}">
+      <img class="thumbnail" src="${image.thumbnail}" align="middle" height=${window.options.listThumbSize} tag="${file}">
     </div>
     <div class="col description">
       <p class="listtitle">${file}</p>
@@ -171,7 +169,7 @@ async function classify() {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
+/*
 async function yolo() {
   stop = false;
   log.div('log', true, 'Loading models ...');
@@ -207,8 +205,8 @@ async function yolo() {
   }
   log.div('log', true, '');
 }
+*/
 
-// eslint-disable-next-line no-unused-vars
 async function person() {
   stop = false;
   log.div('log', true, `FaceAPI version: ${faceapi.tf.version_core} backend ${faceapi.tf.getBackend()}`);
@@ -228,12 +226,12 @@ async function person() {
   await faceapi.nets.faceLandmark68Net.load(options.modelPath);
   await faceapi.nets.faceRecognitionNet.load(options.modelPath);
   await faceapi.nets.faceExpressionNet.load(options.modelPath);
-  if (options.exec === 'yolo') faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
-  if (options.exec === 'ssd') faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
+  if (options.exec === 'yolo') options.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
+  if (options.exec === 'ssd') options.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
 
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
-  await faceapi.detectAllFaces(warmup.canvas, options.face);
+  await faceapi.detectAllFaces(warmup.canvas, options.options);
   log.div('log', true, 'TensorFlow Memory:', faceapi.tf.memory());
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, faceapi.tf.ENV.flags);
@@ -259,7 +257,7 @@ async function person() {
     const image = await processImage.getImage(file);
     const t0 = window.performance.now();
     const data = await faceapi
-      .detectAllFaces(image.canvas, options.face)
+      .detectAllFaces(image.canvas, options.options)
       .withFaceLandmarks()
       .withFaceExpressions()
       .withFaceDescriptors()

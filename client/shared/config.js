@@ -1,8 +1,6 @@
-/* eslint-disable import/newline-after-import */
-/* eslint-disable node/no-unpublished-require */
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-multi-spaces */
 
+import $ from 'jquery';
 import * as log from './log.js';
 
 window.debug = true;

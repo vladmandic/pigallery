@@ -98,7 +98,7 @@ async function main() {
   // define routes for folders
   const optionsStatic = { maxAge: '365d', cacheControl: true, etag: true, lastModified: true };
   app.use('/assets', express.static(path.join(root, './assets'), optionsStatic));
-  app.use('/models', express.static(path.join(root, './models'), optionsStatic));
+  app.use('/models', express.static('/home/vlado/models', optionsStatic));
   app.use('/media', express.static(path.join(root, './media'), optionsStatic));
   app.use('/client', express.static(path.join(root, './client'), optionsStatic));
   app.use('/dist', express.static(path.join(root, './dist'), optionsStatic));

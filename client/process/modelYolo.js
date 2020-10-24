@@ -1,4 +1,5 @@
-/* global tf */
+import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
+
 /* eslint-disable no-use-before-define */
 
 export const v1_tiny_model = 'https://raw.githubusercontent.com/shaqian/tfjs-yolo-demo/master/dist/model/v1tiny/model.json';

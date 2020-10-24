@@ -1,9 +1,9 @@
-import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
+import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
 import * as log from '../shared/log.js';
 import * as draw from './draw.js';
 import * as gesture from './gesture.js';
-import * as models from './models.js';
-import * as human from './human.js';
+import * as runClassify from './runClassify.js';
+import * as runHuman from './runHuman.js';
 import * as definitions from '../shared/models.js';
 
 async function getVideoCanvas(video, canvases, config) {
@@ -75,10 +75,10 @@ async function main(config, objects) {
   let input = await getVideoCanvas(video, objects.canvases, config);
   if (!input) return;
 
-  models.set(objects);
+  runClassify.set(objects);
 
   // this is not optional as we need return canvas with filters applied
-  const res = await human.run(input, config, objects);
+  const res = await runHuman.run(input, config, objects);
   if (res.canvas) input = res.canvas;
   input.className = 'canvases';
   input.style.display = 'block';
@@ -86,28 +86,22 @@ async function main(config, objects) {
 
   objects.results.push(res);
 
-  if (config.classify.imagenet) objects.results.push(await models.imagenet(input, config));
+  if (config.classify.imagenet) objects.results.push(await runClassify.imagenet(input, config));
   else draw.clear(objects.canvases.imagenet);
 
-  if (config.classify.deepdetect) objects.results.push(await models.deepdetect(input, config));
+  if (config.classify.deepdetect) objects.results.push(await runClassify.deepdetect(input, config));
   else draw.clear(objects.canvases.deepdetect);
 
-  if (config.detect.coco) objects.results.push(await models.cocossd(input, config));
-  else draw.clear(objects.canvases.cocossd);
-
-  if (config.classify.nsfw) objects.results.push(await models.nsfw(input, config));
-  else draw.clear(objects.canvases.nsfw);
-
-  if (config.classify.food) objects.results.push(await models.food(input, config));
+  if (config.classify.food) objects.results.push(await runClassify.food(input, config));
   else draw.clear(objects.canvases.food);
 
-  if (config.classify.plants) objects.results.push(await models.plants(input, config));
+  if (config.classify.plants) objects.results.push(await runClassify.plants(input, config));
   else draw.clear(objects.canvases.plants);
 
-  if (config.classify.birds) objects.results.push(await models.birds(input, config));
+  if (config.classify.birds) objects.results.push(await runClassify.birds(input, config));
   else draw.clear(objects.canvases.birds);
 
-  if (config.classify.insects) objects.results.push(await models.insects(input, config));
+  if (config.classify.insects) objects.results.push(await runClassify.insects(input, config));
   else draw.clear(objects.canvases.insects);
 
   const gestures = await gesture.analyze(objects.results);

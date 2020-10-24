@@ -1,7 +1,8 @@
-const moment = require('moment');
-const ColorThief = require('../../assets/color-thief.umd.js');
-const ImageViewer = require('./iv-viewer.js');
-const log = require('../shared/log.js');
+import $ from 'jquery';
+import moment from 'moment';
+import * as log from '../shared/log.js';
+import ColorThief from '../../assets/color-thief.umd.js';
+import ImageViewer from './iv-viewer.js';
 
 let viewer;
 let thief;

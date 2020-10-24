@@ -1,7 +1,7 @@
-const log = require('../shared/log.js');
-const list = require('./list.js');
-const config = require('../shared/config.js');
-const models = require('../shared/models.js').models;
+import * as log from '../shared/log.js';
+import * as list from './list.js';
+import * as config from '../shared/config.js';
+import * as models from '../shared/models.js';
 
 function JSONtoStr(json) {
   let text = '';

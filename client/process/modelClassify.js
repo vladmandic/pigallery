@@ -1,4 +1,4 @@
-/* global tf */
+import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
 
 let config = {
   modelPath: null,
