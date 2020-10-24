@@ -8,13 +8,29 @@ window.debug = true;
 // TFJS Configuration
 const config = {
   backEnd: 'webgl',        // back-end used by tensorflow for image processing: webgl, cpu, wasm, webgpu
-  floatPrecision: true,    // use 32bit or 16bit float precision
-  maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
+  maxSize: 1024,            // maximum image width or height that will be used for processing before resizing is required
   renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 1,      // how many images to process in parallel
   squareImage: false,      // resize proportional to the original image or to a square image
   registerPWA: true,       // register PWA service worker?
   facing: true,            // webcam facing front or back
+  webgl: {
+    WEBGL_FORCE_F16_TEXTURES: true,
+    WEBGL_PACK_DEPTHWISECONV: true,
+    // WEBGL_BUFFER_SUPPORTED
+    // WEBGL_CONV_IM2COL
+    // WEBGL_CPU_FORWARD
+    // WEBGL_FENCE_API_ENABLED
+    // WEBGL_FORCE_F16_TEXTURES
+    // WEBGL_LAZILY_UNPACK
+    // WEBGL_PACK
+    // WEBGL_PACK_ARRAY_OPERATIONS
+    // WEBGL_PACK_BINARY_OPERATIONS
+    // WEBGL_PACK_CLIP
+    // WEBGL_PACK_DEPTHWISECONV
+    // WEBGL_PACK_IMAGE_OPERATIONS
+    // WEBGL_PACK_UNARY_OPERATIONS
+  },
   ui: {
     maxFrames: 10,
     overlay: true,

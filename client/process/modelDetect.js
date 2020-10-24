@@ -1,96 +1,105 @@
 import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
 
-let config = {
-  modelPath: null,
-  modelType: 'graph',
-  score: 0.2,
-  topK: 3,
-  inputMin: -1,
-  inputMax: 1,
-  overlap: 0.1,
-  softNmsSigma: 0,
-  useFloat: false,
+const defaults = {
+  modelPath: null, // required
+  maxResults: 50, // used by nms
+  iouThreshold: 0.5, // used by nms
+  minScore: 0.1, // used by nms
+  normalizeInput: 1, // value:(1) = range:(0..255), value=(1/255) = range:(0..1), value:(-1 + 1/127.5) = range:(-1..1)
+  scaleOutput: false, // use if output is 0..1 instead of 0..width
+  scaleScore: 1, // use if scores are off by order of magniture
+  map: { boxes: 'Identity_1:0', scores: 'Identity_4:0', classes: 'Identity_2:0' }, // defaults map to tfhub object detection models
+  classes: null, // set to url or leave as null to load classes.json from modelPath
 };
 
-async function load(cfg) {
-  let model;
-  config = { ...config, ...cfg };
+async function load(userConfig) {
+  let model = { config: { ...defaults, ...userConfig } };
+  if (!model.config.modelPath) throw new Error('Error loading model: path is null');
   const loadOpts = {
     fetchFunc: (...args) => fetch(...args),
     requestInit: { mode: 'no-cors' },
-    fromTFHub: config.modelPath.includes('tfhub.dev') || config.tgz,
+    fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
   };
-  const modelPath = (!loadOpts.fromTFHub && !config.tgz && !config.modelPath.endsWith('model.json')) ? config.modelPath + '/model.json' : config.modelPath;
-  if (config.modelType === 'graph') model = await tf.loadGraphModel(modelPath, loadOpts);
-  if (config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
-  const res = config.classes ? await fetch(config.classes) : await fetch(config.modelPath + '/classes.json');
-  model.labels = await res.json();
-  model.config = config;
+  const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? model.config.modelPath + '/model.json' : model.config.modelPath; // append model.json if not present
+  try {
+    const saveConfig = model.config;
+    model = await tf.loadGraphModel(modelPath, loadOpts);
+    model.config = saveConfig;
+  } catch (err) {
+    throw new Error(`Error loading model: $${modelPath} message:${err.message}`);
+  }
+  try {
+    const res = model.config.classes ? await fetch(model.config.classes) : await fetch(model.config.modelPath + '/classes.json'); // load classes json file from modelpath/classes.json or user provided url
+    model.labels = await res.json();
+  } catch (err) {
+    throw new Error(`Error loading classes: $${model.config.classes} message:${err.message}`);
+  }
   return model;
 }
 
-async function detect(model, image) {
-  // set variables
-  const maxResults = model.config.maxResults || 50;
-  const iouThreshold = model.config.iouThreshold || 0.5;
-  const minScore = model.config.minScore || 0.1;
-  const normalizeInput = model.config.normalizeInput || 1;
-  const scaleOutput = model.config.scaleOutput || false;
-  const scaleScore = model.config.scaleScore || 1;
-
-  // get image tensor
-  // casting and normalization is on-demand
-
+async function getImage(model, image) {
+  // read image pixels or use tensor as-is
   const bufferT = image instanceof tf.Tensor ? tf.clone(image) : tf.browser.fromPixels(image, 3);
   const expandedT = bufferT.shape.length < 4 ? tf.expandDims(bufferT, 0) : tf.clone(bufferT);
   bufferT.dispose();
+
+  // casting depends on model input data type
   const castedT = model.inputs[0].dtype === 'int32' ? tf.clone(expandedT) : tf.cast(expandedT, 'float32');
   expandedT.dispose();
-  const imageT = normalizeInput === 1 ? tf.clone(castedT) : tf.mul(castedT, [normalizeInput]);
+
+  // normalization is on-demand
+  const imageT = model.config.normalizeInput === 1 ? tf.clone(castedT) : tf.mul(castedT, [model.config.normalizeInput]);
   castedT.dispose();
-  const width = imageT.shape[2];
-  const height = imageT.shape[1];
+  return imageT;
+}
+
+async function exec(model, image, userConfig) {
+  // allow changes of configurations on the fly to play with nms settings
+  if (userConfig) model.config = { ...model.config, ...userConfig };
+
+  // get image tensor
+  const imageT = await getImage(model, image);
 
   // execute model
-  const res = await model.executeAsync(imageT);
-  imageT.dispose();
+  const res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]);
 
   // find results
-  res.sort((a, b) => b.shape.length - a.shape.length); // sort results by complexity of tensors
-  const boxesT = res[0]; // boxes is largest tensor, but remove extra dimension if present
-  const scoresT = res[1]; // scores are next
-  const classesT = res[2]; // classes are last
+  const boxesT = res[0].shape.length > 2 ? res[0].squeeze() : res[0].clone(); // boxes can be 3d or 2d in some models
+  const boxes = await boxesT.array();
+  const scores = await res[1].data();
+  const classes = await res[2].data();
+  for (const tensorT of res) tensorT.dispose();
+  boxesT.dispose();
 
-  const boxes = await boxesT.array(); // boxes data is as-is
-  const scores = await scoresT.data();
-  const classes = await classesT.data();
-
-  // sort & filter results
-  const filteredT = await tf.image.nonMaxSuppressionAsync(boxes, scores, maxResults, iouThreshold, minScore || 0.1);
-  const filtered = await filteredT.data();
-  filteredT.dispose();
-  const detected = [];
+  // sort & filter results using nms feature
+  const nmsT = await tf.image.nonMaxSuppressionAsync(boxes, scores, model.config.maxResults, model.config.iouThreshold, model.config.minScore / model.config.scaleScore);
+  const nms = await nmsT.data();
+  nmsT.dispose();
 
   // create result object
-  for (const i in filtered) {
+  const detected = [];
+  for (const i in nms) {
     const id = parseInt(i);
     detected.push({
-      score: (scaleScore) * Math.trunc(10000 * scores[i]) / 10000,
+      score: Math.min(1, (model.config.scaleScore) * Math.trunc(10000 * scores[i]) / 10000), // limit score to 100% in case of scaled scores
       id: classes[id],
       class: model.labels[classes[id]].displayName,
-      bbox: {
-        x: Math.trunc(boxes[0][id][0]) * (scaleOutput ? width : 1),
-        y: Math.trunc(boxes[0][id][1]) * (scaleOutput ? height : 1),
-        width: (Math.trunc((boxes[0][id][3] * (scaleOutput ? width : 1)) - (boxes[0][id][1])) * (scaleOutput ? width : 1)),
-        height: (Math.trunc((boxes[0][id][2] * (scaleOutput ? height : 1)) - (boxes[0][id][0])) * (scaleOutput ? height : 1)),
+      bbox: { // switch box from x0,y0,x1,y1 to x,y,width,height and potentially scale it if model returns coordinates in range 0..1
+        x: Math.trunc(boxes[id][0]) * (model.config.scaleOutput ? imageT.shape[2] : 1),
+        y: Math.trunc(boxes[id][1]) * (model.config.scaleOutput ? imageT.shape[1] : 1),
+        width: (Math.trunc((boxes[id][3] * (model.config.scaleOutput ? imageT.shape[2] : 1)) - (boxes[id][1])) * (model.config.scaleOutput ? imageT.shape[2] : 1)),
+        height: (Math.trunc((boxes[id][2] * (model.config.scaleOutput ? imageT.shape[1] : 1)) - (boxes[id][0])) * (model.config.scaleOutput ? imageT.shape[1] : 1)),
       },
     });
   }
-  return detected;
+  const results = detected.filter((a) => a.score > model.config.minScore); // filter by score one more time as nms can miss items
+
+  // cleanup and return results
+  imageT.dispose();
+  return results;
 }
 
 module.exports = {
-  config,
   load,
-  exec: detect,
+  exec,
 };
