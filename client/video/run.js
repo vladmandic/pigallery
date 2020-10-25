@@ -49,8 +49,11 @@ async function init(config) {
   document.getElementById('status').innerText = 'initializing';
   if (config.backEnd === 'wasm') tf.wasm.setPaths('/assets');
   tf.setBackend(config.backEnd);
-  // tf.ENV.set('WEBGL_CPU_FORWARD', false);
-  if (config.backEnd === 'webgl') tf.ENV.set('WEBGL_FORCE_F16_TEXTURES', true);
+  tf.ENV.set('DEBUG', false);
+  for (const [key, val] of Object.entries(config.webgl)) {
+    log.debug('WebGL Setting', key, val);
+    tf.ENV.set(key, val);
+  }
   await tf.ready();
   await tf.enableProdMode();
   log.div('log', true, `Using TensorFlow/JS: ${tf.version_core} Backend: ${tf.getBackend().toUpperCase()}`);

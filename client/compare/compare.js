@@ -5,6 +5,7 @@
 import $ from 'jquery';
 import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
 import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
+import Human from '@vladmandic/human';
 import * as log from '../shared/log.js';
 import * as modelClassify from '../process/modelClassify.js';
 import * as modelDetect from '../process/modelDetect.js';
@@ -178,9 +179,13 @@ async function person() {
   if (options.exec === 'yolo') options.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
   if (options.exec === 'ssd') options.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
 
+  const human = new Human();
+  await human.load(config.default.human);
+
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   await faceapi.detectAllFaces(warmup.canvas, options.options);
+  await human.detect(warmup.canvas, config.default.human);
   log.div('log', true, 'TensorFlow Memory:', faceapi.tf.memory());
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, faceapi.tf.ENV.flags);
@@ -193,33 +198,47 @@ async function person() {
   stats.size = Math.round((stats.bytes1 - stats.bytes0) / 1024 / 1024);
   stats.tensors = Math.round(stats.tensors1 - stats.tensors0);
   stats.time = Math.round(stats.time1 - stats.time0);
-  log.div('log', true, `Loaded model: FaceAPI in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
+  log.div('log', true, `Loaded models: FaceAPI/Human in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 
   const api = await fetch('/api/dir?folder=Tests/Persons/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
-  stats = 0;
+  stats = [0, 0];
+  let data;
   for (const i in files) {
     if (i >= limit) stop = true;
     if (stop) break;
     const results = [];
     const image = await processImage.getImage(files[i]);
+
     const t0 = window.performance.now();
-    const data = await faceapi
+
+    data = await faceapi
       .detectAllFaces(image.canvas, options.options)
       .withFaceLandmarks()
       .withFaceExpressions()
       .withFaceDescriptors()
       .withAgeAndGender();
+
+    results.push({ model: 'FaceAPI', data });
+    log.debug('FaceApi', files[i], data);
+
     const t1 = window.performance.now();
-    stats += t1 - t0;
-    log.debug('Person', files[i], options, data);
-    results.push({ model: options, data });
+    stats[0] += t1 - t0;
+
+    data = await human.detect(image.canvas, config.default.human);
+    log.debug('Human', files[i], data);
+    results.push({ model: 'Human', data: [data] });
+
+    const t2 = window.performance.now();
+    stats[1] += t2 - t1;
+
     print(files[i], image, results);
   }
   log.div('log', true, 'Finished:', tf.memory());
-  log.div('log', true, `${options.name}: ${Math.round(stats).toLocaleString()} ms / ${Math.round(stats / files.length)} avg`);
+  log.div('log', true, `FaceApi: ${Math.round(stats[0]).toLocaleString()} ms / ${Math.round(stats[0] / files.length)} avg`);
+  log.div('log', true, `Human: ${Math.round(stats[1]).toLocaleString()} ms / ${Math.round(stats[1] / files.length)} avg`);
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -256,6 +275,7 @@ async function detect() {
       const data = await modelDetect.exec(models[m].model, image.canvas);
       const t1 = window.performance.now();
       stats[m] += (t1 - t0);
+      // tbd: human
       results.push({ model: models[m], data });
       log.debug('Detect', files[i], models[m], data);
     }
