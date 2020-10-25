@@ -26,6 +26,7 @@ async function loadModels() {
   log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
   await tf.setBackend(config.default.backEnd);
   await tf.enableProdMode();
+  tf.ENV.set('DEBUG', false);
   for (const [key, val] of Object.entries(config.default.webgl)) {
     log.debug('WebGL Setting', key, val);
     tf.ENV.set(key, val);
