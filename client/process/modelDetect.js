@@ -10,6 +10,7 @@ const defaults = {
   scaleScore: 1, // use if scores are off by order of magniture
   map: { boxes: 'Identity_1:0', scores: 'Identity_4:0', classes: 'Identity_2:0' }, // defaults map to tfhub object detection models
   classes: null, // set to url or leave as null to load classes.json from modelPath
+  softmax: false,
 };
 
 async function load(userConfig) {
@@ -53,7 +54,7 @@ async function getImage(model, image) {
   return imageT;
 }
 
-async function exec(model, image, userConfig) {
+async function detect(model, image, userConfig) {
   // allow changes of configurations on the fly to play with nms settings
   if (userConfig) model.config = { ...model.config, ...userConfig };
 
@@ -65,13 +66,16 @@ async function exec(model, image, userConfig) {
 
   // find results
   const boxesT = res[0].shape.length > 2 ? res[0].squeeze() : res[0].clone(); // boxes can be 3d or 2d in some models
+  const softmaxT = model.config.softmax ? res[1].softmax() : res[1].clone();
   const boxes = await boxesT.array();
-  const scores = await res[1].data();
+  const scores = await softmaxT.data();
   const classes = await res[2].data();
   for (const tensorT of res) tensorT.dispose();
+  softmaxT.dispose();
   boxesT.dispose();
 
   // sort & filter results using nms feature
+  console.log('score', model.config.minScore / model.config.scaleScore);
   const nmsT = await tf.image.nonMaxSuppressionAsync(boxes, scores, model.config.maxResults, model.config.iouThreshold, model.config.minScore / model.config.scaleScore);
   const nms = await nmsT.data();
   nmsT.dispose();
@@ -81,7 +85,7 @@ async function exec(model, image, userConfig) {
   for (const i in nms) {
     const id = parseInt(i);
     detected.push({
-      score: Math.min(1, (model.config.scaleScore) * Math.trunc(10000 * scores[i]) / 10000), // limit score to 100% in case of scaled scores
+      score: Math.min(1, Math.trunc(model.config.scaleScore * 10000 * scores[i]) / 10000), // limit score to 100% in case of scaled scores
       id: classes[id],
       class: model.labels[classes[id]].displayName,
       bbox: { // switch box from x0,y0,x1,y1 to x,y,width,height and potentially scale it if model returns coordinates in range 0..1
@@ -101,5 +105,5 @@ async function exec(model, image, userConfig) {
 
 module.exports = {
   load,
-  exec,
+  detect,
 };

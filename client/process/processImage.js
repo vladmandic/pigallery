@@ -210,10 +210,8 @@ async function processImage(name) {
   try {
     if (!error) {
       for (const model of models.detect) {
-        if (config.default.batchProcessing === 1) promisesDetect.push(await modelDetect.exec(model, image.canvas));
-        else promisesDetect.push(modelDetect.exec(model, image.canvas));
-        // const res = await modelDetect.exec(model, image.canvas);
-        // if (res) obj.detect.push(...res);
+        if (config.default.batchProcessing === 1) promisesDetect.push(await modelDetect.detect(model, image.canvas));
+        else promisesDetect.push(modelDetect.detect(model, image.canvas));
       }
     }
   } catch (err) {

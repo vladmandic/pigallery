@@ -21,10 +21,15 @@ Didn't find:
 
 ###
 
-- RFE Video scalling
-- Compare: Classify models
 - Compare: Human
+- Video:
+  Input scalling
+  Add Various
+  Add Object Detection to Various
+  Add Image Classification to Various
 - Process: All Verify
-- NudeNet error
-- CenterNet error
+- Model errors:
+  - NudeNet
+  - COCO CenterNet
+  - OpenImages Atrous
 - Investigate error 'Failed to compile fragment shader.'

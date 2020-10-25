@@ -16,7 +16,7 @@ const config = {
   facing: true,            // webcam facing front or back
   // webgl configuration
   webgl: {
-    WEBGL_FORCE_F16_TEXTURES: true,
+    WEBGL_FORCE_F16_TEXTURES: false,
     WEBGL_PACK_DEPTHWISECONV: true,
     // WEBGL_BUFFER_SUPPORTED
     // WEBGL_CONV_IM2COL

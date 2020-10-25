@@ -1,42 +1,41 @@
 import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
 
-let config = {
+const defaults = {
   modelPath: null,
   modelType: 'graph',
-  score: 0.2,
-  topK: 3,
-  inputMin: 0,
-  inputMax: 1,
-  alignCorners: false,
+  minScore: 0.1,
+  maxResults: 50,
+  normalizeInput: 1 / 255, // value:(1) = range:(0..255), value=(1/255) = range:(0..1), value:(-1 + 1/127.5) = range:(-1..1)
   tensorSize: 224,
-  offset: 1,
-  scoreScale: 1,
+  offset: 0,
+  scaleScore: 1,
   background: -1,
-  tgz: false,
-  useFloat: true,
+  softmax: true,
 };
 
-async function load(cfg) {
-  let model;
-  config = { ...config, ...cfg };
+async function load(userConfig) {
+  let model = { config: { ...defaults, ...userConfig } };
+  if (!model.config.modelPath) throw new Error('Error loading model: path is null');
   const loadOpts = {
     fetchFunc: (...args) => fetch(...args),
     requestInit: { mode: 'no-cors' },
-    fromTFHub: config.modelPath.startsWith('http') || config.tgz,
+    fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
   };
-  const modelPath = (!loadOpts.fromTFHub && !config.tgz && !config.modelPath.endsWith('model.json')) ? config.modelPath + '/model.json' : config.modelPath;
+  const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? model.config.modelPath + '/model.json' : model.config.modelPath; // append model.json if not present
   try {
-    if (config.modelType === 'graph') model = await tf.loadGraphModel(modelPath, loadOpts);
-    if (config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
+    const saveConfig = model.config;
+    if (model.config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
+    else model = await tf.loadGraphModel(modelPath, loadOpts);
+    model.config = saveConfig;
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('TFJW Load Error: ', modelPath, config);
-    // eslint-disable-next-line no-console
-    console.error(err);
+    throw new Error(`Error loading model: $${modelPath} message:${err.message}`);
   }
-  const res = config.classes ? await fetch(config.classes) : await fetch(config.modelPath + '/classes.json');
-  model.labels = await res.json();
-  model.config = config;
+  try {
+    const res = model.config.classes ? await fetch(model.config.classes) : await fetch(model.config.modelPath + '/classes.json'); // load classes json file from modelpath/classes.json or user provided url
+    model.labels = await res.json();
+  } catch (err) {
+    throw new Error(`Error loading classes: $${model.config.classes} message:${err.message}`);
+  }
   return model;
 }
 
@@ -44,57 +43,72 @@ async function decodeValues(model, values) {
   const pairs = [];
   for (const i in values) pairs.push({ score: values[i], index: i });
   const results = pairs
-    .filter((a) => ((a.score * model.config.scoreScale) > model.config.score) && (model.config.background !== parseInt(a.index, 10)))
+    .filter((a) => ((a.score * model.config.scaleScore) > model.config.minScore) && (model.config.background !== parseInt(a.index, 10)))
     .sort((a, b) => b.score - a.score)
     .map((a) => {
-      const id = parseInt(a.index) - model.config.offset; // offset indexes for some models
+      const id = a.index - model.config.offset; // offset indexes for some models
       const wnid = model.labels[id] ? model.labels[id][0] : a.index;
-      const label = model.labels[id] ? model.labels[id][1] : `unknown id:${a.index}`;
-      return { wnid, id, class: label.toLowerCase(), score: a.score * model.config.scoreScale };
+      const label = model.labels[id] ? model.labels[id][1].toLowerCase() : `unknown id:${a.index}`;
+      const score = Math.min(1, Math.trunc(model.config.scaleScore * 10000 * a.score) / 10000); // limit score to 100% in case of scaled scores
+      return { id, wnid, score, class: label };
     });
-  if (results && results.length > model.config.topK) results.length = model.config.topK;
-  return results;
+  if (results.length > (2 * model.config.maxResults)) results.length = 2 * model.config.maxResults; // rought cut to guard against huge result sets
+  const duplicates = [];
+  const filtered = results.filter((a) => { // filter out duplicate classes
+    if (duplicates.includes(a.class)) return false;
+    duplicates.push(a.class);
+    return true;
+  });
+  if (filtered.length > model.config.maxResults) filtered.length = model.config.maxResults; // cut results to maximum length
+  return filtered;
 }
 
-async function classify(model, image) {
-  const values = tf.tidy(() => {
-    const buffer = tf.browser.fromPixels(image, 3);
-    let cast;
-    if (!model.config.useFloat) {
-      cast = buffer;
-    } else {
-      const bufftmp = tf.cast(buffer, 'float32');
-      cast = tf.mul(bufftmp, [(model.config.inputMax - model.config.inputMin) / 255.0]);
-      tf.dispose(bufftmp);
-    }
-    const offset = model.config.inputMin > 0 ? tf.add(cast, model.config.inputMin) : cast;
-    const resized = tf.image.resizeBilinear(offset, [model.config.tensorSize, model.config.tensorSize], model.config.alignCorners);
-    const reshaped = tf.reshape(resized, [-1, model.config.tensorSize, model.config.tensorSize, 3]);
-    const predictions = model.predict(reshaped);
-    const prediction = Array.isArray(predictions) ? predictions[0] : predictions; // some models return prediction for multiple objects in array, some return single prediction
-    const softmax = prediction.softmax();
-    const data = softmax.dataSync();
-    tf.dispose(buffer);
-    tf.dispose(cast);
-    tf.dispose(offset);
-    tf.dispose(resized);
-    tf.dispose(reshaped);
-    tf.dispose(predictions);
-    tf.dispose(softmax);
-    return data;
-  });
-  const decoded = await decodeValues(model, values);
+async function getImage(model, image) {
+  // read image pixels or use tensor as-is
+  const bufferT = image instanceof tf.Tensor ? tf.clone(image) : tf.browser.fromPixels(image, 3);
+
+  // resize to expected model input size
+  const resizedT = tf.image.resizeBilinear(bufferT, [model.config.tensorSize, model.config.tensorSize], false);
+  bufferT.dispose();
+
+  const expandedT = resizedT.shape.length < 4 ? tf.expandDims(resizedT, 0) : tf.clone(resizedT);
+  resizedT.dispose();
+
+  // casting depends on model input data type
+  const castedT = model.inputs[0].dtype === 'int32' ? tf.clone(expandedT) : tf.cast(expandedT, 'float32');
+  expandedT.dispose();
+
+  // normalization is on-demand
+  const imageT = model.config.normalizeInput === 1 ? tf.clone(castedT) : tf.mul(castedT, [model.config.normalizeInput]);
+  castedT.dispose();
+  return imageT;
+}
+
+async function classify(model, image, userConfig) {
+  // allow changes of configurations on the fly to play with nms settings
+  if (userConfig) model.config = { ...model.config, ...userConfig };
+
+  // get image tensor
+  const imageT = await getImage(model, image);
+
+  // run prediction
+  const predictionsT = model.predict(imageT);
+  imageT.dispose();
+
+  // get best results
+  const predictionT0 = Array.isArray(predictionsT) ? predictionsT[0] : predictionsT; // some models return prediction for multiple objects in array, some return single prediction
+  const softmaxT = model.config.softmax ? predictionT0.softmax() : predictionT0.clone();
+  if (Array.isArray(predictionsT)) for (const tensorT of predictionsT) tensorT.dispose();
+  else predictionsT.dispose();
+  const softmax = await softmaxT.data();
+  softmaxT.dispose();
+
+  // decode result data
+  const decoded = await decodeValues(model, softmax);
   return decoded;
 }
 
 module.exports = {
-  config,
   load,
   classify,
 };
-
-/*
-      const normalized1 = img.toFloat().div(this.normalizationOffset);
-      const resized1 = tf.image.resizeBilinear(normalized1, [model.config.tensorSize, model.config.tensorSize], model.config.alignCorners);
-      const batched1 = resized1.reshape([1, model.config.tensorSize, model.config.tensorSize, 3]);
-*/

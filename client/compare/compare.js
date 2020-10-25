@@ -137,7 +137,7 @@ async function classify() {
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   for (const i in files) {
-    if (i >= limit) stop = true;
+    if ((limit > 0) && (i >= limit)) stop = true;
     if (stop) break;
     const results = [];
     const image = await processImage.getImage(files[i]);
@@ -207,7 +207,7 @@ async function person() {
   stats = [0, 0];
   let data;
   for (const i in files) {
-    if (i >= limit) stop = true;
+    if ((limit > 0) && (i >= limit)) stop = true;
     if (stop) break;
     const results = [];
     const image = await processImage.getImage(files[i]);
@@ -251,7 +251,7 @@ async function detect() {
 
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
-  await modelDetect.exec(models[0].model, warmup.canvas);
+  await modelDetect.detect(models[0].model, warmup.canvas);
   log.div('log', true, 'TensorFlow Memory:', tf.memory());
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, tf.ENV.flags);
@@ -266,13 +266,13 @@ async function detect() {
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   for (const i in files) {
-    if (i >= limit) stop = true;
+    if ((limit > 0) && (i >= limit)) stop = true;
     if (stop) continue;
     const results = [];
     const image = await processImage.getImage(files[i]);
     for (const m in models) {
       const t0 = window.performance.now();
-      const data = await modelDetect.exec(models[m].model, image.canvas);
+      const data = await modelDetect.detect(models[m].model, image.canvas);
       const t1 = window.performance.now();
       stats[m] += (t1 - t0);
       // tbd: human
