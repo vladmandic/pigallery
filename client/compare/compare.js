@@ -17,7 +17,7 @@ import config from '../shared/config.js';
 const models = [];
 window.cache = [];
 let stop = false;
-const limit = 8;
+const limit = 0;
 
 async function init() {
   const res = await fetch('/api/user');
@@ -91,6 +91,7 @@ async function print(file, image, results) {
     let classified = model.model.name || model.model;
     if (model.data) {
       for (const res of model.data) {
+        if (res.custom && res.data) classified += ` | ${res.custom}: ${JSON.stringify(res.data)}`;
         if (res.score && res.class) classified += ` | ${Math.round(res.score * 100)}% ${res.class} [id:${res.id}]`;
         if (res.age && res.gender) classified += ` | gender: ${Math.round(100 * res.genderProbability)}% ${res.gender} age: ${res.age.toFixed(1)}`;
         if (res.expression) {
@@ -137,6 +138,7 @@ async function classify() {
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   for (const i in files) {
+    if (tf.memory().numBytesInGPUAllocated > tf.ENV.get('WEBGL_DELETE_TEXTURE_THRESHOLD')) log.debug('High memory threshold:', tf.memory());
     if ((limit > 0) && (i >= limit)) stop = true;
     if (stop) break;
     const results = [];
@@ -207,6 +209,7 @@ async function person() {
   stats = [0, 0];
   let data;
   for (const i in files) {
+    if (tf.memory().numBytesInGPUAllocated > tf.ENV.get('WEBGL_DELETE_TEXTURE_THRESHOLD')) log.debug('High memory threshold:', tf.memory());
     if ((limit > 0) && (i >= limit)) stop = true;
     if (stop) break;
     const results = [];
@@ -251,6 +254,7 @@ async function detect() {
 
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
+
   await modelDetect.detect(models[0].model, warmup.canvas);
   log.div('log', true, 'TensorFlow Memory:', tf.memory());
   log.div('log', true, 'TensorFlow Flags:');
@@ -266,6 +270,7 @@ async function detect() {
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   for (const i in files) {
+    if (tf.memory().numBytesInGPUAllocated > tf.ENV.get('WEBGL_DELETE_TEXTURE_THRESHOLD')) log.debug('High memory threshold:', tf.memory());
     if ((limit > 0) && (i >= limit)) stop = true;
     if (stop) continue;
     const results = [];
@@ -278,7 +283,6 @@ async function detect() {
       // tbd: human
       results.push({ model: models[m], data });
       log.debug('Detect', files[i], models[m], data);
-      // log.div('log', true, 'Memory state after run:', ((i * models.length) + (1 * m)), 'snapshot:', tf.memory());
     }
     print(files[i], image, results);
   }
