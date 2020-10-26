@@ -1,4 +1,5 @@
 import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
+import * as custom from './custom.js';
 
 const defaults = {
   modelPath: null, // required
@@ -96,7 +97,15 @@ async function detect(model, image, userConfig) {
     });
   }
   const results = detected.filter((a) => a.score > model.config.minScore); // filter by score one more time as nms can miss items
-
+  if (model.config.postProcess) {
+    try {
+      const data = await custom[model.config.postProcess](model, detected); // hack to call a named function
+      if (data) results.push({ custom: model.config.postProcess, data });
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log('Post process error:', err.message);
+    }
+  }
   // cleanup and return results
   imageT.dispose();
   return results;

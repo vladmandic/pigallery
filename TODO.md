@@ -21,15 +21,15 @@ Didn't find:
 
 ###
 
+- Firefox
 - Compare: Human
 - Video:
   Input scalling
   Add Various
   Add Object Detection to Various
   Add Image Classification to Various
-- Process: All Verify
+- Process: 
+  All Verify
+  Implement NSFW
 - Model errors:
-  - NudeNet
   - COCO CenterNet
-  - OpenImages Atrous
-- Investigate error 'Failed to compile fragment shader.'
