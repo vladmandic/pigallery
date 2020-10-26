@@ -75,7 +75,6 @@ async function detect(model, image, userConfig) {
   boxesT.dispose();
 
   // sort & filter results using nms feature
-  console.log('score', model.config.minScore / model.config.scaleScore);
   const nmsT = await tf.image.nonMaxSuppressionAsync(boxes, scores, model.config.maxResults, model.config.iouThreshold, model.config.minScore / model.config.scaleScore);
   const nms = await nmsT.data();
   nmsT.dispose();

@@ -8,7 +8,7 @@ window.debug = true;
 // TFJS Configuration
 const config = {
   backEnd: 'webgl',        // back-end used by tensorflow for image processing: webgl, cpu, wasm, webgpu
-  maxSize: 1024,           // maximum image width or height that will be used for processing before resizing is required
+  maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
   renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 1,      // how many images to process in parallel
   squareImage: false,      // resize proportional to the original image or to a square image
