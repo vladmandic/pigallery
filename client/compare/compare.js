@@ -17,7 +17,7 @@ import config from '../shared/config.js';
 const models = [];
 window.cache = [];
 let stop = false;
-const limit = 5;
+const limit = 8;
 
 async function init() {
   const res = await fetch('/api/user');
@@ -256,9 +256,9 @@ async function detect() {
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, tf.ENV.flags);
 
-  const api = await fetch('/api/dir?folder=Tests/Objects/');
+  // const api = await fetch('/api/dir?folder=Tests/Objects/');
   // const api = await fetch('/api/dir?folder=Tests/Persons/');
-  // const api = await fetch('/api/dir?folder=Tests/NSFW/');
+  const api = await fetch('/api/dir?folder=Tests/NSFW/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
@@ -278,6 +278,7 @@ async function detect() {
       // tbd: human
       results.push({ model: models[m], data });
       log.debug('Detect', files[i], models[m], data);
+      // log.div('log', true, 'Memory state after run:', ((i * models.length) + (1 * m)), 'snapshot:', tf.memory());
     }
     print(files[i], image, results);
   }
