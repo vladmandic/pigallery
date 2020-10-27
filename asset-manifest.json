@@ -5,7 +5,7 @@
       "imports": []
     },
     "../human/dist/human.esm-nobundle.js": {
-      "bytes": 154973,
+      "bytes": 154982,
       "imports": [
         {
           "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
@@ -52,7 +52,7 @@
       ]
     },
     "../human/dist/human.esm.js": {
-      "bytes": 2923601,
+      "bytes": 2845238,
       "imports": []
     },
     "../human/node_modules/@tensorflow/tfjs-backend-cpu/dist/tf-backend-cpu.node.js": {
@@ -262,7 +262,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 36395,
+      "bytes": 36411,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js"
@@ -359,8 +359,11 @@
       "imports": []
     },
     "client/index/options.js": {
-      "bytes": 7476,
+      "bytes": 8049,
       "imports": [
+        {
+          "path": "node_modules/jquery/dist/jquery.js"
+        },
         {
           "path": "client/shared/log.js"
         },
@@ -642,7 +645,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 22349307
+      "bytes": 22220645
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -699,18 +702,18 @@
           "bytesInOutput": 6513
         },
         "../human/dist/human.esm.js": {
-          "bytesInOutput": 2924598
+          "bytesInOutput": 2846125
         },
         "client/compare/compare.js": {
           "bytesInOutput": 12054
         }
       },
-      "bytes": 7204518
+      "bytes": 7126045
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 1179493
+      "bytes": 1112720
     },
     "dist/index/index.js": {
       "imports": [],
@@ -761,16 +764,13 @@
           "bytesInOutput": 1857
         },
         "client/index/options.js": {
-          "bytesInOutput": 7283
+          "bytesInOutput": 8191
         },
         "client/index/pwa-register.js": {
           "bytesInOutput": 1554
         },
         "client/index/index.js": {
           "bytesInOutput": 84
-        },
-        "assets/marked.esm.js": {
-          "bytesInOutput": 102
         },
         "assets/marked.esm.js": {
           "bytesInOutput": 57506
@@ -782,7 +782,7 @@
           "bytesInOutput": 32484
         }
       },
-      "bytes": 579427
+      "bytes": 580078
     },
     "dist/process/process.js.map": {
       "imports": [],
@@ -980,7 +980,7 @@
           "bytesInOutput": 172
         },
         "../human/dist/human.esm-nobundle.js": {
-          "bytesInOutput": 154053
+          "bytesInOutput": 154062
         },
         "client/video/video.js": {
           "bytesInOutput": 39
@@ -992,7 +992,7 @@
           "bytesInOutput": 10517
         }
       },
-      "bytes": 5723679
+      "bytes": 5723688
     },
     "dist/index/worker.js.map": {
       "imports": [],

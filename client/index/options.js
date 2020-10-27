@@ -1,7 +1,8 @@
+import $ from 'jquery';
 import * as log from '../shared/log.js';
 import * as list from './list.js';
 import * as config from '../shared/config.js';
-import * as models from '../shared/models.js';
+import * as definitions from '../shared/models.js';
 
 function JSONtoStr(json) {
   let text = '';
@@ -14,14 +15,27 @@ function JSONtoStr(json) {
 }
 
 function globalOptions() {
-  let classify = '<b>&nbsp Image Classification:</b><br>';
-  for (const obj of models.classify) classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
-  let detect = '<b>&nbsp Object Detection:</b><br>';
-  for (const obj of models.detect) detect += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
-  let video = '<b>&nbsp Video Analysis:</b><br>';
-  for (const [key, val] of Object.entries(models.video)) video += `&nbsp &nbsp ${key}: ${JSONtoStr(val)}<br>`;
-  let face = '<b>&nbsp Face Analysis:</b><br>';
-  face += `&nbsp &nbsp ${JSONtoStr(models.person)}<br>`;
+  const out = {};
+  if (definitions.models.classify) {
+    out.classify = '<b>&nbsp Image Classification:</b><br>';
+    for (const obj of definitions.models.classify) out.classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
+  }
+  if (definitions.models.detect) {
+    out.detect = '<b>&nbsp Object Detection:</b><br>';
+    for (const obj of definitions.models.detect) out.detect += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
+  }
+  if (definitions.models.video) {
+    out.video = '<b>&nbsp Video Analysis:</b><br>';
+    for (const [key, val] of Object.entries(definitions.models.video)) out.video += `&nbsp &nbsp ${key}: ${JSONtoStr(val)}<br>`;
+  }
+  if (definitions.models.various) {
+    out.various = '<b>&nbsp Various:</b><br>';
+    for (const [key, val] of Object.entries(definitions.models.various)) out.various += `&nbsp &nbsp ${key}: ${JSONtoStr(val)}<br>`;
+  }
+  if (definitions.models.person) {
+    out.face = '<b>&nbsp Face Analysis:</b><br>';
+    out.face += `&nbsp &nbsp ${JSONtoStr(definitions.models.person)}<br>`;
+  }
   const html = `<div style="line-height: 1.4rem">
     <h1>Global configuration</h1>
     Browser register PWA handler: ${config.default.registerPWA}<br>
@@ -35,10 +49,11 @@ function globalOptions() {
     &nbsp Float Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}<br>
     &nbsp Image resize: ${config.default.maxSize}px &nbsp Image square: ${config.default.squareImage}<br>
     <h1>TensorFlow Active Models:</h1>
-    ${classify}<br>
-    ${detect}<br>
-    ${video}<br>
-    ${face}<br>
+    ${out.classify || ''}<br>
+    ${out.detect || ''}<br>
+    ${out.video || ''}<br>
+    ${out.face || ''}<br>
+    ${out.various || ''}<br>
     </div>
   `;
   return html;
