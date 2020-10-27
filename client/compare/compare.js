@@ -1,15 +1,10 @@
-// import ndarray from 'ndarray';
-// import ops from 'ndarray-ops';
-// import KerasJS from '../assets/keras.min.js';
-
 import $ from 'jquery';
-import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
+import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
 import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
 import Human from '@vladmandic/human';
 import * as log from '../shared/log.js';
 import * as modelClassify from '../process/modelClassify.js';
 import * as modelDetect from '../process/modelDetect.js';
-// import * as modelYolo from '../process/modelYolo.js';
 import * as definitions from '../shared/models.js';
 import * as processImage from '../process/processImage.js';
 import config from '../shared/config.js';
@@ -91,7 +86,6 @@ async function print(file, image, results) {
     let classified = model.model.name || model.model;
     if (model.data) {
       for (const res of model.data) {
-        if (res.custom && res.data) classified += ` | ${res.custom}: ${JSON.stringify(res.data)}`;
         if (res.score && res.class) classified += ` | ${Math.round(res.score * 100)}% ${res.class} [id:${res.id}]`;
         if (res.age && res.gender) classified += ` | gender: ${Math.round(100 * res.genderProbability)}% ${res.gender} age: ${res.age.toFixed(1)}`;
         if (res.expression) {
@@ -140,10 +134,11 @@ async function classify() {
   for (const i in files) {
     if (tf.memory().numBytesInGPUAllocated > tf.ENV.get('WEBGL_DELETE_TEXTURE_THRESHOLD')) log.debug('High memory threshold:', tf.memory());
     if ((limit > 0) && (i >= limit)) stop = true;
-    if (stop) break;
+    if (stop) continue;
     const results = [];
     const image = await processImage.getImage(files[i]);
     for (const m in models) {
+      if (stop) continue;
       const t0 = window.performance.now();
       const data = await modelClassify.classify(models[m].model, image.canvas);
       const t1 = window.performance.now();
@@ -211,7 +206,7 @@ async function person() {
   for (const i in files) {
     if (tf.memory().numBytesInGPUAllocated > tf.ENV.get('WEBGL_DELETE_TEXTURE_THRESHOLD')) log.debug('High memory threshold:', tf.memory());
     if ((limit > 0) && (i >= limit)) stop = true;
-    if (stop) break;
+    if (stop) continue;
     const results = [];
     const image = await processImage.getImage(files[i]);
 
@@ -276,6 +271,7 @@ async function detect() {
     const results = [];
     const image = await processImage.getImage(files[i]);
     for (const m in models) {
+      if (stop) continue;
       const t0 = window.performance.now();
       const data = await modelDetect.detect(models[m].model, image.canvas);
       const t1 = window.performance.now();
@@ -297,7 +293,10 @@ async function main() {
   $('#btn-classify').on('click', () => classify());
   $('#btn-detect').on('click', () => detect());
   $('#btn-person').on('click', () => person());
-  $('#btn-stop').on('click', () => { stop = true; });
+  $('#btn-stop').on('click', () => {
+    log.div('log', true, 'Stop requested');
+    stop = true;
+  });
   await config.done();
 }
 

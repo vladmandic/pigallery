@@ -1,4 +1,4 @@
-import Human from '@vladmandic/human';
+import Human from '@vladmandic/human/dist/human.esm-nobundle.js';
 import * as draw from './draw.js';
 
 const human = new Human();

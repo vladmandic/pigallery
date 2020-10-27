@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
+import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
 import * as custom from './custom.js';
 
 const defaults = {
@@ -100,7 +100,7 @@ async function detect(model, image, userConfig) {
   if (model.config.postProcess) {
     try {
       const data = await custom[model.config.postProcess](model, detected); // hack to call a named function
-      if (data) results.push({ custom: model.config.postProcess, data });
+      if (data) results.unshift(...data);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log('Post process error:', err.message);

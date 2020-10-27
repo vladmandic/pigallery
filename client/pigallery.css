@@ -1,6 +1,6 @@
 @font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('/assets/lato.ttf') format('truetype'); }
 html { font-size: 18px; }
-body { font-size: 1rem; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; width: 100vw; height: 100vh; background: var(--background); color: var(--text); }
+body { font-size: 1rem; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; width: 100vw; height: 100vh; background: var(--background); color: var(--text); scrollbar-color: var(--body); }
 ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0; }
 ::-webkit-scrollbar-thumb { background: var(--body); }
 ::-webkit-scrollbar-track { margin: 8px; }

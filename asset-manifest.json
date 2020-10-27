@@ -1,5 +1,188 @@
 {
   "inputs": {
+    "../face-api/dist/face-api.esm.js": {
+      "bytes": 1102131,
+      "imports": []
+    },
+    "../human/dist/human.esm-nobundle.js": {
+      "bytes": 154973,
+      "imports": [
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js"
+        }
+      ]
+    },
+    "../human/dist/human.esm.js": {
+      "bytes": 2923601,
+      "imports": []
+    },
+    "../human/node_modules/@tensorflow/tfjs-backend-cpu/dist/tf-backend-cpu.node.js": {
+      "bytes": 272720,
+      "imports": [
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js"
+        },
+        {
+          "path": "../human/node_modules/seedrandom/index.js"
+        }
+      ]
+    },
+    "../human/node_modules/@tensorflow/tfjs-backend-webgl/dist/tf-backend-webgl.node.js": {
+      "bytes": 571410,
+      "imports": [
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js"
+        }
+      ]
+    },
+    "../human/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.node.js": {
+      "bytes": 294510,
+      "imports": [
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js"
+        }
+      ]
+    },
+    "../human/node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js": {
+      "bytes": 1305668,
+      "imports": [
+        {
+          "path": "empty:/home/vlado/dev/human/node_modules/node-fetch/browser.js"
+        }
+      ]
+    },
+    "../human/node_modules/@tensorflow/tfjs-data/dist/tf-data.node.js": {
+      "bytes": 217016,
+      "imports": [
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js"
+        }
+      ]
+    },
+    "../human/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.node.js": {
+      "bytes": 811045,
+      "imports": [
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js"
+        }
+      ]
+    },
+    "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js": {
+      "bytes": 2953,
+      "imports": [
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-data/dist/tf-data.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-backend-cpu/dist/tf-backend-cpu.node.js"
+        },
+        {
+          "path": "../human/node_modules/@tensorflow/tfjs-backend-webgl/dist/tf-backend-webgl.node.js"
+        }
+      ]
+    },
+    "../human/node_modules/seedrandom/index.js": {
+      "bytes": 2110,
+      "imports": [
+        {
+          "path": "../human/node_modules/seedrandom/lib/alea.js"
+        },
+        {
+          "path": "../human/node_modules/seedrandom/lib/xor128.js"
+        },
+        {
+          "path": "../human/node_modules/seedrandom/lib/xorwow.js"
+        },
+        {
+          "path": "../human/node_modules/seedrandom/lib/xorshift7.js"
+        },
+        {
+          "path": "../human/node_modules/seedrandom/lib/xor4096.js"
+        },
+        {
+          "path": "../human/node_modules/seedrandom/lib/tychei.js"
+        },
+        {
+          "path": "../human/node_modules/seedrandom/seedrandom.js"
+        }
+      ]
+    },
+    "../human/node_modules/seedrandom/lib/alea.js": {
+      "bytes": 3243,
+      "imports": []
+    },
+    "../human/node_modules/seedrandom/lib/tychei.js": {
+      "bytes": 2525,
+      "imports": []
+    },
+    "../human/node_modules/seedrandom/lib/xor128.js": {
+      "bytes": 1748,
+      "imports": []
+    },
+    "../human/node_modules/seedrandom/lib/xor4096.js": {
+      "bytes": 4559,
+      "imports": []
+    },
+    "../human/node_modules/seedrandom/lib/xorshift7.js": {
+      "bytes": 2418,
+      "imports": []
+    },
+    "../human/node_modules/seedrandom/lib/xorwow.js": {
+      "bytes": 1919,
+      "imports": []
+    },
+    "../human/node_modules/seedrandom/seedrandom.js": {
+      "bytes": 8358,
+      "imports": []
+    },
     "assets/color-thief.umd.js": {
       "bytes": 6926,
       "imports": []
@@ -13,19 +196,19 @@
       "imports": []
     },
     "client/compare/compare.js": {
-      "bytes": 12594,
+      "bytes": 12428,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js"
         },
         {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esnext.js"
+          "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
         },
         {
-          "path": "node_modules/@vladmandic/face-api/dist/face-api.esm.js"
+          "path": "../face-api/dist/face-api.esm.js"
         },
         {
-          "path": "node_modules/@vladmandic/human/dist/human.esm.js"
+          "path": "../human/dist/human.esm.js"
         },
         {
           "path": "client/shared/log.js"
@@ -213,22 +396,22 @@
       ]
     },
     "client/process/custom.js": {
-      "bytes": 550,
+      "bytes": 733,
       "imports": []
     },
     "client/process/modelClassify.js": {
       "bytes": 4808,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esnext.js"
+          "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
         }
       ]
     },
     "client/process/modelDetect.js": {
-      "bytes": 5312,
+      "bytes": 5280,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esnext.js"
+          "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
         },
         {
           "path": "client/process/custom.js"
@@ -239,7 +422,7 @@
       "bytes": 4880,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esnext.js"
+          "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
         },
         {
           "path": "node_modules/jquery/dist/jquery.js"
@@ -259,13 +442,13 @@
       ]
     },
     "client/process/processImage.js": {
-      "bytes": 11385,
+      "bytes": 11264,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esnext.js"
+          "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
         },
         {
-          "path": "node_modules/@vladmandic/face-api/dist/face-api.esm.js"
+          "path": "../face-api/dist/face-api.esm.js"
         },
         {
           "path": "client/shared/log.js"
@@ -347,14 +530,14 @@
       "imports": []
     },
     "client/video/menu.js": {
-      "bytes": 10337,
+      "bytes": 10408,
       "imports": []
     },
     "client/video/run.js": {
       "bytes": 5707,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esnext.js"
+          "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
         },
         {
           "path": "client/shared/log.js"
@@ -380,7 +563,7 @@
       "bytes": 2560,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs/dist/tf.esnext.js"
+          "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
         },
         {
           "path": "client/shared/log.js"
@@ -394,10 +577,10 @@
       ]
     },
     "client/video/runHuman.js": {
-      "bytes": 8476,
+      "bytes": 8503,
       "imports": [
         {
-          "path": "node_modules/@vladmandic/human/dist/human.esm.js"
+          "path": "../human/dist/human.esm-nobundle.js"
         },
         {
           "path": "client/video/draw.js"
@@ -430,25 +613,13 @@
         }
       ]
     },
-    "node_modules/@tensorflow/tfjs/dist/tf.esnext.js": {
-      "bytes": 3525871,
+    "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
+      "bytes": 3526165,
       "imports": [
         {
-          "path": "node_modules/@tensorflow/tfjs/node_modules/node-fetch/browser.js"
+          "path": "node_modules/node-fetch/browser.js"
         }
       ]
-    },
-    "node_modules/@tensorflow/tfjs/node_modules/node-fetch/browser.js": {
-      "bytes": 732,
-      "imports": []
-    },
-    "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
-      "bytes": 1102004,
-      "imports": []
-    },
-    "node_modules/@vladmandic/human/dist/human.esm.js": {
-      "bytes": 2844644,
-      "imports": []
     },
     "node_modules/jquery/dist/jquery.js": {
       "bytes": 287630,
@@ -457,25 +628,33 @@
     "node_modules/moment/moment.js": {
       "bytes": 173902,
       "imports": []
+    },
+    "node_modules/node-fetch/browser.js": {
+      "bytes": 732,
+      "imports": []
+    },
+    "empty:/home/vlado/dev/human/node_modules/node-fetch/browser.js": {
+      "bytes": 0,
+      "imports": []
     }
   },
   "outputs": {
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 22298245
+      "bytes": 22349307
     },
     "dist/compare/compare.js": {
       "imports": [],
       "inputs": {
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 218633
+          "bytesInOutput": 218636
         },
-        "node_modules/@tensorflow/tfjs/node_modules/node-fetch/browser.js": {
+        "node_modules/node-fetch/browser.js": {
           "bytesInOutput": 633
         },
-        "node_modules/@tensorflow/tfjs/dist/tf.esnext.js": {
-          "bytesInOutput": 2541254
+        "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
+          "bytesInOutput": 2541536
         },
         "client/shared/log.js": {
           "bytesInOutput": 1608
@@ -484,10 +663,10 @@
           "bytesInOutput": 4211
         },
         "client/process/custom.js": {
-          "bytesInOutput": 658
+          "bytesInOutput": 777
         },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 4356
+          "bytesInOutput": 4326
         },
         "client/shared/models.js": {
           "bytesInOutput": 1857
@@ -504,29 +683,29 @@
         "client/compare/compare.js": {
           "bytesInOutput": 90
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
+        "../face-api/dist/face-api.esm.js": {
           "bytesInOutput": 3663
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 1348470
+        "../face-api/dist/face-api.esm.js": {
+          "bytesInOutput": 1348519
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
+        "../face-api/dist/face-api.esm.js": {
           "bytesInOutput": 303
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 105298
+        "../face-api/dist/face-api.esm.js": {
+          "bytesInOutput": 105391
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
+        "../face-api/dist/face-api.esm.js": {
           "bytesInOutput": 6513
         },
-        "node_modules/@vladmandic/human/dist/human.esm.js": {
-          "bytesInOutput": 2845528
+        "../human/dist/human.esm.js": {
+          "bytesInOutput": 2924598
         },
         "client/compare/compare.js": {
-          "bytesInOutput": 12045
+          "bytesInOutput": 12054
         }
       },
-      "bytes": 7124997
+      "bytes": 7204518
     },
     "dist/index/index.js.map": {
       "imports": [],
@@ -537,7 +716,7 @@
       "imports": [],
       "inputs": {
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 219105
+          "bytesInOutput": 219108
         },
         "client/shared/log.js": {
           "bytesInOutput": 1605
@@ -558,7 +737,7 @@
           "bytesInOutput": 44520
         },
         "client/index/details.js": {
-          "bytesInOutput": 17876
+          "bytesInOutput": 17882
         },
         "client/shared/blockhash.js": {
           "bytesInOutput": 5617
@@ -594,7 +773,7 @@
           "bytesInOutput": 102
         },
         "assets/marked.esm.js": {
-          "bytesInOutput": 57485
+          "bytesInOutput": 57506
         },
         "client/index/index.js": {
           "bytesInOutput": 821
@@ -603,24 +782,24 @@
           "bytesInOutput": 32484
         }
       },
-      "bytes": 579397
+      "bytes": 579427
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 17276093
+      "bytes": 17218876
     },
     "dist/process/process.js": {
       "imports": [],
       "inputs": {
-        "node_modules/@tensorflow/tfjs/node_modules/node-fetch/browser.js": {
+        "node_modules/node-fetch/browser.js": {
           "bytesInOutput": 633
         },
-        "node_modules/@tensorflow/tfjs/dist/tf.esnext.js": {
-          "bytesInOutput": 2541173
+        "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
+          "bytesInOutput": 2541455
         },
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 218674
+          "bytesInOutput": 218677
         },
         "client/shared/log.js": {
           "bytesInOutput": 1610
@@ -632,10 +811,10 @@
           "bytesInOutput": 4209
         },
         "client/process/custom.js": {
-          "bytesInOutput": 658
+          "bytesInOutput": 777
         },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 4354
+          "bytesInOutput": 4324
         },
         "client/shared/blockhash.js": {
           "bytesInOutput": 5582
@@ -652,26 +831,26 @@
         "client/process/process.js": {
           "bytesInOutput": 174
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
+        "../face-api/dist/face-api.esm.js": {
           "bytesInOutput": 3663
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 1348475
+        "../face-api/dist/face-api.esm.js": {
+          "bytesInOutput": 1348524
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
+        "../face-api/dist/face-api.esm.js": {
           "bytesInOutput": 303
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
-          "bytesInOutput": 105298
+        "../face-api/dist/face-api.esm.js": {
+          "bytesInOutput": 105391
         },
-        "node_modules/@vladmandic/face-api/dist/face-api.esm.js": {
+        "../face-api/dist/face-api.esm.js": {
           "bytesInOutput": 6513
         },
         "client/process/process.js": {
           "bytesInOutput": 4416
         }
       },
-      "bytes": 4272877
+      "bytes": 4273341
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
@@ -682,7 +861,7 @@
       "imports": [],
       "inputs": {
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 218551
+          "bytesInOutput": 218554
         },
         "client/shared/log.js": {
           "bytesInOutput": 1588
@@ -697,18 +876,18 @@
           "bytesInOutput": 491
         }
       },
-      "bytes": 234511
+      "bytes": 234514
     },
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 10005590
+      "bytes": 10014496
     },
     "dist/video/video.js": {
       "imports": [],
       "inputs": {
         "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 218616
+          "bytesInOutput": 218619
         },
         "assets/panzoom.js": {
           "bytesInOutput": 49129
@@ -719,11 +898,11 @@
         "client/shared/user.js": {
           "bytesInOutput": 1065
         },
-        "node_modules/@tensorflow/tfjs/node_modules/node-fetch/browser.js": {
+        "node_modules/node-fetch/browser.js": {
           "bytesInOutput": 633
         },
-        "node_modules/@tensorflow/tfjs/dist/tf.esnext.js": {
-          "bytesInOutput": 2540727
+        "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
+          "bytesInOutput": 2541009
         },
         "client/video/draw.js": {
           "bytesInOutput": 7150
@@ -740,6 +919,54 @@
         "client/video/runClassify.js": {
           "bytesInOutput": 2377
         },
+        "empty:/home/vlado/dev/human/node_modules/node-fetch/browser.js": {
+          "bytesInOutput": 46
+        },
+        "../human/node_modules/@tensorflow/tfjs-core/dist/tf-core.node.js": {
+          "bytesInOutput": 1004889
+        },
+        "../human/node_modules/@tensorflow/tfjs-layers/dist/tf-layers.node.js": {
+          "bytesInOutput": 514794
+        },
+        "../human/node_modules/@tensorflow/tfjs-converter/dist/tf-converter.node.js": {
+          "bytesInOutput": 246279
+        },
+        "../human/node_modules/@tensorflow/tfjs-data/dist/tf-data.node.js": {
+          "bytesInOutput": 129609
+        },
+        "../human/node_modules/seedrandom/lib/alea.js": {
+          "bytesInOutput": 2112
+        },
+        "../human/node_modules/seedrandom/lib/xor128.js": {
+          "bytesInOutput": 1699
+        },
+        "../human/node_modules/seedrandom/lib/xorwow.js": {
+          "bytesInOutput": 1897
+        },
+        "../human/node_modules/seedrandom/lib/xorshift7.js": {
+          "bytesInOutput": 2309
+        },
+        "../human/node_modules/seedrandom/lib/xor4096.js": {
+          "bytesInOutput": 2744
+        },
+        "../human/node_modules/seedrandom/lib/tychei.js": {
+          "bytesInOutput": 1940
+        },
+        "../human/node_modules/seedrandom/seedrandom.js": {
+          "bytesInOutput": 4020
+        },
+        "../human/node_modules/seedrandom/index.js": {
+          "bytesInOutput": 458
+        },
+        "../human/node_modules/@tensorflow/tfjs-backend-cpu/dist/tf-backend-cpu.node.js": {
+          "bytesInOutput": 246004
+        },
+        "../human/node_modules/@tensorflow/tfjs-backend-webgl/dist/tf-backend-webgl.node.js": {
+          "bytesInOutput": 527935
+        },
+        "../human/node_modules/@tensorflow/tfjs/dist/tf.node.js": {
+          "bytesInOutput": 3025
+        },
         "client/video/runHuman.js": {
           "bytesInOutput": 8509
         },
@@ -752,20 +979,20 @@
         "client/video/video.js": {
           "bytesInOutput": 172
         },
-        "node_modules/@vladmandic/human/dist/human.esm.js": {
-          "bytesInOutput": 2843379
+        "../human/dist/human.esm-nobundle.js": {
+          "bytesInOutput": 154053
         },
         "client/video/video.js": {
           "bytesInOutput": 39
         },
         "client/video/menu.js": {
-          "bytesInOutput": 10337
+          "bytesInOutput": 10412
         },
         "client/video/video.js": {
           "bytesInOutput": 10517
         }
       },
-      "bytes": 5721937
+      "bytes": 5723679
     },
     "dist/index/worker.js.map": {
       "imports": [],
