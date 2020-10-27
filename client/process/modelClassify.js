@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
+import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
 
 const defaults = {
   modelPath: null,

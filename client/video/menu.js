@@ -1,4 +1,5 @@
 let instance = 0;
+let CSScreated = false;
 
 const css = `
   .menu { position: fixed; top: 0rem; right: 0; width: fit-content; padding: 0 0.6rem 0 0.4rem; line-height: 1.8rem; z-index: 10; max-height: calc(100% - 4rem); box-shadow: 0 0 8px dimgrey; background: var(--body); display: block}
@@ -33,9 +34,11 @@ const css = `
   `;
 
 function createCSS() {
+  if (CSScreated) return;
   const el = document.createElement('style');
   el.innerHTML = css;
   document.getElementsByTagName('head')[0].appendChild(el);
+  CSScreated = true;
 }
 
 class Menu {

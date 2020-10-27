@@ -37,8 +37,8 @@
     .range { margin: 0 0.8rem 0 0; width: 5rem; background: var(--color); color: lightblue; }
     .range:before { content: attr(data-value); color: var(--text); margin: 0 0.4rem 0 0; font-weight: 800; font-size: 0.6rem; }
     input[type=range] { -webkit-appearance: none; }
-    input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: black; border-radius: 1rem; border: 1px; }
-    input[type=range]::-webkit-slider-thumb { border: 1px solid #000000; margin-top: 0.05rem; height: 0.9rem; width: 1.5rem; border-radius: 1rem; background: lightblue; cursor: pointer; -webkit-appearance: none; }
+    input[type=range]::-webkit-slider-runnable-track, input[type=range]::-moz-range-track { width: 100%; height: 1rem; cursor: pointer; background: black; border-radius: 1rem; border: 1px; }
+    input[type=range]::-webkit-slider-thumb, input[type=range]::-moz-range-thumb { border: 1px solid #000000; margin-top: 0.05rem; height: 0.9rem; width: 1.5rem; border-radius: 1rem; background: lightblue; cursor: pointer; -webkit-appearance: none; }
     .canvases { pointer-events: none; position: absolute; top: 0; }
   </style>
   <!-- Script Module -->
@@ -59,7 +59,7 @@
   <!-- Body -->
   <div id="detected" style="pointer-events: none; padding: 4px; position: fixed; white-space: nowrap; z-index:99; height: fit-content; width: -webkit-fill-available; overflow: auto; overflow-wrap: break-word; white-space: normal; color: white"></div>
   <div style="display: block; position: fixed; top: 5rem; ">
-    <div id="status" style="font-size: 6rem; width: -webkit-fill-available; text-align: center; position: fixed; z-index: 50">Ready</div>
+    <div id="status" style="font-size: 6rem; width: 100vw; text-align: center; position: fixed; z-index: 50">Ready</div>
     <div id="video-start" class="fad fa-play-circle" style="font-size: 15rem; width: 100vw; text-align: center; position: fixed; top: 12rem; margin-top: 10rem; z-index: 50; cursor: pointer"></div>
     <video id="video" style="width: 100vw; position: fixed" nocontrols loop controlslist="nodownload,nofullscreen,noremoteplayback"></video>
     <div id="canvases" style="position: relative"></div>

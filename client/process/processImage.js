@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs/dist/tf.esnext.js';
+import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
 import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
 import * as log from '../shared/log.js';
 import * as modelClassify from './modelClassify.js';
@@ -194,8 +194,6 @@ async function processImage(name) {
       for (const model of models.classify) {
         if (config.default.batchProcessing === 1) promisesClassify.push(await modelClassify.classify(model, image.canvas));
         else promisesClassify.push(modelClassify.classify(model, image.canvas));
-        // const res = await modelClassify.classify(model, image.canvas);
-        // if (res) obj.classify.push(...res);
       }
     }
   } catch (err) {
