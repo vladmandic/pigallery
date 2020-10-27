@@ -422,7 +422,7 @@
       ]
     },
     "client/process/process.js": {
-      "bytes": 4880,
+      "bytes": 5467,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -445,7 +445,7 @@
       ]
     },
     "client/process/processImage.js": {
-      "bytes": 11264,
+      "bytes": 11194,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -510,7 +510,7 @@
       "imports": []
     },
     "client/shared/models.js": {
-      "bytes": 5145,
+      "bytes": 5132,
       "imports": []
     },
     "client/shared/user.js": {
@@ -645,7 +645,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 22220645
+      "bytes": 22220548
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -672,7 +672,7 @@
           "bytesInOutput": 4326
         },
         "client/shared/models.js": {
-          "bytesInOutput": 1857
+          "bytesInOutput": 1844
         },
         "client/shared/blockhash.js": {
           "bytesInOutput": 5582
@@ -681,7 +681,7 @@
           "bytesInOutput": 11523
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 10902
+          "bytesInOutput": 10924
         },
         "client/compare/compare.js": {
           "bytesInOutput": 90
@@ -708,12 +708,12 @@
           "bytesInOutput": 12054
         }
       },
-      "bytes": 7126045
+      "bytes": 7126054
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 1112720
+      "bytes": 1112697
     },
     "dist/index/index.js": {
       "imports": [],
@@ -761,7 +761,7 @@
           "bytesInOutput": 6704
         },
         "client/shared/models.js": {
-          "bytesInOutput": 1857
+          "bytesInOutput": 1844
         },
         "client/index/options.js": {
           "bytesInOutput": 8191
@@ -782,12 +782,12 @@
           "bytesInOutput": 32484
         }
       },
-      "bytes": 580078
+      "bytes": 580065
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 17218876
+      "bytes": 17220315
     },
     "dist/process/process.js": {
       "imports": [],
@@ -820,10 +820,10 @@
           "bytesInOutput": 5582
         },
         "client/shared/models.js": {
-          "bytesInOutput": 1857
+          "bytesInOutput": 1844
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 10855
+          "bytesInOutput": 10874
         },
         "client/shared/user.js": {
           "bytesInOutput": 1065
@@ -847,10 +847,10 @@
           "bytesInOutput": 6513
         },
         "client/process/process.js": {
-          "bytesInOutput": 4416
+          "bytesInOutput": 5055
         }
       },
-      "bytes": 4273341
+      "bytes": 4273986
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
@@ -881,7 +881,7 @@
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 10014496
+      "bytes": 10014473
     },
     "dist/video/video.js": {
       "imports": [],
@@ -914,7 +914,7 @@
           "bytesInOutput": 4189
         },
         "client/shared/models.js": {
-          "bytesInOutput": 1857
+          "bytesInOutput": 1844
         },
         "client/video/runClassify.js": {
           "bytesInOutput": 2377
@@ -992,7 +992,7 @@
           "bytesInOutput": 10517
         }
       },
-      "bytes": 5723688
+      "bytes": 5723675
     },
     "dist/index/worker.js.map": {
       "imports": [],
