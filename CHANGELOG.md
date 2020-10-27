@@ -1,12 +1,12 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/10/26 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/10/27 mandic00@live.com
+- webgl memory optimizations
 - working nudenet model
 - work on models
 - working on model processing update
 - work on object detection
-
-### **origin/master, origin/HEAD** 2020/10/23 mandic00@live.com
+- refactored for es2020
 - cleanup
 
 ### **2.2.2** 2020/10/22 mandic00@live.com

@@ -21,7 +21,6 @@ Didn't find:
 
 ###
 
-- Firefox
 - Compare: Human
 - Video:
   Input scalling
@@ -33,3 +32,4 @@ Didn't find:
   Implement NSFW
 - Model errors:
   - COCO CenterNet
+- Switch backend DB from NEDB to Mongo

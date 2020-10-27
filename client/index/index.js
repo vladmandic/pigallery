@@ -656,7 +656,7 @@ async function initMenuHandlers() {
     if ($('#docs').css('display') !== 'none') {
       const res = await fetch('/README.md');
       const md = await res.text();
-      if (md) $('#docs').html(marked(md));
+      if (md) $('#docs').html(marked.default(md));
     }
   });
 
@@ -666,7 +666,7 @@ async function initMenuHandlers() {
     if ($('#docs').css('display') !== 'none') {
       const res = await fetch('/CHANGELOG.md');
       const md = await res.text();
-      if (md) $('#docs').html(marked(md));
+      if (md) $('#docs').html(marked.default(md));
     }
   });
 
