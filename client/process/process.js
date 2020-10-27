@@ -9,6 +9,7 @@ const results = [];
 let id = 0;
 let running = false;
 let stopping = false;
+const autoReload = false;
 
 // initial complex image is used to trigger all models thus warming them up
 async function warmupModels() {
@@ -53,7 +54,7 @@ async function processFiles() {
   await warmupModels();
   const t0 = window.performance.now();
   const promises = [];
-  log.div('process-log', true, `Processing images: ${files.length}`);
+  log.div('process-log', true, `Processing images: ${files.length} batch: ${config.default.default.batchProcessing}`);
   let error = false;
   let stuckTimer = new Date();
   const checkAlive = setInterval(() => { // reload window if no progress for 60sec
@@ -62,19 +63,28 @@ async function processFiles() {
   }, 10000);
   for (const url of files) {
     if (!error && !stopping) {
-      promises.push(process.process(url).then((obj) => {
+      if (config.default.default.batchProcessing <= 1) {
+        const obj = await process.process(url);
         results[id] = obj;
-        // eslint-disable-next-line no-console
         log.div('process-active', false, `[${results.length}/${files.length}] Processed ${obj.image} in ${obj.perf.total.toLocaleString()} ms size ${JSON.stringify(obj).length.toLocaleString()} bytes`);
         log.debug('Processed', obj.image, obj);
         error = (obj.error === true) || error;
         id += 1;
         stuckTimer = new Date();
-      }));
-    }
-    if (promises.length >= config.batchProcessing) {
-      await Promise.all(promises);
-      promises.length = 0;
+      } else {
+        promises.push(process.process(url).then((obj) => {
+          results[id] = obj;
+          log.div('process-active', false, `[${results.length}/${files.length}] Processed ${obj.image} in ${obj.perf.total.toLocaleString()} ms size ${JSON.stringify(obj).length.toLocaleString()} bytes`);
+          log.debug('Processed', obj.image, obj);
+          error = (obj.error === true) || error;
+          id += 1;
+          stuckTimer = new Date();
+        }));
+      }
+      if (promises.length >= config.default.default.batchProcessing) {
+        await Promise.all(promises);
+        promises.length = 0;
+      }
     }
   }
   if (promises.length > 0) await Promise.all(promises);
@@ -87,7 +97,7 @@ async function processFiles() {
   }
   if (error) {
     log.div('process-log', true, 'Aborting current run due to error');
-    setTimeout(() => window.location.reload(true), 2500);
+    if (autoReload) setTimeout(() => window.location.reload(true), 2500);
   }
   log.div('process-active', false, 'Idle ...');
   const p1 = window.performance.now();

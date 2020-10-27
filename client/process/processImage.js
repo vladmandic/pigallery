@@ -63,19 +63,19 @@ async function loadModels() {
     }
   }
 
-  // eslint-disable-next-line no-use-before-define
-  models.faceapi.classify = faceapiClassify;
   if (definitions.models.person[0]) {
     const options = definitions.models.person[0];
     if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
-    if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
+    else await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
     await faceapi.nets.ageGenderNet.load(options.modelPath);
     await faceapi.nets.faceLandmark68Net.load(options.modelPath);
     await faceapi.nets.faceRecognitionNet.load(options.modelPath);
     await faceapi.nets.faceExpressionNet.load(options.modelPath);
     models.faceapi = faceapi;
     if (options.exec === 'yolo') models.faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
-    if (options.exec === 'ssd') models.faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
+    else models.faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
+    // eslint-disable-next-line no-use-before-define
+    models.faceapi.classify = faceapiClassify;
   }
 
   /* working but unreliable
@@ -102,7 +102,7 @@ function flattenObject(object) {
 }
 
 async function faceapiClassify(image) {
-  const results = await faceapi.detectAllFaces(image, models.faceapi.options)
+  const results = await models.faceapi.detectAllFaces(image, models.faceapi.options)
     .withFaceLandmarks()
     .withFaceExpressions()
     .withFaceDescriptors()
@@ -190,7 +190,7 @@ async function processImage(name) {
   // const tc0 = window.performance.now();
   const promisesClassify = [];
   try {
-    if (!error) {
+    if (!error && models.classify) {
       for (const model of models.classify) {
         if (config.default.batchProcessing === 1) promisesClassify.push(await modelClassify.classify(model, image.canvas));
         else promisesClassify.push(modelClassify.classify(model, image.canvas));
@@ -206,7 +206,7 @@ async function processImage(name) {
   // const td0 = window.performance.now();
   const promisesDetect = [];
   try {
-    if (!error) {
+    if (!error && models.detect) {
       for (const model of models.detect) {
         if (config.default.batchProcessing === 1) promisesDetect.push(await modelDetect.detect(model, image.canvas));
         else promisesDetect.push(modelDetect.detect(model, image.canvas));
@@ -262,7 +262,6 @@ async function processImage(name) {
   const t1 = window.performance.now();
   obj.perf = { total: Math.round(t1 - t0) }; // , load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
   if (error) obj.error = error;
-  // if (config.default.batchProcessing === 1) tf.engine().endScope();
 
   if (!error) {
     fetch('/api/metadata', {

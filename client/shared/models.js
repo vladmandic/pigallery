@@ -37,7 +37,7 @@ exports.models = {
     //  map: { boxes: 'Identity:0', scores: 'Identity_2:0', classes: 'Identity_1:0' } },
   ],
   person: [
-    { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 5, size: 416 },
+    { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', score: 0.3, topK: 5, size: 416 },
   ],
   various: [
     { name: 'Food', modelPath: 'models/various/food', minScore: 0.4, tensorSize: 192, scaleScore: 500 },
