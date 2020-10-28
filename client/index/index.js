@@ -142,6 +142,16 @@ async function filterResults(input) {
   busy();
 }
 
+async function deleteImage(image) {
+  if (window.user.admin) {
+    const res = await fetch(`/api/record/del?rm=${image}`);
+    const deleted = await res.json();
+    log.div('log', true, 'Record delete:', res.status, deleted);
+  } else {
+    log.div('log', true, 'Error: must be admin to remove images');
+  }
+}
+
 // randomize image order using Fisher-Yates (aka Knuth) shuffle
 function shuffle(array) {
   let currentIndex = array.length;
@@ -312,74 +322,7 @@ async function findDuplicates() {
   worker.postMessage(all);
 }
 
-/*
-async function fetchChunks(url, since, limit) {
-  log.debug('Download request:', since, limit);
-  const response = await fetch(`${url}&limit=${limit}&time=${since}&chunks=1000`);
-  if (!response || !response.ok) return {};
-  const t0 = window.performance.now();
-  const reader = response.body.getReader();
-  const size = parseInt(response.headers.get('content-Size') || response.headers.get('content-Length'));
-  log.debug('Download start:', size);
-  let chunksTotal = 0;
-  let chunksCurrent = 0;
-  const chunks = [];
-  let chunk = { done: false };
-  let json = {};
-  while (!chunk.done) {
-    chunk = await reader.read();
-    // chunk delimiter is 00 00 00, break if no data to read or chunk lenght < 3 bytes
-    const end = chunk.done ? true : chunk.value.find((val, i, arr) => ((arr.lenght < 3) || (val === 0) && (arr[i + 1] === 0) && (arr[i + 2] === 0))) === 0;
-    console.log('received', chunksTotal, end);
-    if (chunk.value) {
-      chunks.push(chunk.value);
-      chunksTotal += chunk.value.length;
-      chunksCurrent += chunk.value.length;
-    }
-    const t1 = window.performance.now();
-    const perf = Math.round(chunksTotal / (t1 - t0));
-    const progress = Math.round(100 * chunksTotal / size);
-    $('#progress').html(`Downloading ${progress}%:<br>${chunksTotal.toLocaleString()} / ${size.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
-    if (end) {
-      $('#progress').html(`Parsing ${progress}%:<br>${chunksTotal.toLocaleString()} / ${size.toLocaleString()} bytes<br>parsing received data`);
-      console.log('parsing', chunksCurrent);
-      const all = new Uint8Array(chunksCurrent);
-      let position = 0;
-      for (const item of chunks) {
-        all.set(item, position);
-        position += item.length;
-      }
-      const result = new TextDecoder().decode(all);
-      console.log(result);
-      json = JSON.parse(result.substr(0, result.length - 3));
-      $('#progress').text('Indexing');
-      await db.store(json);
-      chunks.lenght = 0;
-      chunksCurrent = 0;
-    }
-    if (chunk.done) break;
-  }
-  $('#progress').html(`Download complete<br>${size.toLocaleString()} bytes`);
-  /*
-  const all = new Uint8Array(received);
-  let position = 0;
-  for (chunk of chunks) {
-    all.set(chunk, position);
-    position += chunk.length;
-  }
-  const result = new TextDecoder().decode(all);
-  const json = JSON.parse(result);
-  $('#progress').text('Indexing');
-  await db.store(json);
-  // stats.load = Math.floor(t1 - t0);
-  // const t2 = window.performance.now();
-  // stats.store = Math.floor(t2 - t1);
-
-  return json;
-}
-*/
-
-// loads imagesm, displays gallery and enumerates sidebar
+// loads images, displays gallery and enumerates sidebar
 async function loadGallery(limit, refresh = false) {
   const chunkSize = 200;
   const cached = await db.count();
@@ -399,7 +342,7 @@ async function loadGallery(limit, refresh = false) {
   }
   const updated = new Date().getTime();
   const since = refresh ? window.options.lastUpdated : 0;
-  const first = await fetch(`/api/get?find=all&limit=${limit}&time=${since}&chunks=${chunkSize}&page=0`);
+  const first = await fetch(`/api/record/get?limit=${limit}&time=${since}&chunks=${chunkSize}&page=0`);
   if (!first || !first.ok) return;
   const totalSize = parseFloat(first.headers.get('content-TotalSize'));
   const pages = parseInt(first.headers.get('content-Pages'));
@@ -412,7 +355,7 @@ async function loadGallery(limit, refresh = false) {
   let perf = Math.round(dlSize / (performance.now() - t0));
   $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
   for (let page = 1; page < pages; page++) {
-    const promise = fetch(`/api/get?find=all&limit=${limit}&time=${since}&chunks=${chunkSize}&page=${page}`);
+    const promise = fetch(`/api/record/get?limit=${limit}&time=${since}&chunks=${chunkSize}&page=${page}`);
     promisesReq.push(promise);
     promise.then((result) => {
       const req = result.json();
@@ -543,7 +486,7 @@ async function initSharesHandler() {
         $('#share-url').val('invalid data');
         return;
       }
-      $.post('/api/share', share)
+      $.post('/api/share/put', share)
         .done((res) => $('#share-url').val(`${window.location.origin}?share=${res.key}`))
         .fail(() => $('#share-url').val('error creating share'));
       enumerate.shares();
@@ -551,7 +494,7 @@ async function initSharesHandler() {
       const name = $('#share-name').val();
       const key = $('#share-url').val().split('=')[1];
       log.debug(t0, `Share remove: ${name} ${key}`);
-      fetch(`/api/share?rm=${key}`).then(() => enumerate.shares());
+      fetch(`/api/share/del?rm=${key}`).then(() => enumerate.shares());
     }
   });
 
@@ -686,7 +629,7 @@ async function initMenuHandlers() {
   $('#btn-logout').on('click', async () => {
     log.debug('Logout');
     await showNavbar();
-    $.post('/api/auth');
+    $.post('/api/user/auth');
     let loc = window.location.href;
     if (loc.includes('share=')) loc = '/auth';
     if ($('#btn-user').hasClass('fa-user-slash')) loc = '/auth';
@@ -866,6 +809,7 @@ async function main() {
   window.simmilarImage = simmilarImage;
   window.simmilarPerson = simmilarPerson;
   window.simmilarClasses = simmilarClasses;
+  window.deleteImage = deleteImage;
   if (window.share) log.debug(null, `Direct link to share: ${window.share}`);
   $('body').on('contextmenu', (evt) => showContextPopup(evt));
   $('body').css('display', 'block');

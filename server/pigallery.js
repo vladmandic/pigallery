@@ -72,7 +72,7 @@ async function main() {
         log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);
       }
     });
-    if (req.url.startsWith('/api/auth')) next();
+    if (req.url.startsWith('/api/user/auth')) next();
     else if (!req.url.startsWith('/api/')) next();
     else if (req.session.user || !global.config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });

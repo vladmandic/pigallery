@@ -27,6 +27,7 @@ async function load(userConfig) {
     if (model.config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
     else model = await tf.loadGraphModel(modelPath, loadOpts);
     model.config = saveConfig;
+    model.name = model.config.name;
   } catch (err) {
     throw new Error(`Error loading model: $${modelPath} message:${err.message}`);
   }

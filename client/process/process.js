@@ -19,7 +19,7 @@ async function warmupModels() {
   const res = await process.process('assets/warmup.jpg');
   if (res.error) {
     log.div('process-log', true, 'Aborting current run due to error during warmup');
-    setTimeout(() => window.location.reload(true), 2500);
+    if (autoReload) setTimeout(() => window.location.reload(true), 2500);
     // setTimeout(() => window.location.replace(`${window.location.origin}?process`), 2500);
   }
   const t1 = window.performance.now();
@@ -36,7 +36,7 @@ async function processFiles() {
   log.server('Image DB Update');
   log.div('process-log', true, 'Requesting file list from server ...');
   log.div('process-state', false, 'Requesting file list from server ...');
-  const res = await fetch('/api/list');
+  const res = await fetch('/api/file/all');
   const dirs = await res.json();
   let files = [];
   for (const dir of dirs) {
@@ -59,7 +59,7 @@ async function processFiles() {
   let stuckTimer = new Date();
   const checkAlive = setInterval(() => { // reload window if no progress for 60sec
     const now = new Date();
-    if (now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) window.location.reload(true);
+    if (autoReload && now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) window.location.reload(true);
   }, 10000);
   for (const url of files) {
     if (!error && !stopping) {

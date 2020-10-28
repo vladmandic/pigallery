@@ -27,6 +27,7 @@ async function load(userConfig) {
     const saveConfig = model.config;
     model = await tf.loadGraphModel(modelPath, loadOpts);
     model.config = saveConfig;
+    model.name = model.config.name;
   } catch (err) {
     throw new Error(`Error loading model: $${modelPath} message:${err.message}`);
   }

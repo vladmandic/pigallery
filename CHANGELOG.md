@@ -1,6 +1,9 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/10/27 mandic00@live.com
+### **HEAD -> master** 2020/10/27 mandic00@live.com
+- remaing import cleanups
+
+### **origin/master, origin/HEAD** 2020/10/27 mandic00@live.com
 - webgl memory optimizations
 - working nudenet model
 - work on models
