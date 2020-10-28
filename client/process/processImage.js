@@ -78,14 +78,6 @@ async function loadModels() {
     models.faceapi.classify = faceapiClassify;
   }
 
-  /* working but unreliable
-  log.div('process-log', true, '  Model: DarkNet/Yolo-v3');
-  models.yolo = await yolo.v1tiny('/models/yolo-v1-tiny/model.json');
-  models.yolo = await yolo.v2tiny('/models/yolo-v2-tiny/model.json');
-  models.yolo = await yolo.v3tiny('/models/yolo-v3-tiny/model.json');
-  models.yolo = await yolo.v3('/models/yolo-v3-full/model.json');
-  */
-
   const t1 = window.performance.now();
   log.div('process-log', true, `TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
   const engine = await tf.engine();
@@ -178,16 +170,16 @@ async function processImage(name) {
   const t0 = window.performance.now();
 
   // load & preprocess image
-  // const ti0 = window.performance.now();
+  const ti0 = window.performance.now();
   const image = await getImage(name);
   obj.processedSize = { width: image.canvas.width, height: image.canvas.height };
   obj.naturalSize = { width: image.naturalWidth, height: image.naturalHeight };
   obj.pixels = image.naturalHeight * image.naturalWidth;
   obj.thumbnail = image.thumbnail;
-  // const ti1 = window.performance.now();
+  const ti1 = window.performance.now();
 
   obj.classify = [];
-  // const tc0 = window.performance.now();
+  const tc0 = window.performance.now();
   const promisesClassify = [];
   try {
     if (!error && models.classify) {
@@ -197,13 +189,13 @@ async function processImage(name) {
       }
     }
   } catch (err) {
-    log.div('process-log', true, `Error during classification for ${name}: ${err}`);
+    log.div('process-log', true, `Error classify: ${name}: `, err);
     error = true;
   }
-  // const tc1 = window.performance.now();
+  const tc1 = window.performance.now();
 
   obj.detect = [];
-  // const td0 = window.performance.now();
+  const td0 = window.performance.now();
   const promisesDetect = [];
   try {
     if (!error && models.detect) {
@@ -213,16 +205,17 @@ async function processImage(name) {
       }
     }
   } catch (err) {
-    log.div('process-log', true, `Error during detection for ${name}: ${err}`);
+    log.div('process-log', true, `Error detect: ${name}:`, err);
     error = true;
   }
-  // const td1 = window.performance.now();
+  const td1 = window.performance.now();
+
   if (!error) {
     let resClassify = [];
     try {
       resClassify = await Promise.all(promisesClassify);
     } catch (err) {
-      log.div('process-log', true, `Error during classification for ${name}: ${err}`);
+      log.div('process-log', true, `Error classify: ${name}:`, err);
       error = true;
     }
     for (const i in resClassify) {
@@ -237,7 +230,7 @@ async function processImage(name) {
     try {
       resDetect = await Promise.all(promisesDetect);
     } catch (err) {
-      log.div('process-log', true, `Error during detection for ${name}: ${err}`);
+      log.div('process-log', true, `Error detect: ${name}:`, err);
       error = true;
     }
     for (const i in resDetect) {
@@ -250,21 +243,21 @@ async function processImage(name) {
 
   if (!error) obj.phash = await hash.data(image.data);
 
-  // const tp0 = window.performance.now();
+  const tp0 = window.performance.now();
   try {
     if (!error && models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
   } catch (err) {
-    log.div('process-log', true, `Error in FaceAPI for ${name}: ${err}`);
+    log.div('process-log', true, `Error face-api: ${name}:`, err);
     error = true;
   }
-  // const tp1 = window.performance.now();
+  const tp1 = window.performance.now();
 
   const t1 = window.performance.now();
-  obj.perf = { total: Math.round(t1 - t0) }; // , load: ti1 - ti0, classify: tc1 - tc0, detect: td1 - td0, person: tp1 - tp0 };
+  obj.perf = { total: Math.round(t1 - t0), load: Math.round(ti1 - ti0), classify: Math.round(tc1 - tc0), detect: Math.round(td1 - td0), person: Math.round(tp1 - tp0) };
   if (error) obj.error = error;
 
   if (!error) {
-    fetch('/api/metadata', {
+    fetch('/api/record/put', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(obj),

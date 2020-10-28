@@ -15,7 +15,7 @@ let stop = false;
 const limit = 0;
 
 async function init() {
-  const res = await fetch('/api/user');
+  const res = await fetch('/api/user/get');
   if (res.ok) window.user = await res.json();
   if (window.user && window.user.user) {
     $('#btn-user').toggleClass('fa-user-slash fa-user');
@@ -124,7 +124,7 @@ async function classify() {
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, tf.ENV.flags);
 
-  const api = await fetch('/api/dir?folder=Tests/Objects/');
+  const api = await fetch('/api/file/dir?folder=Tests/Objects/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
@@ -197,7 +197,7 @@ async function person() {
   stats.time = Math.round(stats.time1 - stats.time0);
   log.div('log', true, `Loaded models: FaceAPI/Human in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
 
-  const api = await fetch('/api/dir?folder=Tests/Persons/');
+  const api = await fetch('/api/file/dir?folder=Tests/Persons/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
@@ -255,9 +255,9 @@ async function detect() {
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, tf.ENV.flags);
 
-  // const api = await fetch('/api/dir?folder=Tests/Objects/');
-  // const api = await fetch('/api/dir?folder=Tests/Persons/');
-  const api = await fetch('/api/dir?folder=Tests/NSFW/');
+  // const api = await fetch('/api/file/dir?folder=Tests/Objects/');
+  // const api = await fetch('/api/file/dir?folder=Tests/Persons/');
+  const api = await fetch('/api/file/dir?folder=Tests/NSFW/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 

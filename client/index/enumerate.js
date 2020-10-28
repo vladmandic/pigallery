@@ -114,7 +114,7 @@ async function enumerateShares() {
   const t0 = window.performance.now();
   $('#shares').html('');
   window.shares = [];
-  const shares = await fetch('/api/shares');
+  const shares = await fetch('/api/share/dir');
   if (shares.ok) window.shares = await shares.json();
   if (!window.shares || (window.shares.length < 1)) return;
   let html = '';

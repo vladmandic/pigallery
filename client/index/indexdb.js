@@ -76,7 +76,7 @@ async function get(name) {
 
 async function share() {
   const t0 = window.performance.now();
-  const res = await fetch(`/api/share?id=${window.share}`);
+  const res = await fetch(`/api/share/get?id=${window.share}`);
   let json = {};
   if (res.ok) json = await res.json();
   const filtered = [];

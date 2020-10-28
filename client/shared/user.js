@@ -4,12 +4,12 @@ import * as log from './log.js';
 async function getUser() {
   $('#progress').html('Authenticating');
   if (window.share) {
-    await $.post('/api/auth', { authShare: window.share }); // autologin for direct shares
+    await $.post('/api/user/auth', { authShare: window.share }); // autologin for direct shares
   }
-  const res = await fetch('/api/user');
+  const res = await fetch('/api/user/get');
   if (res.ok) window.user = await res.json();
   if (!window.share && window.user && window.user.user && window.user.user.startsWith('share')) {
-    $.post('/api/auth'); // logout on share credentials and no share
+    $.post('/api/user/auth'); // logout on share credentials and no share
     log.debug('Logging out user with share credentials and no direct share link');
     window.user = {};
   }
