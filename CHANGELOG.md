@@ -1,6 +1,7 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/10/27 mandic00@live.com
+### **HEAD -> master** 2020/10/28 mandic00@live.com
+- fix processing
 - remaing import cleanups
 
 ### **origin/master, origin/HEAD** 2020/10/27 mandic00@live.com

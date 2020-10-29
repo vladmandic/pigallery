@@ -7,8 +7,8 @@ exports.models = {
     { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect/inception-v3', tensorSize: 299, minScore: 0.35, scaleScore: 2000 },
   ],
   detect: [
-    // ideal combo for  4GB GPU: Coco-EfficientDet-D0 + NudeNet + OI-SSD-MobileNet
-    // ideal combo for 16GB GPU: Coco-EfficientDet-D5 + NudeNet + OI-FRCNN-Inception-Atrous
+    // ideal combo for 4GB GPU: Coco-EfficientDet-D0 + NudeNet + OI-SSD-MobileNet
+    // ideal combo for 8GB GPU: Coco-EfficientDet-D5 + NudeNet + OI-FRCNN-Inception-Atrous
     // TODO: CenterNet
 
     // { name: 'COCO SSD MobileNet v2', modelPath: 'models/coco/ssd-mobilenet-v2', minScore: 0.4 }, // fast and imprecise

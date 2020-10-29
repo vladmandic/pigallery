@@ -8,7 +8,7 @@ window.debug = true;
 // TFJS Configuration
 const config = {
   backEnd: 'webgl',        // back-end used by tensorflow for image processing: webgl, cpu, wasm, webgpu
-  maxSize: 780,            // maximum image width or height that will be used for processing before resizing is required
+  maxSize: 720,            // maximum image width or height that will be used for processing before resizing is required
   renderThumbnail: 230,    // resolution in which to store image thumbnail embedded in result set
   batchProcessing: 1,      // how many images to process in parallel
   squareImage: false,      // resize proportional to the original image or to a square image
@@ -34,7 +34,7 @@ const config = {
     // WEBGL_DISJOINT_QUERY_TIMER_EXTENSION_VERSION: // The disjoint_query_timer extension version. 0: disabled, 1: EXT_disjoint_timer_query, 2: EXT_disjoint_timer_query_webgl2
     // WEBGL_FENCE_API_ENABLED // Whether the fence API is available
     // WEBGL_SIZE_UPLOAD_UNIFORM: // Tensors with size <= than this will be uploaded as uniforms, not textures. default 4
-    WEBGL_DELETE_TEXTURE_THRESHOLD: 4 * 1024 * 1024 * 1024, // delete textures upon disposal is used memory is larger than this rather than making them available for reuse
+    WEBGL_DELETE_TEXTURE_THRESHOLD: Math.trunc(3.5 * 1024 * 1024 * 1024), // delete textures upon disposal is used memory is larger than this rather than making them available for reuse
   },
   ui: {
     maxFrames: 10,
