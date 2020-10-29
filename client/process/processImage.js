@@ -21,10 +21,21 @@ function JSONtoStr(json) {
   return res;
 }
 
+async function resetBackend(backendName) {
+  const engine = tf.engine();
+  if (backendName in engine.registry) {
+    const backendFactory = tf.findBackendFactory(backendName);
+    tf.removeBackend(backendName);
+    tf.registerBackend(backendName, backendFactory);
+  }
+  await tf.setBackend(backendName);
+}
+
 async function loadModels() {
   log.div('process-log', true, 'Starting Image Analsys');
   log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
-  await tf.setBackend(config.default.backEnd);
+  await resetBackend(config.default.backEnd);
+  tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 1024);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
   for (const [key, val] of Object.entries(config.default.webgl)) {

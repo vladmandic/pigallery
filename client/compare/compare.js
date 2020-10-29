@@ -14,6 +14,16 @@ window.cache = [];
 let stop = false;
 const limit = 0;
 
+async function resetBackend(backendName) {
+  const engine = tf.engine();
+  if (backendName in engine.registry) {
+    const backendFactory = tf.findBackendFactory(backendName);
+    tf.removeBackend(backendName);
+    tf.registerBackend(backendName, backendFactory);
+  }
+  await tf.setBackend(backendName);
+}
+
 async function init() {
   const res = await fetch('/api/user/get');
   if (res.ok) window.user = await res.json();
@@ -26,7 +36,7 @@ async function init() {
     window.location.replace('/auth');
   }
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
-  await tf.setBackend(config.default.backEnd);
+  await resetBackend(config.default.backEnd);
   await tf.ready();
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);

@@ -45,10 +45,20 @@ async function updatePerf(config, objects) {
   }
 }
 
+async function resetBackend(backendName) {
+  const engine = tf.engine();
+  if (backendName in engine.registry) {
+    const backendFactory = tf.findBackendFactory(backendName);
+    tf.removeBackend(backendName);
+    tf.registerBackend(backendName, backendFactory);
+  }
+  await tf.setBackend(backendName);
+}
+
 async function init(config) {
   document.getElementById('status').innerText = 'initializing';
   if (config.backEnd === 'wasm') tf.wasm.setPaths('/assets');
-  tf.setBackend(config.backEnd);
+  await resetBackend(config.backEnd);
   tf.ENV.set('DEBUG', false);
   for (const [key, val] of Object.entries(config.webgl)) {
     log.debug('WebGL Setting', key, val);
