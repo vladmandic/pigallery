@@ -4,13 +4,7 @@ import * as draw from './draw.js';
 import * as modelDetect from '../process/modelDetect.js';
 import * as definitions from '../shared/models.js';
 
-let objects;
-
-function setObjects(inObjects) {
-  objects = inObjects;
-}
-
-function appendCanvas(name, width, height) {
+function appendCanvas(name, width, height, objects) {
   objects.canvases[name] = document.createElement('canvas', { desynchronized: true });
   objects.canvases[name].style.position = 'relative';
   objects.canvases[name].id = `canvas-${name}`;
@@ -21,4 +15,9 @@ function appendCanvas(name, width, height) {
   document.getElementById('canvases').appendChild(objects.canvases[name]);
 }
 
-exports.set = setObjects;
+async function run(name, input, config, objects) {
+  console.log(name, input, config, objects);
+  return null;
+}
+
+exports.run = run;

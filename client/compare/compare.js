@@ -22,6 +22,7 @@ async function resetBackend(backendName) {
     tf.registerBackend(backendName, backendFactory);
   }
   await tf.setBackend(backendName);
+  await tf.ready();
 }
 
 async function init() {
@@ -37,7 +38,6 @@ async function init() {
   }
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
   await resetBackend(config.default.backEnd);
-  await tf.ready();
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
   for (const [key, val] of Object.entries(config.default.webgl)) {

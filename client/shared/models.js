@@ -3,7 +3,7 @@
 exports.models = {
   classify: [
     // { name: 'ImageNet Inception v4', modelPath: 'models/imagenet/inception-v4', tensorSize: 299, scaleScore: 200, offset: 1 }, // beaten by efficientnet-b4 by small margin
-    { name: 'ImageNet EfficientNet B4', modelPath: 'models/imagenet/efficientnet-b4', tensorSize: 380, scaleScore: 1.4 },
+    { name: 'ImageNet EfficientNet B4', modelPath: 'models/imagenet/efficientnet-b4', tensorSize: 380, minScore: 0.35, scaleScore: 1 },
     { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect/inception-v3', tensorSize: 299, minScore: 0.35, scaleScore: 2000 },
   ],
   detect: [
@@ -40,10 +40,13 @@ exports.models = {
     { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', score: 0.3, topK: 5, size: 416 },
   ],
   various: [
-    { name: 'Food', modelPath: 'models/various/food', minScore: 0.4, tensorSize: 192, scaleScore: 500 },
-    { name: 'Wine', modelPath: 'models/various/wine', minScore: 0.3, tensorSize: 224, scaleScore: 0.5, softmax: false },
-    { name: 'Products', modelPath: 'models/various/products', minScore: 0.3, tensorSize: 224, scaleScore: 0.5, softmax: false },
-    { name: 'Inception', modelPath: 'models/various/metropolitan', minScore: 0.3, tensorSize: 299, scaleScore: 200 },
+    { name: 'Food Items', modelPath: 'models/various/food', minScore: 0.4, tensorSize: 192, scaleScore: 500, maxResults: 3 },
+    { name: 'Wine Classifier', modelPath: 'models/various/wine', minScore: 0.35, tensorSize: 224, scaleScore: 0.5, maxResults: 3, softmax: false },
+    { name: 'Popular Products', modelPath: 'models/various/products', minScore: 0.35, tensorSize: 224, scaleScore: 0.5, maxResults: 3, softmax: false },
+    { name: 'Metropolitan Art', modelPath: 'models/various/metropolitan', minScore: 0.1, tensorSize: 299, scaleScore: 1, maxResults: 3, softmax: false },
+    { name: 'iNaturalist Plants', modelPath: 'models/inaturalist/plants', minScore: 0.1, tensorSize: 224, scaleScore: 3, maxResults: 3, background: 2101, softmax: false },
+    { name: 'iNaturalist Birds', modelPath: 'models/inaturalist/birds', minScore: 0.1, tensorSize: 224, scaleScore: 1, maxResults: 3, background: 964, softmax: false },
+    { name: 'iNaturalist Insects', modelPath: 'models/inaturalist/insects', minScore: 0.1, tensorSize: 224, scaleScore: 3, maxResults: 3, background: 1021, softmax: false },
   ],
 };
 

@@ -2,6 +2,7 @@ import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
 import * as log from '../shared/log.js';
 import * as draw from './draw.js';
 import * as gesture from './gesture.js';
+import * as runDetect from './runDetect.js';
 import * as runClassify from './runClassify.js';
 import * as runHuman from './runHuman.js';
 import * as definitions from '../shared/models.js';
@@ -56,7 +57,7 @@ async function resetBackend(backendName) {
 }
 
 async function init(config) {
-  document.getElementById('status').innerText = 'initializing';
+  // document.getElementById('status').innerText = 'initializing';
   if (config.backEnd === 'wasm') tf.wasm.setPaths('/assets');
   await resetBackend(config.backEnd);
   tf.ENV.set('DEBUG', false);
@@ -75,47 +76,45 @@ async function init(config) {
   log.debug('TF Flags:', engine.ENV.flags);
   // eslint-disable-next-line no-console
   log.debug('TF Models:', definitions.models);
-  // eslint-disable-next-line no-console
-  document.getElementById('status').innerText = 'loading model: Human ...';
 }
 
 async function main(config, objects) {
   const video = document.getElementById('video');
   const t0 = performance.now();
   objects.detected = [];
+  objects.classified = [];
   objects.results = [];
 
   let input = await getVideoCanvas(video, objects.canvases, config);
   if (!input) return;
 
-  runClassify.set(objects);
-
   // this is not optional as we need return canvas with filters applied
   const res = await runHuman.run(input, config, objects);
+  if (res.human) objects.results.push(res);
+  else draw.clear(objects.canvases.human);
   if (res.canvas) input = res.canvas;
+
   input.className = 'canvases';
   input.style.display = 'block';
   document.getElementById('canvases').appendChild(input);
 
-  objects.results.push(res);
+  for (const m of definitions.models.classify) {
+    const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config.classify, objects) : null;
+    if (data) objects.results.push(data);
+    else draw.clear(objects.canvases[m.name]);
+  }
 
-  if (config.classify.imagenet) objects.results.push(await runClassify.imagenet(input, config));
-  else draw.clear(objects.canvases.imagenet);
+  for (const m of definitions.models.various) {
+    const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config.classify, objects) : null;
+    if (data) objects.results.push(data);
+    else draw.clear(objects.canvases[m.name]);
+  }
 
-  if (config.classify.deepdetect) objects.results.push(await runClassify.deepdetect(input, config));
-  else draw.clear(objects.canvases.deepdetect);
-
-  if (config.classify.food) objects.results.push(await runClassify.food(input, config));
-  else draw.clear(objects.canvases.food);
-
-  if (config.classify.plants) objects.results.push(await runClassify.plants(input, config));
-  else draw.clear(objects.canvases.plants);
-
-  if (config.classify.birds) objects.results.push(await runClassify.birds(input, config));
-  else draw.clear(objects.canvases.birds);
-
-  if (config.classify.insects) objects.results.push(await runClassify.insects(input, config));
-  else draw.clear(objects.canvases.insects);
+  for (const m of definitions.models.detect) {
+    const data = (config.detect[m.name]) ? await runDetect.run(m.name, input, config.detect, objects) : null;
+    if (data) objects.results.push(data);
+    else draw.clear(objects.canvases[m.name]);
+  }
 
   const gestures = await gesture.analyze(objects.results);
 
@@ -126,14 +125,24 @@ async function main(config, objects) {
       if (val >= 10 && key !== 'total') objects.perf[`Human:${key}`] = val;
     }
   }
-  document.getElementById('detected').innerText = config.ui.text ? `Detected: ${log.str([...objects.detected, ...gestures])}` : '';
+  if (config.ui.text) {
+    let msg = '';
+    if (objects.detected.length > 0) msg += `detected: ${log.str([...objects.detected])}<br>`;
+    if (objects.classified.length > 0) msg += `classified: ${log.str([...objects.classified])}<br>`;
+    if (gestures.length > 0) msg += `gestures: ${log.str([...gestures])}<br>`;
+    document.getElementById('detected').innerHTML = msg;
+  } else {
+    document.getElementById('detected').innerHTML = '';
+  }
   document.getElementById('status').innerText = '';
   objects.perf.Total = Math.trunc(t1 - t0);
   objects.perf.Memory = Math.trunc(tf.memory().numBytes / 1024 / 1024).toLocaleString();
   objects.perf.Tensors = tf.memory().numTensors;
   if (objects.perf.Total > (objects.perf.FirstFrame || 0)) objects.perf.FirstFrame = objects.perf.Total;
   updatePerf(config, objects);
-  requestAnimationFrame(() => main(config, objects));
+  // get next frame immediately if frame rate above 33
+  if (objects.perf.Total > 3) requestAnimationFrame(() => main(config, objects));
+  else setTimeout(() => main(config, objects), 3);
 }
 
 exports.main = main;

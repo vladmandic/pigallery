@@ -3,8 +3,9 @@ import panzoom from '../../assets/panzoom.js';
 import * as log from '../shared/log.js';
 import * as user from '../shared/user.js';
 import * as run from './run.js';
-import Menu from './menu.js';
+import Menu from '../shared/menu.js';
 import shared from '../shared/config.js';
+import * as definitions from '../shared/models.js';
 
 const config = shared.default;
 let perfMonitor;
@@ -84,14 +85,15 @@ async function cameraSetup() {
     log.div('div', true, `Start video: ${track.label} camera ${settings.width} x ${settings.height} display ${video.offsetWidth} x ${video.offsetHeight} facing ${settings.facingMode}`);
     log.debug('Camera Settings: ', settings);
     event.stopPropagation();
-    run.init(config);
     run.main(config, objects);
+    document.getElementById('status').innerText = 'loading model: Human ...';
   }, true);
 }
 
 async function menuSetup() {
-  objects.menus.model = new Menu(document.body, '');
+  objects.menus.model = new Menu(document.body, '', null, { background: 'var(--body)' });
   objects.menus.model.addLabel('Human Detection');
+  objects.menus.model.addBool('Human Detection', config.human, 'enabled');
   objects.menus.model.addBool('Face Detect', config.human.face, 'enabled');
   objects.menus.model.addBool('Face Mesh', config.human.face.mesh, 'enabled');
   objects.menus.model.addBool('Face Iris', config.human.face.iris, 'enabled');
@@ -102,16 +104,11 @@ async function menuSetup() {
   objects.menus.model.addBool('Hand Pose', config.human.hand, 'enabled');
 
   objects.menus.model.addLabel('Object Detection');
-  // TBD
-
+  for (const m of definitions.models.detect) objects.menus.model.addBool(m.name, config.detect, m.name);
   objects.menus.model.addLabel('Image Classification');
-  // TBD
-  objects.menus.model.addBool('ImageNet', config.classify, 'imagenet');
-  objects.menus.model.addBool('DeepDetect', config.classify, 'deepdetect');
-  objects.menus.model.addBool('Food Items', config.classify, 'food');
-  objects.menus.model.addBool('Nature: Plants', config.classify, 'plants');
-  objects.menus.model.addBool('Nature: Birds', config.classify, 'birds');
-  objects.menus.model.addBool('Nature: Insects', config.classify, 'insects');
+  for (const m of definitions.models.classify) objects.menus.model.addBool(m.name, config.classify, m.name);
+  for (const m of definitions.models.various) objects.menus.model.addBool(m.name, config.classify, m.name);
+
   objects.menus.model.toggle();
 
   objects.menus.params = new Menu(document.body, '');
@@ -177,9 +174,9 @@ async function menuSetup() {
 
   const click = ('ontouchstart' in window) ? 'touchstart' : 'click';
   document.addEventListener(click, (evt) => {
-    if (evt.target.id !== 'menu-models') objects.menus.model.hide();
-    if (evt.target.id !== 'menu-parameters') objects.menus.params.hide();
-    if (evt.target.id !== 'menu-filters') objects.menus.filters.hide();
+    // if (evt.target.id !== 'menu-models') objects.menus.model.hide();
+    // if (evt.target.id !== 'menu-parameters') objects.menus.params.hide();
+    // if (evt.target.id !== 'menu-filters') objects.menus.filters.hide();
     switch (evt.target.id) {
       case 'video-start': cameraRestart(); break;
       case 'menu-startstop': cameraRestart(); break;
@@ -200,7 +197,7 @@ async function main() {
   await shared.done();
   await menuSetup();
   await cameraSetup();
-  // cameraStartStop();
+  await run.init(config);
 }
 
 window.onload = main;
