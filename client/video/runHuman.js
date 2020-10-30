@@ -78,6 +78,7 @@ function drawBody(result, ui) {
     }
     ctx.strokeStyle = ui.lineColor;
     ctx.lineWidth = ui.lineWidth;
+    ctx.lineJoin = 'round';
     if (ui.drawPolygons) {
       const path = new Path2D();
       let part;
@@ -107,15 +108,19 @@ function drawBody(result, ui) {
       part = pose.keypoints.find((a) => a.part === 'rightAnkle');
       path.lineTo(part.position.x, part.position.y);
       // arms left
-      part = pose.keypoints.find((a) => a.part === 'leftShoulder');
+      part = pose.keypoints.find((a) => a.part === 'rightShoulder');
       path.moveTo(part.position.x, part.position.y);
+      part = pose.keypoints.find((a) => a.part === 'leftShoulder');
+      path.lineTo(part.position.x, part.position.y);
       part = pose.keypoints.find((a) => a.part === 'leftElbow');
       path.lineTo(part.position.x, part.position.y);
       part = pose.keypoints.find((a) => a.part === 'leftWrist');
       path.lineTo(part.position.x, part.position.y);
       // arms right
-      part = pose.keypoints.find((a) => a.part === 'rightShoulder');
+      part = pose.keypoints.find((a) => a.part === 'leftShoulder');
       path.moveTo(part.position.x, part.position.y);
+      part = pose.keypoints.find((a) => a.part === 'rightShoulder');
+      path.lineTo(part.position.x, part.position.y);
       part = pose.keypoints.find((a) => a.part === 'rightElbow');
       path.lineTo(part.position.x, part.position.y);
       part = pose.keypoints.find((a) => a.part === 'rightWrist');
@@ -130,6 +135,7 @@ function drawHand(result, ui) {
   for (const hand of result) {
     ctx.font = ui.font;
     ctx.lineWidth = ui.lineWidth;
+    ctx.lineJoin = 'round';
     if (ui.drawBoxes) {
       draw.rect({
         canvas,
@@ -186,6 +192,7 @@ function appendCanvas(name, width, height, objects) {
 }
 
 async function run(input, config, objects) {
+  if (!config.human.enabled) return {};
   const t0 = performance.now();
   const result = await human.detect(input, config.human);
   const t1 = performance.now();

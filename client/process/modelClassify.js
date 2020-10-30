@@ -43,8 +43,9 @@ async function load(userConfig) {
 async function decodeValues(model, values) {
   const pairs = [];
   for (const i in values) pairs.push({ score: values[i], index: i });
+  // console.log('pairs', pairs.sort((a, b) => b.score - a.score));
   const results = pairs
-    .filter((a) => ((a.score * model.config.scaleScore) > model.config.minScore) && (model.config.background !== parseInt(a.index, 10)))
+    .filter((a) => ((a.score * model.config.scaleScore) > model.config.minScore) && (model.config.background !== parseInt(a.index)))
     .sort((a, b) => b.score - a.score)
     .map((a) => {
       const id = a.index - model.config.offset; // offset indexes for some models

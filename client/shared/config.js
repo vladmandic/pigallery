@@ -49,22 +49,10 @@ const config = {
     lineColor: 'rgba(125, 255, 255, 0.6)',
     font: 'small-caps 1rem "Segoe UI"',
   },
-  classify: {
-    minThreshold: 0.3,
-    imagenet: false,
-    deepdetect: false,
-    nsfw: false,
-    food: false,
-    plants: false,
-    birdS: false,
-    insects: false,
-  },
-  detect: {
-    coco: false,
-    maxObjects: 10,
-    minThreshold: 0.7,
-  },
+  classify: {},
+  detect: {},
   human: {
+    enabled: true,
     backend: 'webgl', // select tfjs backend to use
     console: true, // enable debugging output to console
     scoped: false, // enable scoped runs
