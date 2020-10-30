@@ -11,8 +11,8 @@ exports.models = {
     // ideal combo for 8GB GPU: Coco-EfficientDet-D5 + NudeNet + OI-FRCNN-Inception-Atrous
     // TODO: CenterNet
 
-    // { name: 'COCO SSD MobileNet v2', modelPath: 'models/coco/ssd-mobilenet-v2', minScore: 0.4 }, // fast and imprecise
-    { name: 'COCO EfficientDet D0', modelPath: 'models/coco/efficientdet-d0', minScore: 0.2 }, // tiny and good, but slow
+    // { name: 'COCO SSD MobileNet v2', modelPath: 'models/coco/ssd-mobilenet-v2', minScore: 0.4, scaleOutput: true, maxResults: 20 }, // fast and imprecise
+    { name: 'COCO EfficientDet D0', modelPath: 'models/coco/efficientdet-d0', minScore: 0.2, scaleOutput: true }, // tiny and good, but slow
     // { name: 'COCO EfficientDet D4', modelPath: 'models/coco/efficientdet-d4', minScore: 0.2 }, // memory hog
     // { name: 'COCO EfficientDet D5', modelPath: 'models/coco/efficientdet-d5', minScore: 0.2 }, // good but very slow model
     // { name: 'COCO RetinaNet ResNet101 v1', modelPath: 'models/coco/retinanet-resnet101-v1' }, // good but slow model
@@ -20,7 +20,7 @@ exports.models = {
     // { name: 'COCO Faster-RCNN ResNet101 v1', modelPath: 'models/coco/fasterrcnn-resnet101-v1' }, // worse than RetinaNet ResNet101, converter skip-ops required, unsupported op: BroadcastArgs
     // { name: 'COCO Faster-RCNN ResNet152 v1', modelPath: 'models/coco/fasterrcnn-resnet152-v1' }, // worse than RetinaNet ResNet101, converter skip-ops required, unsupported op: BroadcastArgs
 
-    { name: 'NudeNet f16', modelPath: 'models/various/nudenet/f16', minScore: 0.2, postProcess: 'nsfw',
+    { name: 'NudeNet f16', modelPath: 'models/various/nudenet/f16', minScore: 0.2, postProcess: 'nsfw', axis: false,
       map: { boxes: 'filtered_detections/map/TensorArrayStack/TensorArrayGatherV3:0', scores: 'filtered_detections/map/TensorArrayStack_1/TensorArrayGatherV3:0', classes: 'filtered_detections/map/TensorArrayStack_2/TensorArrayGatherV3:0' } },
 
     { name: 'OpenImages SSD MobileNet v2', modelPath: 'models/openimages/ssd-mobilenet-v2', minScore: 0.15, normalizeInput: 1.0 / 255,
@@ -67,6 +67,5 @@ classify options
   background: -1, // exclude prediction id from results
 detect options:
   iouThreshold: 0.5, // used by nms
-  scaleOutput: false, // use if output coordinates are 0..1 instead of 0..width
   map: { boxes: 'Identity_1:0', scores: 'Identity_4:0', classes: 'Identity_2:0' }, // defaults map to tfhub object detection models
 */

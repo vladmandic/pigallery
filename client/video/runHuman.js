@@ -180,17 +180,6 @@ function drawHand(result, ui) {
   }
 }
 
-function appendCanvas(name, width, height, objects) {
-  objects.canvases[name] = document.createElement('canvas');
-  objects.canvases[name].style.position = 'relative';
-  objects.canvases[name].id = `canvas-${name}`;
-  objects.canvases[name].className = 'canvases';
-  objects.canvases[name].width = width;
-  objects.canvases[name].height = height;
-  objects.canvases[name].style.zIndex = Object.keys(objects.canvases).length;
-  document.getElementById('canvases').appendChild(objects.canvases[name]);
-}
-
 async function run(input, config, objects) {
   if (!config.human.enabled) return {};
   const t0 = performance.now();
@@ -202,7 +191,7 @@ async function run(input, config, objects) {
   // if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, canvas.width, canvas.height);
   // else ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, canvas.width, canvas.height);
   // draw all results
-  if (!objects.canvases.human) appendCanvas('human', input.width, input.height, objects);
+  if (!objects.canvases.human) draw.appendCanvas('human', input.width, input.height, objects);
   canvas = objects.canvases.human;
   ctx = canvas.getContext('2d');
   if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
@@ -213,13 +202,13 @@ async function run(input, config, objects) {
   if (result.hand) drawHand(result.hand, config.ui);
 
   for (const face of result.face) {
-    let label = 'Human: ';
+    let label = '';
     if (face.agConfidence) label += `${Math.trunc(100 * face.agConfidence)}% ${face.gender || ''} `;
     if (face.age) label += `age: ${face.age || ''} `;
     if (face.iris) label += `iris: ${face.iris} `;
     if (face.emotion && face.emotion[0]) label += `${Math.trunc(100 * face.emotion[0].score)}% ${face.emotion[0].emotion} `;
     label += ']';
-    objects.detected.push(label);
+    objects.human.push(label);
   }
   return { human: result };
 }

@@ -20,7 +20,8 @@ async function run(name, input, config, objects) {
   }
   const res = await modelClassify.classify(objects.models[name], input);
   if (res) {
-    for (const item of res) objects.classified.push(`${(100 * item.score).toFixed(1)}% ${name}:${item.class}`);
+    if (!objects.classified[name]) objects.classified[name] = [];
+    for (const item of res) objects.classified[name].push(`${(100 * item.score).toFixed(1)}% ${item.class}`);
   }
   const t1 = performance.now();
   objects.perf[name] = Math.trunc(t1 - t0);
