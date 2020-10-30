@@ -411,7 +411,7 @@
       ]
     },
     "client/process/modelDetect.js": {
-      "bytes": 5316,
+      "bytes": 5419,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -495,7 +495,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 14964,
+      "bytes": 14967,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js"
@@ -514,7 +514,7 @@
       "imports": []
     },
     "client/shared/models.js": {
-      "bytes": 5767,
+      "bytes": 5754,
       "imports": []
     },
     "client/shared/user.js": {
@@ -529,7 +529,7 @@
       ]
     },
     "client/video/draw.js": {
-      "bytes": 7093,
+      "bytes": 7663,
       "imports": []
     },
     "client/video/gesture.js": {
@@ -537,7 +537,7 @@
       "imports": []
     },
     "client/video/run.js": {
-      "bytes": 6381,
+      "bytes": 6615,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -566,7 +566,7 @@
       ]
     },
     "client/video/runClassify.js": {
-      "bytes": 1358,
+      "bytes": 1422,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -583,7 +583,7 @@
       ]
     },
     "client/video/runDetect.js": {
-      "bytes": 908,
+      "bytes": 2005,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js"
@@ -603,7 +603,7 @@
       ]
     },
     "client/video/runHuman.js": {
-      "bytes": 8842,
+      "bytes": 8333,
       "imports": [
         {
           "path": "../human/dist/human.esm-nobundle.js"
@@ -671,7 +671,7 @@
     "dist/compare/compare.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 22665705
+      "bytes": 22665891
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -695,16 +695,16 @@
           "bytesInOutput": 777
         },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 4364
+          "bytesInOutput": 4482
         },
         "client/shared/models.js": {
-          "bytesInOutput": 2481
+          "bytesInOutput": 2521
         },
         "client/shared/blockhash.js": {
           "bytesInOutput": 5588
         },
         "client/shared/config.js": {
-          "bytesInOutput": 11310
+          "bytesInOutput": 11234
         },
         "client/process/processImage.js": {
           "bytesInOutput": 11702
@@ -734,12 +734,12 @@
           "bytesInOutput": 12388
         }
       },
-      "bytes": 7235095
+      "bytes": 7235177
     },
     "dist/index/index.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 1106867
+      "bytes": 1106838
     },
     "dist/index/index.js": {
       "imports": [],
@@ -751,7 +751,7 @@
           "bytesInOutput": 1609
         },
         "client/shared/config.js": {
-          "bytesInOutput": 11309
+          "bytesInOutput": 11233
         },
         "client/index/indexdb.js": {
           "bytesInOutput": 6232
@@ -787,7 +787,7 @@
           "bytesInOutput": 6707
         },
         "client/shared/models.js": {
-          "bytesInOutput": 2481
+          "bytesInOutput": 2521
         },
         "client/index/options.js": {
           "bytesInOutput": 8191
@@ -808,12 +808,12 @@
           "bytesInOutput": 32839
         }
       },
-      "bytes": 581014
+      "bytes": 580978
     },
     "dist/process/process.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 17534185
+      "bytes": 17534371
     },
     "dist/process/process.js": {
       "imports": [],
@@ -831,7 +831,7 @@
           "bytesInOutput": 1614
         },
         "client/shared/config.js": {
-          "bytesInOutput": 11309
+          "bytesInOutput": 11233
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 4243
@@ -840,13 +840,13 @@
           "bytesInOutput": 777
         },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 4362
+          "bytesInOutput": 4484
         },
         "client/shared/blockhash.js": {
           "bytesInOutput": 5588
         },
         "client/shared/models.js": {
-          "bytesInOutput": 2481
+          "bytesInOutput": 2521
         },
         "client/process/processImage.js": {
           "bytesInOutput": 11650
@@ -876,12 +876,12 @@
           "bytesInOutput": 5095
         }
       },
-      "bytes": 4302568
+      "bytes": 4302654
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 457250
+      "bytes": 457210
     },
     "dist/prototype/prototype.js": {
       "imports": [],
@@ -893,7 +893,7 @@
           "bytesInOutput": 1592
         },
         "client/shared/config.js": {
-          "bytesInOutput": 11309
+          "bytesInOutput": 11233
         },
         "client/shared/user.js": {
           "bytesInOutput": 1079
@@ -902,12 +902,12 @@
           "bytesInOutput": 491
         }
       },
-      "bytes": 234343
+      "bytes": 234267
     },
     "dist/video/video.js.map": {
       "imports": [],
       "inputs": {},
-      "bytes": 10150058
+      "bytes": 10162384
     },
     "dist/video/video.js": {
       "imports": [],
@@ -931,22 +931,28 @@
           "bytesInOutput": 2541009
         },
         "client/video/draw.js": {
-          "bytesInOutput": 7150
+          "bytesInOutput": 7689
         },
         "client/video/gesture.js": {
           "bytesInOutput": 2325
         },
+        "client/process/custom.js": {
+          "bytesInOutput": 777
+        },
+        "client/process/modelDetect.js": {
+          "bytesInOutput": 4462
+        },
         "client/shared/models.js": {
-          "bytesInOutput": 2481
+          "bytesInOutput": 2521
         },
         "client/video/runDetect.js": {
-          "bytesInOutput": 249
+          "bytesInOutput": 2176
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 4223
         },
         "client/video/runClassify.js": {
-          "bytesInOutput": 1472
+          "bytesInOutput": 1548
         },
         "empty:/home/vlado/dev/human/node_modules/node-fetch/browser.js": {
           "bytesInOutput": 46
@@ -997,13 +1003,13 @@
           "bytesInOutput": 3025
         },
         "client/video/runHuman.js": {
-          "bytesInOutput": 8869
+          "bytesInOutput": 8331
         },
         "client/video/run.js": {
-          "bytesInOutput": 6715
+          "bytesInOutput": 6981
         },
         "client/shared/config.js": {
-          "bytesInOutput": 11310
+          "bytesInOutput": 11234
         },
         "client/video/video.js": {
           "bytesInOutput": 172
@@ -1021,7 +1027,7 @@
           "bytesInOutput": 10412
         }
       },
-      "bytes": 5806162
+      "bytes": 5813698
     },
     "dist/index/worker.js.map": {
       "imports": [],

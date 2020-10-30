@@ -7,10 +7,10 @@ const defaults = {
   iouThreshold: 0.5, // used by nms
   minScore: 0.1, // used by nms
   normalizeInput: 1, // value:(1) = range:(0..255), value=(1/255) = range:(0..1), value:(-1 + 1/127.5) = range:(-1..1)
-  scaleOutput: false, // use if output is 0..1 instead of 0..width
   scaleScore: 1, // use if scores are off by order of magniture
   map: { boxes: 'Identity_1:0', scores: 'Identity_4:0', classes: 'Identity_2:0' }, // defaults map to tfhub object detection models
   classes: null, // set to url or leave as null to load classes.json from modelPath
+  axis: true,
   softmax: false,
 };
 
@@ -85,15 +85,21 @@ async function detect(model, image, userConfig) {
   const detected = [];
   for (const i in nms) {
     const id = parseInt(i);
+    const scaleOutput = ((boxes[id][0] > 0 && boxes[id][0] < 1) || (boxes[id][1] > 0 && boxes[id][1] < 1));
+    // not sure if model output is x,y or y,x
+    const a = Math.trunc(boxes[id][1] * (scaleOutput ? imageT.shape[2] : 1));
+    const b = Math.trunc(boxes[id][0] * (scaleOutput ? imageT.shape[1] : 1));
+    const c = Math.trunc((boxes[id][2] - boxes[id][0]) * (scaleOutput ? imageT.shape[2] : 1));
+    const d = Math.trunc((boxes[id][3] - boxes[id][1]) * (scaleOutput ? imageT.shape[1] : 1));
     detected.push({
       score: Math.min(1, Math.trunc(model.config.scaleScore * 10000 * scores[i]) / 10000), // limit score to 100% in case of scaled scores
       id: classes[id],
       class: model.labels[classes[id]].displayName,
-      bbox: { // switch box from x0,y0,x1,y1 to x,y,width,height and potentially scale it if model returns coordinates in range 0..1
-        x: Math.trunc(boxes[id][0]) * (model.config.scaleOutput ? imageT.shape[2] : 1),
-        y: Math.trunc(boxes[id][1]) * (model.config.scaleOutput ? imageT.shape[1] : 1),
-        width: (Math.trunc((boxes[id][3] * (model.config.scaleOutput ? imageT.shape[2] : 1)) - (boxes[id][1])) * (model.config.scaleOutput ? imageT.shape[2] : 1)),
-        height: (Math.trunc((boxes[id][2] * (model.config.scaleOutput ? imageT.shape[1] : 1)) - (boxes[id][0])) * (model.config.scaleOutput ? imageT.shape[1] : 1)),
+      bbox: { // switch box from y0,x0,y1,x1 to x,y,width,height and potentially scale it if model returns coordinates in range 0..1
+        x: model.config.axis ? a : b,
+        y: model.config.axis ? b : a,
+        width: model.config.axis ? c : d,
+        height: model.config.axis ? d : c,
       },
     });
   }

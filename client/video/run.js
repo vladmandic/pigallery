@@ -81,8 +81,10 @@ async function init(config) {
 async function main(config, objects) {
   const video = document.getElementById('video');
   const t0 = performance.now();
-  objects.detected = [];
-  objects.classified = [];
+  objects.detected = {};
+  objects.classified = {};
+  objects.gestures = [];
+  objects.human = [];
   objects.results = [];
 
   let input = await getVideoCanvas(video, objects.canvases, config);
@@ -99,24 +101,24 @@ async function main(config, objects) {
   document.getElementById('canvases').appendChild(input);
 
   for (const m of definitions.models.classify) {
-    const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config.classify, objects) : null;
+    const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
     if (data) objects.results.push(data);
     else draw.clear(objects.canvases[m.name]);
   }
 
   for (const m of definitions.models.various) {
-    const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config.classify, objects) : null;
+    const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
     if (data) objects.results.push(data);
     else draw.clear(objects.canvases[m.name]);
   }
 
   for (const m of definitions.models.detect) {
-    const data = (config.detect[m.name]) ? await runDetect.run(m.name, input, config.detect, objects) : null;
+    const data = (config.detect[m.name]) ? await runDetect.run(m.name, input, config, objects) : null;
     if (data) objects.results.push(data);
     else draw.clear(objects.canvases[m.name]);
   }
 
-  const gestures = await gesture.analyze(objects.results);
+  objects.gestures = await gesture.analyze(objects.results);
 
   const t1 = performance.now();
   if (objects.results && objects.results[0] && objects.results[0].human) {
@@ -127,9 +129,14 @@ async function main(config, objects) {
   }
   if (config.ui.text) {
     let msg = '';
-    if (objects.detected.length > 0) msg += `detected: ${log.str([...objects.detected])}<br>`;
-    if (objects.classified.length > 0) msg += `classified: ${log.str([...objects.classified])}<br>`;
-    if (gestures.length > 0) msg += `gestures: ${log.str([...gestures])}<br>`;
+    if (objects.human.length > 0) msg += `human: ${log.str([...objects.human])}<br>`;
+    for (const [key, val] of Object.entries(objects.detected)) {
+      if (val.length > 0) msg += `detected: ${key}: ${log.str([...val])}<br>`;
+    }
+    for (const [key, val] of Object.entries(objects.classified)) {
+      if (val.length > 0) msg += `classified: ${key}: ${log.str([...val])}<br>`;
+    }
+    if (objects.gestures.length > 0) msg += `gestures: ${log.str([...objects.gestures])}<br>`;
     document.getElementById('detected').innerHTML = msg;
   } else {
     document.getElementById('detected').innerHTML = '';
