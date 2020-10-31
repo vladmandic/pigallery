@@ -14,11 +14,12 @@ const config = {
   squareImage: false,      // resize proportional to the original image or to a square image
   registerPWA: true,       // register PWA service worker?
   facing: true,            // webcam facing front or back
+  memory: false,           // set webgl memory hard limit
   // webgl configuration
   webgl: {
     // WEBGL_CHECK_NUMERICAL_PROBLEMS: false // Whether to check for numerical representation problems
     WEBGL_CPU_FORWARD: true, // Whether the WebGL backend will sometimes forward ops to the CPU
-    WEBGL_FORCE_F16_TEXTURES: false, // Whether the WebGL backend will always use f16 textures for rendering
+    WEBGL_FORCE_F16_TEXTURES: true, // Whether the WebGL backend will always use f16 textures for rendering
     // WEBGL_PACK_NORMALIZATION // Whether we will pack the batchnormalization op
     // WEBGL_PACK_CLIP // Whether we will pack the clip op
     WEBGL_PACK_DEPTHWISECONV: false, // Whether we will pack the depthwise conv op // TODO: https://github.com/tensorflow/tfjs/issues/1679

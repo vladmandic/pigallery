@@ -62,8 +62,12 @@ async function init(config) {
   await resetBackend(config.backEnd);
   tf.ENV.set('DEBUG', false);
   for (const [key, val] of Object.entries(config.webgl)) {
-    log.debug('WebGL Setting', key, val);
+    log.debug('Setting WebGL:', key, val);
     tf.ENV.set(key, val);
+  }
+  if (config.memory) {
+    log.debug('Setting WebGL: WEBGL_DELETE_TEXTURE_THRESHOLD:', config.memory);
+    tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
   }
   await tf.ready();
   await tf.enableProdMode();

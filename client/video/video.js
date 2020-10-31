@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
 import panzoom from '../../assets/panzoom.js';
 import * as log from '../shared/log.js';
 import * as user from '../shared/user.js';
@@ -113,6 +114,10 @@ async function menuSetup() {
 
   objects.menus.params = new Menu(document.body, '');
   objects.menus.params.addLabel('Model parameters');
+  objects.menus.params.addBool('WebGL Memory Limit', config, 'memory', (val) => {
+    log.debug('Changing WebGL: WEBGL_DELETE_TEXTURE_THRESHOLD:', val);
+    tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', val ? 0 : -1);
+  });
   objects.menus.params.addRange('Max Objects', config.human.face.detector, 'maxFaces', 0, 50, 1, (val) => {
     config.human.face.detector.maxFaces = parseInt(val);
     config.human.body.maxDetections = parseInt(val);
@@ -187,6 +192,17 @@ async function menuSetup() {
       case 'menu-performance': objects.menus.perf.toggle(evt); break;
       default:
     }
+  });
+}
+
+// eslint-disable-next-line no-unused-vars
+async function xhrFetch(url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = () => resolve(new Response(xhr.responseText, { status: xhr.status }));
+    xhr.onerror = (err) => reject(new TypeError(err));
+    xhr.open('GET', url);
+    xhr.send(null);
   });
 }
 

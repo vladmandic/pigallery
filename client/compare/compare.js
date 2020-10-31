@@ -138,11 +138,12 @@ async function classify() {
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
+  if (tf.memory().numBytesInGPUAllocated > (tf.engine().backendInstance.numMBBeforeWarning * 1024 * 1024)) log.debug('High memory threshold:', tf.memory());
+
   const stats = [];
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   for (const i in files) {
-    if (tf.memory().numBytesInGPUAllocated > tf.ENV.get('WEBGL_DELETE_TEXTURE_THRESHOLD')) log.debug('High memory threshold:', tf.memory());
     if ((limit > 0) && (i >= limit)) stop = true;
     if (stop) continue;
     const results = [];
@@ -214,7 +215,6 @@ async function person() {
   stats = [0, 0];
   let data;
   for (const i in files) {
-    if (tf.memory().numBytesInGPUAllocated > tf.ENV.get('WEBGL_DELETE_TEXTURE_THRESHOLD')) log.debug('High memory threshold:', tf.memory());
     if ((limit > 0) && (i >= limit)) stop = true;
     if (stop) continue;
     const results = [];
@@ -275,7 +275,6 @@ async function detect() {
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   for (const i in files) {
-    if (tf.memory().numBytesInGPUAllocated > tf.ENV.get('WEBGL_DELETE_TEXTURE_THRESHOLD')) log.debug('High memory threshold:', tf.memory());
     if ((limit > 0) && (i >= limit)) stop = true;
     if (stop) continue;
     const results = [];
