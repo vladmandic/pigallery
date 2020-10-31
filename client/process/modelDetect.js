@@ -10,7 +10,7 @@ const defaults = {
   scaleScore: 1, // use if scores are off by order of magniture
   map: { boxes: 'Identity_1:0', scores: 'Identity_4:0', classes: 'Identity_2:0' }, // defaults map to tfhub object detection models
   classes: null, // set to url or leave as null to load classes.json from modelPath
-  axis: true,
+  switchAxis: false,
   softmax: false,
 };
 
@@ -33,9 +33,10 @@ async function load(userConfig) {
   }
   try {
     const res = model.config.classes ? await fetch(model.config.classes) : await fetch(model.config.modelPath + '/classes.json'); // load classes json file from modelpath/classes.json or user provided url
-    model.labels = await res.json();
+    if (res && res.ok) model.labels = await res.json();
+    else throw new Error(`classes file is missing: ${model.config.classes} status: ${res.status}`);
   } catch (err) {
-    throw new Error(`Error loading classes: $${model.config.classes} message:${err.message}`);
+    throw new Error(`Error loading classes: ${model.config.classes} message: ${err.message}`);
   }
   return model;
 }
@@ -65,7 +66,6 @@ async function detect(model, image, userConfig) {
 
   // execute model
   const res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]);
-
   // find results
   const boxesT = res[0].shape.length > 2 ? res[0].squeeze() : res[0].clone(); // boxes can be 3d or 2d in some models
   const softmaxT = model.config.softmax ? res[1].softmax() : res[1].clone();
@@ -80,6 +80,8 @@ async function detect(model, image, userConfig) {
   const nmsT = await tf.image.nonMaxSuppressionAsync(boxes, scores, model.config.maxResults, model.config.iouThreshold, model.config.minScore / model.config.scaleScore);
   const nms = await nmsT.data();
   nmsT.dispose();
+  // console.log(`executeAsync: ${Math.trunc(t1 - t0)} ms`);
+  // console.log(`allocated: ${Math.trunc(tf.memory().numBytesInGPUAllocated / 1024 / 1024)} MB free: ${Math.trunc(tf.memory().numBytesInGPUFree / 1024 / 1024)} MB limit: ${Math.trunc(tf.engine().backendInstance.numMBBeforeWarning)} MB`);
 
   // create result object
   const detected = [];
@@ -87,19 +89,21 @@ async function detect(model, image, userConfig) {
     const id = parseInt(i);
     const scaleOutput = ((boxes[id][0] > 0 && boxes[id][0] < 1) || (boxes[id][1] > 0 && boxes[id][1] < 1));
     // not sure if model output is x,y or y,x
-    const a = Math.trunc(boxes[id][1] * (scaleOutput ? imageT.shape[2] : 1));
-    const b = Math.trunc(boxes[id][0] * (scaleOutput ? imageT.shape[1] : 1));
-    const c = Math.trunc((boxes[id][2] - boxes[id][0]) * (scaleOutput ? imageT.shape[2] : 1));
-    const d = Math.trunc((boxes[id][3] - boxes[id][1]) * (scaleOutput ? imageT.shape[1] : 1));
+    const a = boxes[id][0];
+    const b = boxes[id][1];
+    const c = boxes[id][2] - a;
+    const d = boxes[id][3] - b;
+    const width = model.config.switchAxis ? imageT.shape[1] : imageT.shape[2];
+    const height = model.config.switchAxis ? imageT.shape[2] : imageT.shape[1];
     detected.push({
       score: Math.min(1, Math.trunc(model.config.scaleScore * 10000 * scores[i]) / 10000), // limit score to 100% in case of scaled scores
       id: classes[id],
       class: model.labels[classes[id]].displayName,
       bbox: { // switch box from y0,x0,y1,x1 to x,y,width,height and potentially scale it if model returns coordinates in range 0..1
-        x: model.config.axis ? a : b,
-        y: model.config.axis ? b : a,
-        width: model.config.axis ? c : d,
-        height: model.config.axis ? d : c,
+        x: Math.trunc((scaleOutput ? width : 1) * (model.config.switchAxis ? a : b)),
+        y: Math.trunc((scaleOutput ? height : 1) * (model.config.switchAxis ? b : a)),
+        width: Math.trunc((scaleOutput ? width : 1) * (model.config.switchAxis ? c : d)),
+        height: Math.trunc((scaleOutput ? height : 1) * (model.config.switchAxis ? d : c)),
       },
     });
   }
