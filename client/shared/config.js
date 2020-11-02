@@ -19,10 +19,10 @@ const config = {
   webgl: {
     // WEBGL_CHECK_NUMERICAL_PROBLEMS: false // Whether to check for numerical representation problems
     WEBGL_CPU_FORWARD: true, // Whether the WebGL backend will sometimes forward ops to the CPU
-    WEBGL_FORCE_F16_TEXTURES: true, // Whether the WebGL backend will always use f16 textures for rendering
+    // WEBGL_FORCE_F16_TEXTURES: true, // Whether the WebGL backend will always use f16 textures for rendering
     // WEBGL_PACK_NORMALIZATION // Whether we will pack the batchnormalization op
     // WEBGL_PACK_CLIP // Whether we will pack the clip op
-    WEBGL_PACK_DEPTHWISECONV: false, // Whether we will pack the depthwise conv op // TODO: https://github.com/tensorflow/tfjs/issues/1679
+    // WEBGL_PACK_DEPTHWISECONV: false, // Whether we will pack the depthwise conv op // TODO: https://github.com/tensorflow/tfjs/issues/1679
     // WEBGL_PACK_BINARY_OPERATIONS // Whether we will pack binary ops
     // WEBGL_PACK_UNARY_OPERATIONS // Whether we will pack unary ops
     // WEBGL_PACK_ARRAY_OPERATIONS // Whether we will pack array ops
@@ -38,6 +38,7 @@ const config = {
     // WEBGL_DELETE_TEXTURE_THRESHOLD: Math.trunc(3.5 * 1024 * 1024 * 1024), // delete textures upon disposal is used memory is larger than this rather than making them available for reuse
   },
   ui: {
+    scale: 100,
     maxFrames: 10,
     overlay: true,
     useDepth: true,

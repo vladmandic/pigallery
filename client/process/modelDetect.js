@@ -12,6 +12,7 @@ const defaults = {
   classes: null, // set to url or leave as null to load classes.json from modelPath
   switchAxis: false,
   softmax: false,
+  profile: false,
 };
 
 async function load(userConfig) {
@@ -57,6 +58,26 @@ async function getImage(model, image) {
   return imageT;
 }
 
+function profile(data) {
+  if (!data || !data.kernels) return {};
+  const maxResults = 5;
+  const time = data.kernels
+    .filter((a) => a.kernelTimeMs > 0)
+    .reduce((a, b) => a += b.kernelTimeMs, 0);
+  const slowest = data.kernels
+    .map((a, i) => { a.id = i; return a; })
+    .filter((a) => a.kernelTimeMs > 0)
+    .sort((a, b) => b.kernelTimeMs - a.kernelTimeMs);
+  const largest = data.kernels
+    .map((a, i) => { a.id = i; return a; })
+    .filter((a) => a.totalBytesSnapshot > 0)
+    .sort((a, b) => b.totalBytesSnapshot - a.totalBytesSnapshot);
+  if (slowest.length > maxResults) slowest.length = maxResults;
+  if (largest.length > maxResults) largest.length = maxResults;
+  const res = { newBytes: data.newBytes, newTensors: data.newTensors, peakBytes: data.peakBytes, numKernelOps: data.kernels.length, timeKernelOps: time, slowestKernelOps: slowest, largestKernelOps: largest };
+  return res;
+}
+
 async function detect(model, image, userConfig) {
   // allow changes of configurations on the fly to play with nms settings
   if (userConfig) model.config = { ...model.config, ...userConfig };
@@ -65,7 +86,19 @@ async function detect(model, image, userConfig) {
   const imageT = await getImage(model, image);
 
   // execute model
-  const res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]);
+  let res;
+  if (!model.config.profile) {
+    res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]);
+  } else {
+    const memBefore = tf.memory();
+    const profileData = await tf.profile(() => model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]));
+    res = await profileData.result;
+    const memAfter = tf.memory();
+    const memProfile = profile(profileData);
+    // eslint-disable-next-line no-unused-vars
+    const profiling = { before: memBefore, after: memAfter, profile: memProfile };
+  }
+
   // find results
   const boxesT = res[0].shape.length > 2 ? res[0].squeeze() : res[0].clone(); // boxes can be 3d or 2d in some models
   const softmaxT = model.config.softmax ? res[1].softmax() : res[1].clone();

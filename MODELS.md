@@ -226,9 +226,3 @@ Once TF tools are compiled, use them to get details on the model before conversi
 | MobileNet v2 Insects     | Image Classification | iNaturalist  | 1020    | 13 MB  | 169     | 224 px     | 32 ms       | -               | -         | -      | -      |
 
 <br>
-<br>
-<br>
-
-## Learning
-
-- Google ML Course: <https://developers.google.com/machine-learning/crash-course>
