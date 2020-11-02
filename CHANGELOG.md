@@ -1,10 +1,13 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/10/28 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/10/31 mandic00@live.com
+- implemented object detection
+- added all image classifications
+- working on processing
+- processing fixes
 - fix processing
 - remaing import cleanups
-
-### **origin/master, origin/HEAD** 2020/10/27 mandic00@live.com
+- fix firefox compatibility issues
 - webgl memory optimizations
 - working nudenet model
 - work on models

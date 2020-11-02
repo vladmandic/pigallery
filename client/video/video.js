@@ -148,6 +148,7 @@ async function menuSetup() {
   });
   objects.menus.params.addHTML('<hr style="min-width: 200px; border-style: inset; border-color: dimgray">');
   objects.menus.params.addLabel('Display options');
+  objects.menus.params.addRange('Scale Resolution', config.ui, 'scale', 10, 100, 5);
   objects.menus.params.addBool('Show Text', config.ui, 'text');
   objects.menus.params.addBool('Use 3D Depth', config.ui, 'useDepth');
   objects.menus.params.addBool('Hide Overlay', config.ui, 'overlay');

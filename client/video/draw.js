@@ -9,6 +9,8 @@ function appendCanvas(name, width, height, objects) {
   objects.canvases[name].width = width;
   objects.canvases[name].height = height;
   objects.canvases[name].style.zIndex = Object.keys(objects.canvases).length;
+  objects.canvases[name].style.pointerEvents = 'none';
+  objects.canvases[name].getContext('2d').imageSmoothingEnabled = false;
   document.getElementById('canvases').appendChild(objects.canvases[name]);
 }
 

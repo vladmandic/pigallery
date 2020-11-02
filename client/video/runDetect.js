@@ -4,9 +4,6 @@ import * as draw from './draw.js';
 import * as modelDetect from '../process/modelDetect.js';
 import * as definitions from '../shared/models.js';
 
-let canvas;
-let ctx;
-
 async function run(name, input, config, objects) {
   const t0 = performance.now();
   if (!objects.models[name]) {
@@ -23,11 +20,12 @@ async function run(name, input, config, objects) {
     return null;
   }
   if (!objects.canvases[name]) draw.appendCanvas(name, input.width, input.height, objects);
-  canvas = objects.canvases[name];
-  ctx = canvas.getContext('2d');
+  const canvas = objects.canvases[name];
 
   const res = await modelDetect.detect(objects.models[name], input);
-  ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, canvas.width, canvas.height);
+  // ctx = canvas.getContext('2d');
+  // ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, canvas.width, canvas.height);
+  draw.clear(canvas);
   if (res) {
     if (!objects.detected[name]) objects.detected[name] = [];
     for (const item of res) {

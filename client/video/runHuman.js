@@ -182,20 +182,30 @@ function drawHand(result, ui) {
 
 async function run(input, config, objects) {
   if (!config.human.enabled) return {};
-  const t0 = performance.now();
+  // const t0 = performance.now();
   const result = await human.detect(input, config.human);
-  const t1 = performance.now();
-  objects.perf.Human = Math.trunc(t1 - t0);
+  // const t1 = performance.now();
+  // objects.perf.Human = Math.trunc(t1 - t0);
+
   // draw image from video
   // const ctx = canvas.getContext('2d');
   // if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, canvas.width, canvas.height);
   // else ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, canvas.width, canvas.height);
   // draw all results
   if (!objects.canvases.human) draw.appendCanvas('human', input.width, input.height, objects);
+  // recreate canvas if resolution changed
+  if (objects.canvases.human.width !== input.width) {
+    draw.clear(objects.canvases.human);
+    document.getElementById('canvases').removeChild(objects.canvases.human);
+    objects.canvases.human = null;
+    draw.appendCanvas('human', input.width, input.height, objects);
+  }
   canvas = objects.canvases.human;
   ctx = canvas.getContext('2d');
-  if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
-  else ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
+
+  draw.clear(canvas);
+  // if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
+  // else ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
 
   if (result.face) drawFace(result.face, config.ui);
   if (result.body) drawBody(result.body, config.ui);
@@ -205,8 +215,8 @@ async function run(input, config, objects) {
     let label = '';
     if (face.agConfidence) label += `${Math.trunc(100 * face.agConfidence)}% ${face.gender || ''} `;
     if (face.age) label += `age: ${face.age || ''} `;
-    if (face.iris) label += `iris: ${face.iris} `;
     if (face.emotion && face.emotion[0]) label += `${Math.trunc(100 * face.emotion[0].score)}% ${face.emotion[0].emotion} `;
+    if (face.iris) label += `distance: ${face.iris} `;
     label += ']';
     objects.human.push(label);
   }
