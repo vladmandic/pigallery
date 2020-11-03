@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/10/31 mandic00@live.com
+### **HEAD -> master** 2020/11/02 mandic00@live.com
+
+### **origin/master, origin/HEAD** 2020/10/31 mandic00@live.com
 - implemented object detection
 - added all image classifications
 - working on processing
