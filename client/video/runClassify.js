@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
+import { tf } from '../shared/tf.js';
 import * as log from '../shared/log.js';
 import * as modelClassify from '../process/modelClassify.js';
 import * as definitions from '../shared/models.js';

@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
+import { tf } from '../shared/tf.js';
 import panzoom from '../../assets/panzoom.js';
 import * as log from '../shared/log.js';
 import * as user from '../shared/user.js';

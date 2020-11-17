@@ -17,6 +17,7 @@ const config = {
   memory: false,           // set webgl memory hard limit
   // webgl configuration
   webgl: {
+    WEBGL_DELETE_TEXTURE_THRESHOLD: 0,
     // WEBGL_CHECK_NUMERICAL_PROBLEMS: false // Whether to check for numerical representation problems
     WEBGL_CPU_FORWARD: true, // Whether the WebGL backend will sometimes forward ops to the CPU
     // WEBGL_FORCE_F16_TEXTURES: true, // Whether the WebGL backend will always use f16 textures for rendering

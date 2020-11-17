@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
+import { tf } from '../shared/tf.js';
 
 const defaults = {
   modelPath: null,

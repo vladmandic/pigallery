@@ -1,5 +1,5 @@
-import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
 import $ from 'jquery';
+import { tf } from '../shared/tf.js';
 import * as log from '../shared/log.js';
 import * as config from '../shared/config.js';
 import * as process from './processImage.js';

@@ -7,11 +7,7 @@ exports.models = {
     { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect/inception-v3', tensorSize: 299, minScore: 0.35, scaleScore: 2000 },
   ],
   detect: [
-    // ideal combo for 4GB GPU: Coco-EfficientDet-D0 + NudeNet + OI-SSD-MobileNet
-    // ideal combo for 8GB GPU: Coco-EfficientDet-D5 + NudeNet + OI-FRCNN-Inception-Atrous
-    // TODO: CenterNet
-
-    { name: 'COCO EfficientDet D0', modelPath: 'models/coco/efficientdet-d0', minScore: 0.2, scaleOutput: true },
+    // { name: 'COCO EfficientDet D0', modelPath: 'models/coco/efficientdet-d0', minScore: 0.2, scaleOutput: true },
     // { name: 'COCO EfficientDet D1', modelPath: 'models/coco/efficientdet-d1', minScore: 0.2, scaleOutput: true },
     // { name: 'COCO EfficientDet D2', modelPath: 'models/coco/efficientdet-d2', minScore: 0.2, scaleOutput: true },
     // { name: 'COCO EfficientDet D3', modelPath: 'models/coco/efficientdet-d3', minScore: 0.2, scaleOutput: true },
@@ -34,12 +30,12 @@ exports.models = {
     // { name: 'OpenImages Faster-RCNN Inception ResNet v2', modelPath: 'models/openimages/faster-rcnn-resnet-v2', minScore: 0.05, normalizeInput: 1.0 / 255,
     //   map: { boxes: 'module_apply_default/hub_input/strided_slice:0', scores: 'module_apply_default/hub_input/strided_slice_1:0', classes: 'module_apply_default/hub_input/strided_slice_2:0' } },
 
-    { name: 'OpenImages Faster-RCNN Inception ResNet v2 Atrous', modelPath: 'models/openimages/faster-rcnn-inception-resnet-v2-atrous', minScore: 0.05, normalizeInput: 1.0 / 255,
-      map: { boxes: 'detection_boxes:0', scores: 'detection_scores:0', classes: 'detection_classes:0' } },
+    // { name: 'OpenImages Faster-RCNN Inception ResNet v2 Atrous', modelPath: 'models/openimages/faster-rcnn-inception-resnet-v2-atrous', minScore: 0.05, normalizeInput: 1.0 / 255,
+    //  map: { boxes: 'detection_boxes:0', scores: 'detection_scores:0', classes: 'detection_classes:0' } },
 
     // execution error: All tensors passed to tf.addN() must have the same shape
-    // { name: 'COCO CenterNet ResNet50-v2', modelPath: 'models/coco/centernet-resnet50-v2', minScore: 0.1,
-    //  map: { boxes: 'Identity:0', scores: 'Identity_2:0', classes: 'Identity_1:0' } },
+    // { name: 'COCO CenterNet ResNet50-v2', modelPath: 'models/coco/centernet-resnet50-v2', minScore: 0.3,
+    //   map: { boxes: 'Identity:0', scores: 'Identity_2:0', classes: 'Identity_1:0' } },
   ],
   person: [
     { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', score: 0.3, topK: 5, size: 416 },
