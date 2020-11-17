@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
+import { tf } from '../shared/tf.js';
 import * as log from '../shared/log.js';
 import * as draw from './draw.js';
 import * as modelDetect from '../process/modelDetect.js';

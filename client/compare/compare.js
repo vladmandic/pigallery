@@ -1,7 +1,7 @@
 import $ from 'jquery';
-import * as tf from '@tensorflow/tfjs/dist/tf.es2017.js';
-import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
-import Human from '@vladmandic/human';
+import { tf } from '../shared/tf.js';
+// import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
+// import Human from '@vladmandic/human';
 import * as log from '../shared/log.js';
 import * as modelClassify from '../process/modelClassify.js';
 import * as modelDetect from '../process/modelDetect.js';
@@ -166,8 +166,9 @@ async function classify() {
 }
 
 async function person() {
+  /*
   stop = false;
-  log.div('log', true, `FaceAPI version: ${faceapi.tf.version_core} backend ${faceapi.tf.getBackend()}`);
+  og.div('log', true, `FaceAPI version: ${faceapi.tf.version_core} backend ${faceapi.tf.getBackend()}`);
   log.div('log', true, 'Loading models ...');
 
   let engine;
@@ -235,7 +236,7 @@ async function person() {
     const t1 = window.performance.now();
     stats[0] += t1 - t0;
 
-    data = await human.detect(image.canvas, config.default.human);
+    // data = await human.detect(image.canvas, config.default.human);
     log.debug('Human', files[i], data);
     results.push({ model: 'Human', data: [data] });
 
@@ -247,6 +248,7 @@ async function person() {
   log.div('log', true, 'Finished:', tf.memory());
   log.div('log', true, `FaceApi: ${Math.round(stats[0]).toLocaleString()} ms / ${Math.round(stats[0] / files.length)} avg`);
   log.div('log', true, `Human: ${Math.round(stats[1]).toLocaleString()} ms / ${Math.round(stats[1] / files.length)} avg`);
+  */
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -265,9 +267,9 @@ async function detect() {
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, tf.ENV.flags);
 
-  // const api = await fetch('/api/file/dir?folder=Tests/Objects/');
+  const api = await fetch('/api/file/dir?folder=Tests/Objects/');
   // const api = await fetch('/api/file/dir?folder=Tests/Persons/');
-  const api = await fetch('/api/file/dir?folder=Tests/NSFW/');
+  // const api = await fetch('/api/file/dir?folder=Tests/NSFW/');
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
