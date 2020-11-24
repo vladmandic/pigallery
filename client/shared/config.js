@@ -291,8 +291,9 @@ window.options = {
 
 async function initTheme() {
   window.theme = window.themes[window.options.theme];
+  log.debug(null, 'Options:', window.options);
+  log.debug(null, `Theme: ${window.theme?.name} ${window.options.theme}`);
   if (!window.theme) return;
-  log.debug(null, `Theme: ${window.theme.name}`);
   document.documentElement.style.setProperty('--body', window.theme.body);
   document.documentElement.style.setProperty('--background', window.theme.background);
   document.documentElement.style.setProperty('--gradient', window.theme.gradient);

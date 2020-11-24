@@ -1,8 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/11/02 mandic00@live.com
-
-### **origin/master, origin/HEAD** 2020/10/31 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/11/17 mandic00@live.com
+- video optimizations
+- webgl tuning
 - implemented object detection
 - added all image classifications
 - working on processing

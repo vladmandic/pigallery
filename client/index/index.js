@@ -2,14 +2,14 @@ import $ from 'jquery';
 import * as log from '../shared/log.js';
 import * as marked from '../../assets/marked.esm.js';
 import * as config from '../shared/config.js';
-import * as db from './indexdb.js';
+import * as indexdb from './indexdb.js';
 import * as details from './details.js';
 import * as hash from '../shared/blockhash.js';
 import * as user from '../shared/user.js';
 import * as list from './list.js';
 import * as map from './map.js';
 import * as enumerate from './enumerate.js';
-import * as options from './options.js';
+import * as optionsConfig from './options.js';
 import * as pwa from './pwa-register.js';
 
 // global variables
@@ -56,12 +56,12 @@ async function folderHandlers() {
       case 'folder':
         log.debug(t0, `Selected path: ${path}`);
         const root = window.user && window.user.root ? window.user.root : 'media/';
-        if (window.filtered.length < await db.count()) window.filtered = await db.refresh();
+        if (window.filtered.length < await indexdb.count()) window.filtered = await indexdb.refresh();
         if (path !== root) window.filtered = window.filtered.filter((a) => escape(a.image).startsWith(path));
         break;
       case 'location':
         log.debug(t0, `Selected location: ${path}`);
-        if (window.filtered.length < await db.count()) window.filtered = await db.refresh();
+        if (window.filtered.length < await indexdb.count()) window.filtered = await indexdb.refresh();
         if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => (path.startsWith(escape(a.location.near)) || path.startsWith(escape(a.location.country))));
         else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
         break;
@@ -78,7 +78,7 @@ async function folderHandlers() {
         $('#share-url').val(`${window.location.origin}?share=${share.key}`);
         $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
         window.share = share.key;
-        window.filtered = await db.refresh();
+        window.filtered = await indexdb.refresh();
         // eslint-disable-next-line no-use-before-define
         // await sortResults(window.options.listSortOrder);
         break;
@@ -123,10 +123,10 @@ async function filterResults(input) {
     if (keys.length !== 2) window.filtered = [];
     const key = keys[0].toLowerCase();
     const val = parseInt(keys[1]) || keys[1].toLowerCase();
-    if (key === 'limit') window.filtered = await db.all('date', false, 1, parseInt(keys[1]));
-    else window.filtered = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val });
+    if (key === 'limit') window.filtered = await indexdb.all('date', false, 1, parseInt(keys[1]));
+    else window.filtered = await indexdb.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val });
   } else {
-    window.filtered = await db.refresh();
+    window.filtered = await indexdb.refresh();
   }
   if (words.length > 0) {
     const full = filterWord(words.join(' ').toLowerCase());
@@ -250,18 +250,18 @@ async function sortResults(sort) {
   const t0 = window.performance.now();
   log.debug(t0, `Sorting: ${sort.replace('navlinebutton fad sort fa-', '')}`);
   if (sort.includes('random')) {
-    window.filtered = await db.all();
+    window.filtered = await indexdb.all();
     shuffle(window.filtered);
   }
   list.clearPrevious();
   // sort by
   busy('Sorting images');
-  if (sort.includes('alpha-down')) window.filtered = await db.all('name', true, 1, window.options.listItemCount);
-  if (sort.includes('alpha-up')) window.filtered = await db.all('name', false, 1, window.options.listItemCount);
-  if (sort.includes('numeric-down')) window.filtered = await db.all('date', false, 1, window.options.listItemCount);
-  if (sort.includes('numeric-up')) window.filtered = await db.all('date', true, 1, window.options.listItemCount);
-  if (sort.includes('amount-down')) window.filtered = await db.all('size', false, 1, window.options.listItemCount);
-  if (sort.includes('amount-up')) window.filtered = await db.all('size', true, 1, window.options.listItemCount);
+  if (sort.includes('alpha-down')) window.filtered = await indexdb.all('name', true, 1, window.options.listItemCount);
+  if (sort.includes('alpha-up')) window.filtered = await indexdb.all('name', false, 1, window.options.listItemCount);
+  if (sort.includes('numeric-down')) window.filtered = await indexdb.all('date', false, 1, window.options.listItemCount);
+  if (sort.includes('numeric-up')) window.filtered = await indexdb.all('date', true, 1, window.options.listItemCount);
+  if (sort.includes('amount-down')) window.filtered = await indexdb.all('size', false, 1, window.options.listItemCount);
+  if (sort.includes('amount-up')) window.filtered = await indexdb.all('size', true, 1, window.options.listItemCount);
   // if (sort.includes('simmilarity')) window.filtered = await db.all('simmilarity', false); // simmilarity is calculated, not stored in indexdb
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) window.options.listDivider = 'month';
@@ -276,12 +276,12 @@ async function sortResults(sort) {
   stats.initial = Math.floor(t1 - t0);
   $('#all').focus();
   busy('Loading remaining<br>images in background');
-  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await db.all('name', true, window.options.listItemCount + 1));
-  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await db.all('name', false, window.options.listItemCount + 1));
-  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await db.all('date', false, window.options.listItemCount + 1));
-  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await db.all('date', true, window.options.listItemCount + 1));
-  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, window.options.listItemCount + 1));
-  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, window.options.listItemCount + 1));
+  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await indexdb.all('name', true, window.options.listItemCount + 1));
+  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await indexdb.all('name', false, window.options.listItemCount + 1));
+  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await indexdb.all('date', false, window.options.listItemCount + 1));
+  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await indexdb.all('date', true, window.options.listItemCount + 1));
+  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await indexdb.all('size', false, window.options.listItemCount + 1));
+  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await indexdb.all('size', true, window.options.listItemCount + 1));
   log.debug(t1, `Cached images: ${window.filtered.length} fetched remaining`);
   stats.remaining = Math.floor(window.performance.now() - t1);
   // if (window.filtered.length > 0) log.div('log', true, `Loaded ${window.filtered.length} images from cache`);
@@ -318,14 +318,14 @@ async function findDuplicates() {
     sortResults('simmilarity');
     busy(false);
   });
-  const all = await db.all();
+  const all = await indexdb.all();
   worker.postMessage(all);
 }
 
 // loads images, displays gallery and enumerates sidebar
 async function loadGallery(limit, refresh = false) {
   const chunkSize = 200;
-  const cached = await db.count();
+  const cached = await indexdb.count();
   if (window.share) return;
   if (!window.user.user) return;
   $('#progress').text('Requesting');
@@ -337,8 +337,8 @@ async function loadGallery(limit, refresh = false) {
   const t0 = window.performance.now();
   if (!refresh) {
     log.div('log', true, 'Downloading image cache ...');
-    await db.reset();
-    await db.open();
+    await indexdb.reset();
+    await indexdb.open();
   }
   const updated = new Date().getTime();
   const since = refresh ? window.options.lastUpdated : 0;
@@ -348,7 +348,7 @@ async function loadGallery(limit, refresh = false) {
   const pages = parseInt(first.headers.get('content-Pages'));
   const json0 = await first.json();
   let dlSize = JSON.stringify(json0).length;
-  db.store(json0);
+  indexdb.store(json0);
   const promisesReq = [];
   const promisesData = [];
   let progress = Math.min(100, Math.round(100 * dlSize / totalSize));
@@ -365,7 +365,7 @@ async function loadGallery(limit, refresh = false) {
         progress = Math.min(100, Math.round(100 * dlSize / totalSize));
         perf = Math.round(dlSize / (performance.now() - t0));
         const t2 = performance.now();
-        await db.store(json);
+        await indexdb.store(json);
         const t3 = performance.now();
         stats.store += t3 - t2;
         log.debug('Donwloading', `page:${page} progress:${progress}% bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
@@ -379,7 +379,7 @@ async function loadGallery(limit, refresh = false) {
   const t1 = window.performance.now();
 
   const dt = window.options.lastUpdated === 0 ? 'start' : new Date(window.options.lastUpdated).toLocaleDateString();
-  const current = await db.count();
+  const current = await indexdb.count();
   perf = (current - cached) > 0 ? `performance: ${Math.round(dlSize / (t1 - t0)).toLocaleString()} KB/sec ` : '';
   log.div('log', true, `Download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${perf}updated since ${dt}`);
   // window.filtered = await db.all();
@@ -616,13 +616,13 @@ async function initMenuHandlers() {
   // navline user options
   $('#btn-options').on('click', async () => {
     await showNavbar($('#docs'));
-    if ($('#docs').css('display') !== 'none') options.show();
+    if ($('#docs').css('display') !== 'none') optionsConfig.show();
   });
 
   // navline global params
   $('#btn-params').on('click', async () => {
     await showNavbar($('#docs'));
-    if ($('#docs').css('display') !== 'none') options.params();
+    if ($('#docs').css('display') !== 'none') optionsConfig.params();
   });
 
   // navline user logout
@@ -735,7 +735,7 @@ async function hashChange(evt) {
   const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1));
   if (source > target) {
     const top = parseInt($('#all').scrollTop()) === 0;
-    const all = await db.count() - window.filtered.length;
+    const all = await indexdb.count() - window.filtered.length;
     if (top && all === 0) {
       log.debug(t0, 'Exiting ...');
     } else {
@@ -804,7 +804,7 @@ async function main() {
   googleAnalytics();
   details.handlers();
   initHotkeys();
-  await db.open();
+  await indexdb.open();
   window.details = details;
   window.simmilarImage = simmilarImage;
   window.simmilarPerson = simmilarPerson;

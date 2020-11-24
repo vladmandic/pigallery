@@ -132,7 +132,7 @@ async function detect(model, image, userConfig) {
       score: Math.min(1, Math.trunc(model.config.scaleScore * 10000 * scores[i]) / 10000), // limit score to 100% in case of scaled scores
       id: classes[id],
       class: model.labels[classes[id]].displayName,
-      bbox: { // switch box from y0,x0,y1,x1 to x,y,width,height and potentially scale it if model returns coordinates in range 0..1
+      box: { // switch box from y0,x0,y1,x1 to x,y,width,height and potentially scale it if model returns coordinates in range 0..1
         x: Math.trunc((scaleOutput ? width : 1) * (model.config.switchAxis ? a : b)),
         y: Math.trunc((scaleOutput ? height : 1) * (model.config.switchAxis ? b : a)),
         width: Math.trunc((scaleOutput ? width : 1) * (model.config.switchAxis ? c : d)),

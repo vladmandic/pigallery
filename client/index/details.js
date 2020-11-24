@@ -101,10 +101,11 @@ function drawBoxes(object) {
   // draw detected objects
   if (window.options.viewBoxes && object.detect) {
     for (const obj of object.detect) {
-      const x = obj.box[0] * resizeX;
-      const y = obj.box[1] * resizeY;
-      let width = obj.box[2] * resizeX;
-      let height = obj.box[3] * resizeY;
+      if (!obj.box) continue;
+      const x = (obj.box?.x || obj.box[0]) * resizeX;
+      const y = (obj.box?.y || obj.box[1]) * resizeY;
+      let width = (obj.box.width || obj.box[2]) * resizeX;
+      let height = (obj.box.height || obj.box[3]) * resizeY;
       if (x + width > canvas.width) width = canvas.width - x;
       if (y + height > canvas.height) height = canvas.height - y;
       roundRect(ctx, x, y, width, height, 10, 4, 'lightyellow', null, 0.4, obj.class);
