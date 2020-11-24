@@ -30,13 +30,13 @@ async function run(name, input, config, objects) {
     if (!objects.detected[name]) objects.detected[name] = [];
     for (const item of res) {
       objects.detected[name].push(`${(100 * item.score).toFixed(1)}% ${item.class}`);
-      if (config.ui.drawBoxes && item.bbox) {
+      if (config.ui.drawBoxes && item.box) {
         draw.rect({
           canvas,
-          x: item.bbox.x,
-          y: item.bbox.y,
-          width: item.bbox.width,
-          height: item.bbox.height,
+          x: item.box.x,
+          y: item.box.y,
+          width: item.box.width,
+          height: item.box.height,
           lineWidth: config.ui.lineWidth,
           color: config.ui.lineColor,
           title: item.class,
