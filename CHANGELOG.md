@@ -1,6 +1,7 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2020/11/17 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/11/24 mandic00@live.com
+- remove tf from assets
 - video optimizations
 - webgl tuning
 - implemented object detection
