@@ -1,6 +1,6 @@
 {
   "name": "@vladmandic/pigallery",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "PiGallery: Photo Gallery and Analysis using TensorFlow/JS and EXIF metadata",
   "main": "server/pigallery.js",
   "sideEffects": false,
