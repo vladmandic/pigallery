@@ -62,9 +62,10 @@
   "homepage": "https://github.com/vladmandic/pigallery#readme",
   "dependencies": {
     "@tensorflow/tfjs": "^2.7.0",
-    "@vladmandic/face-api": "file:../face-api",
+    "@tensorflow/tfjs-backend-wasm": "^2.7.0",
+    "@vladmandic/face-api": "^0.8.9",
     "@vladmandic/human": "file:../human",
-    "@vladmandic/pilogger": "file:../pilogger",
+    "@vladmandic/pilogger": "^0.2.9",
     "buffer": "^6.0.3",
     "chokidar": "^3.4.3",
     "clean-css": "^4.2.3",
