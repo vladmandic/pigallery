@@ -32,6 +32,6 @@ async function update(f) {
 
 exports.update = update;
 
-if (!module.parent) {
+if (require.main === module) {
   update('CHANGELOG.md');
 }

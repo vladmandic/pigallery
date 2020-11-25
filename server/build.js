@@ -72,13 +72,14 @@ async function compile() {
     await service.build({
       entryPoints: [...files, ...jsFiles],
       outdir: './dist',
-      minify: false,
+      minifyWhitespace: true,
+      minifySyntax: true,
       bundle: true,
       sourcemap: true,
       external: ['fs', 'crypto', 'util', 'string_decoder'],
       logLevel: 'error',
       platform: 'browser',
-      target: 'esnext',
+      target: 'es2018',
       format: 'esm',
       metafile,
     });
@@ -109,6 +110,6 @@ async function compile() {
 exports.init = init;
 exports.compile = compile;
 
-if (!module.parent) {
+if (require.main === module) {
   //
 }

@@ -396,6 +396,6 @@ exports.store = storeObject;
 exports.list = listFiles;
 exports.check = checkRecords;
 
-if (!module.parent) {
+if (require.main === module) {
   testExif(proc.argv[2]);
 }

@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 import config from '../shared/config.js';
 import * as log from '../shared/log.js';
 import * as user from '../shared/user.js';
