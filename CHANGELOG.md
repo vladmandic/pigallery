@@ -1,8 +1,7 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/11/25 mandic00@live.com
-
-### **origin/master, origin/HEAD** 2020/11/24 mandic00@live.com
+### **2.2.3** 2020/11/25 mandic00@live.com
+- fix chrome 87 compatibility
 - remove tf from assets
 - video optimizations
 - webgl tuning

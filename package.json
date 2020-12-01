@@ -69,7 +69,7 @@
     "buffer": "^6.0.3",
     "chokidar": "^3.4.3",
     "clean-css": "^4.2.3",
-    "esbuild": "^0.8.15",
+    "esbuild": "^0.8.17",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
@@ -79,7 +79,7 @@
     "nedb-promises": "^4.1.0",
     "node-fetch": "^2.6.1",
     "session-file-store": "^1.5.0",
-    "simple-git": "^2.23.0"
+    "simple-git": "^2.24.0"
   },
   "devDependencies": {
     "eslint": "^7.14.0",
