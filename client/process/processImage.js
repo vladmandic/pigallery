@@ -1,5 +1,6 @@
 import { tf } from '../shared/tf.js';
-// import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
+// eslint-disable-next-line import/order
+import * as faceapi from '@vladmandic/face-api/dist/face-api.esm-nobundle.js';
 import * as log from '../shared/log.js';
 import * as modelClassify from './modelClassify.js';
 import * as modelDetect from './modelDetect.js';
@@ -74,7 +75,6 @@ async function loadModels() {
     }
   }
 
-  /*
   if (definitions.models.person[0]) {
     const options = definitions.models.person[0];
     if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
@@ -89,7 +89,6 @@ async function loadModels() {
     // eslint-disable-next-line no-use-before-define
     models.faceapi.classify = faceapiClassify;
   }
-  */
 
   const t1 = window.performance.now();
   log.div('process-log', true, `TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
@@ -97,7 +96,6 @@ async function loadModels() {
   log.div('process-log', true, `TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
 }
 
-/*
 function flattenObject(object) {
   const stripped = {};
   for (const key of Object.keys(object)) {
@@ -130,7 +128,6 @@ async function faceapiClassify(image) {
   }
   return faces;
 }
-*/
 
 async function getImage(url, maxSize = config.default.maxSize) {
   return new Promise((resolve) => {
