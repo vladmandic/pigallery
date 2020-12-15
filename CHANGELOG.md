@@ -1,8 +1,11 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2020/12/12 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2020/12/14 mandic00@live.com
+- merge pull request #3 from vladmandic/dependabot/npm_and_yarn/ini-1.3.8
+- bump ini from 1.3.5 to 1.3.8
 
-### **origin/master, origin/HEAD** 2020/12/01 mandic00@live.com
+### **2.2.4** 2020/12/12 mandic00@live.com
+- package update
 
 ### **2.2.3** 2020/11/25 mandic00@live.com
 - fix chrome 87 compatibility
