@@ -50,6 +50,7 @@
     "promise/no-nesting": "off",
     "import/no-absolute-path": "off",
     "no-regex-spaces": "off",
-    "radix": "off"
+    "radix": "off",
+    "import/prefer-default-export": "off"
   }
 }

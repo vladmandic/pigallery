@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import $ from 'jquery';
 import * as log from '../shared/log.js';
 
@@ -94,13 +96,13 @@ async function enumerateFolders() {
         if (!document.getElementById(`dir-${pathId}`)) {
           const div = document.createElement('li');
           div.id = `dir-${pathId}`;
-          if (i !== depth) div.style = 'display: none';
+          if (i !== depth) div.style.display = 'none';
           let path = '';
           for (let j = 0; j <= i; j++) path += `${escape(item.folders[j])}/`;
           const count = i === item.folders.length - 1 ? `(${item.count})` : '';
           div.innerHTML = `<span tag="${path}" type="folder" style="padding-left: ${i * 16}px" class="folder"><i class="collapsible fas fa-chevron-circle-right">&nbsp</i>${item.folders[i]} ${count}</span>`;
-          if (i === depth) document.getElementById('folders').appendChild(div);
-          else document.getElementById(`dir-${parentId}`).appendChild(div);
+          if (i === depth) document.getElementById('folders')?.appendChild(div);
+          else document.getElementById(`dir-${parentId}`)?.appendChild(div);
           folderCount++;
         }
       }

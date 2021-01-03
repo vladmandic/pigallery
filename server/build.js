@@ -30,7 +30,7 @@ async function buildStats() {
   const stats = { modules: 0, moduleBytes: 0, imports: 0, importBytes: 0, outputs: 0, outputBytes: 0, outputFiles: [] };
   if (!fs.existsSync(metafile)) return stats;
   const data = fs.readFileSync(metafile);
-  const json = JSON.parse(data);
+  const json = JSON.parse(data.toString());
   if (json && json.inputs && json.outputs) {
     for (const [key, val] of Object.entries(json.inputs)) {
       if (key.startsWith('node_modules')) {
@@ -44,6 +44,7 @@ async function buildStats() {
     for (const [key, val] of Object.entries(json.outputs)) {
       if (!key.endsWith('.map')) {
         stats.outputs += 1;
+        // @ts-ignore
         stats.outputFiles.push(key);
         stats.outputBytes += val.bytes;
       }
@@ -85,7 +86,7 @@ async function compile() {
     });
     const t1 = process.hrtime.bigint();
     const s = await buildStats();
-    log.state('Client application rebuild:', Math.trunc(parseInt(t1 - t0) / 1000 / 1000), 'ms', s.imports, 'imports in', s.importBytes, 'bytes', s.modules, 'modules in', s.moduleBytes, 'bytes', s.outputs, 'outputs in', s.outputBytes, 'bytes');
+    log.state('Client application rebuild:', Math.trunc(parseInt((t1 - t0).toString()) / 1000 / 1000), 'ms', s.imports, 'imports in', s.importBytes, 'bytes', s.modules, 'modules in', s.moduleBytes, 'bytes', s.outputs, 'outputs in', s.outputBytes, 'bytes');
   } catch (err) {
     log.error('Client application build error', JSON.stringify(err.errors || err, null, 2));
   }

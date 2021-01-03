@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const fs = require('fs');
 const path = require('path');
 const log = require('@vladmandic/pilogger');
@@ -99,7 +101,7 @@ function api(app) {
       obj.name = data.name;
       obj.processed = new Date();
       obj.images = data['images[]'];
-      obj.share = parseInt(obj.processed.getTime() / 1000).toString(36);
+      obj.share = (obj.processed.getTime() / 1000).toString(36);
       global.db.update({ share: obj.share }, obj, { upsert: true });
       log.info(`API/Share/Put ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images.length);
       res.status(200).json({ key: obj.share });

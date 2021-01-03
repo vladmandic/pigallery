@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import * as log from '../shared/log.js';
 
 async function register(path) {
@@ -8,10 +10,12 @@ async function register(path) {
       const regs = await navigator.serviceWorker.getRegistrations();
       for (const reg of regs) {
         log.debug(t0, 'PWA Found:', reg.scope);
+        // @ts-ignore
         if (reg.scope.startsWith(window.location.origin)) found = reg;
       }
       if (!found) {
         const reg = await navigator.serviceWorker.register(path, { scope: '/' });
+        // @ts-ignore
         found = reg;
         log.debug(t0, 'PWA Registered:', reg.scope);
       }

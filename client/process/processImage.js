@@ -11,7 +11,7 @@ import config from '../shared/config.js';
 const models = {};
 let error = false;
 
-function JSONtoStr(json) {
+export function JSONtoStr(json) {
   if (!json) return '';
   let res = '';
   if (Array.isArray(json)) {
@@ -23,30 +23,32 @@ function JSONtoStr(json) {
 }
 
 async function resetBackend(backendName) {
+  /*
   const engine = tf.engine();
   if (backendName in engine.registry) {
     const backendFactory = tf.findBackendFactory(backendName);
     tf.removeBackend(backendName);
     tf.registerBackend(backendName, backendFactory);
   }
+  */
   await tf.setBackend(backendName);
 }
 
-async function loadModels() {
+export async function load() {
   log.div('process-log', true, 'Starting Image Analsys');
   log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
-  await resetBackend(config.default.backEnd);
+  await resetBackend(config.backEnd);
   tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
-  for (const [key, val] of Object.entries(config.default.webgl)) {
+  for (const [key, val] of Object.entries(config.webgl)) {
     log.debug('WebGL Setting', key, val);
     tf.ENV.set(key, val);
   }
   log.div('process-log', true, 'Configuration:');
   log.div('process-log', true, `  Backend: ${tf.getBackend().toUpperCase()}`);
-  log.div('process-log', true, `  Parallel processing: ${config.default.batchProcessing} parallel images`);
-  log.div('process-log', true, `  Forced image resize: ${config.default.maxSize}px maximum shape: ${config.default.squareImage ? 'square' : 'native'}`);
+  log.div('process-log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
+  log.div('process-log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
   log.div('process-log', true, 'Image Classification models:');
   for (const model of definitions.models.classify) {
     log.div('process-log', true, `  ${JSONtoStr(model)}`);
@@ -129,13 +131,13 @@ async function faceapiClassify(image) {
   return faces;
 }
 
-async function getImage(url, maxSize = config.default.maxSize) {
+export async function getImage(url, maxSize = config.maxSize) {
   return new Promise((resolve) => {
     const image = new Image();
     image.addEventListener('load', () => {
       const ratio = 1.0 * image.height / image.width;
       if (Math.max(image.width, image.height) > maxSize) {
-        if (config.default.squareImage) {
+        if (config.squareImage) {
           image.height = maxSize;
           image.width = maxSize;
         } else {
@@ -147,23 +149,24 @@ async function getImage(url, maxSize = config.default.maxSize) {
       offscreenCanvas.height = image.height;
       offscreenCanvas.width = image.width;
       const ctx = offscreenCanvas.getContext('2d');
+      if (!ctx) return;
       ctx.drawImage(image, 0, 0, image.width, image.height);
       const data = ctx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-      if (Math.max(image.width, image.height) > config.default.renderThumbnail) {
-        if (config.default.squareImage) {
-          image.height = config.default.renderThumbnail;
-          image.width = config.default.renderThumbnail;
+      if (Math.max(image.width, image.height) > config.renderThumbnail) {
+        if (config.squareImage) {
+          image.height = config.renderThumbnail;
+          image.width = config.renderThumbnail;
         } else {
-          image.width = ratio <= 1 ? config.default.renderThumbnail : 1.0 * config.default.renderThumbnail / ratio;
-          image.height = ratio >= 1 ? config.default.renderThumbnail : 1.0 * config.default.renderThumbnail * ratio;
+          image.width = ratio <= 1 ? config.renderThumbnail : 1.0 * config.renderThumbnail / ratio;
+          image.height = ratio >= 1 ? config.renderThumbnail : 1.0 * config.renderThumbnail * ratio;
         }
       }
       const thumbnailCanvas = document.createElement('canvas');
       thumbnailCanvas.height = image.height;
       thumbnailCanvas.width = image.width;
       const thumbnailCtx = thumbnailCanvas.getContext('2d');
-      thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
+      if (thumbnailCtx) thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
       const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.8);
 
       resolve({ image, canvas: offscreenCanvas, data, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
@@ -172,8 +175,8 @@ async function getImage(url, maxSize = config.default.maxSize) {
   });
 }
 
-async function processImage(name) {
-  // if (config.default.batchProcessing === 1) tf.engine().startScope();
+export async function process(name) {
+  // if (config.batchProcessing === 1) tf.engine().startScope();
   const mem = tf.memory();
   log.div('process-state', false, `Engine state: ${mem.numBytes.toLocaleString()} bytes ${mem.numTensors.toLocaleString()} tensors ${mem.numDataBuffers.toLocaleString()} buffers ${mem.numBytesInGPU ? mem.numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj = {};
@@ -196,7 +199,7 @@ async function processImage(name) {
   try {
     if (!error && models.classify) {
       for (const model of models.classify) {
-        if (config.default.batchProcessing === 1) promisesClassify.push(await modelClassify.classify(model, image.canvas));
+        if (config.batchProcessing === 1) promisesClassify.push(await modelClassify.classify(model, image.canvas));
         else promisesClassify.push(modelClassify.classify(model, image.canvas));
       }
     }
@@ -212,7 +215,7 @@ async function processImage(name) {
   try {
     if (!error && models.detect) {
       for (const model of models.detect) {
-        if (config.default.batchProcessing === 1) promisesDetect.push(await modelDetect.detect(model, image.canvas));
+        if (config.batchProcessing === 1) promisesDetect.push(await modelDetect.detect(model, image.canvas));
         else promisesDetect.push(modelDetect.detect(model, image.canvas));
       }
     }
@@ -277,8 +280,3 @@ async function processImage(name) {
   }
   return obj;
 }
-
-exports.load = loadModels;
-exports.process = processImage;
-exports.getImage = getImage;
-exports.JSONtoStr = JSONtoStr;

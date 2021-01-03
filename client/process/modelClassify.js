@@ -13,10 +13,11 @@ const defaults = {
   softmax: true,
 };
 
-async function load(userConfig) {
+export async function load(userConfig) {
   let model = { config: { ...defaults, ...userConfig } };
   if (!model.config.modelPath) throw new Error('Error loading model: path is null');
   const loadOpts = {
+    // @ts-ignore
     fetchFunc: (...args) => fetch(...args),
     requestInit: { mode: 'no-cors' },
     fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
@@ -25,6 +26,7 @@ async function load(userConfig) {
   try {
     const saveConfig = model.config;
     if (model.config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
+    // @ts-ignore
     else model = await tf.loadGraphModel(modelPath, loadOpts);
     model.config = saveConfig;
     model.name = model.config.name;
@@ -48,7 +50,7 @@ async function decodeValues(model, values) {
     .filter((a) => ((a.score * model.config.scaleScore) > model.config.minScore) && (model.config.background !== parseInt(a.index)))
     .sort((a, b) => b.score - a.score)
     .map((a) => {
-      const id = a.index - model.config.offset; // offset indexes for some models
+      const id = parseInt(a.index) - model.config.offset; // offset indexes for some models
       const wnid = model.labels[id] ? model.labels[id][0] : a.index;
       const label = model.labels[id] ? model.labels[id][1].toLowerCase() : `unknown id:${a.index}`;
       const score = Math.min(1, Math.trunc(model.config.scaleScore * 10000 * a.score) / 10000); // limit score to 100% in case of scaled scores
@@ -86,7 +88,7 @@ async function getImage(model, image) {
   return imageT;
 }
 
-async function classify(model, image, userConfig) {
+export async function classify(model, image, userConfig) {
   // allow changes of configurations on the fly to play with nms settings
   if (userConfig) model.config = { ...model.config, ...userConfig };
 
@@ -109,8 +111,3 @@ async function classify(model, image, userConfig) {
   const decoded = await decodeValues(model, softmax);
   return decoded;
 }
-
-module.exports = {
-  load,
-  classify,
-};

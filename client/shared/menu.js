@@ -1,3 +1,4 @@
+// @ts-nocheck
 let instance = 0;
 let CSScreated = false;
 
@@ -141,10 +142,10 @@ class Menu {
       const y = evt.y || (evt.touches && evt.touches[0] ? evt.touches[0].pageY : null);
       if (x) this.menu.style.left = `${x - 105}px`;
       if (y) this.menu.style.top = '5.5rem'; // `${evt.y + 55}px`;
-      if (this.menu.offsetLeft < 0) this.menu.style.left = 0;
+      if (this.menu.offsetLeft < 0) this.menu.style.left = '0';
       if ((this.menu.offsetLeft + this.menu.offsetWidth) > window.innerWidth) {
-        this.menu.style.left = null;
-        this.menu.style.right = 0;
+        this.menu.style.left = '';
+        this.menu.style.right = '0';
       }
       this.menu.style.borderStyle = 'solid';
     } else {

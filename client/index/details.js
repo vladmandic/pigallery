@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import $ from 'jquery';
 import moment from 'moment';
 import * as log from '../shared/log.js';
@@ -39,7 +41,7 @@ function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeSt
 }
 
 // combine results from multiple model results
-function combineResults(object) {
+export function combine(object) {
   const res = [];
   if (!object || !(object.length > 0)) return res;
   const found = [];
@@ -71,8 +73,9 @@ function getPalette() {
   return txt;
 }
 
-function clearBoxes() {
+export function clear() {
   const canvas = document.getElementById('popup-canvas');
+  if (!canvas) return;
   canvas.style.position = 'absolute';
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -80,10 +83,11 @@ function clearBoxes() {
 
 // draw boxes for detected objects, faces and face elements
 let last;
-function drawBoxes(object) {
+export function boxes(object) {
   if (object) last = object;
   const img = document.getElementsByClassName('iv-image')[0];
   const canvas = document.getElementById('popup-canvas');
+  if (!canvas) return;
   canvas.style.position = 'absolute';
   canvas.style.left = `${img.offsetLeft}px`;
   canvas.style.top = `${img.offsetTop}px`;
@@ -94,7 +98,7 @@ function drawBoxes(object) {
   if (!object) object = last;
   if (!object) return;
 
-  clearBoxes();
+  clear();
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
 
@@ -174,7 +178,7 @@ async function resizeDetailsImage(object) {
     const zoom = Math.trunc(viewer._state.zoomValue * Math.min(zoomX, zoomY));
     await viewer.zoom(zoom);
     //  draw detection boxes and faces
-    drawBoxes();
+    boxes();
   }
 }
 
@@ -187,7 +191,7 @@ async function hideNavbar() {
 }
 
 // show details popup
-async function showDetails(img) {
+export async function show(img) {
   hideNavbar();
   const t0 = window.performance.now();
   if (!img && last) img = last.image;
@@ -223,19 +227,21 @@ async function showDetails(img) {
   resizeDetailsImage(object);
 
   // handle pan&zoom redraws
-  el.addEventListener('touchstart', () => clearBoxes(object), { passive: true });
-  el.addEventListener('mousedown', () => clearBoxes(object), { passive: true });
-  el.addEventListener('touchend', () => drawBoxes(object), { passive: true });
-  el.addEventListener('mouseup', () => drawBoxes(object), { passive: true });
-  el.addEventListener('dblclick', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
-  el.addEventListener('wheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
-  el.addEventListener('mousewheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
+  if (el) {
+    el.addEventListener('touchstart', () => clear(), { passive: true });
+    el.addEventListener('mousedown', () => clear(), { passive: true });
+    el.addEventListener('touchend', () => boxes(object), { passive: true });
+    el.addEventListener('mouseup', () => boxes(object), { passive: true });
+    el.addEventListener('dblclick', () => setTimeout(() => boxes(object), 200), { passive: true });
+    el.addEventListener('wheel', () => setTimeout(() => boxes(object), 200), { passive: true });
+    el.addEventListener('mousewheel', () => setTimeout(() => boxes(object), 200), { passive: true });
+  }
 
   let classified = 'Classified ';
-  for (const obj of combineResults(object.classify)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
+  for (const obj of combine(object.classify)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
 
   let detected = 'Detected ';
-  for (const obj of combineResults(object.detect)) detected += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
+  for (const obj of combine(object.detect)) detected += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
 
   let person = '';
   let nsfw = '';
@@ -303,9 +309,9 @@ async function showDetails(img) {
   $('#popup-details').toggle(window.options.viewDetails);
 }
 
-async function showNextDetails(left) {
+export async function next(left) {
   if ($('#popup').css('display') === 'none') return;
-  clearBoxes();
+  clear();
   const img = $('.iv-image');
   if (!img || img.length < 1) return;
   const url = new URL(img[0].src);
@@ -315,15 +321,15 @@ async function showNextDetails(left) {
   if (id < 0) id = window.filtered.length - 1;
   if (id > window.filtered.length - 1) id = 0;
   const target = window.filtered[id];
-  showDetails(target.image);
+  show(target.image);
 }
 
 // starts slideshow
 let slideshowRunning;
-async function startSlideshow(start) {
+export async function slideShow(start) {
   if (start) {
-    showNextDetails(false);
-    slideshowRunning = setTimeout(() => startSlideshow(true), window.options.slideDelay);
+    next(false);
+    slideshowRunning = setTimeout(() => slideShow(true), window.options.slideDelay);
   } else if (slideshowRunning) {
     clearTimeout(slideshowRunning);
     slideshowRunning = null;
@@ -337,6 +343,7 @@ function detectSwipe() {
   // Directions enumeration
   const directions = Object.freeze({ UP: 'up', DOWN: 'down', RIGHT: 'right', LEFT: 'left' });
   const el = document.getElementById('popup');
+  if (!el) return;
   el.addEventListener('touchstart', (e) => {
     swipePos.sX = e.touches[0].screenX;
     swipePos.sY = e.touches[0].screenY;
@@ -355,43 +362,43 @@ function detectSwipe() {
     if (deltaY === 0 || Math.abs(deltaX / deltaY) > 1) direction = deltaX > 0 ? directions.RIGHT : directions.LEFT;
     else direction = deltaY > 0 ? directions.UP : directions.DOWN;
     // if (direction && typeof func === 'function') func(el, direction);
-    if (direction === directions.LEFT) showNextDetails(false);
-    if (direction === directions.RIGHT) showNextDetails(true);
+    if (direction === directions.LEFT) next(false);
+    if (direction === directions.RIGHT) next(true);
   }, { passive: true });
 }
 
 // navbar details - used when in details view
-function initDetailsHandlers() {
+export function handlers() {
   // handle clicks inside details view
 
   detectSwipe();
 
-  $('#popup').click(() => {
+  $('#popup').on('click', (e) => {
     // if (event.screenX < 20) showNextDetails(true);
     // else if (event.clientX > $('#popup').width() - 20) showNextDetails(false);
-    if (!event.target.className.includes('iv-large-image') && !event.target.className.includes('iv-snap-handle') && !event.target.className.includes('iv-snap-view')) {
-      clearBoxes();
+    if (!e.target.className.includes('iv-large-image') && !e.target.className.includes('iv-snap-handle') && !e.target.className.includes('iv-snap-view')) {
+      clear();
       $('#popup').toggle('fast');
       $('#optionsview').toggle(false);
     }
   });
 
   // navbar details previous
-  $('#details-previous').click(() => showNextDetails(true));
+  $('#details-previous').on('click', () => next(true));
 
   // navbar details close
-  $('#details-close').click(() => {
-    clearBoxes();
-    startSlideshow(false);
+  $('#details-close').on('click', () => {
+    clear();
+    slideShow(false);
     $('#popup').toggle('fast');
     $('#optionsview').toggle(false);
   });
 
   // navbar details next
-  $('#details-next').click(() => showNextDetails(false));
+  $('#details-next').on('click', () => next(false));
 
   // navbar details show/hide details
-  $('#details-desc').click(() => {
+  $('#details-desc').on('click', () => {
     $('#details-desc').toggleClass('fa-comment fa-comment-slash');
     window.options.viewDetails = !window.options.viewDetails;
     $('#popup-details').toggle(window.options.viewDetails);
@@ -399,30 +406,22 @@ function initDetailsHandlers() {
   });
 
   // navbar details show/hide detection boxes
-  $('#details-boxes').click(() => {
+  $('#details-boxes').on('click', () => {
     $('#details-boxes').toggleClass('fa-store fa-store-slash');
     window.options.viewBoxes = !window.options.viewBoxes;
-    drawBoxes();
+    boxes();
   });
 
   // navbar details show/hide faces
-  $('#details-faces').click(() => {
+  $('#details-faces').on('click', () => {
     $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
     window.options.viewFaces = !window.options.viewFaces;
-    drawBoxes();
+    boxes();
   });
 
   // navbar details download image
-  $('#details-raw').click(() => {
+  $('#details-raw').on('click', () => {
     $('#details-raw').toggleClass('fa-video fa-video-slash');
     window.options.viewRaw = !window.options.viewRaw;
   });
 }
-
-exports.show = showDetails;
-exports.next = showNextDetails;
-exports.boxes = drawBoxes;
-exports.clear = clearBoxes;
-exports.combine = combineResults;
-exports.slideshow = startSlideshow;
-exports.handlers = initDetailsHandlers;

@@ -9,6 +9,7 @@ const git = simpleGit();
 async function update(f) {
   let text = '# PiGallery Change Log\n';
   const all = await git.log();
+  // @ts-ignore
   const log = all.all.sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
 
   let previous = '';

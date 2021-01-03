@@ -1,3 +1,4 @@
+// @ts-nocheck
 import $ from 'jquery';
 import { tf } from '../shared/tf.js';
 // import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
@@ -10,6 +11,7 @@ import * as processImage from '../process/processImage.js';
 import config from '../shared/config.js';
 
 const models = [];
+// @ts-ignore
 window.cache = [];
 let stop = false;
 const limit = 0;
@@ -37,14 +39,14 @@ async function init() {
     window.location.replace('/auth');
   }
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
-  await resetBackend(config.default.backEnd);
+  await resetBackend(config.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
-  for (const [key, val] of Object.entries(config.default.webgl)) {
+  for (const [key, val] of Object.entries(config.webgl)) {
     log.debug('WebGL Setting', key, val);
     tf.ENV.set(key, val);
   }
-  log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.default.batchProcessing} image resize: ${config.default.maxSize}px shape: ${config.default.squareImage ? 'square' : 'native'}`);
+  log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.batchProcessing} image resize: ${config.maxSize}px shape: ${config.squareImage ? 'square' : 'native'}`);
 }
 
 async function loadClassify(options) {
@@ -108,7 +110,8 @@ async function print(file, image, results) {
   }
   const item = document.createElement('div');
   item.className = 'listitem';
-  item.style = `min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px; contain-intrinsic-size: ${16 + window.options.listThumbSize}px`;
+  // item.style = `min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px; contain-intrinsic-size: ${16 + window.options.listThumbSize}px`;
+  item.setAttribute('style', `min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px; contain-intrinsic-size: ${16 + window.options.listThumbSize}px`);
   item.innerHTML = `
     <div class="col thumbnail">
       <img class="thumbnail" src="${image.thumbnail}" align="middle" height=${window.options.listThumbSize} tag="${file}">
@@ -144,7 +147,7 @@ async function classify() {
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   for (const i in files) {
-    if ((limit > 0) && (i >= limit)) stop = true;
+    if ((limit > 0) && (parseInt(i) >= limit)) stop = true;
     if (stop) continue;
     const results = [];
     const image = await processImage.getImage(files[i]);
@@ -189,12 +192,12 @@ async function person() {
   if (options.exec === 'ssd') options.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
 
   const human = new Human();
-  await human.load(config.default.human);
+  await human.load(config.human);
 
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   await faceapi.detectAllFaces(warmup.canvas, options.options);
-  await human.detect(warmup.canvas, config.default.human);
+  await human.detect(warmup.canvas, config.human);
   log.div('log', true, 'TensorFlow Memory:', faceapi.tf.memory());
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, faceapi.tf.ENV.flags);
@@ -236,7 +239,7 @@ async function person() {
     const t1 = window.performance.now();
     stats[0] += t1 - t0;
 
-    // data = await human.detect(image.canvas, config.default.human);
+    // data = await human.detect(image.canvas, config.human);
     log.debug('Human', files[i], data);
     results.push({ model: 'Human', data: [data] });
 
@@ -277,7 +280,7 @@ async function detect() {
   // eslint-disable-next-line no-unused-vars
   for (const m in models) stats.push(0);
   for (const i in files) {
-    if ((limit > 0) && (i >= limit)) stop = true;
+    if ((limit > 0) && (parseInt(i) >= limit)) stop = true;
     if (stop) continue;
     const results = [];
     const image = await processImage.getImage(files[i]);

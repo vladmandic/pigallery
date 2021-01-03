@@ -15,10 +15,11 @@ const defaults = {
   profile: false,
 };
 
-async function load(userConfig) {
+export async function load(userConfig) {
   let model = { config: { ...defaults, ...userConfig } };
   if (!model.config.modelPath) throw new Error('Error loading model: path is null');
   const loadOpts = {
+    // @ts-ignore
     fetchFunc: (...args) => fetch(...args),
     requestInit: { mode: 'no-cors' },
     fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
@@ -26,6 +27,7 @@ async function load(userConfig) {
   const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? model.config.modelPath + '/model.json' : model.config.modelPath; // append model.json if not present
   try {
     const saveConfig = model.config;
+    // @ts-ignore
     model = await tf.loadGraphModel(modelPath, loadOpts);
     model.config = saveConfig;
     model.name = model.config.name;
@@ -78,7 +80,7 @@ function profile(data) {
   return res;
 }
 
-async function detect(model, image, userConfig) {
+export async function detect(model, image, userConfig) {
   // allow changes of configurations on the fly to play with nms settings
   if (userConfig) model.config = { ...model.config, ...userConfig };
 
@@ -154,8 +156,3 @@ async function detect(model, image, userConfig) {
   imageT.dispose();
   return results;
 }
-
-module.exports = {
-  load,
-  detect,
-};

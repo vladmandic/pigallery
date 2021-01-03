@@ -180,7 +180,7 @@ function drawHand(result, ui) {
   }
 }
 
-async function run(input, config, objects) {
+export async function run(input, config, objects) {
   if (!config.human.enabled) return {};
   // const t0 = performance.now();
   const result = await human.detect(input, config.human);
@@ -196,6 +196,7 @@ async function run(input, config, objects) {
   // recreate canvas if resolution changed
   if (objects.canvases.human.width !== input.width) {
     draw.clear(objects.canvases.human);
+    // @ts-ignore
     document.getElementById('canvases').removeChild(objects.canvases.human);
     objects.canvases.human = null;
     draw.appendCanvas('human', input.width, input.height, objects);
@@ -223,9 +224,6 @@ async function run(input, config, objects) {
   return { human: result };
 }
 
-async function load(config) {
+export async function load(config) {
   await human.load(config.human);
 }
-
-exports.run = run;
-exports.load = load;

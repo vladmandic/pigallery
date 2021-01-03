@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const fs = require('fs');
 const chokidar = require('chokidar');
 const log = require('@vladmandic/pilogger');
@@ -11,8 +13,8 @@ async function processChange(f, msg) {
     log.warn('Server file modified: restart required');
   } else if (f.endsWith('.json')) {
     log.info('Reloading configuration');
-    global.config = JSON.parse(fs.readFileSync('./config.json'));
-    global.config.node = JSON.parse(fs.readFileSync('./package.json'));
+    global.config = JSON.parse(fs.readFileSync('./config.json').toString());
+    global.config.node = JSON.parse(fs.readFileSync('./package.json').toString());
   } else {
     build.compile();
   }

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const fs = require('fs');
 const path = require('path');
 const proc = require('process');
@@ -215,7 +217,7 @@ async function getExif(url) {
       stream
         .on('data', (buf) => {
           chunk = Buffer.concat([chunk, buf]);
-          if (chunk.legth >= 65536) {
+          if (chunk.length >= 65536) {
             stream.close();
           }
         })

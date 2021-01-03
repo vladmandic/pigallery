@@ -1,7 +1,8 @@
+// @ts-nocheck
 import $ from 'jquery';
 import * as log from './log.js';
 
-async function getUser() {
+export async function get() {
   $('#progress').html('Authenticating');
   if (window.share) {
     await $.post('/api/user/auth', { authShare: window.share }); // autologin for direct shares
@@ -21,5 +22,3 @@ async function getUser() {
     window.location.replace('/auth');
   }
 }
-
-exports.get = getUser;

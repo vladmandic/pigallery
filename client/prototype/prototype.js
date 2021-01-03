@@ -1,3 +1,5 @@
+/* eslint-disable import/no-named-as-default-member */
+
 // import $ from 'jquery';
 import config from '../shared/config.js';
 import * as log from '../shared/log.js';
@@ -12,7 +14,9 @@ async function init() {
   await user.get();
   await config.theme();
   await main();
+  // @ts-ignore
   if (!window.user.admin) {
+    // @ts-ignore
     log.debug('User not authorized: ', window.user);
     return;
   }

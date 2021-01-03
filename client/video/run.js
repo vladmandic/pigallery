@@ -8,8 +8,10 @@ import * as runHuman from './runHuman.js';
 import * as definitions from '../shared/models.js';
 
 async function getVideoCanvas(video, canvases, config) {
-  if (config.ui.overlay) document.getElementById('video').style.visibility = 'hidden';
-  else document.getElementById('video').style.visibility = 'visible';
+  const el = document.getElementById('video');
+  if (!el) return null;
+  if (config.ui.overlay) el.style.visibility = 'hidden';
+  else el.style.visibility = 'visible';
   if (video.paused || video.ended || (video.readyState <= 2)) return null;
   if (!canvases.process) {
     canvases.process = document.createElement('canvas');
@@ -61,6 +63,7 @@ async function resetBackend(backendName) {
 
 async function init(config) {
   // document.getElementById('status').innerText = 'initializing';
+  // @ts-ignore
   if (config.backEnd === 'wasm') tf.wasm.setPaths('/assets');
   await resetBackend(config.backEnd);
   tf.ENV.set('DEBUG', false);
@@ -107,7 +110,7 @@ async function main(config, objects) {
   input.className = 'canvases';
   input.style.display = 'block';
   input.id = res.human.canvas ? 'canvas-processed' : 'canvas-raw';
-  document.getElementById('canvases').appendChild(input);
+  document.getElementById('canvases')?.appendChild(input);
 
   for (const m of definitions.models.classify) {
     const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
@@ -136,9 +139,12 @@ async function main(config, objects) {
       objects.perf[`Human:${key}`] = val;
     }
   }
+  const el = document.getElementById('detected');
+  if (!el) return;
   if (config.ui.text) {
     let msg = '';
-    msg += `camera: ${video.videoWidth} x ${video.videoHeight} processing: ${input.width} x ${input.height}<br>`;
+    // @ts-ignore
+    msg += `camera: ${video?.videoWidth} x ${video?.videoHeight} processing: ${input.width} x ${input.height}<br>`;
     if (objects.human.length > 0) msg += `human: ${log.str([...objects.human])}<br>`;
     for (const [key, val] of Object.entries(objects.detected)) {
       if (val.length > 0) msg += `detected: ${key}: ${log.str([...val])}<br>`;
@@ -147,10 +153,11 @@ async function main(config, objects) {
       if (val.length > 0) msg += `classified: ${key}: ${log.str([...val])}<br>`;
     }
     if (objects.gestures.length > 0) msg += `gestures: ${log.str([...objects.gestures])}<br>`;
-    document.getElementById('detected').innerHTML = msg;
+    el.innerHTML = msg;
   } else {
-    document.getElementById('detected').innerHTML = '';
+    el.innerHTML = '';
   }
+  // @ts-ignore
   document.getElementById('status').innerText = '';
   objects.perf['Total time'] = Math.trunc(t1 - t0);
   const mem = tf.memory();

@@ -2,7 +2,7 @@ const defaultFont = 'small-caps 1rem "Segoe UI"';
 const extractSize = 100;
 
 function appendCanvas(name, width, height, objects) {
-  objects.canvases[name] = document.createElement('canvas', { desynchronized: true });
+  objects.canvases[name] = document.createElement('canvas');
   // objects.canvases[name].style.position = 'relative';
   objects.canvases[name].id = `canvas-${name}`;
   objects.canvases[name].className = 'canvases';
@@ -10,8 +10,8 @@ function appendCanvas(name, width, height, objects) {
   objects.canvases[name].height = height;
   objects.canvases[name].style.zIndex = Object.keys(objects.canvases).length;
   objects.canvases[name].style.pointerEvents = 'none';
-  objects.canvases[name].getContext('2d').imageSmoothingEnabled = false;
-  document.getElementById('canvases').appendChild(objects.canvases[name]);
+  objects.canvases[name].getContext('2d', { desynchronized: true }).imageSmoothingEnabled = false;
+  (document.getElementById('canvases') || document.createElement('canvas')).appendChild(objects.canvases[name]);
 }
 
 function rect({ canvas = null, x = 0, y = 0, width = 0, height = 0, radius = 8, lineWidth = 2, color = 'white', title = null, font = null }) {
@@ -36,7 +36,7 @@ function rect({ canvas = null, x = 0, y = 0, width = 0, height = 0, radius = 8, 
   ctx.font = font || defaultFont;
   if (title) {
     if (Array.isArray(title)) {
-      for (const i in title) ctx.fillText(title[i], x + lineWidth, y + (2 * lineWidth) + ((i + 1) * lineWidth / 4));
+      for (const i in title) ctx.fillText(title[i], x + lineWidth, y + (2 * lineWidth) + ((parseInt(i) + 1) * lineWidth / 4));
     } else {
       ctx.fillText(title, x + lineWidth, y + lineWidth + 16);
     }
@@ -94,10 +94,11 @@ function curve({ points = [], canvas = null, lineWidth = 2, color = 'white', tit
 }
 
 function crop(image, x, y, width, height, { color = 'white', title = null, font = null }) {
-  const canvas = document.createElement('canvas', { desynchronized: true });
+  const canvas = document.createElement('canvas');
   canvas.width = extractSize * width / height;
   canvas.height = extractSize;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { desynchronized: true });
+  if (!ctx) return null;
   ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
   ctx.fillStyle = color;
   ctx.font = font || defaultFont;
