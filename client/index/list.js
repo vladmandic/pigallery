@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import $ from 'jquery';
 import moment from 'moment';
 import * as log from '../shared/log.js';
@@ -129,7 +131,7 @@ async function thumbButtons(evt, show) {
 
 // adds items to gallery view on scroll event - infinite scroll
 let current;
-async function scrollResults() {
+export async function scroll() {
   const scrollHeight = $('#results').prop('scrollHeight');
   const bottom = $('#results').scrollTop() + $('#all').height();
   if (((bottom + 16) >= scrollHeight) && (current < window.filtered.length)) {
@@ -157,7 +159,7 @@ async function scrollResults() {
 }
 
 // redraws gallery view and rebuilds sidebar menu
-async function redrawResults() {
+export async function redraw() {
   const dt = new Date();
   const base = new Date(dt.getFullYear(), dt.getMonth(), 0).getTime();
   const hash = Math.trunc((dt.getTime() - base) / 1000);
@@ -168,13 +170,13 @@ async function redrawResults() {
   current = 0;
 
   $('#results').off('scroll');
-  $('#results').scroll(() => scrollResults());
-  scrollResults();
+  $('#results').scroll(() => scroll());
+  scroll();
   log.debug(t0, 'Redraw results complete');
 }
 
 // resize gallery view depending on user configuration
-async function resizeResults() {
+export async function resize() {
   const thumbSize = parseInt($('#thumbsize')[0].value);
   if (thumbSize !== window.options.listThumbSize) {
     window.options.listThumbSize = thumbSize;
@@ -188,7 +190,4 @@ async function resizeResults() {
   $('body').get(0).style.setProperty('--btntiny', `${Math.round(window.options.listThumbSize / 5)}px`);
 }
 
-exports.redraw = redrawResults;
-exports.resize = resizeResults;
-exports.scroll = scrollResults;
-exports.clearPrevious = () => { previous = null; };
+export function clearPrevious() { previous = null; }

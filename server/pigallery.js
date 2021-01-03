@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const fs = require('fs');
 const path = require('path');
 const log = require('@vladmandic/pilogger');
@@ -13,7 +15,7 @@ const watcher = require('./watcher.js');
 const changelog = require('./changelog.js');
 
 global.json = [];
-global.config = JSON.parse(fs.readFileSync('./config.json'));
+global.config = JSON.parse(fs.readFileSync('./config.json').toString());
 
 function allowPWA(req, res, next) {
   if (req.url.endsWith('.js')) res.header('Service-Worker-Allowed', '/');

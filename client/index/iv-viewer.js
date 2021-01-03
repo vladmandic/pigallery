@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /* eslint-disable func-names */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-expressions */

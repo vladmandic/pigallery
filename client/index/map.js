@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /* global L */
 
 import $ from 'jquery';

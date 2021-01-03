@@ -54,7 +54,7 @@ async function processFiles() {
   await warmupModels();
   const t0 = window.performance.now();
   const promises = [];
-  log.div('process-log', true, `Processing images: ${files.length} batch: ${config.default.default.batchProcessing}`);
+  log.div('process-log', true, `Processing images: ${files.length} batch: ${config.default.batchProcessing}`);
   let error = false;
   let stuckTimer = new Date();
   const checkAlive = setInterval(() => { // reload window if no progress for 60sec
@@ -63,7 +63,7 @@ async function processFiles() {
   }, 10000);
   for (const url of files) {
     if (!error && !stopping) {
-      if (config.default.default.batchProcessing <= 1) {
+      if (config.default.batchProcessing <= 1) {
         const obj = await process.process(url);
         results[id] = obj;
         log.div('process-active', false, `[${results.length}/${files.length}] Processed ${obj.image} in ${obj.perf.total.toLocaleString()} ms size ${JSON.stringify(obj).length.toLocaleString()} bytes`);
@@ -81,7 +81,7 @@ async function processFiles() {
           stuckTimer = new Date();
         }));
       }
-      if (promises.length >= config.default.default.batchProcessing) {
+      if (promises.length >= config.default.batchProcessing) {
         await Promise.all(promises);
         promises.length = 0;
       }
@@ -110,7 +110,9 @@ async function main() {
   log.debug(parent.location.href === location.href ? 'Running in stand-alone mode' : 'Running in frame');
   await user.get();
   await config.theme();
+  // @ts-ignore
   if (!window.user.admin) {
+    // @ts-ignore
     log.div('process-active', true, 'Image database update not authorized: ', window.user);
     return;
   }

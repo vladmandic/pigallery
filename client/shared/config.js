@@ -1,8 +1,10 @@
+// @ts-nocheck
 /* eslint-disable no-multi-spaces */
 
 import $ from 'jquery';
 import * as log from './log.js';
 
+// @ts-ignore
 window.debug = true;
 
 // TFJS Configuration
@@ -143,10 +145,12 @@ const config = {
 
 function colorHex(str) {
   const ctx = document.createElement('canvas').getContext('2d');
+  if (!ctx) return null;
   ctx.fillStyle = str;
   return ctx.fillStyle;
 }
 
+// @ts-ignore
 window.themes = [
   {
     name: 'Light',
@@ -212,84 +216,85 @@ window.themes = [
 ];
 
 // user configurable options & defalt values, stored in browsers local storage
+// @ts-ignore
 window.options = {
-  get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || 500); },
-  set listItemCount(val) { return localStorage.setItem('listItemCount', val); },
+  get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || '500'); },
+  set listItemCount(val) { localStorage.setItem('listItemCount', val.toString()); },
 
   get cacheModels() { return localStorage.getItem('cacheModels') ? localStorage.getItem('cacheModels') === 'true' : true; },
-  set cacheModels(val) { return localStorage.setItem('cacheModels', val); },
+  set cacheModels(val) { localStorage.setItem('cacheModels', val.toString()); },
 
   get cacheAssets() { return localStorage.getItem('cacheAssets') ? localStorage.getItem('cacheAssets') === 'true' : true; },
-  set cacheAssets(val) { return localStorage.setItem('cacheAssets', val); },
+  set cacheAssets(val) { localStorage.setItem('cacheAssets', val.toString()); },
 
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
-  set listFolders(val) { return localStorage.setItem('listFolders', val); },
+  set listFolders(val) { localStorage.setItem('listFolders', val.toString()); },
 
   get listDetails() { return localStorage.getItem('listDetails') ? localStorage.getItem('listDetails') === 'true' : false; },
-  set listDetails(val) { return localStorage.setItem('listDetails', val); },
+  set listDetails(val) { localStorage.setItem('listDetails', val.toString()); },
 
   get listDivider() { return localStorage.getItem('listDivider') || 'month'; },
-  set listDivider(val) { return localStorage.setItem('listDivider', val); },
+  set listDivider(val) { localStorage.setItem('listDivider', val); },
 
   get listSortOrder() { return localStorage.getItem('listSortOrder') || 'numeric-down'; },
-  set listSortOrder(val) { return localStorage.setItem('listSortOrder', val); },
+  set listSortOrder(val) { localStorage.setItem('listSortOrder', val); },
 
   get listThumbSquare() { return localStorage.getItem('listThumbSquare') ? localStorage.getItem('listThumbSquare') === 'true' : true; },
-  set listThumbSquare(val) { return localStorage.setItem('listThumbSquare', val); },
+  set listThumbSquare(val) { localStorage.setItem('listThumbSquare', val.toString()); },
 
   get listTitle() { return localStorage.getItem('listTitle') ? localStorage.getItem('listTitle') === 'true' : true; },
-  set listTitle(val) { return localStorage.setItem('listTitle', val); },
+  set listTitle(val) { localStorage.setItem('listTitle', val.toString()); },
 
-  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || 180); },
-  set listThumbSize(val) { return localStorage.setItem('listThumbSize', val); },
+  get listThumbSize() { return parseInt(localStorage.getItem('listThumbSize') || '180'); },
+  set listThumbSize(val) { localStorage.setItem('listThumbSize', val.toString()); },
 
-  get listLimit() { return parseInt(localStorage.getItem('listLimit') || 100000); },
-  set listLimit(val) { return localStorage.setItem('listLimit', val); },
+  get listLimit() { return parseInt(localStorage.getItem('listLimit') || '100000'); },
+  set listLimit(val) { localStorage.setItem('listLimit', val.toString()); },
 
   get viewDetails() { return localStorage.getItem('viewDetails') ? localStorage.getItem('viewDetails') === 'true' : true; },
-  set viewDetails(val) { return localStorage.setItem('viewDetails', val); },
+  set viewDetails(val) { localStorage.setItem('viewDetails', val.toString()); },
 
   get viewBoxes() { return localStorage.getItem('viewBoxes') ? localStorage.getItem('viewBoxes') === 'true' : true; },
-  set viewBoxes(val) { return localStorage.setItem('viewBoxes', val); },
+  set viewBoxes(val) { localStorage.setItem('viewBoxes', val.toString()); },
 
   get viewFaces() { return localStorage.getItem('viewFaces') ? localStorage.getItem('viewFaces') === 'true' : true; },
-  set viewFaces(val) { return localStorage.setItem('viewFaces', val); },
+  set viewFaces(val) { localStorage.setItem('viewFaces', val.toString()); },
 
   get viewRaw() { return localStorage.getItem('viewRaw') ? localStorage.getItem('viewRaw') === 'true' : false; },
-  set viewRaw(val) { return localStorage.setItem('viewRaw', val); },
+  set viewRaw(val) { localStorage.setItem('viewRaw', val.toString()); },
 
   get liveLoad() { return localStorage.getItem('liveLoad') ? localStorage.getItem('liveLoad') === 'true' : false; },
-  set liveLoad(val) { return localStorage.setItem('liveLoad', val); },
+  set liveLoad(val) { localStorage.setItem('liveLoad', val.toString()); },
 
   get dateShort() { return localStorage.getItem('dateShort') || 'YYYY/MM/DD'; },
-  set dateShort(val) { return localStorage.setItem('dateShort', val); },
+  set dateShort(val) { localStorage.setItem('dateShort', val); },
 
   get dateLong() { return localStorage.getItem('dateLong') || 'dddd, MMMM Do, YYYY'; },
-  set dateLong(val) { return localStorage.setItem('dateLong', val); },
+  set dateLong(val) { localStorage.setItem('dateLong', val); },
 
   get dateDivider() { return localStorage.getItem('dateDivider') || 'MMMM YYYY'; },
-  set dateDivider(val) { return localStorage.setItem('dateDivider', val); },
+  set dateDivider(val) { localStorage.setItem('dateDivider', val); },
 
   get fontSize() { return localStorage.getItem('fontSize') || '16px'; },
-  set fontSize(val) { return localStorage.setItem('fontSize', val); },
+  set fontSize(val) { localStorage.setItem('fontSize', val); },
 
-  get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || 2500); },
-  set slideDelay(val) { return localStorage.setItem('slidedelay', val); },
+  get slideDelay() { return parseInt(localStorage.getItem('slidedelay') || '2500'); },
+  set slideDelay(val) { localStorage.setItem('slidedelay', val.toString()); },
 
-  get topClasses() { return parseInt(localStorage.getItem('topClasses') || 25); },
-  set topClasses(val) { return localStorage.setItem('topClasses', val); },
+  get topClasses() { return parseInt(localStorage.getItem('topClasses') || '25'); },
+  set topClasses(val) { localStorage.setItem('topClasses', val.toString()); },
 
-  get listDetailsWidth() { return parseInt(localStorage.getItem('listDetailsWidth') || 25); },
-  set listDetailsWidth(val) { return localStorage.setItem('listDetailsWidth', val); },
+  get listDetailsWidth() { return parseInt(localStorage.getItem('listDetailsWidth') || '25'); },
+  set listDetailsWidth(val) { localStorage.setItem('listDetailsWidth', val.toString()); },
 
-  get lastUpdated() { return parseInt(localStorage.getItem('lastUpdated') || 0); },
-  set lastUpdated(val) { return localStorage.setItem('lastUpdated', val); },
+  get lastUpdated() { return parseInt(localStorage.getItem('lastUpdated') || '0'); },
+  set lastUpdated(val) { localStorage.setItem('lastUpdated', val.toString()); },
 
-  get theme() { return parseInt(localStorage.getItem('theme') || 2); },
-  set theme(val) { return localStorage.setItem('theme', val); },
+  get theme() { return parseInt(localStorage.getItem('theme') || '2'); },
+  set theme(val) { localStorage.setItem('theme', val.toString()); },
 };
 
-async function initTheme() {
+export async function theme() {
   window.theme = window.themes[window.options.theme];
   log.debug(null, 'Options:', window.options);
   log.debug(null, `Theme: ${window.theme?.name} ${window.options.theme}`);
@@ -306,7 +311,7 @@ async function initTheme() {
   document.documentElement.style.setProperty('--inactive', window.theme.inactive);
 }
 
-async function doneLoading() {
+export async function done() {
   $('.navbarbutton').animate({ opacity: 1.0 }, 1000);
   $('#btn-user').prop('title', '');
   if (parent.location.href !== location.href) {
@@ -318,5 +323,4 @@ async function doneLoading() {
 }
 
 exports.default = config;
-exports.theme = initTheme;
-exports.done = doneLoading;
+export { config as default };

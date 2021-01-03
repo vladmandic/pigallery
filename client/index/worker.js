@@ -23,5 +23,5 @@ onmessage = async (msg) => {
   }
   duplicates = [...new Set(duplicates)];
   duplicates = duplicates.sort((a, b) => (a.simmilarity - b.simmilarity));
-  postMessage(duplicates);
+  postMessage(duplicates, 'pigallery');
 };

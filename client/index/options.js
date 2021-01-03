@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import $ from 'jquery';
 import * as log from '../shared/log.js';
 import * as list from './list.js';
@@ -38,16 +40,16 @@ function globalOptions() {
   }
   const html = `<div style="line-height: 1.4rem">
     <h1>Global configuration</h1>
-    Browser register PWA handler: ${config.default.registerPWA}<br>
+    Browser register PWA handler: ${config.registerPWA}<br>
     Image Processing:<br>
-    &nbsp Image thumbnail size: ${config.default.renderThumbnail}px<br>
+    &nbsp Image thumbnail size: ${config.renderThumbnail}px<br>
     Server added metadata:<br>
     &nbsp Image EXIF processing: true<br>
     &nbsp Image location processing: true, DB: assets/cities.json<br>
     &nbsp Image tag processing: true, DB: assets/wordnet-synset.json<br>
     <h1>TensorFlow Configuration:</h1>
-    &nbsp Float Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}<br>
-    &nbsp Image resize: ${config.default.maxSize}px &nbsp Image square: ${config.default.squareImage}<br>
+    &nbsp Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}<br>
+    &nbsp Image resize: ${config.maxSize}px &nbsp Image square: ${config.squareImage}<br>
     <h1>TensorFlow Active Models:</h1>
     ${out.classify || ''}<br>
     ${out.detect || ''}<br>

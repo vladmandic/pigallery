@@ -4,14 +4,16 @@ import * as draw from './draw.js';
 import * as modelDetect from '../process/modelDetect.js';
 import * as definitions from '../shared/models.js';
 
-async function run(name, input, config, objects) {
+export async function run(name, input, config, objects) {
   const t0 = performance.now();
   if (!objects.models[name]) {
+    // @ts-ignore
     document.getElementById('status').innerText = `loading model: ${name} ...`;
     const memory0 = await tf.memory();
     const options = definitions.models.detect.find((a) => a.name === name);
     objects.models[name] = await modelDetect.load(options);
     const memory1 = await tf.memory();
+    // @ts-ignore
     document.getElementById('status').innerText = '';
     log.div('log', true, `Loaded model ${name}: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
   }
@@ -49,5 +51,3 @@ async function run(name, input, config, objects) {
   objects.perf[name] = Math.trunc(t1 - t0);
   return { name: res };
 }
-
-exports.run = run;

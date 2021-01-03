@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import * as log from '../shared/log.js';
 
 let db;
@@ -7,7 +9,7 @@ const database = 'pigallery';
 const table = 'images';
 let last = { index: 'date', direction: true, start: 1, end: Number.MAX_SAFE_INTEGER };
 
-async function open() {
+export async function open() {
   if (window.share) return null;
   const t0 = window.performance.now();
   return new Promise((resolve) => {
@@ -39,7 +41,7 @@ async function open() {
   });
 }
 
-async function reset() {
+export async function reset() {
   const t0 = window.performance.now();
   return new Promise((resolve) => {
     log.debug(t0, 'IndexDB reset');
@@ -60,21 +62,21 @@ async function reset() {
   });
 }
 
-async function put(obj) {
+export async function put(obj) {
   obj.id = id++;
   db.transaction([table], 'readwrite')
     .objectStore(table)
     .put(obj);
 }
 
-async function get(name) {
+export async function get(name) {
   db.transaction([table], 'readonly')
     .objectStore(table)
     .get(name)
     .onsuccess = (evt) => evt.target.result;
 }
 
-async function share() {
+export async function getShare() {
   const t0 = window.performance.now();
   const res = await fetch(`/api/share/get?id=${window.share}`);
   let json = {};
@@ -88,13 +90,12 @@ async function share() {
   return filtered;
 }
 
-async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER, tag = null) {
+export async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER, tag = null) {
   const t0 = window.performance.now();
   last = { index, direction, start: 1, end: Number.MAX_SAFE_INTEGER };
   return new Promise((resolve) => {
     if (window.share) {
-      const res = share();
-      resolve(res);
+      getShare().then((res) => resolve(res));
     } else {
       const res = [];
       if (!window.user || !window.user.user) resolve(res);
@@ -133,11 +134,11 @@ async function all(index = 'date', direction = true, start = 1, end = Number.MAX
   });
 }
 
-async function refresh() {
+export async function refresh() {
   return all(last.index, last.direction, last.start, last.end);
 }
 
-async function count() {
+export async function count() {
   if (window.share) return Number.MAX_SAFE_INTEGER;
   return new Promise((resolve) => {
     db.transaction([table], 'readonly')
@@ -147,7 +148,7 @@ async function count() {
   });
 }
 
-async function store(objects) {
+export async function store(objects) {
   for (const i in objects) {
     if (!objects[i].exif) objects[i].exif = {};
     if (!objects[i].exif.created) objects[i].exif.created = 0;
@@ -155,7 +156,7 @@ async function store(objects) {
   }
 }
 
-async function test() {
+export async function test() {
   await open();
   log.div('log', true, `IndexDB count on open ${await count()} records`);
   await reset();
@@ -168,13 +169,3 @@ async function test() {
   window.results = await all();
   log.debug(t1, `IndexDB retrieve ${window.results.length} records`);
 }
-
-exports.open = open; // open database
-exports.reset = reset; // delete all records
-exports.put = put; // store one record
-exports.get = get; // get one record
-exports.count = count; // get record count
-exports.store = store; // store all records
-exports.all = all; // get all records
-exports.refresh = refresh; // get all records in the same manner as the last call to all
-exports.test = test; // test function
