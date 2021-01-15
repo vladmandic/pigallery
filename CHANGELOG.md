@@ -1,8 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2021/01/03 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2021/01/03 mandic00@live.com
 
-### **origin/master, origin/HEAD** 2020/12/15 mandic00@live.com
+### **2.2.6** 2021/01/03 mandic00@live.com
 
 ### **2.2.5** 2020/12/15 mandic00@live.com
 - reenable faceapi
