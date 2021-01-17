@@ -21,8 +21,8 @@ exports.models = {
     // { name: 'COCO Faster-RCNN ResNet101 v1', modelPath: 'models/coco/fasterrcnn-resnet101-v1' }, // worse than RetinaNet ResNet101, converter skip-ops required, unsupported op: BroadcastArgs
     // { name: 'COCO Faster-RCNN ResNet152 v1', modelPath: 'models/coco/fasterrcnn-resnet152-v1' }, // worse than RetinaNet ResNet101, converter skip-ops required, unsupported op: BroadcastArgs
 
-    // { name: 'NudeNet f16', modelPath: 'models/various/nudenet/f16', minScore: 0.3, postProcess: 'nsfw', switchAxis: true,
-    //   map: { boxes: 'filtered_detections/map/TensorArrayStack/TensorArrayGatherV3:0', scores: 'filtered_detections/map/TensorArrayStack_1/TensorArrayGatherV3:0', classes: 'filtered_detections/map/TensorArrayStack_2/TensorArrayGatherV3:0' } },
+    { name: 'NudeNet f16', modelPath: 'models/various/nudenet/f16', minScore: 0.3, postProcess: 'nsfw', switchAxis: true,
+      map: { boxes: 'filtered_detections/map/TensorArrayStack/TensorArrayGatherV3:0', scores: 'filtered_detections/map/TensorArrayStack_1/TensorArrayGatherV3:0', classes: 'filtered_detections/map/TensorArrayStack_2/TensorArrayGatherV3:0' } },
 
     { name: 'OpenImages SSD MobileNet v2', modelPath: 'models/openimages/ssd-mobilenet-v2', minScore: 0.15, normalizeInput: 1.0 / 255, maxResults: 20,
       map: { boxes: 'module_apply_default/hub_input/strided_slice:0', scores: 'module_apply_default/hub_input/strided_slice_1:0', classes: 'module_apply_default/hub_input/strided_slice_2:0' } },

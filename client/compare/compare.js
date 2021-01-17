@@ -8,7 +8,7 @@ import * as modelClassify from '../process/modelClassify.js';
 import * as modelDetect from '../process/modelDetect.js';
 import * as definitions from '../shared/models.js';
 import * as processImage from '../process/processImage.js';
-import config from '../shared/config.js';
+import * as config from '../shared/config.js';
 
 const models = [];
 // @ts-ignore

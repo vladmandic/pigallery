@@ -322,5 +322,4 @@ export async function done() {
   }
 }
 
-exports.default = config;
 export { config as default };

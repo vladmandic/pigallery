@@ -29,7 +29,6 @@ Didn't find:
   Add Image Classification to Various
 - Process: 
   All Verify
-  Implement NSFW
 - Model errors:
   - COCO CenterNet
 - Switch backend DB from NEDB to Mongo

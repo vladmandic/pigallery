@@ -136,8 +136,10 @@ async function enumerateResults() {
   await Promise.all([a1, a2, a3]);
 }
 
-exports.classes = enumerateClasses;
-exports.folders = enumerateFolders;
-exports.locations = enumerateLocations;
-exports.shares = enumerateShares;
-exports.enumerate = enumerateResults;
+export {
+  enumerateClasses as classes,
+  enumerateFolders as folders,
+  enumerateLocations as locations,
+  enumerateShares as shares,
+  enumerateResults as enumerate,
+};

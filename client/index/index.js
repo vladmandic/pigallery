@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import $ from 'jquery';
 import * as log from '../shared/log.js';
 import * as marked from '../../assets/marked.esm.js';
@@ -344,8 +346,8 @@ async function loadGallery(limit, refresh = false) {
   const since = refresh ? window.options.lastUpdated : 0;
   const first = await fetch(`/api/record/get?limit=${limit}&time=${since}&chunks=${chunkSize}&page=0`);
   if (!first || !first.ok) return;
-  const totalSize = parseFloat(first.headers.get('content-TotalSize'));
-  const pages = parseInt(first.headers.get('content-Pages'));
+  const totalSize = parseFloat(first.headers.get('content-TotalSize') || '');
+  const pages = parseInt(first.headers.get('content-Pages') || '0');
   const json0 = await first.json();
   let dlSize = JSON.stringify(json0).length;
   indexdb.store(json0);
@@ -399,7 +401,7 @@ async function showContextPopup(evt) {
 
 // resize viewport
 function resizeViewport() {
-  $('#main').height(window.innerHeight - $('#log').height() - $('#navbar').height() - 16);
+  $('#main').height(window.innerHeight - ($('#log').height() || 0) - ($('#navbar').height() || 0) - 16);
   if ($('#popup').css('display') !== 'none') details.show();
   const top = $('#optionsview').css('height');
   const height = $('body').height() - parseInt($('#optionsview').css('height'));
@@ -482,6 +484,7 @@ async function initSharesHandler() {
       share.name = $('#share-name').val();
       share.images = window.filtered.map((a) => a.image);
       log.debug(t0, `Share create: creator: ${share.creator} name: ${share.name} images: ${share.images.length.toLocaleString()} size: ${JSON.stringify(share).length.toLocaleString()} bytes`);
+      // @ts-ignore
       if (!share.creator || !share.name || ((share.name.length < 2) || !share.images) || (share.images.length < 1)) {
         $('#share-url').val('invalid data');
         return;
@@ -492,6 +495,7 @@ async function initSharesHandler() {
       enumerate.shares();
     } else {
       const name = $('#share-name').val();
+      // @ts-ignore
       const key = $('#share-url').val().split('=')[1];
       log.debug(t0, `Share remove: ${name} ${key}`);
       fetch(`/api/share/del?rm=${key}`).then(() => enumerate.shares());
@@ -511,7 +515,7 @@ async function initHotkeys() {
   $('html').on('keydown', () => {
     const top = $('#results').scrollTop();
     const line = window.options.listThumbSize / 2 + 16;
-    const page = $('#results').height() - window.options.listThumbSize;
+    const page = ($('#results').height() || 0) - window.options.listThumbSize;
     const bottom = $('#results').prop('scrollHeight');
     $('#results').stop();
     switch (event.keyCode) {
@@ -536,7 +540,7 @@ async function initHotkeys() {
         $('#optionslist').toggle(false);
         $('#optionsview').toggle(false);
         $('#popup').toggle(false);
-        details.slideshow(false);
+        details.slideShow(false);
         break;
       default: // log.div('log', true, 'Unhandled keydown event', event.keyCode);
     }

@@ -36,7 +36,7 @@ function rect({ canvas = null, x = 0, y = 0, width = 0, height = 0, radius = 8, 
   ctx.font = font || defaultFont;
   if (title) {
     if (Array.isArray(title)) {
-      for (const i in title) ctx.fillText(title[i], x + lineWidth, y + (2 * lineWidth) + ((parseInt(i) + 1) * lineWidth / 4));
+      for (const i in title) ctx.fillText(title[i], x + lineWidth, y + (parseInt(i) * lineWidth * 2) + 16);
     } else {
       ctx.fillText(title, x + lineWidth, y + lineWidth + 16);
     }

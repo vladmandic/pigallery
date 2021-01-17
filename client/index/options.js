@@ -165,5 +165,7 @@ function showParams() {
   $('#docs').html(html);
 }
 
-exports.show = showOptions;
-exports.params = showParams;
+export {
+  showOptions as show,
+  showParams as params,
+};

@@ -63,11 +63,11 @@
   "dependencies": {
     "@tensorflow/tfjs": "^2.8.4",
     "@tensorflow/tfjs-backend-wasm": "^2.8.4",
-    "@vladmandic/face-api": "^0.9.5",
+    "@vladmandic/face-api": "^0.11.2",
     "@vladmandic/human": "file:../human",
     "@vladmandic/pilogger": "^0.2.11",
     "buffer": "^6.0.3",
-    "chokidar": "^3.5.0",
+    "chokidar": "^3.5.1",
     "clean-css": "^4.2.3",
     "esbuild": "^0.8.32",
     "exif-parser": "^0.1.12",
@@ -82,7 +82,7 @@
     "simple-git": "^2.31.0"
   },
   "devDependencies": {
-    "eslint": "^7.17.0",
+    "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-html": "^6.1.1",
     "eslint-plugin-import": "^2.22.1",
