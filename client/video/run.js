@@ -97,7 +97,7 @@ async function main(config, objects) {
   objects.human = [];
   objects.results = [];
 
-  let input = await getVideoCanvas(video, objects.canvases, config);
+  const input = await getVideoCanvas(video, objects.canvases, config);
   if (!input) return;
 
   // this is not optional as we need return canvas with filters applied
@@ -106,10 +106,11 @@ async function main(config, objects) {
   else draw.clear(objects.canvases.human);
 
   // this is canvas with actual image, all other are overlays
-  if (res.human.canvas) input = res.human.canvas;
+  // if (res.human.canvas) input = res.human.canvas;
   input.className = 'canvases';
   input.style.display = 'block';
-  input.id = res.human.canvas ? 'canvas-processed' : 'canvas-raw';
+  // input.id = res.human?.canvas ? 'canvas-processed' : 'canvas-raw';
+  input.id = 'canvas-raw';
   document.getElementById('canvases')?.appendChild(input);
 
   for (const m of definitions.models.classify) {
@@ -172,6 +173,8 @@ async function main(config, objects) {
   else setTimeout(() => main(config, objects), 3);
 }
 
-exports.main = main;
-exports.clear = clearAll;
-exports.init = init;
+export {
+  main,
+  init,
+  clearAll as clear,
+};

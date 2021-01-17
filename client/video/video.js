@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import $ from 'jquery';
 import { tf } from '../shared/tf.js';
 import panzoom from '../../assets/panzoom.js';
@@ -5,7 +7,7 @@ import * as log from '../shared/log.js';
 import * as user from '../shared/user.js';
 import * as run from './run.js';
 import Menu from '../shared/menu.js';
-import shared from '../shared/config.js';
+import * as shared from '../shared/config.js';
 import * as definitions from '../shared/models.js';
 
 const config = shared.default;
@@ -31,7 +33,7 @@ async function cameraStart(play = true) {
   // const devices = await navigator.mediaDevices.enumerateDevices();
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
   const track = stream.getVideoTracks()[0];
-  if (track.getCapabilities && track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: 0 });
+  if (track.getCapabilities && track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: '0' });
   video.srcObject = stream;
   if (play) {
     panzoom(document.getElementById('video'), { zoomSpeed: 0.025, minZoom: 0.5, maxZoom: 2.0 });
