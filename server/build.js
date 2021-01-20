@@ -11,6 +11,14 @@ let service;
 let clean;
 const metafile = './asset-manifest.json';
 
+const banner = `
+  /*
+  PiGallery
+  homepage: <https://github.com/vladmandic/pigallery>
+  author: <https://github.com/vladmandic>'
+  */
+`;
+
 async function init() {
   service = await esbuild.startService();
   clean = new CleanCSS({
@@ -20,7 +28,7 @@ async function init() {
         // transform: (propertyName, propertyValue) => ((propertyName === 'src' && propertyValue.indexOf('webfonts/') > -1) ? propertyValue.replace('webfonts/', '/assets/') : propertyValue),
       },
       2: {
-        all: false,
+        all: true,
       },
     },
   });
@@ -71,10 +79,12 @@ async function compile() {
   try {
     const t0 = process.hrtime.bigint();
     await service.build({
+      banner,
       entryPoints: [...files, ...jsFiles],
       outdir: './dist',
       minifyWhitespace: true,
       minifySyntax: true,
+      minifyIdentifiers: true,
       bundle: true,
       sourcemap: true,
       external: ['fs', 'crypto', 'util', 'string_decoder'],
