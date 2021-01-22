@@ -63,13 +63,13 @@
   "dependencies": {
     "@tensorflow/tfjs": "^2.8.5",
     "@tensorflow/tfjs-backend-wasm": "^2.8.5",
-    "@vladmandic/face-api": "^0.11.2",
+    "@vladmandic/face-api": "^0.11.3",
     "@vladmandic/human": "file:../human",
-    "@vladmandic/pilogger": "^0.2.11",
+    "@vladmandic/pilogger": "^0.2.12",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.1",
     "clean-css": "^4.2.3",
-    "esbuild": "^0.8.33",
+    "esbuild": "^0.8.34",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
@@ -89,6 +89,6 @@
     "eslint-plugin-json": "^2.1.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "npm-check-updates": "^10.2.5"
+    "npm-check-updates": "^11.0.2"
   }
 }
