@@ -91,7 +91,7 @@ async function main() {
     }
   }
   // define routes for static files
-  for (const f of ['/favicon.ico', '/manifest.json', '/asset-manifest.json', '/README.md', '/CHANGELOG.md', '/MODELS.md', '/TODO.md', '/LICENSE']) {
+  for (const f of ['/favicon.ico', '/pigallery.webmanifest', '/asset-manifest.json', '/README.md', '/CHANGELOG.md', '/MODELS.md', '/TODO.md', '/LICENSE']) {
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
   // define route for root

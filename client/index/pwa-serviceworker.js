@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 
 const cacheName = 'pigallery';
-const cacheFiles = ['/favicon.ico', '/manifest.json', '/client/offline.html']; // assets and models are cached on first access
+const cacheFiles = ['/favicon.ico', '/pigallery.webmanifest', '/client/offline.html']; // assets and models are cached on first access
 let cacheModels = false;
 let cacheAssets = false;
 
