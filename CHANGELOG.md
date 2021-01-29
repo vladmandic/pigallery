@@ -1,6 +1,7 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2021/01/20 mandic00@live.com
+### **2.2.7** 2021/01/22 mandic00@live.com
+- enable build optimizations
 
 ### **2.2.6** 2021/01/03 mandic00@live.com
 

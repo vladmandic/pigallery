@@ -39,14 +39,14 @@ async function init() {
     window.location.replace('/auth');
   }
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
-  await resetBackend(config.backEnd);
+  await resetBackend(config.default.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
-  for (const [key, val] of Object.entries(config.webgl)) {
+  for (const [key, val] of Object.entries(config.default.webgl)) {
     log.debug('WebGL Setting', key, val);
     tf.ENV.set(key, val);
   }
-  log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.batchProcessing} image resize: ${config.maxSize}px shape: ${config.squareImage ? 'square' : 'native'}`);
+  log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.default.batchProcessing} image resize: ${config.default.maxSize}px shape: ${config.default.squareImage ? 'square' : 'native'}`);
 }
 
 async function loadClassify(options) {
@@ -192,12 +192,12 @@ async function person() {
   if (options.exec === 'ssd') options.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
 
   const human = new Human();
-  await human.load(config.human);
+  await human.load(config.default.human);
 
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   await faceapi.detectAllFaces(warmup.canvas, options.options);
-  await human.detect(warmup.canvas, config.human);
+  await human.detect(warmup.canvas, config.default.human);
   log.div('log', true, 'TensorFlow Memory:', faceapi.tf.memory());
   log.div('log', true, 'TensorFlow Flags:');
   log.div('log', true, faceapi.tf.ENV.flags);
@@ -239,7 +239,7 @@ async function person() {
     const t1 = window.performance.now();
     stats[0] += t1 - t0;
 
-    // data = await human.detect(image.canvas, config.human);
+    // data = await human.detect(image.canvas, config.default.human);
     log.debug('Human', files[i], data);
     results.push({ model: 'Human', data: [data] });
 
@@ -311,7 +311,7 @@ async function main() {
     log.div('log', true, 'Stop requested');
     stop = true;
   });
-  await config.done();
+  await config.default.done();
 }
 
 window.onload = main;

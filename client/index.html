@@ -16,7 +16,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="author" href="/humans.txt">
   <link rel="pingback" href="/api/pingback">
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="/pigallery.webmanifest">
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   <link rel="icon" sizes="256x256" href="/assets/dash-256.png">
   <link rel="apple-touch-icon" href="/assets/dash-256.png">
@@ -43,7 +43,7 @@
   </div>
 
   <div id="searchbar" class="row navline text-center">
-    <input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
+    <label for="search-input">Search</label><input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
     <i class="navlinebutton fad fa-check-circle" style="font-size: 2.3rem; padding: 4px;" id="btn-searchnow"></i>
     <i class="navlinebutton fad fa-times-circle" style="font-size: 2.3rem; padding: 4px;" id="btn-resetsearch"></i>
     <span id="search-result" style="align-self: center; padding-left: 16px;"></span>
@@ -110,9 +110,9 @@
     <div id="all" class="all">
       <div id="map" class="row map"></div>
       <div id="share" class="row share">
-        <input class="input" type="text" id="share-name" placeholder="what is the share name ?"/>
+        <label for="share-name">Share name</label><input class="input" type="text" id="share-name" placeholder="what is the share name ?"/>
         <i class="navlinebutton fad fa-plus-square" id="btn-shareadd" style="padding: 0;"></i>
-        <input class="input" type="text" id="share-url" placeholder="URL" readonly/>
+        <label for="share-url">Share URL</label><input class="input" type="text" id="share-url" placeholder="URL" readonly/>
         <i class="navlinebutton fad fa-copy" id="btn-sharecopy" style="padding: 0;"></i>
       </div>
       <div id="results" class="row results"></div>
@@ -129,7 +129,7 @@
   
   <div id="docs" class="docs"></div>
 
-  <iframe id="iframe" class="iframe"></iframe>
+  <iframe id="iframe" class="iframe" title="embedded"></iframe>
 
   <div id="install" class="install">
     Install web app<br>PiGallery
