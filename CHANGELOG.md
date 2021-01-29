@@ -1,5 +1,7 @@
 # PiGallery Change Log
 
+### **2.2.8** 2021/01/29 mandic00@live.com
+
 ### **2.2.7** 2021/01/22 mandic00@live.com
 - enable build optimizations
 
