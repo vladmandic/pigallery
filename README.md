@@ -145,6 +145,14 @@
     If there are no processed images, it's blank
   - Select `User`->`Update DB` to start image processing
   - Select `Live Video` to process live video from your device camera
+  - Client access is logged on server:
+  ```js
+  2021-02-16 11:41:57 INFO:  API/User/Auth demo@example.com@::1 demo@example.com true
+  2021-02-16 11:41:58 INFO:  API/User/Get demo@example.com@::1 { user: 'demo@example.com', admin: true, root: 'media/' }
+  2021-02-16 11:41:58 INFO:  API/Record/Get demo@example.com@::1 root: media/ images: 0 limit: 100000 chunk: 200 since: 2021-02-16T16:41:59.585Z
+  2021-02-16 11:41:58 INFO:  API/Record/Get Chunk page: 0 of 1 size: 2 total: 2
+  2021-02-16 11:41:58 INFO:  API/Log demo@example.com@::1 Stats: images:0, latency:54, fetch:118, interactive:217, complete:244, load:52, store:0, size:2, speed:0, initial:3, remaining:2, enumerate:73, ready:272, cache:0, pageMode:Standalone, appMode:Browser
+  ```
 
 ### Configuration Details
 

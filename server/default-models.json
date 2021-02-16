@@ -1,0 +1,12 @@
+{
+  "classify": [
+  ],
+  "detect": [
+  ],
+  "person": [
+    { "name": "FaceAPI SSD/MobileNet v1", "modelPath": "@vladmandic/face-api/model/", "score": 0.3, "topK": 10, "size": 416 }
+  ],
+  "video": [],
+  "various": [
+ ]
+}

@@ -40,6 +40,14 @@ async function prompt(question) {
   });
 }
 
+async function createModels() {
+  process.stdout.write('Configuration file not found: models.json\n');
+  process.stdout.write('Creating default configuration\n');
+  const cfg = JSON.parse(fs.readFileSync('server/default-models.json').toString());
+  fs.writeFileSync('models.json', JSON.stringify(cfg, null, 2));
+  process.stdout.write('Default models configuration created\n');
+}
+
 async function createConfig() {
   process.stdout.write('Configuration file not found: config.json\n');
   process.stdout.write('Creating default configuration\n');
@@ -53,7 +61,7 @@ async function createConfig() {
   process.stdout.write(`Using ${cfg.server.httpPort} as default HTTP server port\n`);
   process.stdout.write(`Using ${cfg.server.httpsPort} as default HTTPS server port\n`);
   fs.writeFileSync('config.json', JSON.stringify(cfg, null, 2));
-  process.stdout.write('Default configuration created\n');
+  process.stdout.write('Default server configuration created\n');
 }
 
 async function main() {
@@ -82,7 +90,7 @@ async function main() {
   npm.update = await exec('npm update --depth=10 --json', 'NPM update modules');
   npm.dedupe = await exec('npm dedupe --json', 'NPM deduplicate modules');
   npm.prune = await exec('npm prune --no-production --json', 'NPM prune unused modules');
-  // npm.audit = await exec('npm audit fix --json', 'NPM audit modules');
+  npm.audit = await exec('npm audit fix --force --json', 'NPM audit modules');
 
   // delete examples
   await deleteExamples();
@@ -104,7 +112,11 @@ async function main() {
 
   // check & create default configuration
   if (!fs.existsSync('config.json')) await createConfig();
-  else process.stdout.write('Configuration file found: config.json\n');
+  else process.stdout.write('Server configuration file found: config.json\n');
+
+  // check & create default models
+  if (!fs.existsSync('models.json')) await createModels();
+  else process.stdout.write('Model configuration file found: models.json\n');
 
   process.exit(0);
 }

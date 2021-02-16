@@ -5,7 +5,6 @@ import * as gesture from './gesture.js';
 import * as runDetect from './runDetect.js';
 import * as runClassify from './runClassify.js';
 import * as runHuman from './runHuman.js';
-import * as definitions from '../shared/models.js';
 
 async function getVideoCanvas(video, canvases, config) {
   const el = document.getElementById('video');
@@ -85,7 +84,7 @@ async function init(config) {
   // eslint-disable-next-line no-console
   log.debug('TF Flags:', engine.ENV.flags);
   // eslint-disable-next-line no-console
-  log.debug('TF Models:', definitions.models);
+  log.debug('TF Models:', config.models);
 }
 
 async function main(config, objects) {
@@ -113,19 +112,24 @@ async function main(config, objects) {
   input.id = 'canvas-raw';
   document.getElementById('canvases')?.appendChild(input);
 
-  for (const m of definitions.models.classify) {
+  if (!config.models) {
+    const req = await fetch('/api/models/get');
+    if (req && req.ok) config.models = await req.json();
+  }
+
+  for (const m of config.models.classify) {
     const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
     if (data) objects.results.push(data);
     else draw.clear(objects.canvases[m.name]);
   }
 
-  for (const m of definitions.models.various) {
+  for (const m of config.models.various) {
     const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
     if (data) objects.results.push(data);
     else draw.clear(objects.canvases[m.name]);
   }
 
-  for (const m of definitions.models.detect) {
+  for (const m of config.models.detect) {
     const data = (config.detect[m.name]) ? await runDetect.run(m.name, input, config, objects) : null;
     if (data) objects.results.push(data);
     else draw.clear(objects.canvases[m.name]);

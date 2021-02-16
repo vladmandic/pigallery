@@ -8,7 +8,6 @@ import * as user from '../shared/user.js';
 import * as run from './run.js';
 import Menu from '../shared/menu.js';
 import * as shared from '../shared/config.js';
-import * as definitions from '../shared/models.js';
 
 const config = shared.default;
 let perfMonitor;
@@ -107,10 +106,10 @@ async function menuSetup() {
   objects.menus.model.addBool('Hand Pose', config.human.hand, 'enabled');
 
   objects.menus.model.addLabel('Object Detection');
-  for (const m of definitions.models.detect) objects.menus.model.addBool(m.name, config.detect, m.name);
+  for (const m of config.models.detect) objects.menus.model.addBool(m.name, config.detect, m.name);
   objects.menus.model.addLabel('Image Classification');
-  for (const m of definitions.models.classify) objects.menus.model.addBool(m.name, config.classify, m.name);
-  for (const m of definitions.models.various) objects.menus.model.addBool(m.name, config.classify, m.name);
+  for (const m of config.models.classify) objects.menus.model.addBool(m.name, config.classify, m.name);
+  for (const m of config.models.various) objects.menus.model.addBool(m.name, config.classify, m.name);
 
   objects.menus.model.toggle();
 

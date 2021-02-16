@@ -1,7 +1,6 @@
 import { tf } from '../shared/tf.js';
 import * as log from '../shared/log.js';
 import * as modelClassify from '../process/modelClassify.js';
-import * as definitions from '../shared/models.js';
 
 export async function run(name, input, config, objects) {
   const t0 = performance.now();
@@ -9,7 +8,7 @@ export async function run(name, input, config, objects) {
     // @ts-ignore
     document.getElementById('status').innerText = `loading model: ${name} ...`;
     const memory0 = await tf.memory();
-    const options = definitions.models.classify.find((a) => a.name === name) || definitions.models.various.find((a) => a.name === name);
+    const options = config.models.classify.find((a) => a.name === name) || config.models.various.find((a) => a.name === name);
     objects.models[name] = await modelClassify.load(options);
     const memory1 = await tf.memory();
     // @ts-ignore
