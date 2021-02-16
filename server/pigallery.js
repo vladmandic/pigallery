@@ -114,6 +114,7 @@ async function main() {
   app.use('/media', express.static(path.join(root, './media'), optionsStatic));
   app.use('/client', express.static(path.join(root, './client'), optionsStatic));
   app.use('/dist', express.static(path.join(root, './dist'), optionsStatic));
+  app.use('/@vladmandic', express.static(path.join(root, './node_modules/@vladmandic'), optionsStatic));
 
   // start http server
   if (global.config.server.httpPort && global.config.server.httpPort !== 0) {

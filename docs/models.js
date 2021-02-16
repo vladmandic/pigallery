@@ -36,6 +36,9 @@ exports.models = {
     // { name: 'COCO CenterNet ResNet50-v2', modelPath: 'models/coco/centernet-resnet50-v2', minScore: 0.3, maxResults: 20,
     //  map: { boxes: 'Identity:0', scores: 'Identity_2:0', classes: 'Identity_1:0' } },
   ],
+  video: [
+
+  ],
   person: [
     { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', score: 0.3, topK: 5, size: 416 },
   ],

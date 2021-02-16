@@ -56,6 +56,11 @@ function api(app) {
   });
 
   // share namespace
+  app.get('/api/models/get', (req, res) => {
+    log.info('API/Models/Get', __dirname, sign(req));
+    const json = JSON.parse(fs.readFileSync(path.join(__dirname, '../models.json')).toString());
+    res.json(json);
+  });
 
   app.get('/api/share/dir', async (req, res) => {
     if (req.session.share) res.json([]);

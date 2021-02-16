@@ -8,7 +8,7 @@ const defaults = {
   minScore: 0.1, // used by nms
   normalizeInput: 1, // value:(1) = range:(0..255), value=(1/255) = range:(0..1), value:(-1 + 1/127.5) = range:(-1..1)
   scaleScore: 1, // use if scores are off by order of magniture
-  map: { boxes: 'Identity_1:0', scores: 'Identity_4:0', classes: 'Identity_2:0' }, // defaults map to tfhub object detection models
+  map: { boxes: 'detection_boxes', scores: 'detection_scores', classes: 'detection_classes' }, // defaults map to tfhub object detection models
   classes: null, // set to url or leave as null to load classes.json from modelPath
   switchAxis: false,
   softmax: false,
@@ -20,8 +20,8 @@ export async function load(userConfig) {
   if (!model.config.modelPath) throw new Error('Error loading model: path is null');
   const loadOpts = {
     // @ts-ignore
-    fetchFunc: (...args) => fetch(...args),
-    requestInit: { mode: 'no-cors' },
+    // fetchFunc: (...args) => fetch(...args),
+    // requestInit: { mode: 'no-cors' },
     fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
   };
   const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? model.config.modelPath + '/model.json' : model.config.modelPath; // append model.json if not present

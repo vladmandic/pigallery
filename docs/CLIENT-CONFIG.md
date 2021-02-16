@@ -1,5 +1,11 @@
-Optionally edit `client/shared/config.js` for image processing settings  
+# Configuration Details
 
+Active client configuration can be edited in the client app via 'User' -> 'Settings'  
+Active model configuration can be seen in the client app via 'User' -> 'Params'  
+
+To modify client configuration advanced parameters, edit `client/shared/config.js`  
+
+Main parameters are:
 ```js
   const config = {
     backEnd: 'webgl',     // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
@@ -12,3 +18,5 @@ Optionally edit `client/shared/config.js` for image processing settings
                           // can be increased for faster processing, but uses extra GPU memory
   }
 ```
+
+To modify model configuration, edit `model.json` to select active models for both image processing and live video  

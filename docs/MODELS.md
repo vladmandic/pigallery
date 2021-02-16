@@ -1,6 +1,10 @@
-# Moodels
+# Configuration Details
 
-Optionally edit `client/model.js` to select active models for both image processing and live video  
+Active client configuration can be edited in the client app via 'User' -> 'Settings'  
+Active model configuration can be seen in the client app via 'User' -> 'Params'  
+
+To modify client configuration, edit `client/shared/config.js`  
+To modify model configuration, edit `model.json` to select active models for both image processing and live video  
 
 ## Image Processing
 
@@ -15,45 +19,13 @@ Optionally edit `client/model.js` to select active models for both image process
 - Usage without GPU acceleration is not recommended  
 - Note that GPU is not required for image gallery, only for initial processing  
 
+# Models
+
 ## Loading Models
 
 Note that models can be loaded from either local storage or directly from an external http location.  
 Directly supported models are TensorFlow graph models and layers models.  
 For other types of models, see notes on coversion.
-
-## Recommended Models
-
-```js
-exports.models = {
-  classify: [
-    // Image classification using Inception v4 trained on ImageNet 1000 dataset
-    { name: 'ImageNet Inception v4', modelPath: 'models/imagenet-inception-v4', score: 0.22, topK: 3, tensorSize: 299, scoreScale: 200, offset: 1 },
-    // Image classification using EfficientNet B5 trained on ImageNet 1000 dataset
-    { name: 'ImageNet EfficientNet B5', modelPath: 'models/imagenet-efficientnet-b5', score: 0.2, topK: 3, tensorSize: 456, scoreScale: 1, offset: 0 },
-    // Image classification using Inception v3 trained on DeepDetect 6000 dataset
-    { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
-    // Image classification using MobileNet v1 trained on AIY 2000 dataset
-    { name: 'AIY MobileNet Food', modelPath: 'models/aiy-mobilenet-food', score: 0.35, topK: 1, tensorSize: 192, scoreScale: 500, offset: 0 },
-    // Image classification using Inception v3 trained on NSFW dataset
-    { name: 'NSFW Inception v3', modelPath: 'models/nsfw-inception-v3-quant', score: 0.7, topK: 4, tensorSize: 299, scoreScale: 2, offset: 0, background: 2, modelType: 'layers' },
-  ],
-  detect: [
-    // Object detection using SSD and classification using MobileNet v2 trained on CoCo 90 dataset
-    { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/coco-ssd-mobilenet-v2', score: 0.4, topK: 6, overlap: 0.5, useFloat: false, exec: 'coco' },
-    // Object detection using SSD and classification using SSD/MobileNet v2 trained on OpenImages 600 dataset
-    { name: 'OpenImages SSD/MobileNet v2', modelPath: 'models/openimages-ssd-mobilenet-v2', score: 0.2, topK: 6, useFloat: true, exec: 'ssd' },
-  ],
-  person: [
-    // Object detection using SSD and classification using MobileNet v1 from Face-API
-    { name: 'FaceAPI SSD/MobileNet v1', modelPath: 'models/faceapi/', exec: 'ssd', score: 0.3, topK: 5, size: 416 },
-  ],
-  video: {
-    classify: { name: 'DeepDetect Inception v3', modelPath: 'models/deepdetect-inception-v3', score: 0.1, topK: 5, tensorSize: 299, scoreScale: 1000, offset: 0 },
-    detect: { name: 'CoCo SSD/MobileNet v2', modelPath: 'models/coco-ssd-mobilenet-v2', score: 0.4, topK: 5, overlap: 0.5, useFloat: false, exec: 'coco' },
-    person: { name: 'FaceAPI TinyYolo', modelPath: 'models/faceapi/', exec: 'yolo', score: 0.3, topK: 5, size: 416 },
-  },
-};
-```
 
 ### Model Parameters
 
@@ -82,30 +54,6 @@ Where to find large number of pretrained models:
 - TFJS NPMs: <https://github.com/tensorflow/tfjs-models>
 - Intel: <https://github.com/IntelAI/models/tree/master/benchmarks>
 - Google: <https://aihub.cloud.google.com/>
-
-### Interesting models
-
-- Places365: Still searching for a good pretrained model
-- Google BiT <https://tfhub.dev/google/collections/bit/1>: Large models pretrained on ImageNet 1k and 21k  
-  r050x1 1k=91MB   21k=240MB  
-  r050x3 1k=770MB  21k=1190MB  
-  r101x1 1k=159MB  21k=308MB  
-  r101x3 1k=1340MB 21k=1780MB  
-  r152x4 1=2733MB  21k=4179MB
-- Google Landmarks: <https://tfhub.dev/google/collections/landmarks/1>
-- Google Food: <https://tfhub.dev/google/aiy/vision/classifier/food_V1/1>
-- Google Supermarket Products: <https://tfhub.dev/google/on_device_vision/classifier/popular_us_products_V1/1>
-- iNaturalist: 2017 dataset 5089 classs from 0.6M images in 237GB  
-  Note: competition uses obfucated taxonomy since 2018, so categories must be downloaded separately after the competition  
-  iNaturalist: <https://tfhub.dev/s?q=inaturalist> <https://github.com/richardaecn/cvpr18-inaturalist-transfer>  
-  Competitions: <https://github.com/visipedia/inat_comp>  
-  Dataset: <https://www.kaggle.com/c/inaturalist-2019-fgvc6/data> <https://github.com/visipedia/inat_comp/tree/master/2017>  
-  Model Small: <https://www.kaggle.com/sujoykg/xception-keras/>  
-  Model Large: <https://www.kaggle.com/cedriclacrambe/inaturalist-xception-512/>  
-  Lexicon Latin: <https://www.gbif.org/dataset/search>  
-  Lexicon Government: <https://www.itis.gov/>  
-  Lookup: <http://www.gbif.org/species/{gbid}> <https://api.gbif.org/v1/species?name={name}>  
-  Hierarchy: categogy -> kingdom -> phylum -> class -> order -> family -> genus -> name  
 
 ## Convert models
 

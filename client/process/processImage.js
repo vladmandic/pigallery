@@ -5,7 +5,6 @@ import * as log from '../shared/log.js';
 import * as modelClassify from './modelClassify.js';
 import * as modelDetect from './modelDetect.js';
 import * as hash from '../shared/blockhash.js';
-import * as definitions from '../shared/models.js';
 import config from '../shared/config.js';
 
 const models = {};
@@ -45,40 +44,46 @@ export async function load() {
     log.debug('WebGL Setting', key, val);
     tf.ENV.set(key, val);
   }
+
+  if (!config.models) {
+    const req = await fetch('/api/models/get');
+    if (req && req.ok) config.models = await req.json();
+  }
+
   log.div('process-log', true, 'Configuration:');
   log.div('process-log', true, `  Backend: ${tf.getBackend().toUpperCase()}`);
   log.div('process-log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
   log.div('process-log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
   log.div('process-log', true, 'Image Classification models:');
-  for (const model of definitions.models.classify) {
+  for (const model of config.models.classify) {
     log.div('process-log', true, `  ${JSONtoStr(model)}`);
   }
   log.div('process-log', true, 'Object Detection models:');
-  for (const model of definitions.models.detect) {
+  for (const model of config.models.detect) {
     log.div('process-log', true, `  ${JSONtoStr(model)}`);
   }
   log.div('process-log', true, 'Face Detection model:');
-  log.div('process-log', true, `  ${JSONtoStr(definitions.models.person)}`);
+  log.div('process-log', true, `  ${JSONtoStr(config.models.person)}`);
   const t0 = window.performance.now();
 
   models.classify = [];
-  if (definitions.models.classify && definitions.models.classify.length > 0) {
-    for (const cfg of definitions.models.classify) {
+  if (config.models.classify && config.models.classify.length > 0) {
+    for (const cfg of config.models.classify) {
       const res = await modelClassify.load(cfg);
       models.classify.push(res);
     }
   }
 
   models.detect = [];
-  if (definitions.models.detect && definitions.models.detect.length > 0) {
-    for (const cfg of definitions.models.detect) {
+  if (config.models.detect && config.models.detect.length > 0) {
+    for (const cfg of config.models.detect) {
       const res = await modelDetect.load(cfg);
       models.detect.push(res);
     }
   }
 
-  if (definitions.models.person[0]) {
-    const options = definitions.models.person[0];
+  if (config.models.person[0]) {
+    const options = config.models.person[0];
     if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
     else await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
     await faceapi.nets.ageGenderNet.load(options.modelPath);
@@ -235,7 +240,7 @@ export async function process(name) {
     }
     for (const i in resClassify) {
       if (resClassify[i]) {
-        for (const j in resClassify[i]) resClassify[i][j].model = definitions.models.classify[i].name;
+        for (const j in resClassify[i]) resClassify[i][j].model = config.models.classify[i].name;
         obj.classify.push(...resClassify[i]);
       }
     }
@@ -250,7 +255,7 @@ export async function process(name) {
     }
     for (const i in resDetect) {
       if (resDetect[i]) {
-        for (const j in resDetect[i]) resDetect[i][j].model = definitions.models.detect[i].name;
+        for (const j in resDetect[i]) resDetect[i][j].model = config.models.detect[i].name;
         obj.detect.push(...resDetect[i]);
       }
     }

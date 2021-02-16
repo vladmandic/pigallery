@@ -4,7 +4,6 @@ import $ from 'jquery';
 import * as log from '../shared/log.js';
 import * as list from './list.js';
 import * as config from '../shared/config.js';
-import * as definitions from '../shared/models.js';
 
 function JSONtoStr(json) {
   let text = '';
@@ -16,40 +15,44 @@ function JSONtoStr(json) {
   return text;
 }
 
-function globalOptions() {
+async function globalOptions() {
+  const req = await fetch('/api/models/get');
+  if (!req || !req.ok) return '';
+  const models = await req.json();
+
   const out = {};
-  if (definitions.models.classify) {
+  if (models.classify) {
     out.classify = '<b>&nbsp Image Classification:</b><br>';
-    for (const obj of definitions.models.classify) out.classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
+    for (const obj of models.classify) out.classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
   }
-  if (definitions.models.detect) {
+  if (models.detect) {
     out.detect = '<b>&nbsp Object Detection:</b><br>';
-    for (const obj of definitions.models.detect) out.detect += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
+    for (const obj of models.detect) out.detect += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
   }
-  if (definitions.models.video) {
+  if (models.video) {
     out.video = '<b>&nbsp Video Analysis:</b><br>';
-    for (const [key, val] of Object.entries(definitions.models.video)) out.video += `&nbsp &nbsp ${key}: ${JSONtoStr(val)}<br>`;
+    for (const [key, val] of Object.entries(models.video)) out.video += `&nbsp &nbsp ${key}: ${JSONtoStr(val)}<br>`;
   }
-  if (definitions.models.various) {
+  if (models.various) {
     out.various = '<b>&nbsp Various:</b><br>';
-    for (const [key, val] of Object.entries(definitions.models.various)) out.various += `&nbsp &nbsp ${key}: ${JSONtoStr(val)}<br>`;
+    for (const [key, val] of Object.entries(models.various)) out.various += `&nbsp &nbsp ${key}: ${JSONtoStr(val)}<br>`;
   }
-  if (definitions.models.person) {
+  if (models.person) {
     out.face = '<b>&nbsp Face Analysis:</b><br>';
-    out.face += `&nbsp &nbsp ${JSONtoStr(definitions.models.person)}<br>`;
+    out.face += `&nbsp &nbsp ${JSONtoStr(models.person)}<br>`;
   }
   const html = `<div style="line-height: 1.4rem">
     <h1>Global configuration</h1>
-    Browser register PWA handler: ${config.registerPWA}<br>
+    Browser register PWA handler: ${config.default.registerPWA}<br>
     Image Processing:<br>
-    &nbsp Image thumbnail size: ${config.renderThumbnail}px<br>
+    &nbsp Image thumbnail size: ${config.default.renderThumbnail}px<br>
     Server added metadata:<br>
     &nbsp Image EXIF processing: true<br>
     &nbsp Image location processing: true, DB: assets/cities.json<br>
     &nbsp Image tag processing: true, DB: assets/wordnet-synset.json<br>
     <h1>TensorFlow Configuration:</h1>
-    &nbsp Float Precision: ${config.floatPrecision ? '32bit' : '16bit'}<br>
-    &nbsp Image resize: ${config.maxSize}px &nbsp Image square: ${config.squareImage}<br>
+    &nbsp Float Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}<br>
+    &nbsp Image resize: ${config.default.maxSize}px &nbsp Image square: ${config.default.squareImage}<br>
     <h1>TensorFlow Active Models:</h1>
     ${out.classify || ''}<br>
     ${out.detect || ''}<br>
@@ -153,15 +156,15 @@ function userOptions() {
   return html;
 }
 
-function showOptions() {
+async function showOptions() {
   const html = userOptions();
   $('#docs').html(html);
   $('#btnSaveConfig').click(saveOptions);
   $('#btnResetConfig').click(resetOptions);
 }
 
-function showParams() {
-  const html = globalOptions();
+async function showParams() {
+  const html = await globalOptions();
   $('#docs').html(html);
 }
 

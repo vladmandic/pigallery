@@ -18,9 +18,9 @@ export async function load(userConfig) {
   if (!model.config.modelPath) throw new Error('Error loading model: path is null');
   const loadOpts = {
     // @ts-ignore
-    fetchFunc: (...args) => fetch(...args),
-    requestInit: { mode: 'no-cors' },
-    fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
+    // fetchFunc: (...args) => fetch(...args),
+    // requestInit: { mode: 'no-cors' },
+    // fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
   };
   const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? model.config.modelPath + '/model.json' : model.config.modelPath; // append model.json if not present
   try {
@@ -31,7 +31,7 @@ export async function load(userConfig) {
     model.config = saveConfig;
     model.name = model.config.name;
   } catch (err) {
-    throw new Error(`Error loading model: $${modelPath} message:${err.message}`);
+    throw new Error(`Error loading model: ${modelPath} message:${err.message}`);
   }
   try {
     const res = model.config.classes ? await fetch(model.config.classes) : await fetch(model.config.modelPath + '/classes.json'); // load classes json file from modelpath/classes.json or user provided url

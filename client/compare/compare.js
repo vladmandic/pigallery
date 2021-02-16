@@ -6,7 +6,6 @@ import { tf } from '../shared/tf.js';
 import * as log from '../shared/log.js';
 import * as modelClassify from '../process/modelClassify.js';
 import * as modelDetect from '../process/modelDetect.js';
-import * as definitions from '../shared/models.js';
 import * as processImage from '../process/processImage.js';
 import * as config from '../shared/config.js';
 
@@ -47,6 +46,10 @@ async function init() {
     tf.ENV.set(key, val);
   }
   log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.default.batchProcessing} image resize: ${config.default.maxSize}px shape: ${config.default.squareImage ? 'square' : 'native'}`);
+  if (!config.default.models) {
+    const req = await fetch('/api/models/get');
+    if (req && req.ok) config.default.models = await req.json();
+  }
 }
 
 async function loadClassify(options) {
@@ -128,8 +131,7 @@ async function classify() {
   stop = false;
   log.server('Compare: Classify');
   log.div('log', true, 'Loading models ...');
-  for (const def of definitions.models.classify) await loadClassify(def);
-
+  for (const def of config.default.models.classify) await loadClassify(def);
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   await modelClassify.classify(models[0].model, warmup.canvas);
@@ -181,7 +183,7 @@ async function person() {
   stats.bytes0 = engine.state.numBytes;
   stats.tensors0 = engine.state.numTensors;
 
-  const options = definitions.models.person[0];
+  const options = config.models.person[0];
   if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
   if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
   await faceapi.nets.ageGenderNet.load(options.modelPath);
@@ -259,7 +261,7 @@ async function detect() {
   stop = false;
   log.server('Compare: Detect');
   log.div('log', true, 'Loading models ...');
-  for (const def of definitions.models.detect) await loadDetect(def);
+  for (const def of config.default.models.detect) await loadDetect(def);
   if (!models[0].model) return;
 
   log.div('log', true, 'Warming up ...');
