@@ -44,7 +44,7 @@
       "imports": []
     },
     "client/process/modelDetect.js": {
-      "bytes": 7394,
+      "bytes": 7557,
       "imports": [
         {
           "path": "client/shared/tf.js",
@@ -25967,7 +25967,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6595301
+      "bytes": 6595468
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -29794,7 +29794,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6612191
+      "bytes": 6612358
     },
     "dist/process/process.js": {
       "imports": [],
@@ -33588,7 +33588,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7119574
+      "bytes": 7119741
     },
     "dist/video/video.js": {
       "imports": [],

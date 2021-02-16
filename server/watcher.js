@@ -13,8 +13,12 @@ async function processChange(f, msg) {
     log.warn('Server file modified: restart required');
   } else if (f.endsWith('.json')) {
     log.info('Reloading configuration');
-    global.config = JSON.parse(fs.readFileSync('./config.json').toString());
-    global.config.node = JSON.parse(fs.readFileSync('./package.json').toString());
+    try {
+      global.config = JSON.parse(fs.readFileSync('./config.json').toString());
+      global.config.node = JSON.parse(fs.readFileSync('./package.json').toString());
+    } catch (err) {
+      log.warn('Configuration file cannot be reloaded');
+    }
   } else {
     build.compile();
   }
