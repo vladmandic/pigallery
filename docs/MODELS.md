@@ -1,45 +1,100 @@
 # Configuration Details
 
 Active client configuration can be edited in the client app via 'User' -> 'Settings'  
-Active model configuration can be seen in the client app via 'User' -> 'Params'  
+To modify client configuration advanced parameters, edit `client/shared/config.js`  
 
-To modify client configuration, edit `client/shared/config.js`  
+Active model configuration can be seen in the client app via 'User' -> 'Params'  
 To modify model configuration, edit `model.json` to select active models for both image processing and live video  
 
-## Image Processing
+## Default Models
 
-- If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory.  
-  Just restart processing and it will continue from the last known good result.
-- Model load time can be from few seconds to over a minute depending on model size (in MB)
-- Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
-- Once models are loaded and ready, actual processing is ~1sec per image
-- Image analysis is maximized out-of-the-box for a GPU-accelerated system using WebGL acceleration and GPU with minimum of 4GB of memory  
-- For high-end systems with 8GB or higher, you can further enable ImageNet 21k models  
-- For low-end systems with 2GB or less, enable analysis based on MobileNet v2 and EfficientNet B0  
-- Usage without GPU acceleration is not recommended  
-- Note that GPU is not required for image gallery, only for initial processing  
+By default, application ships with [Face-API](https://github.com/vladmandic/face-api) and [Human](https://github.com/vladmandic/human) modules that include their required models.  
+`Face-API` is used for face analysis during image processing while `Human` is used during video processing.  
 
-# Models
+Application does NOT ship with any **classification** or **detection** models - it is up to user to provide them.
+
+## Recommended Models
+
+Below is the configuration I'm using in production for optimal results on 4GB GPU:
+
+  ```json
+  {
+    "classify":[
+      { "name":"ImageNet EfficientNet B4",
+        "modelPath":"models/imagenet/efficientnet-b4",
+        "tensorSize":380, "minScore":0.35, "scaleScore":1 },
+      { "name":"DeepDetect Inception v3", "modelPath":"models/deepdetect/inception-v3",
+        "tensorSize":299, "minScore":0.35, "scaleScore":2000 }
+    ],
+    "detect":[
+      { "name":"COCO SSD MobileNet v2", "modelPath":"models/coco/ssd-mobilenet-v2",
+        "minScore":0.4, "scaleOutput":true, "maxResults":20 },
+      { "name":"NudeNet f16", "modelPath":"models/various/nudenet/f16",
+        "minScore":0.3, "postProcess":"nsfw", "switchAxis":true,
+        "map":{
+          "boxes":"filtered_detections/map/TensorArrayStack/TensorArrayGatherV3:0",
+          "scores":"filtered_detections/map/TensorArrayStack_1/TensorArrayGatherV3:0",
+          "classes":"filtered_detections/map/TensorArrayStack_2/TensorArrayGatherV3:0"
+        } },
+      { "name":"OpenImages SSD MobileNet v2", "modelPath":"models/openimages/ssd-mobilenet-v2",
+        "minScore":0.15, "normalizeInput":0.00392156862745098, "maxResults":20,
+          "map":{
+          "boxes":"module_apply_default/hub_input/strided_slice:0",
+          "scores":"module_apply_default/hub_input/strided_slice_1:0",
+          "classes":"module_apply_default/hub_input/strided_slice_2:0"
+        } }
+    ],
+    "video":[],
+    "person":[
+      { "name":"FaceAPI SSD/MobileNet v1", "modelPath":"models/faceapi/",
+        "score":0.3, "topK":5, "size":416 }
+    ],
+    "various":[
+      { "name":"Food Items", "modelPath":"models/various/food",
+        "minScore":0.4, "tensorSize":192, "scaleScore":500, "maxResults":3 },
+      { "name":"Wine Classifier",
+        "modelPath":"models/various/wine",
+        "minScore":0.35, "tensorSize":224, "scaleScore":0.5, "maxResults":3, "softmax":false },
+      { "name":"Popular Products",
+        "modelPath":"models/various/products",
+        "minScore":0.35, "tensorSize":224, "scaleScore":0.5, "maxResults":3, "softmax":false },
+      { "name":"Metropolitan Art", "modelPath":"models/various/metropolitan",
+        "minScore":0.1, "tensorSize":299, "scaleScore":1, "maxResults":3, "softmax":false },
+      { "name":"iNaturalist Plants", "modelPath":"models/inaturalist/plants",
+        "minScore":0.1, "tensorSize":224, "scaleScore":3, "maxResults":3, "background":2101, "softmax":false },
+      { "name":"iNaturalist Birds", "modelPath":"models/inaturalist/birds",
+        "minScore":0.1, "tensorSize":224, "scaleScore":1, "maxResults":3, "background":964, "softmax":false },
+      { "name":"iNaturalist Insects", "modelPath":"models/inaturalist/insects",
+        "minScore":0.1, "tensorSize":224, "scaleScore":3, "maxResults":3, "background":1021, "softmax":false }
+    ]
+  }
+  ```
 
 ## Loading Models
 
-Note that models can be loaded from either local storage or directly from an external http location.  
+Models can be loaded from either local storage or directly from an external http location.  
 Directly supported models are TensorFlow graph models and layers models.  
 For other types of models, see notes on coversion.
 
 ### Model Parameters
 
+- name: Model label
 - modelPath: Where to load model from, can be a local path or a hosted http link such as one from tfhub.com
-- score: minimal score analysis has to achieve to include results
-- topK: how many top results to return
+- minScore: minimal score analysis has to achieve to include results
+- maxResults, topK: how many top results to return
+- normalizeInput: multiply each input with this value as some models prefer input in different ranges such as [0..1], [-1..1], [0..255], etc.
 - scoreScale: relative score multiplier to balance scores between different models
 - offset: specific to model and controls label index offset within classes definition
-- tensorSize, size: each model is compiled for specific input size. this is model specific and cannot be modified by user
+- tensorSize, size: some model are compiled for specific input size. this is a model specific value
 - background: which label to exclude from results as a generic result
 - model type: model specific, can be 'graph' or 'layers'
 - useFloat: model specific, should model use float or integer processing
 - overlap: maximum overlap percentage allowed before droping detetion boxes from results
 - exec: model specific, use cusom engine for model execution
+- softMax: run softmax function on model results before parsing
+- map: provide custom mapping of output tensors used for detection models if it cannot be determined automatically
+
+<br>
 
 ## Model Downloads
 
@@ -57,13 +112,7 @@ Where to find large number of pretrained models:
 
 ## Convert models
 
-### Install TF Tools
-
-```bash
-  pip3 install tensorflow tensorflowjs
-```
-
-#### Install Python, TensorFlow <https://github.com/tensorflow/tensorflow> and Bazel <https://github.com/bazelbuild/bazel/releases>
+### Install Python, TensorFlow <https://github.com/tensorflow/tensorflow> and Bazel <https://github.com/bazelbuild/bazel/releases>
 
 ```bash
   sudo apt install python3 python3-pip unzip
@@ -125,6 +174,9 @@ Once TF tools are compiled, use them to get details on the model before conversi
   - `--quantize_uint8 True`
   - `--quantize_uint16 True`
 - Models that output features (e.g. notop models) do not have activations above base layers so output is not directly usable
+
+### Additional Reads
+
 - TF-Keras to TFJS  
   <https://www.tensorflow.org/js/tutorials/conversion/import_keras>
 - TF-Saves/Frozen/Hub  
@@ -135,9 +187,7 @@ Once TF tools are compiled, use them to get details on the model before conversi
 - ONNX to TF  
   <https://github.com/onnx/onnx-tensorflow>
 
-<br>
-<br>
-<br>
+<br><hr><br>
 
 ## Testing Notes
 

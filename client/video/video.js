@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import $ from 'jquery';
+import Human from '@vladmandic/human/dist/human.esm-nobundle.js';
 import { tf } from '../shared/tf.js';
 import panzoom from '../../assets/panzoom.js';
 import * as log from '../shared/log.js';
@@ -92,7 +93,30 @@ async function cameraSetup() {
   }, true);
 }
 
+function initHumanConfig() {
+  if (!config.human) {
+    const human = new Human();
+    config.human = JSON.parse(JSON.stringify(human.config));
+    config.human.enabled = true;
+    config.human.face.detector.modelPath = '@vladmandic/human/models/blazeface-back.json';
+    config.human.face.mesh.modelPath = '@vladmandic/human/models/facemesh.json';
+    config.human.face.iris.modelPath = '@vladmandic/human/models/iris.json';
+    config.human.face.age.modelPath = '@vladmandic/human/models/age-ssrnet-imdb.json';
+    config.human.face.gender.modelPath = '@vladmandic/human/models/gender-ssrnet-imdb.json';
+    config.human.face.emotion.modelPath = '@vladmandic/human/models/emotion-large.json';
+    config.human.face.embedding.modelPath = '@vladmandic/human/models/mobilefacenet.json';
+    config.human.body.modelPath = '@vladmandic/human/models/posenet.json';
+    config.human.hand.detector.modelPath = '@vladmandic/human/models/handdetect.json';
+    config.human.hand.skeleton.modelPath = '@vladmandic/human/models/handskeleton.json';
+  }
+}
+
 async function menuSetup() {
+  if (!config.models) {
+    const req = await fetch('/api/models/get');
+    if (req && req.ok) config.models = await req.json();
+  }
+  initHumanConfig();
   objects.menus.model = new Menu(document.body, '', null, { background: 'var(--body)' });
   objects.menus.model.addLabel('Human Detection');
   objects.menus.model.addBool('Human Detection', config.human, 'enabled');

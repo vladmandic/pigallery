@@ -1,5 +1,6 @@
-/* eslint-disable object-property-newline */
+# Alternative models
 
+```js
 exports.models = {
   classify: [
     // { name: 'ImageNet Inception v4', modelPath: 'models/imagenet/inception-v4', tensorSize: 299, scaleScore: 200, offset: 1 }, // beaten by efficientnet-b4 by small margin
@@ -72,3 +73,4 @@ detect options:
   iouThreshold: 0.5, // used by nms
   map: { boxes: 'Identity_1:0', scores: 'Identity_4:0', classes: 'Identity_2:0' }, // defaults map to tfhub object detection models
 */
+```

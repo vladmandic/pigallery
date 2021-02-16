@@ -6,7 +6,9 @@
   "sideEffects": false,
   "scripts": {
     "start": "node --unhandled-rejections=strict --pending-deprecation --trace-deprecation server/pigallery.js",
-    "lint": "eslint *.json client/**/*.js server/**.js"
+    "lint": "eslint *.json client/**/*.js server/**.js",
+    "setup": "node ./setup.js",
+    "reset": "rimraf setup.json models.json config.json pigallery.log pigallery.db sessions/* dist/*"
   },
   "engines": {
     "node": ">=14.0.0"

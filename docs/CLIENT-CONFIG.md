@@ -1,7 +1,6 @@
 # Configuration Details
 
 Active client configuration can be edited in the client app via 'User' -> 'Settings'  
-Active model configuration can be seen in the client app via 'User' -> 'Params'  
 
 To modify client configuration advanced parameters, edit `client/shared/config.js`  
 
@@ -16,7 +15,13 @@ Main parameters are:
     renderThumbnail: 230, // resolution in which to store image thumbnail embedded in result set
     batchProcessing: 1,   // how many images to process in parallel
                           // can be increased for faster processing, but uses extra GPU memory
+    squareImage: false,   // resize proportional to the original image or to a square image
+    registerPWA: true,    // register PWA service worker?
+    facing: true,         // webcam facing front or back
+    memory: false,        // set webgl memory hard limit
   }
 ```
+
+Active model configuration can be seen in the client app via 'User' -> 'Params'  
 
 To modify model configuration, edit `model.json` to select active models for both image processing and live video  
