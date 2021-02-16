@@ -1,8 +1,7 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2021/02/16 mandic00@live.com
-
-### **origin/master, origin/HEAD** 2021/02/16 mandic00@live.com
+### **3.0.1** 2021/02/16 mandic00@live.com
+- move modules config
 
 ### **2.2.9** 2021/02/06 mandic00@live.com
 
