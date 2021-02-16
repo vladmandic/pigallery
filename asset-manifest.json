@@ -25722,56 +25722,6 @@
         }
       ]
     },
-    "assets/panzoom.js": {
-      "bytes": 47577,
-      "imports": []
-    },
-    "client/video/draw.js": {
-      "bytes": 7845,
-      "imports": []
-    },
-    "client/video/gesture.js": {
-      "bytes": 2273,
-      "imports": []
-    },
-    "client/video/runDetect.js": {
-      "bytes": 1958,
-      "imports": [
-        {
-          "path": "client/shared/tf.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "client/shared/log.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "client/video/draw.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "client/process/modelDetect.js",
-          "kind": "import-statement"
-        }
-      ]
-    },
-    "client/video/runClassify.js": {
-      "bytes": 1363,
-      "imports": [
-        {
-          "path": "client/shared/tf.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "client/shared/log.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "client/process/modelClassify.js",
-          "kind": "import-statement"
-        }
-      ]
-    },
     "node_modules/@tensorflow/tfjs/package.json": {
       "bytes": 5008,
       "imports": []
@@ -25857,8 +25807,58 @@
         }
       ]
     },
+    "assets/panzoom.js": {
+      "bytes": 47577,
+      "imports": []
+    },
+    "client/video/draw.js": {
+      "bytes": 7845,
+      "imports": []
+    },
+    "client/video/gesture.js": {
+      "bytes": 2273,
+      "imports": []
+    },
+    "client/video/runDetect.js": {
+      "bytes": 1958,
+      "imports": [
+        {
+          "path": "client/shared/tf.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "client/shared/log.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "client/video/draw.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "client/process/modelDetect.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
+    "client/video/runClassify.js": {
+      "bytes": 1363,
+      "imports": [
+        {
+          "path": "client/shared/tf.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "client/shared/log.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "client/process/modelClassify.js",
+          "kind": "import-statement"
+        }
+      ]
+    },
     "client/video/runHuman.js": {
-      "bytes": 8688,
+      "bytes": 8648,
       "imports": [
         {
           "path": "node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
@@ -25871,7 +25871,7 @@
       ]
     },
     "client/video/run.js": {
-      "bytes": 7648,
+      "bytes": 7616,
       "imports": [
         {
           "path": "client/shared/tf.js",
@@ -25908,10 +25908,14 @@
       "imports": []
     },
     "client/video/video.js": {
-      "bytes": 11411,
+      "bytes": 12675,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
+          "kind": "import-statement"
+        },
+        {
+          "path": "node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
           "kind": "import-statement"
         },
         {
@@ -33584,7 +33588,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7117896
+      "bytes": 7119574
     },
     "dist/video/video.js": {
       "imports": [],
@@ -33592,27 +33596,6 @@
       "inputs": {
         "node_modules/jquery/dist/jquery.js": {
           "bytesInOutput": 94419
-        },
-        "node_modules/node-fetch/browser.js": {
-          "bytesInOutput": 366
-        },
-        "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 932226
-        },
-        "assets/panzoom.js": {
-          "bytesInOutput": 18667
-        },
-        "client/shared/log.js": {
-          "bytesInOutput": 988
-        },
-        "client/video/draw.js": {
-          "bytesInOutput": 4285
-        },
-        "client/video/gesture.js": {
-          "bytesInOutput": 1349
-        },
-        "client/process/custom.js": {
-          "bytesInOutput": 369
         },
         "(disabled):node_modules/node-fetch/browser.js": {
           "bytesInOutput": 18
@@ -33656,29 +33639,29 @@
         "node_modules/@tensorflow/tfjs-backend-wasm/wasm-out/tfjs-backend-wasm.js": {
           "bytesInOutput": 18266
         },
+        "node_modules/node-fetch/browser.js": {
+          "bytesInOutput": 369
+        },
+        "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
+          "bytesInOutput": 932230
+        },
+        "assets/panzoom.js": {
+          "bytesInOutput": 18670
+        },
+        "client/shared/log.js": {
+          "bytesInOutput": 990
+        },
+        "client/video/draw.js": {
+          "bytesInOutput": 4288
+        },
+        "client/video/gesture.js": {
+          "bytesInOutput": 1352
+        },
+        "client/process/custom.js": {
+          "bytesInOutput": 372
+        },
         "client/video/video.js": {
-          "bytesInOutput": 7934
-        },
-        "client/shared/tf.js": {
-          "bytesInOutput": 16
-        },
-        "client/shared/user.js": {
-          "bytesInOutput": 736
-        },
-        "client/video/run.js": {
-          "bytesInOutput": 4587
-        },
-        "client/video/runDetect.js": {
-          "bytesInOutput": 991
-        },
-        "client/process/modelDetect.js": {
-          "bytesInOutput": 3437
-        },
-        "client/video/runClassify.js": {
-          "bytesInOutput": 783
-        },
-        "client/process/modelClassify.js": {
-          "bytesInOutput": 2237
+          "bytesInOutput": 8889
         },
         "node_modules/@tensorflow/tfjs/package.json": {
           "bytesInOutput": 15
@@ -36240,7 +36223,7 @@
           "bytesInOutput": 76
         },
         "node_modules/@tensorflow/tfjs-layers/dist/index.js": {
-          "bytesInOutput": 465
+          "bytesInOutput": 464
         },
         "node_modules/@tensorflow/tfjs-core/dist/public/chained_ops/abs.js": {
           "bytesInOutput": 70
@@ -37011,7 +36994,7 @@
           "bytesInOutput": 6300
         },
         "node_modules/@tensorflow/tfjs-layers/dist/exports_layers.js": {
-          "bytesInOutput": 3634
+          "bytesInOutput": 3622
         },
         "node_modules/@tensorflow/tfjs-layers/dist/backend/state.js": {
           "bytesInOutput": 119
@@ -37089,7 +37072,7 @@
           "bytesInOutput": 1617
         },
         "node_modules/@tensorflow/tfjs-layers/dist/regularizers.js": {
-          "bytesInOutput": 1082
+          "bytesInOutput": 1074
         },
         "node_modules/@tensorflow/tfjs-layers/dist/layers/advanced_activations.js": {
           "bytesInOutput": 3229
@@ -37098,7 +37081,7 @@
           "bytesInOutput": 663
         },
         "node_modules/@tensorflow/tfjs-layers/dist/layers/convolutional.js": {
-          "bytesInOutput": 16028
+          "bytesInOutput": 16025
         },
         "node_modules/@tensorflow/tfjs-layers/dist/layers/convolutional_depthwise.js": {
           "bytesInOutput": 2359
@@ -37128,7 +37111,7 @@
           "bytesInOutput": 2191
         },
         "node_modules/@tensorflow/tfjs-layers/dist/layers/pooling.js": {
-          "bytesInOutput": 6874
+          "bytesInOutput": 6871
         },
         "node_modules/@tensorflow/tfjs-layers/dist/layers/wrappers.js": {
           "bytesInOutput": 6237
@@ -37140,22 +37123,22 @@
           "bytesInOutput": 40
         },
         "node_modules/@tensorflow/tfjs-layers/dist/exports_regularizers.js": {
-          "bytesInOutput": 147
+          "bytesInOutput": 145
         },
         "node_modules/@tensorflow/tfjs-layers/dist/callbacks.js": {
-          "bytesInOutput": 1701
+          "bytesInOutput": 1697
         },
         "node_modules/@tensorflow/tfjs-converter/dist/index.js": {
-          "bytesInOutput": 126
+          "bytesInOutput": 124
         },
         "node_modules/@tensorflow/tfjs-converter/dist/data/compiled_api.js": {
-          "bytesInOutput": 1176
+          "bytesInOutput": 1173
         },
         "node_modules/@tensorflow/tfjs-converter/dist/operations/custom_op/register.js": {
-          "bytesInOutput": 166
+          "bytesInOutput": 164
         },
         "node_modules/@tensorflow/tfjs-converter/dist/operations/executors/utils.js": {
-          "bytesInOutput": 1146
+          "bytesInOutput": 1145
         },
         "node_modules/@tensorflow/tfjs-converter/dist/operations/op_list/arithmetic.js": {
           "bytesInOutput": 2910
@@ -37209,7 +37192,7 @@
           "bytesInOutput": 1958
         },
         "node_modules/@tensorflow/tfjs-converter/dist/operations/operation_mapper.js": {
-          "bytesInOutput": 6229
+          "bytesInOutput": 6226
         },
         "node_modules/@tensorflow/tfjs-converter/dist/operations/custom_op/node_value_impl.js": {
           "bytesInOutput": 970
@@ -37287,7 +37270,7 @@
           "bytesInOutput": 1430
         },
         "node_modules/@tensorflow/tfjs-converter/dist/executor/graph_executor.js": {
-          "bytesInOutput": 7659
+          "bytesInOutput": 7658
         },
         "node_modules/@tensorflow/tfjs-converter/dist/executor/resource_manager.js": {
           "bytesInOutput": 506
@@ -37362,10 +37345,31 @@
           "bytesInOutput": 16
         },
         "node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-          "bytesInOutput": 274675
+          "bytesInOutput": 274674
+        },
+        "client/shared/tf.js": {
+          "bytesInOutput": 17
+        },
+        "client/shared/user.js": {
+          "bytesInOutput": 737
+        },
+        "client/video/run.js": {
+          "bytesInOutput": 4575
+        },
+        "client/video/runDetect.js": {
+          "bytesInOutput": 994
+        },
+        "client/process/modelDetect.js": {
+          "bytesInOutput": 3440
+        },
+        "client/video/runClassify.js": {
+          "bytesInOutput": 785
+        },
+        "client/process/modelClassify.js": {
+          "bytesInOutput": 2239
         },
         "client/video/runHuman.js": {
-          "bytesInOutput": 4587
+          "bytesInOutput": 4557
         },
         "client/shared/menu.js": {
           "bytesInOutput": 9348
@@ -37374,7 +37378,7 @@
           "bytesInOutput": 6723
         }
       },
-      "bytes": 2433895
+      "bytes": 2434795
     },
     "dist/index/worker.js.map": {
       "imports": [],

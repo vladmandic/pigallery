@@ -11,9 +11,9 @@
 - Image thumbnails for fast display
 - Image analysis using machine learning using multiple image classification and object detection models
 - Image perception hash to quickly locate duplicate image regardless of size or to search for simmilar images
-- Image conditions using analysis of camera settings
+- Image conditions using analysis of camera settings (light, dark, zoom, wide, etc.)
 - Person age, gender & emotion modelling and NSFW classification
-- Image geo-location
+- Image geo-location including nearest city for quick searches
 - Lexicon definitions for complete image description
 - Analysis is always incremental so only new or modified images will be analyzed
 - All data is stored in a server-side database and original image is never modified
@@ -42,7 +42,7 @@
 
 *If you'd like to include any additional image analysis (additional machine models or static analysis), drop a note!*
 
-<br>
+<br><hr><br>
 
 ## Screenshots
 
@@ -60,24 +60,23 @@
 
 </center>
 
-<br>
-<br>
-<br>
+<br><hr><br>
 
 ## Install, Configure & Run
 
-### Install
+### Install:
 
 - Install NodeJS: <https://nodejs.org/en/>
-- Download PiGallery:
+- Download PiGallery:  
   using Git: `git clone --depth 1 https://github.com/vladmandic/pigallery`  
   or download archive from <https://github.com/vladmandic/pigallery/releases/>
 
-### Configure
+### Configure:
 
-- Configure PiGallery: `./setup.js`:  
+- Configure PiGallery:  
+  `./setup.js` or `npm run setup`:  
   which automatically installs all dependencies  
-  and creates default configuration in `config.json`:
+  and creates default configuration in `config.json` and `models.json`:
 
   ```text
   Starting Setup
@@ -106,12 +105,18 @@
   Using 10010 as default HTTP server port
   Using 10011 as default HTTPS server port  
   Default configuration created
+  Configuration file not found: models.json
+  Creating default configuration
+  Default models configuration created
   ```
 
-### Run
+### Run:
 
-- Run server application: `npm start`  
+- Run server application:  
+  `npm start`  
   - Optionally use provided `pigallery.service` as a template to run as a Linux **systemd** service
+  - Server monitors client files for changes and runs automatic client application rebuild as needed
+  - Server log is written to file specified in the `config.json` (default is `pigallery.log`)
 
   ```js
   2021-02-16 10:45:19 INFO:  @vladmandic/pigallery version 2.2.9
@@ -120,17 +125,9 @@
   2021-02-16 10:45:19 INFO:  Authentication required: true
   2021-02-16 10:45:19 INFO:  Media root: media/
   2021-02-16 10:45:19 INFO:  Allowed image file types: [ '.jpeg', '.jpg', [length]: 2 ]
-  2021-02-16 10:45:19 DATA:  Build sources: [ 'client/compare/compare.js', 'client/index/index.js', 'client/process/process.js', 'client/prototype/prototype.js', 'client/video/video.js', [length]: 5 ] [ 'client/index/worker.js', 'client/index/pwa-serviceworker.js', [length]: 2 ]
   2021-02-16 10:45:19 STATE:  Change log updated: /home/vlado/dev/pigallery/CHANGELOG.md
   2021-02-16 10:45:20 STATE:  Client application rebuild: 704 ms 40 imports in 383638 bytes 1248 modules in 8531007 bytes 7 outputs in 7201354 bytes
   2021-02-16 10:45:22 STATE:  Client CSS rebuild: 1903 ms imports 554067 byes outputs 454018 bytes
-  2021-02-16 10:45:22 STATE:  Mounted: auth from client/auth.html
-  2021-02-16 10:45:22 STATE:  Mounted: compare from client/compare.html
-  2021-02-16 10:45:22 STATE:  Mounted: index from client/index.html
-  2021-02-16 10:45:22 STATE:  Mounted: offline from client/offline.html
-  2021-02-16 10:45:22 STATE:  Mounted: process from client/process.html
-  2021-02-16 10:45:22 STATE:  Mounted: prototype from client/prototype.html
-  2021-02-16 10:45:22 STATE:  Mounted: video from client/video.html
   2021-02-16 10:45:22 STATE:  RESTful API ready
   2021-02-16 10:45:22 STATE:  Loaded WordNet database: assets/wordnet-synset.json 60942 terms in 24034816 bytes
   2021-02-16 10:45:23 STATE:  Loaded all cities database: assets/cities.json 195175 all cities 4426 large cities
@@ -140,12 +137,11 @@
   2021-02-16 10:45:24 STATE:  Image DB loaded: pigallery.db records: 0
   ```
 
-- Use your browser to navigate to server: `https://localhost:10010` or `https://localhost:10011` (default values)
+- Use your browser to navigate to server:  
+  `https://localhost:10010` or `https://localhost:10011` (default values)
   - Default view is image gallery.
-    If there are no processed images, it's blank
-  - Select `User`->`Update DB` to start image processing
-  - Select `Live Video` to process live video from your device camera
   - Client access is logged on server:
+
   ```js
   2021-02-16 11:41:57 INFO:  API/User/Auth demo@example.com@::1 demo@example.com true
   2021-02-16 11:41:58 INFO:  API/User/Get demo@example.com@::1 { user: 'demo@example.com', admin: true, root: 'media/' }
@@ -154,13 +150,52 @@
   2021-02-16 11:41:58 INFO:  API/Log demo@example.com@::1 Stats: images:0, latency:54, fetch:118, interactive:217, complete:244, load:52, store:0, size:2, speed:0, initial:3, remaining:2, enumerate:73, ready:272, cache:0, pageMode:Standalone, appMode:Browser
   ```
 
-### Configuration Details
+- If there are no processed images, gallery view is empty  
+  Select `User`->`Update DB` to start image processing of provided sample images
+
+  ```js
+  13:52:30.352 Requesting file list from server ...
+  13:52:30.401   Analyzing folder: Samples/ matching: * recursive: false force: false pending: 110
+  13:52:30.402 Starting Image Analsys
+  13:52:30.402 Initializing TensorFlow/JS version 3.0.0
+  13:52:30.491 Configuration:
+  13:52:30.491   Backend: WEBGL
+  13:52:30.491   Parallel processing: 1 parallel images
+  13:52:30.491   Forced image resize: 720px maximum shape: native
+  13:52:30.492 Image Classification models:
+  13:52:30.492 Object Detection models:
+  13:52:30.492 Face Detection model:
+  13:52:30.492   name:FaceAPI SSD/MobileNet v1, modelPath:@vladmandic/face-api/model/, score:0.3, topK:10, size:416
+  13:52:31.005 TensorFlow models loaded: 512ms
+  13:52:31.007 TensorFlow engine state: Bytes: 49,089,476 Buffers: 400 Tensors: 400
+  13:52:36.998 TensorFlow models warmed up in 5,987ms
+  13:52:37.004 Processing images: 110 batch: 1
+  13:53:18.416 Processed 110 of 110 images in 41,412ms 376ms avg
+  13:53:18.443 Results: 110 images in total 2,543,600 bytes average 23,124 bytes
+  13:53:18.443 Image Analysis done: 48,091ms
+  13:53:18.443 Reload image database now
+  ```
+
+- Select `Live Video` to process live video from your device camera
+
+<br>
+
+### Configuration Details:
 
 - [Server configuration documentation]('docs/SERVER-CONFIG.md')
 - [Client configuration documentation]('docs/CLIENT-CONFIG.md')
 - [Model configuration documentation]('docs/MODELS.md')
 
 <br>
+
+### Reset
+
+To delete generated image database and all user configuration file effecively resetting configuration to factory,  
+run `npm start reset`
+
+After reset, you have to recreate configuration files using `./setup.js`
+
+<br><hr><br>
 
 ## General Notes
 
@@ -191,10 +226,31 @@ Collected metadata is additionally analyzed to render human-readable search term
 - Lens settings can be specified as: *superzoom, zoom, portrait, wide, ultrawide*
 - Special words can be used in search terms to form a sentence: *the, a, in, wearing, having, etc.*
 
+<br>
+
+### Image Processing
+
+- If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory.  
+  Just restart processing and it will continue from the last known good result.  
+  But if it continues, you need to reduce number of active models or use smaller models.  
+- Model load time can be from few seconds to over a minute depending on model size (in MB)
+- Model warm-up time can be from few seconds to over a minute depending on model complexity (number of tensors)
+- Once models are loaded and ready, actual processing is ~0.1sec - ~1sec per image
+- Image analysis is maximized out-of-the-box for a GPU-accelerated system using WebGL acceleration and GPU with minimum of 4GB of memory  
+  For high-end systems with 8GB or higher, you can further enable ImageNet 21k models  
+  For low-end systems with 2GB or less, enable analysis based on MobileNet v2 and EfficientNet B0 and do not use complex models  
+- Usage without GPU acceleration is not recommended  
+  Note that GPU is not required for image gallery, only for initial processing  
+
+<br>
+
 ### Search
 
 Result of all metadata processing is a very flexbile search engine - take a look at this example:  
-`"Happy female in 20ies in Miami wearing dress and dining outdoors"`
+
+  `"Happy female in 20ies in Miami wearing dress and dining outdoors"`
+
+<br>
 
 ### Navigation
 
@@ -218,9 +274,17 @@ Result of all metadata processing is a very flexbile search engine - take a look
 - Swipe down will refresh image database
 - Swipe left and right are previous and next image in details view
 
-<br>
+<br><hr><br>
 
-### Links
+### Documentation:
+
+- **Main**: <https://github.com/vladmandic/pigallery/README.md>  
+- **Server Configuration**: <https://github.com/vladmandic/pigallery/SERVER-CONFIG.md>  
+- **Client Configuration**: <https://github.com/vladmandic/pigallery/CLIENT-CONFIG.md>  
+- **Model Configuration**: <https://github.com/vladmandic/pigallery/MODELS.md>  
+- **Development Todo List**: <https://github.com/vladmandic/pigallery/TODO.md>  
+
+### Links:
 
 - **Code Repository**: <https://github.com/vladmandic/pigallery>  
 - **Changelog**: <https://github.com/vladmandic/pigallery/CHANGELOG.md>  

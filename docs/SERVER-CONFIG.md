@@ -10,12 +10,13 @@ Default server configuration is created during setup step and written to `config
     "users": [
       { "email": "demo@example.com", "passwd": "demo", "admin": true, "mediaRoot": "media/" },
     ],
-    // predefined user used for anonymous sharing, only works with generated share links
+    // predefined user used for anonymous sharing, only works with generated share links  
     "share": {
       "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/"
     },
     // list of locations to scan for images to be processed
     // match is used as substring match, so do not use explict wildcards
+    // recursive determines if location if going to be scanned recursively or just as flat file list
     "locations": [
       { "folder": "samples/", "match": ".jp", "recursive": true }
     ],

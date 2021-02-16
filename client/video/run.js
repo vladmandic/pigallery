@@ -112,10 +112,8 @@ async function main(config, objects) {
   input.id = 'canvas-raw';
   document.getElementById('canvases')?.appendChild(input);
 
-  if (!config.models) {
-    const req = await fetch('/api/models/get');
-    if (req && req.ok) config.models = await req.json();
-  }
+  const req = await fetch('/api/models/get');
+  if (req && req.ok) config.models = await req.json();
 
   for (const m of config.models.classify) {
     const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;

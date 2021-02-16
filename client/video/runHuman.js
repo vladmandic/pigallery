@@ -181,7 +181,6 @@ function drawHand(result, ui) {
 }
 
 export async function run(input, config, objects) {
-  if (!config.human.enabled) return {};
   // const t0 = performance.now();
   const result = await human.detect(input, config.human);
   // const t1 = performance.now();
