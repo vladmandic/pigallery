@@ -25389,7 +25389,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 15241,
+      "bytes": 10785,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25995,7 +25995,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6607772
+      "bytes": 6602511
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -29746,19 +29746,19 @@
           "bytesInOutput": 66773
         },
         "client/shared/config.js": {
-          "bytesInOutput": 6667
+          "bytesInOutput": 5450
         },
         "client/process/processImage.js": {
           "bytesInOutput": 951
         }
       },
-      "bytes": 2178892
+      "bytes": 2177675
     },
     "dist/index/index.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 1021908
+      "bytes": 1017367
     },
     "dist/index/index.js": {
       "imports": [],
@@ -29828,7 +29828,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6624783
+      "bytes": 6619522
     },
     "dist/process/process.js": {
       "imports": [],
@@ -29904,7 +29904,7 @@
           "bytesInOutput": 16
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7937
+          "bytesInOutput": 6720
         },
         "node_modules/@vladmandic/face-api/dist/face-api.esm-nobundle.js": {
           "bytesInOutput": 82682
@@ -33591,13 +33591,13 @@
           "bytesInOutput": 737
         }
       },
-      "bytes": 2201825
+      "bytes": 2200608
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 447297
+      "bytes": 442036
     },
     "dist/prototype/prototype.js": {
       "imports": [],
@@ -33610,7 +33610,7 @@
           "bytesInOutput": 995
         },
         "client/shared/config.js": {
-          "bytesInOutput": 6634
+          "bytesInOutput": 5417
         },
         "client/prototype/prototype.js": {
           "bytesInOutput": 247
@@ -33619,13 +33619,13 @@
           "bytesInOutput": 736
         }
       },
-      "bytes": 99908
+      "bytes": 98691
     },
     "dist/video/video.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7130665
+      "bytes": 7125399
     },
     "dist/video/video.js": {
       "imports": [],
@@ -33638,7 +33638,7 @@
           "bytesInOutput": 366
         },
         "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-          "bytesInOutput": 932222
+          "bytesInOutput": 932226
         },
         "assets/panzoom.js": {
           "bytesInOutput": 18667
@@ -34976,7 +34976,7 @@
           "bytesInOutput": 88
         },
         "node_modules/@tensorflow/tfjs-backend-cpu/dist/utils/fft_utils.js": {
-          "bytesInOutput": 4345
+          "bytesInOutput": 4343
         },
         "node_modules/@tensorflow/tfjs-backend-cpu/dist/kernels/FFT.js": {
           "bytesInOutput": 367
@@ -35081,7 +35081,7 @@
           "bytesInOutput": 689
         },
         "node_modules/@tensorflow/tfjs-backend-cpu/dist/kernels/Softmax.js": {
-          "bytesInOutput": 898
+          "bytesInOutput": 896
         },
         "node_modules/@tensorflow/tfjs-backend-cpu/dist/kernels/NonMaxSuppressionV3.js": {
           "bytesInOutput": 401
@@ -37415,10 +37415,10 @@
           "bytesInOutput": 9348
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7940
+          "bytesInOutput": 6723
         }
       },
-      "bytes": 2437334
+      "bytes": 2436117
     },
     "dist/index/worker.js.map": {
       "imports": [],

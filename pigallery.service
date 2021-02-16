@@ -5,13 +5,13 @@ After=network.target network-online.target
 [Service]
 Type=simple
 Environment="NODE_ENV=production"
-ExecStart=/home/vlado/.nvm/versions/node/v14.8.0/bin/node server/pigallery.js
-WorkingDirectory=/home/vlado/dev/pigallery
+ExecStart=/home/demo/.nvm/versions/node/v15.4.0/bin/node server/pigallery.js
+WorkingDirectory=/home/demo/pigallery
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
 RestartSec=300
-User=vlado
+User=demo
 StandardOutput=null
 
 [Install]

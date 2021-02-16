@@ -1,11 +1,6 @@
 {
   "users": [
-    {
-      "email": "share@pigallery.ddns.net",
-      "passwd": "d1ff1cuTpa33w0RD",
-      "admin": false,
-      "mediaRoot": "share/"
-    }
+    { "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" }
   ],
   "share": {
     "email": "share@pigallery.ddns.net",
@@ -15,24 +10,6 @@
   },
   "locations": [
     {
-      "folder": "Pictures/Samsung Gallery/Snapseed",
-      "match": ""
-    },
-    {
-      "folder": "Pictures/Camera Roll/",
-      "match": "-01.jp"
-    },
-    {
-      "folder": "People/",
-      "match": "",
-      "recursive": true
-    },
-    {
-      "folder": "Photos/",
-      "match": "",
-      "recursive": true
-    },
-    {
       "folder": "Samples/",
       "match": "",
       "recursive": false
@@ -40,9 +17,9 @@
   ],
   "server": {
     "httpPort": 10010,
-    "httpsPort": 0,
-    "SSLKey": "",
-    "SSLCrt": "",
+    "httpsPort": 10011,
+    "SSLKey": "server/https.key",
+    "SSLCrt": "server/https.crt",
     "forceHTTPS": false,
     "authForce": true,
     "allowPWA": true,

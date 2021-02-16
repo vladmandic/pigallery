@@ -6,6 +6,7 @@
 const fs = require('fs');
 const proc = require('child_process');
 const process = require('process');
+const readline = require('readline');
 
 let npm = {};
 
@@ -27,32 +28,32 @@ async function exec(cmd, msg) {
   });
 }
 
-/*
-async function dependencyCheck() {
-  process.stdout.write('Running: Dependency check ...');
-  // eslint-disable-next-line node/no-unpublished-require
-  const depcheck = require('depcheck');
-  const options = {
-    ignoreBinPackage: false, // ignore the packages with bin entry
-    skipMissing: false, // skip calculation of missing dependencies
-    ignoreDirs: [],
-    ignoreMatches: ['htmlhint', 'minify', 'chart.js', 'eslint-plugin-*'],
-    // parsers: { '*.js': depcheck.parser.es6 },
-    detectors: [depcheck.detector.requireCallExpression, depcheck.detector.importDeclaration],
-    specials: [depcheck.special.eslint],
-  };
-  return new Promise((resolve) => {
-    depcheck(process.cwd(), options, (res) => {
-      npm.depcheck = res;
-      process.stdout.write(`\rDependency check: Unused={${res.dependencies}${res.devDependencies}} Missing=${JSON.stringify(res.missing)}\n`);
-      resolve(true);
-    });
-  });
-}
-*/
-
 async function deleteExamples() {
   await exec('find node_modules -type d -name "example*" -exec rm -rf {} \\; 2>/dev/null', 'Deleting module samples');
+}
+
+let rl;
+async function prompt(question) {
+  if (!rl) rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => resolve(answer));
+  });
+}
+
+async function createConfig() {
+  process.stdout.write('Configuration file not found: config.json\n');
+  process.stdout.write('Creating default configuration\n');
+  const cfg = JSON.parse(fs.readFileSync('server/default-config.json').toString());
+  let email = await prompt('Enter default admin user email: ');
+  if (!email || email.length < 1) email = 'demo@example.com';
+  let passwd = await prompt('Enter default admin user password: ');
+  if (!passwd || passwd.length < 1) passwd = 'demo';
+  cfg.users.push({ email, passwd, admin: true, mediaRoot: 'media/' });
+  process.stdout.write(`Using ${cfg.server.mediaRoot} as image root containing sample images\n`);
+  process.stdout.write(`Using ${cfg.server.httpPort} as default HTTP server port\n`);
+  process.stdout.write(`Using ${cfg.server.httpsPort} as default HTTPS server port\n`);
+  fs.writeFileSync('config.json', JSON.stringify(cfg, null, 2));
+  process.stdout.write('Default configuration created\n');
 }
 
 async function main() {
@@ -75,13 +76,7 @@ async function main() {
   // npm install
   npm.installProd = await exec('npm install --only=prod --json', 'NPM install production modules');
   npm.installDev = await exec('npm install --only=dev --json', 'NPM install development modules');
-  npm.installOpt = await exec('npm install --only=opt --json', 'NPM install optional modules');
-
-  // ncu upgrade
-  // process.stdout.write('NCU force upgrade modules\n');
-  // eslint-disable-next-line node/no-unpublished-require
-  // const ncu = require('npm-check-updates'); // eariliest we can load it
-  // npm.ncu = await ncu.run({ jsonUpgraded: true, upgrade: true, packageManager: 'npm', silent: true });
+  // npm.installOpt = await exec('npm install --only=opt --json', 'NPM install optional modules');
 
   // npm optimize
   npm.update = await exec('npm update --depth=10 --json', 'NPM update modules');
@@ -99,18 +94,19 @@ async function main() {
   const meta = npm.prune.audit.metadata;
   process.stdout.write(`Total dependencies: production=${meta.dependencies} development=${meta.devDependencies} optional=${meta.optionalDependencies}\n`);
 
-  // 3rd party checks
-  // await dependencyCheck();
-  // await auditCheck();
-
-  // npm.cache = await exec('npm cache verify', 'NPM verify cache');
-
-  process.stdout.write('Results written to setup.json\n');
+  // create installation log
   let old = [];
   if (fs.existsSync(f)) old = JSON.parse(fs.readFileSync(f).toString());
   if (!Array.isArray(old)) old = [];
   old.push(npm);
   fs.writeFileSync(f, JSON.stringify(npm, null, 2));
+  process.stdout.write('Results written to setup.json\n');
+
+  // check & create default configuration
+  if (!fs.existsSync('config.json')) await createConfig();
+  else process.stdout.write('Configuration file found: config.json\n');
+
+  process.exit(0);
 }
 
 main();

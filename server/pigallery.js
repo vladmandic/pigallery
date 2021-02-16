@@ -15,7 +15,6 @@ const watcher = require('./watcher.js');
 const changelog = require('./changelog.js');
 
 global.json = [];
-global.config = JSON.parse(fs.readFileSync('./config.json').toString());
 
 function allowPWA(req, res, next) {
   if (req.url.endsWith('.js')) res.header('Service-Worker-Allowed', '/');
@@ -36,11 +35,17 @@ function allowFrames(req, res, next) {
 }
 
 async function main() {
-  log.configure({ logFile: global.config.server.logFile });
+  try {
+    global.config = JSON.parse(fs.readFileSync('./config.json').toString());
+  } catch (err) {
+    log.error('Configuration file config.json cannot be read');
+    // process.exit(0);
+  }
+  log.configure({ logFile: global.config?.server?.logFile || 'pigallery.log' });
   log.header();
-  log.info('Authentication required:', global.config.server.authForce);
-  log.info('Media root:', global.config.server.mediaRoot);
-  log.info('Allowed image file types:', global.config.server.allowedImageFileTypes);
+  log.info('Authentication required:', global.config?.server?.authForce || 'undefined');
+  log.info('Media root:', global.config?.server?.mediaRoot || 'undefined');
+  log.info('Allowed image file types:', global.config?.server?.allowedImageFileTypes || 'undefined');
   const root = path.join(__dirname, '../');
   const app = express();
   app.disable('x-powered-by');
@@ -55,6 +60,11 @@ async function main() {
 
   // initialize file watcher
   await watcher.watch();
+
+  if (!global.config) {
+    log.error('Configuration missing, exiting...');
+    process.exit(0);
+  }
 
   // load expressjs middleware
   global.config.cookie.store = new FileStore({ path: global.config.cookie.path, retries: 1, logFn: log.warn, ttl: 24 * 3600, reapSyncFallback: true });
