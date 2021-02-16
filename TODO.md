@@ -6,6 +6,7 @@
 - User DB management client-side
 - User DB check server-side
 - Move compare to main app as test feature
+- Switch backend DB from NEDB to Mongo
 
 ## Desired Models
 
@@ -13,10 +14,6 @@ Didn't find:
 
 - Places365: all found pre-trained weights are for PyTorch
 - Objects365: new dataset, no public pre-trained weights so far
-
-## Random
-
-- Jeeliz: https://github.com/jeeliz/jeelizFaceFilter
 
 ###
 
@@ -30,4 +27,3 @@ Didn't find:
   All Verify
 - Model errors:
   - COCO CenterNet
-- Switch backend DB from NEDB to Mongo

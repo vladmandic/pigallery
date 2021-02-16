@@ -20,7 +20,7 @@ async function exec(cmd, msg) {
         json = JSON.parse(`${stdout}${stderr}`);
       } catch { /**/ }
       const t1 = process.hrtime.bigint();
-      const ms = Math.trunc(parseFloat(t1 - t0) / 1000000);
+      const ms = Math.trunc(parseFloat((t1 - t0).toString()) / 1000000);
       if (msg) process.stdout.write(`\r${msg} completed in ${ms.toLocaleString()}ms\n`);
       resolve(json);
     });
@@ -63,14 +63,14 @@ async function main() {
     process.exit(1);
   }
 
-  const p = JSON.parse(fs.readFileSync('./package.json'));
+  const p = JSON.parse(fs.readFileSync('./package.json').toString());
   process.stdout.write(`${p.name} server v${p.version}\n`);
   process.stdout.write(`Platform=${process.platform} Arch=${process.arch} Node=${process.version}\n`);
   process.stdout.write('Project dependencies\n');
   process.stdout.write(` production: ${Object.keys(p.dependencies || {}).length}\n`);
   process.stdout.write(` development: ${Object.keys(p.devDependencies || {}).length}\n`);
   process.stdout.write(` optional: ${Object.keys(p.optionalDependencies || {}).length}\n`);
-  if (fs.existsSync(f)) npm = JSON.parse(fs.readFileSync(f));
+  if (fs.existsSync(f)) npm = JSON.parse(fs.readFileSync(f).toString());
 
   // npm install
   npm.installProd = await exec('npm install --only=prod --json', 'NPM install production modules');
@@ -107,7 +107,7 @@ async function main() {
 
   process.stdout.write('Results written to setup.json\n');
   let old = [];
-  if (fs.existsSync(f)) old = JSON.parse(fs.readFileSync(f));
+  if (fs.existsSync(f)) old = JSON.parse(fs.readFileSync(f).toString());
   if (!Array.isArray(old)) old = [];
   old.push(npm);
   fs.writeFileSync(f, JSON.stringify(npm, null, 2));
@@ -124,26 +124,13 @@ cd scripts
 curl -L https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css >bootstrap.css
 curl -L https://cdn.jsdelivr.net/npm/chart.js@latest >chart.js
 curl -L http://hammerjs.github.io/dist/hammer.min.js >hammer.js
-curl -L https://code.jquery.com/jquery-3.5.0.min.js >jquery.js
+curl -L https://code.jquery.com/jquery-3.5.1.min.js >jquery.js
 curl -L https://moment.github.io/luxon/global/luxon.min.js >luxon.js
 curl -L https://momentjs.com/downloads/moment.min.js >moment.js
 curl -L https://unpkg.com/@popperjs/core@latest >popper.js
 curl -L https://unpkg.com/superagent@latest >superagent.js
 curl -L https://omnipotent.net/jquery.sparkline/2.1.2/jquery.sparkline.min.js >sparkline.js
-curl -L https://unpkg.com/suncalc@latest >suncalc-full.js
-curl -L https://www.chartjs.org/chartjs-chart-financial/chartjs-chart-financial.js >chart-financial-full.js
-../node_modules/.bin/minify chart-financial-full.js >chart-financial.js
-rm chart-financial-full.js
-../node_modules/.bin/minify suncalc-full.js >suncalc.js
-rm suncalc-full.js
-curl -L https://raw.githubusercontent.com/maxdow/skycons/master/skycons.js >skycons-full.js
-../node_modules/.bin/minify skycons-full.js >skycons.js
-rm skycons-full.js
-cp ../backup/prism.js .
-cp ../backup/prism.css .
-cp ../backup/sorttable.js .
-cd ..
-
-# prism: dynamically generated js and css at
-# https://prismjs.com/download.html#themes=prism-tomorrow&languages=markup+css+clike+javascript+bash+css-extras+diff+json+json5+julia+markdown&plugins=line-numbers+inline-color
+curl -L https://raw.githubusercontent.com/markedjs/marked/master/lib/marked.esm.js >marked.esm.js
+curl -L https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js >mapquest.js
+curl -L https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css >mapquest.css
 */

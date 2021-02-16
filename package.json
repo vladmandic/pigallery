@@ -14,15 +14,6 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "browserslist": [
-    "last 1 Chrome version"
-  ],
-  "staticFiles": {
-    "staticPath": "assets",
-    "excludeGlob": [
-      "*"
-    ]
-  },
   "stylelint": {
     "extends": "stylelint-config-standard",
     "rules": {
@@ -63,13 +54,13 @@
   "dependencies": {
     "@tensorflow/tfjs": "^3.0.0",
     "@tensorflow/tfjs-backend-wasm": "^3.0.0",
-    "@vladmandic/face-api": "file:../face-api",
-    "@vladmandic/human": "file:../human",
-    "@vladmandic/pilogger": "file:../pilogger",
+    "@vladmandic/face-api": "^0.12.6",
+    "@vladmandic/human": "^0.20.2",
+    "@vladmandic/pilogger": "^0.2.14",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.1",
     "clean-css": "^5.0.1",
-    "esbuild": "^0.8.43",
+    "esbuild": "^0.8.46",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
@@ -82,13 +73,13 @@
     "simple-git": "^2.34.2"
   },
   "devDependencies": {
-    "eslint": "^7.19.0",
+    "eslint": "^7.20.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-html": "^6.1.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-json": "^2.1.2",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "npm-check-updates": "^11.1.1"
+    "eslint-plugin-promise": "^4.3.1",
+    "npm-check-updates": "^11.1.4"
   }
 }
