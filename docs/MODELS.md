@@ -1,5 +1,7 @@
 # Moodels
 
+Optionally edit `client/model.js` to select active models for both image processing and live video  
+
 ## Image Processing
 
 - If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory.  

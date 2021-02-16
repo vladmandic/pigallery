@@ -4,7 +4,7 @@
 
 <br>
 
-## Key features
+## Key features:
 
 ### At it's core, **PiGallery** builds a database of images which includes
 
@@ -43,8 +43,6 @@
 *If you'd like to include any additional image analysis (additional machine models or static analysis), drop a note!*
 
 <br>
-<br>
-<br>
 
 ## Screenshots
 
@@ -60,18 +58,6 @@
 
 ![alt text](assets/screenshot-details2.png)
 
-### Screenshot: Complex Search Results
-
-![alt text](assets/screenshot-search.png)
-
-### Screenshot: Live Video
-
-![alt text](assets/screenshot-video.png)
-
-### Screenshot: Image Processing
-
-![alt text](assets/screenshot-processing.png)
-
 </center>
 
 <br>
@@ -86,93 +72,86 @@
 - Download PiGallery:
   using Git: `git clone --depth 1 https://github.com/vladmandic/pigallery`  
   or download archive from <https://github.com/vladmandic/pigallery/releases/>
-- Install PiGallery:  
-  run `./setup.js`
-
-**That's it!**
-
-- Image samples are provided (note: all included photos are mine)
-- Default configuration should work out-of-the-box,  
-  only thing you must do is either add a user or disable authorization
-- Setup step provides default models
 
 ### Configure
 
-Edit `config.json`:
+- Configure PiGallery: `./setup.js`:  
+  which automatically installs all dependencies  
+  and creates default configuration in `config.json`:
 
-```json
-  {
-    // list of users and their home folders (which is relative to global server.mediaRoot property)
-    // if server.authForce is set to true, at least one valid user should be configured
-    // admin property controlls if user has rights to process images or just view them as well as to manage anonymous shares
-    "users": [
-      { "email": "user@example.com", "passwd": "test", "admin": true, "mediaRoot": "media/" },
-    ],
-    // predefined user used for anonymous sharing, only works with generated share links
-    "share": {
-      "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/"
-    },
-    // list of locations to scan for images to be processed
-    "locations": [
-      { "folder": "samples/", "match": ".jp", "recursive": true }
-    ],
-    "server": {
-      "authForce": true, // force user authentication or allow anounymous users
-      "httpPort": 8000, // http server port
-      "httpsPort": 8080, // https server port
-      "SSLKey": "/home/vlado/dev/piproxy/cert/private.pem", // https server key
-      "SSLCrt": "/home/vlado/dev/piproxy/cert/fullchain.pem", // https server certificate
-      "forceHTTPS": false, // redirect unsecure http requests to https
-      "allowPWA": true, // allow application installation as pwa or limit to browser-only
-      "logFile": "pigallery.log", // application log files
-      "mediaRoot": "media/", // root folder for all image processing
-      "allowedImageFileTypes": [ ".jpeg", ".jpg" ], // list of exensions that application will enumerate for processing
-      "defaultLimit": 500, // number of images that server will send to browser in initial requests, remaining images are loaded in the background
-      "db": "pigallery.db", // application image database
-      "descriptionsDB": "assets/wordnet-synset.json", // application lexicon database, used during image processing
-      "citiesDB": "assets/cities.json", // application geo-location database, used during image processing
-      "warmupImage": "assets/warmup.jpg", // test image used to warm-up models at the start of image processing
-    },
-    // how to handle sessions from authenticated users, probably no need to modify
-    "cookie": {
-      "path": "./sessions",
-      "secret": "whaTEvEr!42", "proxy": false, "resave": false, "rolling": true, "saveUninitialized": false,
-      "cookie": { "httpOnly": false, "sameSite": true, "secure": false, "maxAge": 6048000001000 }
-    }
-  }
-```
-
-Optionally edit `client/config.js` for image processing settings  
-
-```js
-  const config = {
-    backEnd: 'webgl',     // back-end used by tensorflow for image processing, can be webgl, cpu, wasm
-    floatPrecision: true, // use 32bit or 16bit float precision
-    maxSize: 780,         // maximum image width or height that will be used for processing
-    renderThumbnail: 230, // resolution in which to store image thumbnail embedded in result set
-    batchProcessing: 1,   // how many images to process in parallel
-  }
-```
-
-Optionally edit `client/model.js` to select active models for both image processing and live video  
-
-For details on model configuration, how to fine-tune them as well as where to find and how to convert models, see <https://github.com/vladmandic/pigallery/MODELS.md>
+  ```text
+  Starting Setup
+  @vladmandic/pigallery server v2.2.9
+  Platform=linux Arch=x64 Node=v15.4.0
+  Project dependencies
+  production: 19
+  development: 8
+  optional: 0
+  NPM install production modules completed in 7,516ms
+  NPM install development modules completed in 5,819ms
+  NPM update modules completed in 6,757ms
+  NPM deduplicate modules completed in 2,370ms
+  NPM prune unused modules completed in 2,513ms
+  Deleting module samples completed in 49ms
+  NPM outdated check completed in 6,257ms
+  NPM indirect outdated modules: 75
+  NPM list full completed in 1,225ms
+  Total dependencies: production=176 development=450 optional=2
+  Results written to setup.json
+  Configuration file not found: config.json
+  Creating default configuration
+  Enter default admin user email: demo@example.com
+  Enter default admin user password: demo
+  Using media/ as image root containing sample images
+  Using 10010 as default HTTP server port
+  Using 10011 as default HTTPS server port  
+  Default configuration created
+  ```
 
 ### Run
 
-Run server application using `npm start`  
+- Run server application: `npm start`  
+  - Optionally use provided `pigallery.service` as a template to run as a Linux **systemd** service
 
-- Optionally use provided `pigallery.service` as a template to run as a Linux systemd service
+  ```js
+  2021-02-16 10:45:19 INFO:  @vladmandic/pigallery version 2.2.9
+  2021-02-16 10:45:19 INFO:  User: vlado Platform: linux Arch: x64 Node: v15.4.0
+  2021-02-16 10:45:19 STATE:  Application log: /home/vlado/dev/pigallery/pigallery.log
+  2021-02-16 10:45:19 INFO:  Authentication required: true
+  2021-02-16 10:45:19 INFO:  Media root: media/
+  2021-02-16 10:45:19 INFO:  Allowed image file types: [ '.jpeg', '.jpg', [length]: 2 ]
+  2021-02-16 10:45:19 DATA:  Build sources: [ 'client/compare/compare.js', 'client/index/index.js', 'client/process/process.js', 'client/prototype/prototype.js', 'client/video/video.js', [length]: 5 ] [ 'client/index/worker.js', 'client/index/pwa-serviceworker.js', [length]: 2 ]
+  2021-02-16 10:45:19 STATE:  Change log updated: /home/vlado/dev/pigallery/CHANGELOG.md
+  2021-02-16 10:45:20 STATE:  Client application rebuild: 704 ms 40 imports in 383638 bytes 1248 modules in 8531007 bytes 7 outputs in 7201354 bytes
+  2021-02-16 10:45:22 STATE:  Client CSS rebuild: 1903 ms imports 554067 byes outputs 454018 bytes
+  2021-02-16 10:45:22 STATE:  Mounted: auth from client/auth.html
+  2021-02-16 10:45:22 STATE:  Mounted: compare from client/compare.html
+  2021-02-16 10:45:22 STATE:  Mounted: index from client/index.html
+  2021-02-16 10:45:22 STATE:  Mounted: offline from client/offline.html
+  2021-02-16 10:45:22 STATE:  Mounted: process from client/process.html
+  2021-02-16 10:45:22 STATE:  Mounted: prototype from client/prototype.html
+  2021-02-16 10:45:22 STATE:  Mounted: video from client/video.html
+  2021-02-16 10:45:22 STATE:  RESTful API ready
+  2021-02-16 10:45:22 STATE:  Loaded WordNet database: assets/wordnet-synset.json 60942 terms in 24034816 bytes
+  2021-02-16 10:45:23 STATE:  Loaded all cities database: assets/cities.json 195175 all cities 4426 large cities
+  2021-02-16 10:45:24 STATE:  Server HTTP listening: { address: '::', family: 'IPv6', port: 10010 }
+  2021-02-16 10:45:24 STATE:  Server HTTPS listening: { address: '::', family: 'IPv6', port: 10011 }
+  2021-02-16 10:45:24 STATE:  Monitoring: [ 'config.json', 'package.json', 'server', 'client', 'assets', [length]: 5 ]
+  2021-02-16 10:45:24 STATE:  Image DB loaded: pigallery.db records: 0
+  ```
 
-Use your browser to navigate to server
+- Use your browser to navigate to server: `https://localhost:10010` or `https://localhost:10011` (default values)
+  - Default view is image gallery.
+    If there are no processed images, it's blank
+  - Select `User`->`Update DB` to start image processing
+  - Select `Live Video` to process live video from your device camera
 
-- Default view is image gallery.
-  If there are no processed images, it's blank
-- Select `User`->`Update DB` to start image processing
-- Select `Live Video` to process live video from your device camera
+### Configuration Details
 
-<br>
-<br>
+- [Server configuration documentation]('docs/SERVER-CONFIG.md')
+- [Client configuration documentation]('docs/CLIENT-CONFIG.md')
+- [Model configuration documentation]('docs/MODELS.md')
+
 <br>
 
 ## General Notes
@@ -232,17 +211,12 @@ Result of all metadata processing is a very flexbile search engine - take a look
 - Swipe left and right are previous and next image in details view
 
 <br>
-<br>
-<br>
 
 ### Links
 
 - **Code Repository**: <https://github.com/vladmandic/pigallery>  
 - **Changelog**: <https://github.com/vladmandic/pigallery/CHANGELOG.md>  
 - **Todo List**: <https://github.com/vladmandic/pigallery/TODO.md>  
-- **Notes on Models**: <https://github.com/vladmandic/pigallery/MODELS.md>  
 - **License**: <https://github.com/vladmandic/pigallery/LICENSE>  
 
-<br>
-<br>
 <br>
