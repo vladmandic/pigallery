@@ -6,19 +6,27 @@ To modify client configuration advanced parameters, edit `client/shared/config.j
 Active model configuration can be seen in the client app via 'User' -> 'Params'  
 To modify model configuration, edit `model.json` to select active models for both image processing and live video  
 
+<br>
+
 ## Default Models
+
+Default model configuration is created when running `./setup.js` and written to `models.json`
 
 Application ships with [Face-API](https://github.com/vladmandic/face-api) and [Human](https://github.com/vladmandic/human) modules that include their required models.  
 `Face-API` is used for face analysis during image processing while `Human` is used during video processing.  
 
-Application does NOT ship with any **classification** or **detection** models - it is up to user to provide them.  
+Application does NOT include any pre-packaged **classification** or **detection** models - it is up to user to provide them.  
 By default, enabled 3rd party models are:
 - Image Classification: `MobileNet v3 trained on ImageNet dataset`, provided by [tfhub.net](https://tfhub.dev/google/imagenet/mobilenet_v3_large_100_224/classification/5)
 - Object Detection: `MobileNet v2 with SSD trained on COCO dataset`, provided by [tfhub.net](https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1)
 
+Note that you can chain any number of models within each section and results will be combined according to overall scores.
+
+<br>
+
 ## Recommended Models
 
-Below is the configuration I'm using in production for optimal results on 4GB GPU:
+Below is the configuration I'm using in production for optimal results on a GPU with 4GB memory:
 
   ```json
   {
@@ -207,6 +215,10 @@ So resulting model map for a converted model would be:
     } },
 ```
 
+Note that `map.classes` can be set to `null` in which case application will attempt to infer classes data from scores data.
+
+<br><hr><br>
+
 ### Advanced Model Analysis
 
 Requires TensorFlow <https://github.com/tensorflow/tensorflow> dev tools not included in package
@@ -245,6 +257,7 @@ Once TF tools are compiled, use them to get details on the model before conversi
     Found 1 possible outputs: (name=InceptionV4/Logits/Predictions, op=Softmax)
 ```
 
+<br>
 
 ### Additional Reads
 
