@@ -20,7 +20,7 @@ export async function load(userConfig) {
     // @ts-ignore
     // fetchFunc: (...args) => fetch(...args),
     // requestInit: { mode: 'no-cors' },
-    // fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
+    fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
   };
   const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? model.config.modelPath + '/model.json' : model.config.modelPath; // append model.json if not present
   try {
