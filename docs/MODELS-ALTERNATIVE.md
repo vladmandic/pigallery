@@ -1,5 +1,18 @@
 # Alternative models
 
+```json
+    { "name": "COCO SSD MobileNet v2",
+      "modelPath": "https://storage.googleapis.com/tfhub-tfjs-modules/tensorflow/tfjs-model/ssd_mobilenet_v1/1/default/1/model.json",
+      "classes": "assets/classes-coco.json",
+      "minScore":0.4, "scaleOutput":true, "maxResults":20,
+      "map": {
+        "boxes": "Identity_1:0",
+        "scores": "Identity_4:0",
+        "classes": "Identity_2:0"
+      }
+    }
+```
+
 ```js
 exports.models = {
   classify: [

@@ -8,10 +8,13 @@ To modify model configuration, edit `model.json` to select active models for bot
 
 ## Default Models
 
-By default, application ships with [Face-API](https://github.com/vladmandic/face-api) and [Human](https://github.com/vladmandic/human) modules that include their required models.  
+Application ships with [Face-API](https://github.com/vladmandic/face-api) and [Human](https://github.com/vladmandic/human) modules that include their required models.  
 `Face-API` is used for face analysis during image processing while `Human` is used during video processing.  
 
-Application does NOT ship with any **classification** or **detection** models - it is up to user to provide them.
+Application does NOT ship with any **classification** or **detection** models - it is up to user to provide them.  
+By default, enabled 3rd party models are:
+- Image Classification: `MobileNet v3 trained on ImageNet dataset`, provided by [tfhub.net](https://tfhub.dev/google/imagenet/mobilenet_v3_large_100_224/classification/5)
+- Object Detection: `MobileNet v2 with SSD trained on COCO dataset`, provided by [tfhub.net](https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1)
 
 ## Recommended Models
 

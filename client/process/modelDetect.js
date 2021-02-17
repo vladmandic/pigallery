@@ -80,6 +80,24 @@ function profile(data) {
   return res;
 }
 
+function calculateMaxScores(scores, numBoxes, numClasses, config) {
+  const maxes = [];
+  const classes = [];
+  for (let i = 0; i < numBoxes; i++) {
+    let max = Number.MIN_VALUE;
+    let index = -1;
+    for (let j = 0; j < numClasses; j++) {
+      if (scores[i * numClasses + j] > max) {
+        max = scores[i * numClasses + j];
+        index = j;
+      }
+    }
+    maxes[i] = max;
+    classes[i] = index + config.offset;
+  }
+  return [maxes, classes];
+}
+
 export async function detect(model, image, userConfig) {
   // allow changes of configurations on the fly to play with nms settings
   if (userConfig) model.config = { ...model.config, ...userConfig };
@@ -90,7 +108,8 @@ export async function detect(model, image, userConfig) {
   // execute model
   let res;
   if (!model.config.profile) {
-    res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]);
+    if (model.config.map.classes) res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]);
+    else res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores]);
     // res = await model.executeAsync(imageT);
     // window.tensor0 = model;
     // window.tensors1 = res;
@@ -109,8 +128,15 @@ export async function detect(model, image, userConfig) {
   const boxesT = res[0].shape.length > 2 ? res[0].squeeze() : res[0].clone(); // boxes can be 3d or 2d in some models
   const softmaxT = model.config.softmax ? res[1].softmax() : res[1].clone();
   const boxes = await boxesT.array();
-  const scores = await softmaxT.data();
-  const classes = await res[2].data();
+  let scores;
+  let classes;
+  if (res[2]) {
+    scores = await softmaxT.data();
+    classes = await res[2].data();
+  } else {
+    const rawScores = await res[1].data();
+    [scores, classes] = calculateMaxScores(rawScores, res[1].shape[1], res[1].shape[2], model.config);
+  }
   for (const tensorT of res) tensorT.dispose();
   softmaxT.dispose();
   boxesT.dispose();
@@ -125,7 +151,7 @@ export async function detect(model, image, userConfig) {
   // create result object
   const detected = [];
   for (const i in nms) {
-    const id = parseInt(i);
+    const id = parseInt(nms[i]);
     const scaleOutput = ((boxes[id][0] > 0 && boxes[id][0] < 1) || (boxes[id][1] > 0 && boxes[id][1] < 1));
     // not sure if model output is x,y or y,x
     const a = boxes[id][0];
@@ -135,9 +161,9 @@ export async function detect(model, image, userConfig) {
     const width = model.config.switchAxis ? imageT.shape[1] : imageT.shape[2];
     const height = model.config.switchAxis ? imageT.shape[2] : imageT.shape[1];
     detected.push({
-      score: Math.min(1, Math.trunc(model.config.scaleScore * 10000 * scores[i]) / 10000), // limit score to 100% in case of scaled scores
+      score: Math.min(1, Math.trunc(model.config.scaleScore * 10000 * scores[id]) / 10000), // limit score to 100% in case of scaled scores
       id: classes[id],
-      class: model.labels[classes[id]].displayName,
+      class: model.labels[classes[id]]?.displayName || 'unknown',
       box: { // switch box from y0,x0,y1,x1 to x,y,width,height and potentially scale it if model returns coordinates in range 0..1
         x: Math.trunc((scaleOutput ? width : 1) * (model.config.switchAxis ? a : b)),
         y: Math.trunc((scaleOutput ? height : 1) * (model.config.switchAxis ? b : a)),
