@@ -3,17 +3,11 @@
     { "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" }
   ],
   "share": {
-    "email": "share@pigallery.ddns.net",
-    "passwd": "d1ff1cuTpa33w0RD",
-    "admin": false,
-    "mediaRoot": "share/"
-  },
+    "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" },
   "locations": [
-    {
-      "folder": "Samples/",
-      "match": "",
-      "recursive": false
-    }
+    { "folder": "Samples/", "match": "", "recursive": false }
+  ],
+  "exclude": [
   ],
   "server": {
     "httpPort": 10010,
@@ -24,10 +18,7 @@
     "authForce": true,
     "allowPWA": true,
     "logFile": "pigallery.log",
-    "allowedImageFileTypes": [
-      ".jpeg",
-      ".jpg"
-    ],
+    "allowedImageFileTypes": [ ".jpeg", ".jpg" ],
     "mediaRoot": "media/",
     "defaultLimit": 500,
     "db": "pigallery.db",
@@ -42,11 +33,6 @@
     "resave": false,
     "rolling": true,
     "saveUninitialized": false,
-    "cookie": {
-      "httpOnly": false,
-      "sameSite": true,
-      "secure": false,
-      "maxAge": 6048000001000
-    }
+    "cookie": { "httpOnly": false, "sameSite": true, "secure": false, "maxAge": 6048000001000 }
   }
 }

@@ -1,6 +1,6 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2021/02/16 mandic00@live.com
+### **3.0.3** 2021/02/17 mandic00@live.com
 
 ### **3.0.2** 2021/02/16 mandic00@live.com
 - fixed object detection
