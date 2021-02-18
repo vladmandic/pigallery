@@ -8,7 +8,7 @@ import * as hash from '../shared/blockhash.js';
 import config from '../shared/config.js';
 
 const models = {};
-let error = false;
+let error;
 
 export function JSONtoStr(json) {
   if (!json) return '';
@@ -186,6 +186,7 @@ export async function process(name) {
   log.div('process-state', false, `Engine state: ${mem.numBytes.toLocaleString()} bytes ${mem.numTensors.toLocaleString()} tensors ${mem.numDataBuffers.toLocaleString()} buffers ${mem.numBytesInGPU ? mem.numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj = {};
   obj.image = name;
+  let model;
 
   const t0 = window.performance.now();
 
@@ -203,14 +204,15 @@ export async function process(name) {
   const promisesClassify = [];
   try {
     if (!error && models.classify) {
-      for (const model of models.classify) {
+      for (const m of models.classify) {
+        model = m;
         if (config.batchProcessing === 1) promisesClassify.push(await modelClassify.classify(model, image.canvas));
         else promisesClassify.push(modelClassify.classify(model, image.canvas));
       }
     }
   } catch (err) {
-    log.div('process-log', true, `Error classify: ${name}: `, err);
-    error = true;
+    error = err;
+    error.where = 'classify';
   }
   const tc1 = window.performance.now();
 
@@ -219,14 +221,15 @@ export async function process(name) {
   const promisesDetect = [];
   try {
     if (!error && models.detect) {
-      for (const model of models.detect) {
+      for (const m of models.detect) {
+        model = m;
         if (config.batchProcessing === 1) promisesDetect.push(await modelDetect.detect(model, image.canvas));
         else promisesDetect.push(modelDetect.detect(model, image.canvas));
       }
     }
   } catch (err) {
-    log.div('process-log', true, `Error detect: ${name}:`, err);
-    error = true;
+    error = err;
+    error.where = 'detect';
   }
   const td1 = window.performance.now();
 
@@ -235,8 +238,8 @@ export async function process(name) {
     try {
       resClassify = await Promise.all(promisesClassify);
     } catch (err) {
-      log.div('process-log', true, `Error classify: ${name}:`, err);
-      error = true;
+      error = err;
+      error.where = 'classify promise';
     }
     for (const i in resClassify) {
       if (resClassify[i]) {
@@ -250,8 +253,8 @@ export async function process(name) {
     try {
       resDetect = await Promise.all(promisesDetect);
     } catch (err) {
-      log.div('process-log', true, `Error detect: ${name}:`, err);
-      error = true;
+      error = err;
+      error.where = 'detect promise';
     }
     for (const i in resDetect) {
       if (resDetect[i]) {
@@ -267,14 +270,25 @@ export async function process(name) {
   try {
     if (!error && models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
   } catch (err) {
-    log.div('process-log', true, `Error face-api: ${name}:`, err);
-    error = true;
+    error = err;
+    error.where = 'face-api';
+    model = models.faceapi.classify;
   }
   const tp1 = window.performance.now();
 
   const t1 = window.performance.now();
   obj.perf = { total: Math.round(t1 - t0), load: Math.round(ti1 - ti0), classify: Math.round(tc1 - tc0), detect: Math.round(td1 - td0), person: Math.round(tp1 - tp0) };
-  if (error) obj.error = error;
+  if (error) {
+    log.div('process-log', true, `Error processing: <span style="color: lightcoral">${name}</span>`);
+    log.div('process-log', true, `Error during: <span style="color: lightcoral">${error.where}</span>`);
+    log.div('process-log', true, `Error model: <span style="color: lightcoral">${model.name}</span>`);
+    log.div('process-log', true, `Error type: <span style="color: lightcoral">${error.name}</span>`);
+    log.div('process-log', true, `Error message: <span style="color: lightcoral">${error.message}</span>`);
+    log.div('process-log', true, `Error stack: <pre style="color: lightcoral">${error.stack}</pre>`);
+    obj.error = true;
+    // eslint-disable-next-line no-console
+    console.error(error);
+  }
 
   if (!error) {
     fetch('/api/record/put', {

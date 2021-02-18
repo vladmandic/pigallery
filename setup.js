@@ -89,7 +89,7 @@ async function main() {
   // npm optimize
   npm.update = await exec('npm update --depth=10 --json', 'NPM update modules');
   npm.dedupe = await exec('npm dedupe --json', 'NPM deduplicate modules');
-  npm.prune = await exec('npm prune --no-production --json', 'NPM prune unused modules');
+  npm.prune = await exec('npm prune --json', 'NPM prune unused modules');
   npm.audit = await exec('npm audit fix --force --json', 'NPM audit modules');
 
   // delete examples
@@ -99,8 +99,9 @@ async function main() {
   npm.outdated = await exec('npm outdated --depth=5 --json', 'NPM outdated check');
   process.stdout.write(`NPM indirect outdated modules: ${Object.keys(npm.outdated).length}\n`);
   npm.ls = await exec('npm ls --json', 'NPM list full');
-  const meta = npm.prune.audit.metadata;
-  process.stdout.write(`Total dependencies: production=${meta.dependencies} development=${meta.devDependencies} optional=${meta.optionalDependencies}\n`);
+  const meta = npm.prune?.audit?.metadata;
+  if (!meta || !meta.dependencies) process.stdout.write('Cannor analyze dependencies\n');
+  process.stdout.write(`Total dependencies: production=${meta.dependencies || 'N/A'} development=${meta.devDependencies || 'N/A'} optional=${meta.optionalDependencies || 'N/A'}\n`);
 
   // create installation log
   let old = [];

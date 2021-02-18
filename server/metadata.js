@@ -283,7 +283,8 @@ function readDir(folder, match = null, recursive = false) {
       const name = path.join(folder, file);
       const stat = fs.statSync(name);
       if (stat.isFile()) {
-        if (match) {
+        if (global.config.exclude.includes(file)) log.info('FS Exclude:', file);
+        else if (match) {
           if (name.includes(match)) files.push(name);
         } else {
           files.push(name);

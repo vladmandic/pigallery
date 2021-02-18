@@ -20,6 +20,9 @@ Default server configuration is created during setup step and written to `config
     "locations": [
       { "folder": "samples/", "match": ".jp", "recursive": true }
     ],
+    // list of images to exclude from processing (applies only to file names, not folder names), case-sensitive
+    "exclude": [
+    ]
     "server": {
       "logFile": "pigallery.log",                     // application log files
       "authForce": true,                              // force user authentication or allow anounymous users
