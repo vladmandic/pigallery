@@ -66,6 +66,8 @@ export async function load() {
   log.div('process-log', true, `  ${JSONtoStr(config.models.person)}`);
   const t0 = window.performance.now();
 
+  log.div('process-log', true, 'TensorFlow models loading ...');
+
   models.classify = [];
   if (config.models.classify && config.models.classify.length > 0) {
     for (const cfg of config.models.classify) {
