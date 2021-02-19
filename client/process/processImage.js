@@ -285,6 +285,7 @@ export async function process(name) {
     log.div('process-log', true, `Error type: <span style="color: lightcoral">${error.name}</span>`);
     log.div('process-log', true, `Error message: <span style="color: lightcoral">${error.message}</span>`);
     log.div('process-log', true, `Error stack: <pre style="color: lightcoral">${error.stack}</pre>`);
+    log.server(`Error processing: ${name} during: ${error.where} model: ${model.name} error:${error.name} ${error.message}`);
     obj.error = true;
     // eslint-disable-next-line no-console
     console.error(error);
