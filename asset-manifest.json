@@ -25411,7 +25411,7 @@
       ]
     },
     "client/process/processImage.js": {
-      "bytes": 11579,
+      "bytes": 11705,
       "imports": [
         {
           "path": "client/shared/tf.js",
@@ -25980,7 +25980,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6603905
+      "bytes": 6604032
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -29807,7 +29807,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6620991
+      "bytes": 6621184
     },
     "dist/process/process.js": {
       "imports": [],
@@ -33555,7 +33555,7 @@
           "bytesInOutput": 77
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 6671
+          "bytesInOutput": 6775
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 2288
@@ -33567,7 +33567,7 @@
           "bytesInOutput": 737
         }
       },
-      "bytes": 2202221
+      "bytes": 2202325
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
