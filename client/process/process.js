@@ -14,7 +14,8 @@ const autoReload = false;
 // initial complex image is used to trigger all models thus warming them up
 async function warmupModels() {
   if (stopping) return;
-  log.div('process-log', true, 'TensorFlow models warming up ...');
+  log.div('process-log', true, 'TensorFlow flags: <span style="font-size: 0.6rem">', tf.ENV.flags, '</span>');
+  log.div('process-log', true, 'TensorFlow warming up ...');
   const t0 = window.performance.now();
   const res = await process.process('assets/warmup.jpg');
   if (res.error) {
@@ -23,8 +24,7 @@ async function warmupModels() {
     // setTimeout(() => window.location.replace(`${window.location.origin}?process`), 2500);
   }
   const t1 = window.performance.now();
-  log.div('process-log', true, `TensorFlow models warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
-  log.div('process-log', true, 'TensorFlow flags: <br>', tf.ENV.flags);
+  log.div('process-log', true, `TensorFlow warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
 
 // calls main detectxion and then print results for all images matching spec

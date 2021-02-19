@@ -25411,7 +25411,7 @@
       ]
     },
     "client/process/processImage.js": {
-      "bytes": 11705,
+      "bytes": 11771,
       "imports": [
         {
           "path": "client/shared/tf.js",
@@ -25690,7 +25690,7 @@
       ]
     },
     "client/process/process.js": {
-      "bytes": 5491,
+      "bytes": 5516,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25980,7 +25980,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6604032
+      "bytes": 6604100
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -29807,7 +29807,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6621184
+      "bytes": 6621311
     },
     "dist/process/process.js": {
       "imports": [],
@@ -29871,7 +29871,7 @@
           "bytesInOutput": 1980
         },
         "client/process/process.js": {
-          "bytesInOutput": 3467
+          "bytesInOutput": 3491
         },
         "client/shared/tf.js": {
           "bytesInOutput": 16
@@ -33555,7 +33555,7 @@
           "bytesInOutput": 77
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 6775
+          "bytesInOutput": 6832
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 2288
@@ -33567,7 +33567,7 @@
           "bytesInOutput": 737
         }
       },
-      "bytes": 2202325
+      "bytes": 2202406
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
