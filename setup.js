@@ -101,7 +101,7 @@ async function main() {
   npm.ls = await exec('npm ls --json', 'NPM list full');
   const meta = npm.prune?.audit?.metadata;
   if (!meta || !meta.dependencies) process.stdout.write('Cannor analyze dependencies\n');
-  process.stdout.write(`Total dependencies: production=${meta.dependencies || 'N/A'} development=${meta.devDependencies || 'N/A'} optional=${meta.optionalDependencies || 'N/A'}\n`);
+  else process.stdout.write(`Total dependencies: production=${meta?.dependencies || 'N/A'} development=${meta?.devDependencies || 'N/A'} optional=${meta?.optionalDependencies || 'N/A'}\n`);
 
   // create installation log
   let old = [];
