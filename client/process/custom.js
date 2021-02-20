@@ -1,8 +1,8 @@
 async function nsfw(model, detected) {
   if (!detected) return null;
   const labelPerson = [6, 7];
-  const labelSexy = [1, 2, 3, 4, 8, 9, 10, 15];
-  const labelNude = [0, 5, 11, 12, 13];
+  const labelSexy = [0, 3, 4, 5, 10, 11, 12, 13];
+  const labelNude = [0, 11, 13];
   const found = { person: false, sexy: false, nude: false };
   for (const item of detected) {
     if (labelPerson.includes(item.id)) found.person = true;
