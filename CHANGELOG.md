@@ -1,5 +1,7 @@
 # PiGallery Change Log
 
+### **HEAD -> master, origin/master, origin/HEAD** 2021/02/20 mandic00@live.com
+
 ### **3.0.6** 2021/02/20 mandic00@live.com
 - nudenet labels
 - error logging
