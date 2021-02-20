@@ -1,5 +1,9 @@
 # PiGallery Change Log
 
+### **3.0.5** 2021/02/19 mandic00@live.com
+- improve logging
+- server error logging
+
 ### **3.0.4** 2021/02/18 mandic00@live.com
 - added file exclude, exception handling
 
