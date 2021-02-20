@@ -40,7 +40,7 @@
       ]
     },
     "client/process/custom.js": {
-      "bytes": 733,
+      "bytes": 728,
       "imports": []
     },
     "client/process/modelDetect.js": {
@@ -25980,7 +25980,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6604276
+      "bytes": 6604261
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -25999,7 +25999,7 @@
           "bytesInOutput": 988
         },
         "client/process/custom.js": {
-          "bytesInOutput": 369
+          "bytesInOutput": 366
         },
         "node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 995
@@ -29734,7 +29734,7 @@
           "bytesInOutput": 951
         }
       },
-      "bytes": 2178830
+      "bytes": 2178827
     },
     "dist/index/index.js.map": {
       "imports": [],
@@ -29807,7 +29807,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6621577
+      "bytes": 6621562
     },
     "dist/process/process.js": {
       "imports": [],
@@ -29865,7 +29865,7 @@
           "bytesInOutput": 18348
         },
         "client/process/custom.js": {
-          "bytesInOutput": 372
+          "bytesInOutput": 369
         },
         "client/shared/blockhash.js": {
           "bytesInOutput": 1980
@@ -33567,7 +33567,7 @@
           "bytesInOutput": 737
         }
       },
-      "bytes": 2202563
+      "bytes": 2202560
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
@@ -33601,7 +33601,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7127661
+      "bytes": 7127646
     },
     "dist/video/video.js": {
       "imports": [],
@@ -33668,7 +33668,7 @@
           "bytesInOutput": 1352
         },
         "client/process/custom.js": {
-          "bytesInOutput": 372
+          "bytesInOutput": 369
         },
         "client/video/video.js": {
           "bytesInOutput": 8889
@@ -37391,7 +37391,7 @@
           "bytesInOutput": 6723
         }
       },
-      "bytes": 2440707
+      "bytes": 2440704
     },
     "dist/index/worker.js.map": {
       "imports": [],
