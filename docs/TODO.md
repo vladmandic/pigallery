@@ -7,7 +7,7 @@
 - Move compare to main app as test feature
 - Switch backend DB from NEDB to Mongo
 - Document HTTPrest API
-- Host large models
+- Enable reprocess for specific entries
 
 ## Desired Models
 
