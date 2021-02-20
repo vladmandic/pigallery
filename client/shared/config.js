@@ -16,29 +16,28 @@ const config = {
   squareImage: false,      // resize proportional to the original image or to a square image
   registerPWA: true,       // register PWA service worker?
   facing: true,            // webcam facing front or back
-  memory: false,           // set webgl memory hard limit
+  memory: true,           // set webgl memory hard limit
   // webgl configuration
   webgl: {
-    WEBGL_DELETE_TEXTURE_THRESHOLD: 0,
     // WEBGL_CHECK_NUMERICAL_PROBLEMS: false // Whether to check for numerical representation problems
-    WEBGL_CPU_FORWARD: true, // Whether the WebGL backend will sometimes forward ops to the CPU
-    // WEBGL_FORCE_F16_TEXTURES: true, // Whether the WebGL backend will always use f16 textures for rendering
-    // WEBGL_PACK_NORMALIZATION // Whether we will pack the batchnormalization op
-    // WEBGL_PACK_CLIP // Whether we will pack the clip op
-    // WEBGL_PACK_DEPTHWISECONV: false, // Whether we will pack the depthwise conv op // TODO: https://github.com/tensorflow/tfjs/issues/1679
-    // WEBGL_PACK_BINARY_OPERATIONS // Whether we will pack binary ops
-    // WEBGL_PACK_UNARY_OPERATIONS // Whether we will pack unary ops
-    // WEBGL_PACK_ARRAY_OPERATIONS // Whether we will pack array ops
-    // WEBGL_PACK_IMAGE_OPERATIONS // Whether we will pack image ops
-    // WEBGL_PACK_REDUCE // Whether we will pack reduce ops
-    // WEBGL_LAZILY_UNPACK // Whether packed WebGL kernels lazily unpack their outputs
     // WEBGL_CONV_IM2COL // Whether we will use the im2col algorithm to speed up convolutions
-    // WEBGL_MAX_TEXTURE_SIZE // The maximum texture dimension
-    // WEBGL_MAX_TEXTURES_IN_SHADER // The maximum texture dimension
+    // WEBGL_CPU_FORWARD: true, // Whether the WebGL backend will sometimes forward ops to the CPU
+    // WEBGL_DELETE_TEXTURE_THRESHOLD: 0, // delete textures upon disposal is used memory is larger than this rather than making them available for reuse // Math.trunc(3.5 * 1024 * 1024 * 1024)
     // WEBGL_DISJOINT_QUERY_TIMER_EXTENSION_VERSION: // The disjoint_query_timer extension version. 0: disabled, 1: EXT_disjoint_timer_query, 2: EXT_disjoint_timer_query_webgl2
     // WEBGL_FENCE_API_ENABLED // Whether the fence API is available
+    // WEBGL_FORCE_F16_TEXTURES: true, // Whether the WebGL backend will always use f16 textures for rendering
+    // WEBGL_LAZILY_UNPACK // Whether packed WebGL kernels lazily unpack their outputs
+    // WEBGL_MAX_TEXTURE_SIZE // The maximum texture dimension
+    // WEBGL_MAX_TEXTURES_IN_SHADER // The maximum texture dimension
+    // WEBGL_PACK_ARRAY_OPERATIONS // Whether we will pack array ops
+    // WEBGL_PACK_BINARY_OPERATIONS // Whether we will pack binary ops
+    // WEBGL_PACK_CLIP // Whether we will pack the clip op
+    // WEBGL_PACK_DEPTHWISECONV: false, // Whether we will pack the depthwise conv op // TODO: https://github.com/tensorflow/tfjs/issues/1679
+    // WEBGL_PACK_IMAGE_OPERATIONS // Whether we will pack image ops
+    // WEBGL_PACK_NORMALIZATION // Whether we will pack the batchnormalization op
+    // WEBGL_PACK_REDUCE // Whether we will pack reduce ops
+    // WEBGL_PACK_UNARY_OPERATIONS // Whether we will pack unary ops
     // WEBGL_SIZE_UPLOAD_UNIFORM: // Tensors with size <= than this will be uploaded as uniforms, not textures. default 4
-    // WEBGL_DELETE_TEXTURE_THRESHOLD: Math.trunc(3.5 * 1024 * 1024 * 1024), // delete textures upon disposal is used memory is larger than this rather than making them available for reuse
   },
   ui: {
     scale: 100,

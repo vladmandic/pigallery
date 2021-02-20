@@ -1,5 +1,10 @@
 # PiGallery Change Log
 
+### **3.0.6** 2021/02/20 mandic00@live.com
+- nudenet labels
+- error logging
+- setup exception handling
+
 ### **3.0.5** 2021/02/19 mandic00@live.com
 - improve logging
 - server error logging

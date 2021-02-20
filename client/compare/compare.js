@@ -42,7 +42,7 @@ async function init() {
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
   for (const [key, val] of Object.entries(config.default.webgl)) {
-    log.debug('WebGL Setting', key, val);
+    log.debug('  WebGL Setting', key, val);
     tf.ENV.set(key, val);
   }
   log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.default.batchProcessing} image resize: ${config.default.maxSize}px shape: ${config.default.squareImage ? 'square' : 'native'}`);

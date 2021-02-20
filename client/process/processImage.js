@@ -37,13 +37,8 @@ export async function load() {
   log.div('process-log', true, 'Starting Image Analsys');
   log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
   await resetBackend(config.backEnd);
-  tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
-  for (const [key, val] of Object.entries(config.webgl)) {
-    log.debug('WebGL Setting', key, val);
-    tf.ENV.set(key, val);
-  }
 
   if (!config.models) {
     const req = await fetch('/api/models/get');
@@ -54,6 +49,16 @@ export async function load() {
   log.div('process-log', true, `  Backend: ${tf.getBackend().toUpperCase()}`);
   log.div('process-log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
   log.div('process-log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
+
+  if (config.memory) {
+    log.div('process-log', true, '  WebGL: Enabling memory deallocator');
+    tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
+  }
+  for (const [key, val] of Object.entries(config.webgl)) {
+    log.div('process-log', true, '  WebGL Flag', key, val);
+    tf.ENV.set(key, val);
+  }
+
   log.div('process-log', true, 'Image Classification models:');
   for (const model of config.models.classify) {
     log.div('process-log', true, `  ${JSONtoStr(model)}`);

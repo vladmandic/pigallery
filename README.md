@@ -236,7 +236,7 @@ Collected metadata is additionally analyzed to render human-readable search term
 
 ### Image Processing
 
-- If you get `Error: Failed to compile fragment shader`, you've run out of GPU memory.  
+- If you get `Error: Failed to link vertex and fragment shaders`, you've run out of GPU memory.  
   Just restart processing and it will continue from the last known good result.  
   But if it continues, you need to reduce number of active models or use smaller models.  
 - Model load time can be from few seconds to over a minute depending on model size (in MB)
