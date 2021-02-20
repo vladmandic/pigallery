@@ -282,6 +282,7 @@ export async function process(name) {
   obj.perf = { total: Math.round(t1 - t0), load: Math.round(ti1 - ti0), classify: Math.round(tc1 - tc0), detect: Math.round(td1 - td0), person: Math.round(tp1 - tp0) };
   if (error) {
     log.div('process-log', true, `Error processing: <span style="color: lightcoral">${name}</span>`);
+    log.div('process-log', true, `Natural size: ${obj.naturalSize.width} x ${obj.naturalSize.height} Process size: ${obj.processedSize.width} x ${obj.processedSize.height}`);
     log.div('process-log', true, `Error during: <span style="color: lightcoral">${error.where}</span>`);
     log.div('process-log', true, `Error model: <span style="color: lightcoral">${model.name}</span>`);
     log.div('process-log', true, `Error type: <span style="color: lightcoral">${error.name}</span>`);
