@@ -121,14 +121,15 @@ export function boxes(object) {
     for (const i in object.person) {
       if (object.person[i].box) {
         // draw box around face
-        const x = object.person[i].box.x * resizeX;
-        const y = object.person[i].box.y * resizeY;
-        let width = object.person[i].box.width * resizeX;
-        let height = object.person[i].box.height * resizeY;
+        const x = object.person[i].box[0] * resizeX;
+        const y = object.person[i].box[1] * resizeY;
+        let width = object.person[i].box[2] * resizeX;
+        let height = object.person[i].box[3] * resizeY;
         if (x + width > canvas.width) width = canvas.width - x;
         if (y + height > canvas.height) height = canvas.height - y;
         roundRect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`);
         // draw face points
+        /*
         ctx.fillStyle = 'lightblue';
         ctx.globalAlpha = 0.5;
         const pointSize = 2;
@@ -137,6 +138,7 @@ export function boxes(object) {
           ctx.arc(pt.x * resizeX, pt.y * resizeY, pointSize, 0, 2 * Math.PI);
           ctx.fill();
         }
+        */
         /*
         const jaw = person.boxes.landmarks.getJawOutline() || [];
         const nose = person.boxes.landmarks.getNose() || [];
@@ -248,9 +250,9 @@ export async function show(img) {
   for (const i in object.person) {
     if (object.person[i].age) {
       person += `Person ${1 + parseInt(i)} | 
-          <font color="${window.theme.link}">gender: ${(100 * object.person[i].scoreGender).toFixed(0)}% ${object.person[i].gender}</font> | 
+          <font color="${window.theme.link}">gender: ${(100 * object.person[i].genderScore).toFixed(0)}% ${object.person[i].gender}</font> | 
           <font color="${window.theme.link}">age: ${object.person[i].age.toFixed(1)}</font> | 
-          <font color="${window.theme.link}">emotion: ${(100 * object.person[i].scoreEmotion).toFixed(0)}% ${object.person[i].emotion}<br></font>`;
+          <font color="${window.theme.link}">emotion: ${(100 * object.person[i].emotionScore).toFixed(0)}% ${object.person[i].emotion}<br></font>`;
     }
     if (object.person[i].class) {
       nsfw += `Class: ${(100 * object.person[i].scoreClass).toFixed(0)}% ${object.person[i].class} `;
@@ -282,9 +284,11 @@ export async function show(img) {
   let location = '';
   if (object.location && object.location.city) {
     location += `
-      Location: <font color="${window.theme.link}">${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})</font><br>`;
+      <font color="${window.theme.link}">${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})</font><br>`;
   }
   if (object.exif && object.exif.lat) location += `Coordinates: <a target="_blank" href="https://www.google.com/maps/@${object.exif.lat},${object.exif.lon},15z"> Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)} </a><br>`;
+
+  const conditions = object.tags.filter((a) => (a.conditions)).map((a) => a.conditions);
 
   $('#details-download').off();
   $('#details-download').click(() => window.open(object.image, '_blank'));
@@ -295,11 +299,12 @@ export async function show(img) {
       ${exif}
       <h2>Location</h2>
       ${location}
-      <h2>Dominant Palette</h2>
-      ${getPalette()}
+      <h2>Conditions: ${conditions?.join(', ')}</h2>
       <h2>${classified}</h2>
       <h2>${detected}</h2>
       <h2>${person} ${nsfw}</h2>
+      <h2>Dominant Palette</h2>
+      ${getPalette()}
       ${desc}
       <h2>Tags</h2>
         <i>${log.str(object.tags)}</i>

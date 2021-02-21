@@ -11,7 +11,7 @@ function addDividers(object) {
   if (!window.options.listTitle) return '';
   let divider;
   if (window.options.listDivider === 'simmilarity' && object.simmilarity) {
-    const curr = `${100 - object.simmilarity}%`;
+    const curr = `${object.simmilarity}%`;
     const prev = previous ? `${100 - previous.simmilarity}%` : 'none';
     if (curr !== prev) divider = curr;
   }
