@@ -288,17 +288,15 @@ export async function process(name) {
   const t1 = window.performance.now();
   obj.perf = { total: Math.round(t1 - t0), load: Math.round(ti1 - ti0), classify: Math.round(tc1 - tc0), detect: Math.round(td1 - td0), person: Math.round(tp1 - tp0) };
   if (error) {
-    log.div('process-log', true, `Error processing: <span style="color: lightcoral">${name}</span>`);
-    log.div('process-log', true, `Natural size: ${obj.naturalSize.width} x ${obj.naturalSize.height} Process size: ${obj.processedSize.width} x ${obj.processedSize.height}`);
-    log.div('process-log', true, `Error during: <span style="color: lightcoral">${error.where}</span>`);
-    log.div('process-log', true, `Error model: <span style="color: lightcoral">${model.name}</span>`);
-    log.div('process-log', true, `Error type: <span style="color: lightcoral">${error.name}</span>`);
-    log.div('process-log', true, `Error message: <span style="color: lightcoral">${error.message}</span>`);
-    log.div('process-log', true, `Error stack: <pre style="color: lightcoral">${error.stack}</pre>`);
+    log.div('process-log', true, `Error processing: <span style="color: lightcoral">${name}</span> Natural size: ${obj.naturalSize.width} x ${obj.naturalSize.height} Process size: ${obj.processedSize.width} x ${obj.processedSize.height}`);
+    log.div('process-log', true, `Error during: ${error.where} model: ${model.name} error type: <span style="color: lightcoral">${error.name}</span> message: <span style="color: lightcoral">${error.message}</span>`);
+    // log.div('process-log', true, `Error stack: <pre style="color: lightcoral">${error.stack}</pre>`);
     log.server(`Error processing: ${name} during: ${error.where} model: ${model.name} error:${error.name} ${error.message}`);
-    obj.error = true;
+    // ignore NudeNet TypeError: Cannot read property '0' of undefined
     // eslint-disable-next-line no-console
     console.error(error);
+    if (model.name !== 'NudeNet') obj.error = true;
+    else error = null;
   }
 
   if (!error) {

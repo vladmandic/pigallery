@@ -25381,7 +25381,7 @@
       ]
     },
     "node_modules/@vladmandic/face-api/dist/face-api.esm-nobundle.js": {
-      "bytes": 82178,
+      "bytes": 82227,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/index.js",
@@ -25411,7 +25411,7 @@
       ]
     },
     "client/process/processImage.js": {
-      "bytes": 12226,
+      "bytes": 12115,
       "imports": [
         {
           "path": "client/shared/tf.js",
@@ -25980,7 +25980,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6797295
+      "bytes": 6797358
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -29725,7 +29725,7 @@
           "bytesInOutput": 846
         },
         "node_modules/@vladmandic/face-api/dist/face-api.esm-nobundle.js": {
-          "bytesInOutput": 82222
+          "bytesInOutput": 82294
         },
         "client/shared/config.js": {
           "bytesInOutput": 7069
@@ -29734,7 +29734,7 @@
           "bytesInOutput": 1965
         }
       },
-      "bytes": 5996546
+      "bytes": 5996618
     },
     "dist/index/index.js.map": {
       "imports": [],
@@ -29807,7 +29807,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 6816103
+      "bytes": 6816068
     },
     "dist/process/process.js": {
       "imports": [],
@@ -29880,7 +29880,7 @@
           "bytesInOutput": 8570
         },
         "node_modules/@vladmandic/face-api/dist/face-api.esm-nobundle.js": {
-          "bytesInOutput": 102150
+          "bytesInOutput": 102200
         },
         "node_modules/@tensorflow/tfjs/dist/index.js": {
           "bytesInOutput": 14445
@@ -33555,7 +33555,7 @@
           "bytesInOutput": 846
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 11471
+          "bytesInOutput": 11192
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 3848
@@ -33567,7 +33567,7 @@
           "bytesInOutput": 994
         }
       },
-      "bytes": 6031223
+      "bytes": 6030994
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
