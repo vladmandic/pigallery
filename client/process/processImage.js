@@ -1,6 +1,6 @@
 import { tf } from '../shared/tf.js';
 // eslint-disable-next-line import/order
-import * as faceapi from '@vladmandic/face-api/dist/face-api.esm-nobundle.js';
+import Human from '@vladmandic/human/dist/human.esm-nobundle.js';
 import * as log from '../shared/log.js';
 import * as modelClassify from './modelClassify.js';
 import * as modelDetect from './modelDetect.js';
@@ -35,28 +35,10 @@ async function resetBackend(backendName) {
 
 export async function load() {
   log.div('process-log', true, 'Starting Image Analsys');
-  log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
-  await resetBackend(config.backEnd);
-  await tf.enableProdMode();
-  tf.ENV.set('DEBUG', false);
 
   if (!config.models) {
     const req = await fetch('/api/models/get');
     if (req && req.ok) config.models = await req.json();
-  }
-
-  log.div('process-log', true, 'Configuration:');
-  log.div('process-log', true, `  Backend: ${tf.getBackend().toUpperCase()}`);
-  log.div('process-log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
-  log.div('process-log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
-
-  if (config.memory) {
-    log.div('process-log', true, '  WebGL: Enabling memory deallocator');
-    tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
-  }
-  for (const [key, val] of Object.entries(config.webgl)) {
-    log.div('process-log', true, '  WebGL Flag', key, val);
-    tf.ENV.set(key, val);
   }
 
   log.div('process-log', true, 'Image Classification models:');
@@ -72,6 +54,12 @@ export async function load() {
   const t0 = window.performance.now();
 
   log.div('process-log', true, 'TensorFlow models loading ...');
+
+  if (config.models.person) {
+    const human = new Human(config.models.person);
+    await human.load(config.models.person);
+    models.human = human;
+  }
 
   models.classify = [];
   if (config.models.classify && config.models.classify.length > 0) {
@@ -89,58 +77,26 @@ export async function load() {
     }
   }
 
-  if (config.models.person[0]) {
-    const options = config.models.person[0];
-    if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
-    else await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
-    await faceapi.nets.ageGenderNet.load(options.modelPath);
-    await faceapi.nets.faceLandmark68Net.load(options.modelPath);
-    await faceapi.nets.faceRecognitionNet.load(options.modelPath);
-    await faceapi.nets.faceExpressionNet.load(options.modelPath);
-    models.faceapi = faceapi;
-    if (options.exec === 'yolo') models.faceapi.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
-    else models.faceapi.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
-    // eslint-disable-next-line no-use-before-define
-    models.faceapi.classify = faceapiClassify;
-  }
-
   const t1 = window.performance.now();
   log.div('process-log', true, `TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
+  log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
+  await resetBackend(config.backEnd);
+  await tf.enableProdMode();
+  tf.ENV.set('DEBUG', false);
+  log.div('process-log', true, 'Configuration:');
+  log.div('process-log', true, `  Backend: ${tf.getBackend().toUpperCase()}`);
+  log.div('process-log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
+  log.div('process-log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
+  if (config.memory) {
+    log.div('process-log', true, '  WebGL: Enabling memory deallocator');
+    tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
+  }
+  for (const [key, val] of Object.entries(config.webgl)) {
+    log.div('process-log', true, '  WebGL:', key, val);
+    tf.ENV.set(key, val);
+  }
   const engine = await tf.engine();
   log.div('process-log', true, `TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
-}
-
-function flattenObject(object) {
-  const stripped = {};
-  for (const key of Object.keys(object)) {
-    if (key[0] === '_') stripped[key.substr(1)] = object[key];
-    else stripped[key] = object[key];
-  }
-  return stripped;
-}
-
-async function faceapiClassify(image) {
-  const results = await models.faceapi.detectAllFaces(image, models.faceapi.options)
-    .withFaceLandmarks()
-    .withFaceExpressions()
-    .withFaceDescriptors()
-    .withAgeAndGender();
-  const faces = [];
-  for (const result of results) {
-    const emotion = Object.entries(result.expressions).reduce(([keyPrev, valPrev], [keyCur, valCur]) => (valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]));
-    const object = {
-      scoreGender: result.genderProbability,
-      gender: result.gender,
-      age: result.age,
-      descriptor: result.descriptor,
-      scoreEmotion: emotion && emotion[1] ? emotion[1] : 0,
-      emotion: emotion && emotion[0] ? emotion[0] : '',
-      box: flattenObject(result.detection.box),
-      points: result.landmarks.positions.map((a) => flattenObject(a)),
-    };
-    faces.push(object);
-  }
-  return faces;
 }
 
 export async function getImage(url, maxSize = config.maxSize) {
@@ -277,11 +233,30 @@ export async function process(name) {
 
   const tp0 = window.performance.now();
   try {
-    if (!error && models.faceapi) obj.person = await models.faceapi.classify(image.canvas);
+    if (!error && models.human) {
+      obj.person = [];
+      const res = await models.human.detect(image.canvas, config.models.person);
+      if (res && res.face) {
+        for (const person of res.face) {
+          obj.person.push({
+            confidence: person.confidence,
+            box: person.box,
+            iris: person.iris,
+            age: person.age,
+            gender: person.gender,
+            genderScore: person.genderConfidence,
+            emotion: person.emotion[0] ? person.emotion[0].emotion : '',
+            emotionScore: person.emotion[0] ? person.emotion[0].score : '',
+            descriptor: person.embedding,
+          });
+        }
+      }
+    }
   } catch (err) {
     error = err;
-    error.where = 'face-api';
-    model = models.faceapi.classify;
+    error.where = 'human';
+    model = models.human;
+    model.name = 'human';
   }
   const tp1 = window.performance.now();
 
@@ -289,13 +264,13 @@ export async function process(name) {
   obj.perf = { total: Math.round(t1 - t0), load: Math.round(ti1 - ti0), classify: Math.round(tc1 - tc0), detect: Math.round(td1 - td0), person: Math.round(tp1 - tp0) };
   if (error) {
     log.div('process-log', true, `Error processing: <span style="color: lightcoral">${name}</span> Natural size: ${obj.naturalSize.width} x ${obj.naturalSize.height} Process size: ${obj.processedSize.width} x ${obj.processedSize.height}`);
-    log.div('process-log', true, `Error during: ${error.where} model: ${model.name} error type: <span style="color: lightcoral">${error.name}</span> message: <span style="color: lightcoral">${error.message}</span>`);
+    log.div('process-log', true, `Error during: ${error?.where} model: ${model?.name} error type: <span style="color: lightcoral">${error?.name}</span> message: <span style="color: lightcoral">${error?.message}</span>`);
     // log.div('process-log', true, `Error stack: <pre style="color: lightcoral">${error.stack}</pre>`);
-    log.server(`Error processing: ${name} during: ${error.where} model: ${model.name} error:${error.name} ${error.message}`);
+    log.server(`Error processing: ${name} during: ${error?.where} model: ${model?.name} error:${error?.name} ${error?.message}`);
     // ignore NudeNet TypeError: Cannot read property '0' of undefined
     // eslint-disable-next-line no-console
     console.error(error);
-    if (model.name !== 'NudeNet') obj.error = true;
+    if (model?.name !== 'NudeNet') obj.error = true;
     else error = null;
     if (!error) log.server('Continuing processing due to non-critical error');
   }

@@ -186,11 +186,19 @@ async function simmilarImage(image) {
   busy();
 }
 
+function euclideanDistance(embedding1, embedding2) {
+  if (!embedding1 || !embedding2) return 0;
+  if (embedding1?.length === 0 || embedding2?.length === 0) return 0;
+  if (embedding1?.length !== embedding2?.length) return 0;
+  // general minkowski distance
+  // euclidean distance is limited case where order is 2
+  const order = 2;
+  const distance = 10.0 * ((embedding1.map((val, i) => (val - embedding2[i])).reduce((dist, diff) => dist + (diff ** order), 0) ** (1 / order)));
+  const rounded = Math.trunc(100 * (1 - distance)) / 100;
+  return rounded;
+}
+
 async function simmilarPerson(image) {
-  function euclideanDistance(desc1, desc2) {
-    if (desc1.length !== desc2.length) return 0;
-    return Math.sqrt(desc1.map((val, i) => val - desc2[i]).reduce((res, diff) => res + (diff ** 2), 0));
-  }
   busy('Searching for<br>simmilar people');
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
@@ -203,11 +211,12 @@ async function simmilarPerson(image) {
   }
   for (const i in window.filtered) {
     const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
-    window.filtered[i].simmilarity = target ? Math.round(100 * euclideanDistance(target, descriptor)) : 100;
+    window.filtered[i].simmilarity = target ? 100 * euclideanDistance(target, descriptor) : 0;
+    console.log('SIMMILARITY', window.filtered[i].simmilarity);
   }
   window.filtered = window.filtered
-    .filter((a) => ((a.person && a.person[0]) && (a.simmilarity < 55) && (a.person[0].gender === object.person[0].gender)))
-    .sort((a, b) => a.simmilarity - b.simmilarity);
+    .filter((a) => (a.person && a.person[0]) && (a.simmilarity > 50))
+    .sort((a, b) => b.simmilarity - a.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} persons`);
   list.redraw();
   enumerate.enumerate().then(() => folderHandlers());
