@@ -297,6 +297,7 @@ export async function process(name) {
     console.error(error);
     if (model.name !== 'NudeNet') obj.error = true;
     else error = null;
+    if (!error) log.server('Continuing processing due to non-critical error');
   }
 
   if (!error) {

@@ -37,6 +37,7 @@ async function div(id, append, ...msg) {
     if (append) elem.innerHTML += html + '<br>';
     else elem.innerHTML = html;
     elem.scrollTop = elem.scrollHeight;
+    elem.scrollIntoView(false);
   }
 }
 
