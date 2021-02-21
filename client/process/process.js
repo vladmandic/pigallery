@@ -35,7 +35,7 @@ async function processFiles() {
   log.div('log', true, 'Image database update requested ...');
   log.server('Image DB Update');
   log.div('process-log', true, 'Requesting file list from server ...');
-  log.div('process-state', false, 'Requesting file list from server ...');
+  // log.div('process-state', false, 'Requesting file list from server ...');
   const res = await fetch('/api/file/all');
   const dirs = await res.json();
   let files = [];

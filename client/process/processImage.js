@@ -206,6 +206,8 @@ export async function process(name) {
   obj.thumbnail = image.thumbnail;
   const ti1 = window.performance.now();
 
+  log.debug(`Processing: ${name} size: ${obj.naturalSize.width} x ${obj.naturalSize.height} input: ${obj.processedSize.width} x ${obj.processedSize.height}`);
+
   obj.classify = [];
   const tc0 = window.performance.now();
   const promisesClassify = [];
@@ -275,7 +277,7 @@ export async function process(name) {
 
   const tp0 = window.performance.now();
   try {
-    if (!error && models.faceapi) obj.person = await models.faceapi.classify(image.canvas, 1);
+    if (!error && models.faceapi) obj.person = await models.faceapi.classify(image.canvas);
   } catch (err) {
     error = err;
     error.where = 'face-api';
