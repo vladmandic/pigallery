@@ -1,6 +1,10 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2021/02/21 mandic00@live.com
+### **HEAD -> master** 2021/02/22 mandic00@live.com
+
+### **3.1.1** 2021/02/21 mandic00@live.com
+- error logging
+- switch from faceapi to human
 
 ### **origin/master, origin/HEAD** 2021/02/21 mandic00@live.com
 - exception handling for nudenet
