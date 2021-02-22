@@ -26,10 +26,10 @@
     "mesh": { "modelPath": "@vladmandic/human/models/facemesh.json" },
     "iris": { "modelPath": "@vladmandic/human/models/iris.json" },
     "age": { "modelPath": "@vladmandic/human/models/age-ssrnet-imdb.json" },
-    "gender": { "modelPath": "@vladmandic/human/models/gender-ssrnet-imdb.json" },
+    "gender": { "modelPath": "@vladmandic/human/models/gender.json" },
     "emotion": { "modelPath": "@vladmandic/human/models/emotion-large.json" },
     "embedding": { "modelPath": "@vladmandic/human/models/mobilefacenet.json", "enabled": true }
   } },
-  "video": [],
+"video": [],
   "various": []
 }
