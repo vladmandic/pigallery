@@ -9,7 +9,6 @@ const results = [];
 let id = 0;
 let running = false;
 let stopping = false;
-const autoReload = false;
 
 // initial complex image is used to trigger all models thus warming them up
 async function warmupModels() {
@@ -20,7 +19,7 @@ async function warmupModels() {
   const res = await process.process('assets/warmup.jpg');
   if (res.error) {
     log.div('process-log', true, 'Aborting current run due to error during warmup');
-    if (autoReload) setTimeout(() => window.location.reload(true), 2500);
+    if (config.default.autoreload) setTimeout(() => window.location.reload(true), 2500);
     // setTimeout(() => window.location.replace(`${window.location.origin}?process`), 2500);
   }
   const t1 = window.performance.now();
@@ -59,7 +58,7 @@ async function processFiles() {
   let stuckTimer = new Date();
   const checkAlive = setInterval(() => { // reload window if no progress for 60sec
     const now = new Date();
-    if (autoReload && now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) window.location.reload(true);
+    if (config.default.autoReload && now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) window.location.reload(true);
   }, 10000);
   for (const url of files) {
     if (!error && !stopping) {
@@ -97,7 +96,7 @@ async function processFiles() {
   }
   if (error) {
     log.div('process-log', true, 'Aborting current run due to error');
-    if (autoReload) setTimeout(() => window.location.reload(true), 2500);
+    if (config.default.autoReload) setTimeout(() => window.location.reload(true), 2500);
   }
   log.div('process-active', false, 'Idle ...');
   const p1 = window.performance.now();

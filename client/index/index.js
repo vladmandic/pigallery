@@ -212,7 +212,6 @@ async function simmilarPerson(image) {
   for (const i in window.filtered) {
     const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
     window.filtered[i].simmilarity = target ? 100 * euclideanDistance(target, descriptor) : 0;
-    console.log('SIMMILARITY', window.filtered[i].simmilarity);
   }
   window.filtered = window.filtered
     .filter((a) => (a.person && a.person[0]) && (a.simmilarity > 50))
