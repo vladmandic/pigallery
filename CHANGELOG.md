@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2021/02/21 mandic00@live.com
+### **HEAD -> master** 2021/02/21 mandic00@live.com
+
+### **origin/master, origin/HEAD** 2021/02/21 mandic00@live.com
 - exception handling for nudenet
 
 ### **3.0.7** 2021/02/20 mandic00@live.com
