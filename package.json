@@ -42,7 +42,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "^3.1.0",
     "@tensorflow/tfjs-backend-wasm": "^3.1.0",
-    "@vladmandic/human": "^0.20.8",
+    "@vladmandic/human": "^0.20.10",
     "@vladmandic/pilogger": "^0.2.14",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.1",
