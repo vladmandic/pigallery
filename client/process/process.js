@@ -58,7 +58,7 @@ async function processFiles() {
   let stuckTimer = new Date();
   const checkAlive = setInterval(() => { // reload window if no progress for 60sec
     const now = new Date();
-    if (config.default.autoReload && now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) window.location.reload(true);
+    if (config.default.autoreload && now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) window.location.reload(true);
   }, 10000);
   for (const url of files) {
     if (!error && !stopping) {
@@ -96,7 +96,7 @@ async function processFiles() {
   }
   if (error) {
     log.div('process-log', true, 'Aborting current run due to error');
-    if (config.default.autoReload) setTimeout(() => window.location.reload(true), 2500);
+    if (config.default.autoreload) setTimeout(() => window.location.reload(true), 2500);
   }
   log.div('process-active', false, 'Idle ...');
   const p1 = window.performance.now();
