@@ -25397,7 +25397,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 10940,
+      "bytes": 10926,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25894,7 +25894,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 5262869
+      "bytes": 5262854
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -25940,7 +25940,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 1022787
+      "bytes": 1022772
     },
     "dist/index/index.js": {
       "imports": [],
@@ -26007,7 +26007,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7201370
+      "bytes": 7201355
     },
     "dist/process/process.js": {
       "imports": [],
@@ -29785,7 +29785,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 460855
+      "bytes": 460840
     },
     "dist/prototype/prototype.js": {
       "imports": [],
@@ -29813,7 +29813,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7325761
+      "bytes": 7325746
     },
     "dist/video/video.js": {
       "imports": [],

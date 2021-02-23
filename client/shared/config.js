@@ -4,7 +4,6 @@
 import $ from 'jquery';
 import * as log from './log.js';
 
-// @ts-ignore
 window.debug = true;
 
 // TFJS Configuration
