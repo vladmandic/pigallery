@@ -76,23 +76,32 @@ function getPalette() {
 export function clear() {
   const canvas = document.getElementById('popup-canvas');
   if (!canvas) return;
-  canvas.style.position = 'absolute';
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 // draw boxes for detected objects, faces and face elements
 let last;
-export function boxes(object) {
+export function drawBoxes(object) {
   if (object) last = object;
   const img = document.getElementsByClassName('iv-image')[0];
   const canvas = document.getElementById('popup-canvas');
   if (!canvas) return;
-  canvas.style.position = 'absolute';
   canvas.style.left = `${img.offsetLeft}px`;
   canvas.style.top = `${img.offsetTop}px`;
-  canvas.width = Math.min($('#popup-image').width(), $('.iv-image').width()); // img.width;
-  canvas.height = Math.min($('#popup-image').height(), $('.iv-image').height()); // img.height;
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  // move details panel to side or bottom depending on screen aspect ratio
+  const ratioScreen = $('#popup').width() / $('#popup').height();
+  const ratioImage = last.naturalSize.width / last.naturalSize.height;
+  const vertical = ratioImage < ratioScreen;
+  $('#popup').css('display', vertical ? 'flex' : 'block');
+  if (vertical) $('#popup-details').height(`${document.getElementById('popup').clientHeight}px`);
+  else $('#popup-details').height(`${document.getElementById('popup').clientHeight - document.getElementById('popup-canvas').clientHeight}px`);
+  // canvas.style.width = `${canvas.width}px`;
+  // canvas.style.height = `${canvas.height}px`;
+
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (!object) object = last;
@@ -158,29 +167,19 @@ async function resizeDetailsImage(object) {
   if (object) last = object;
   if (!last) return;
   // wait for image to be loaded silly way as on load event doesn't trigger consistently
-  const img = document.getElementsByClassName('iv-image');
-  if (!img || !img[0] || !img[0].complete) {
+  const img = document.getElementsByClassName('iv-image')[0];
+  if (!img || !img.complete) {
     setTimeout(() => resizeDetailsImage(object), 25);
   } else {
-    // move details panel to side or bottom depending on screen aspect ratio
-    const ratioScreen = $('#popup').width() / $('#popup').height();
-    const ratioImage = last.naturalSize.width / last.naturalSize.height;
-    const vertical = ratioImage < (ratioScreen + 0.3);
-    $('#popup').css('display', vertical ? 'flex' : 'block');
     // resize panels
     $('.iv-image').css('cursor', 'zoom-in');
-    document.getElementById('popup-image').style.width = vertical ? `${100 - window.options.listDetailsWidth}%` : '100%';
-    $('#popup-image').width(vertical && window.options.viewDetails ? `${100 - window.options.listDetailsWidth}%` : '100%');
-    $('#popup-image').height(!vertical && window.options.viewDetails ? `${100 - window.options.listDetailsWidth}%` : '100%');
-    $('#popup-details').width(vertical && window.options.viewDetails ? `${window.options.listDetailsWidth}%` : '100%');
-    $('#popup-details').height(!vertical && window.options.viewDetails ? `${window.options.listDetailsWidth}%` : '100%');
-    const details = window.options.viewDetails ? 100.0 - window.options.listDetailsWidth : 100;
-    const zoomX = $('#popup').width() * (vertical ? details / 100 : 1) / $('.iv-image').width();
-    const zoomY = $('#popup').height() * (!vertical ? details / 100 : 1) / $('.iv-image').height();
-    const zoom = Math.trunc(viewer._state.zoomValue * Math.min(zoomX, zoomY));
-    await viewer.zoom(zoom);
-    //  draw detection boxes and faces
-    boxes();
+    // const details = window.options.viewDetails ? 100.0 - window.options.listDetailsWidth : 100;
+    // const zoomX = document.getElementById('popup').clientWidth * (vertical ? details / 100 : 1) / img.clientWidth;
+    // const zoomY = document.getElementById('popup').clientHeight * (!vertical ? details / 100 : 1) / img.clientHeight;
+    // const zoom = Math.trunc(viewer.state.zoomValue * Math.min(zoomX, zoomY));
+    // draw detection boxes and faces
+    await viewer.zoom(100);
+    await drawBoxes();
   }
 }
 
@@ -219,15 +218,12 @@ export async function show(img) {
   $('#details-desc').removeClass('fa-comment fa-comment-slash');
   $('#details-desc').addClass(window.options.viewDetails ? 'fa-comment' : 'fa-comment-slash');
   $('#details-boxes').removeClass('fa-store fa-store-slash');
-  $('#details-boxes').addClass(window.options.viewBoxes ? 'fa-comment' : 'fa-comment-slash');
+  $('#details-boxes').addClass(window.options.viewBoxes ? 'fa-store' : 'fa-store-slash');
   $('#details-faces').removeClass('fa-head-side-cough fa-head-side-cough-slash');
   $('#details-faces').addClass(window.options.viewFaces ? 'fa-head-side-cough' : 'fa-head-side-cough-slash');
 
   const el = document.getElementById('popup-image');
-  if (!viewer) {
-    viewer = new ImageViewer(el, { zoomValue: 500, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
-    window.viewer = viewer;
-  }
+  if (!viewer) viewer = new ImageViewer(el, { zoomValue: 100, minZoom: 10, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
   await viewer.load(object.thumbnail, img);
   resizeDetailsImage(object);
 
@@ -235,11 +231,11 @@ export async function show(img) {
   if (el) {
     el.addEventListener('touchstart', () => clear(), { passive: true });
     el.addEventListener('mousedown', () => clear(), { passive: true });
-    el.addEventListener('touchend', () => boxes(object), { passive: true });
-    el.addEventListener('mouseup', () => boxes(object), { passive: true });
-    el.addEventListener('dblclick', () => setTimeout(() => boxes(object), 200), { passive: true });
-    el.addEventListener('wheel', () => setTimeout(() => boxes(object), 200), { passive: true });
-    el.addEventListener('mousewheel', () => setTimeout(() => boxes(object), 200), { passive: true });
+    el.addEventListener('touchend', () => drawBoxes(object), { passive: true });
+    el.addEventListener('mouseup', () => drawBoxes(object), { passive: true });
+    el.addEventListener('dblclick', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
+    el.addEventListener('wheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
+    el.addEventListener('mousewheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
   }
 
   let classified = 'Classified ';
@@ -314,6 +310,7 @@ export async function show(img) {
       </div>
     `;
   if (window.options.viewDetails) $('#popup-details').html(html);
+  document.getElementById('popup-details').scrollTop = 0;
   $('#popup-details').toggle(window.options.viewDetails);
 }
 
@@ -384,7 +381,7 @@ export function handlers() {
   $('#popup').on('click', (e) => {
     // if (event.screenX < 20) showNextDetails(true);
     // else if (event.clientX > $('#popup').width() - 20) showNextDetails(false);
-    if (!e.target.className.includes('iv-large-image') && !e.target.className.includes('iv-snap-handle') && !e.target.className.includes('iv-snap-view')) {
+    if (!e.target.className.startsWith('iv-')) {
       clear();
       $('#popup').toggle('fast');
       $('#optionsview').toggle(false);
@@ -417,14 +414,14 @@ export function handlers() {
   $('#details-boxes').on('click', () => {
     $('#details-boxes').toggleClass('fa-store fa-store-slash');
     window.options.viewBoxes = !window.options.viewBoxes;
-    boxes();
+    drawBoxes();
   });
 
   // navbar details show/hide faces
   $('#details-faces').on('click', () => {
     $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
     window.options.viewFaces = !window.options.viewFaces;
-    boxes();
+    drawBoxes();
   });
 
   // navbar details download image
