@@ -174,7 +174,7 @@ async function simmilarImage(image) {
   busy('Searching for<br>simmilar images');
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
-  const object = window.filtered.find((a) => a.image === decodeURI(image));
+  const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
   for (const img of window.filtered) img.simmilarity = hash.distance(img.phash, object.phash);
   window.filtered = window.filtered
     .filter((a) => a.simmilarity < 70)
@@ -202,7 +202,7 @@ async function simmilarPerson(image) {
   busy('Searching for<br>simmilar people');
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
-  const object = window.filtered.find((a) => a.image === decodeURI(image));
+  const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
   const descriptor = (object.person && object.person[0] && object.person[0].descriptor) ? new Float32Array(Object.values(object.person[0].descriptor)) : null;
   if (!descriptor) {
     log.debug(t0, 'Simmilar Search aborted as no person found in image');
@@ -227,7 +227,7 @@ async function simmilarClasses(image) {
   busy('Searching for<br>simmilar classes');
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
-  const object = window.filtered.find((a) => a.image === decodeURI(image));
+  const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
 
   const valid = ['classified', 'detected', 'camera', 'conditions', 'zoom', 'near'];
   const tags = object.tags.filter((obj) => valid.includes(Object.keys(obj)[0])).map((a) => Object.values(a)[0]);
