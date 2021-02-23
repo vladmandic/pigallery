@@ -48,10 +48,10 @@ async function folderHandlers() {
   });
   $('.folder').off();
   $('.folder').on('click', async (evt) => {
-    $('.folder').off();
     const path = $(evt.target).attr('tag');
-    const type = evt.target.getAttribute('type');
     if (!path || path.length < 1) return;
+    $('.folder').off();
+    const type = evt.target.getAttribute('type');
     const t0 = window.performance.now();
     busy(`Selected ${type}<br>${path}`);
     switch (type) {
