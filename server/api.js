@@ -21,7 +21,7 @@ function api(app) {
 
   app.get('/api/log/put', (req, res) => {
     res.status(200).send('true');
-    const msg = decodeURI(req.query.msg || '').replace(/\s+/g, ' ');
+    const msg = decodeURIComponent(req.query.msg || '').replace(/\s+/g, ' ');
     log.info('API/Log', sign(req), msg);
   });
 
@@ -230,7 +230,7 @@ function api(app) {
   });
 
   app.get(`${global.config.server.mediaRoot}/*`, async (req, res) => {
-    const fileName = decodeURI(req.url);
+    const fileName = decodeURIComponent(req.url);
     if (fileName.startsWith('/')) fileName.substr(1);
     if (!fileName.startsWith(req.session.root)) {
       res.sendStatus(401);

@@ -204,8 +204,11 @@ export async function show(img) {
     return;
   }
   log.debug(t0, `Loading image: ${img}`);
-  const object = window.filtered.find((a) => a.image === decodeURI(img));
-  if (!object) return;
+  const object = window.filtered.find((a) => a.image === decodeURIComponent(img));
+  if (!object) {
+    log.debug(t0, `Could not find image: ${decodeURIComponent(img)}`);
+    return;
+  }
 
   log.debug(null, 'Details for object', object);
 
@@ -320,7 +323,7 @@ export async function next(left) {
   const img = $('.iv-image');
   if (!img || img.length < 1) return;
   const url = new URL(img[0].src);
-  let id = window.filtered.findIndex((a) => a.image === decodeURI(url.pathname.substr(1)));
+  let id = window.filtered.findIndex((a) => a.image === decodeURIComponent(url.pathname.substr(1)));
   if (id === -1) return;
   id = left ? id - 1 : id + 1;
   if (id < 0) id = window.filtered.length - 1;

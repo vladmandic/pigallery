@@ -87,6 +87,7 @@ export async function load() {
   log.div('process-log', true, `  Backend: ${tf.getBackend().toUpperCase()}`);
   log.div('process-log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
   log.div('process-log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
+  log.div('process-log', true, `  Auto re-load on error: ${config.autoreload}`);
   if (config.memory) {
     log.div('process-log', true, '  WebGL: Enabling memory deallocator');
     tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);

@@ -26,7 +26,7 @@ async function debug(...msg) {
 
 async function server(...msg) {
   debug(...msg);
-  fetch(`/api/log/put?msg=${encodeURI(str(...msg))}`);
+  fetch(`/api/log/put?msg=${encodeURIComponent(str(...msg))}`);
 }
 
 async function div(id, append, ...msg) {

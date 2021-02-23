@@ -100,7 +100,7 @@ function printResult(object) {
   desc.id = object.id;
   desc.style = `display: ${window.options.listDetails ? 'block' : 'hidden'}`;
   desc.innerHTML = `
-    <p class="listtitle">${decodeURI(object.image).replace(root, '')}</p>
+    <p class="listtitle">${decodeURIComponent(object.image).replace(root, '')}</p>
     ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
     ${location}<br>
     ${classified}<br>
