@@ -215,7 +215,7 @@ window.options = {
 async function setTheme() {
   window.theme = window.themes[window.options.theme];
   log.debug(null, 'Options:', window.options);
-  log.debug(null, `Theme: ${window.theme?.name} ${window.options.theme}`);
+  log.debug(null, `Theme: ${window.theme?.name} ${window.options.theme}`, window.theme);
   if (!window.theme) return;
   document.documentElement.style.setProperty('--body', window.theme.body);
   document.documentElement.style.setProperty('--background', window.theme.background);

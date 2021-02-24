@@ -204,7 +204,7 @@ export async function run(input, config, objects) {
   ctx = canvas.getContext('2d');
 
   draw.clear(canvas);
-  // if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
+  if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
   // else ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
 
   if (result.face) drawFace(result.face, config.ui);

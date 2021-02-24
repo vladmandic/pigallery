@@ -35,6 +35,7 @@ async function cameraStart(play = true) {
   const track = stream.getVideoTracks()[0];
   if (track.getCapabilities && track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: '0' });
   video.srcObject = stream;
+  document.getElementById('status').innerText = 'ready';
   if (play) {
     panzoom(document.getElementById('video'), { zoomSpeed: 0.025, minZoom: 0.5, maxZoom: 2.0 });
     document.getElementById('menu-startstop').classList.remove('fa-play-circle');
@@ -89,7 +90,7 @@ async function cameraSetup() {
     log.debug('Camera Settings: ', settings);
     event.stopPropagation();
     run.main(config.default, objects);
-    document.getElementById('status').innerText = 'loading model: Human ...';
+    // document.getElementById('status').innerText = 'loading model: Human ...';
   }, true);
 }
 
@@ -97,7 +98,7 @@ function initHumanConfig() {
   if (!config.default.human) {
     const human = new Human();
     config.default.human = JSON.parse(JSON.stringify(human.config));
-    config.default.human.enabled = true;
+    config.default.human.face.enabled = false;
     config.default.human.face.detector.modelPath = '@vladmandic/human/models/blazeface-back.json';
     config.default.human.face.mesh.modelPath = '@vladmandic/human/models/facemesh.json';
     config.default.human.face.iris.modelPath = '@vladmandic/human/models/iris.json';
@@ -105,7 +106,9 @@ function initHumanConfig() {
     config.default.human.face.gender.modelPath = '@vladmandic/human/models/gender.json';
     config.default.human.face.emotion.modelPath = '@vladmandic/human/models/emotion-large.json';
     config.default.human.face.embedding.modelPath = '@vladmandic/human/models/mobilefacenet.json';
+    config.default.human.body.enabled = false;
     config.default.human.body.modelPath = '@vladmandic/human/models/posenet.json';
+    config.default.human.hand.enabled = false;
     config.default.human.hand.detector.modelPath = '@vladmandic/human/models/handdetect.json';
     config.default.human.hand.skeleton.modelPath = '@vladmandic/human/models/handskeleton.json';
   }
@@ -119,7 +122,7 @@ async function menuSetup() {
   initHumanConfig();
   objects.menus.model = new Menu(document.body, '', null, { background: 'var(--body)' });
   objects.menus.model.addLabel('Human Detection');
-  objects.menus.model.addBool('Human Detection', config.default.human, 'enabled');
+  // objects.menus.model.addBool('Human Detection', config.default.human, 'enabled');
   objects.menus.model.addBool('Face Detect', config.default.human.face, 'enabled');
   objects.menus.model.addBool('Face Mesh', config.default.human.face.mesh, 'enabled');
   objects.menus.model.addBool('Face Iris', config.default.human.face.iris, 'enabled');
