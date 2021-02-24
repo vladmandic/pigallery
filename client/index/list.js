@@ -12,7 +12,7 @@ function addDividers(object) {
   let divider;
   if (window.options.listDivider === 'simmilarity' && object.simmilarity) {
     const curr = `${object.simmilarity}%`;
-    const prev = previous ? `${100 - previous.simmilarity}%` : 'none';
+    const prev = previous ? `${previous.simmilarity}%` : 'none';
     if (curr !== prev) divider = curr;
   }
   if (window.options.listDivider === 'month') {
@@ -79,10 +79,11 @@ function printResult(object) {
   const thumb = document.createElement('div');
   thumb.className = 'col thumbnail';
   thumb.id = object.id;
-  const square = window.options.listThumbSquare ? `width=${window.options.listThumbSize}px` : '';
+  const fixWidth = window.options.fixWidth ? `width=${window.options.listThumbSize}px` : '';
+  const fixHeight = window.options.fixHeight ? `height=${window.options.listThumbSize}px` : '';
   const title = `${object.image}\n${timestamp}\n${classified}\n${detected}\n${location}\n${camera}`;
   thumb.innerHTML = `
-    <img loading="lazy" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" align="middle" ${square} height=${window.options.listThumbSize}px title="${title}">
+    <img loading="lazy" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" align="middle" ${fixWidth} ${fixHeight} title="${title}">
     <div class="thumb-top">
       <p class="btn-tiny fa fa-file-archive" onclick="deleteImage('${escape(object.image)}');" title="Delete image"></p>
       <p class="btn-tiny fa fa-file-image" onclick="details.show('${escape(object.image)}');" title="View image details"></p>

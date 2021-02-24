@@ -154,8 +154,11 @@ window.options = {
   get listSortOrder() { return localStorage.getItem('listSortOrder') || 'numeric-down'; },
   set listSortOrder(val) { localStorage.setItem('listSortOrder', val); },
 
-  get listThumbSquare() { return localStorage.getItem('listThumbSquare') ? localStorage.getItem('listThumbSquare') === 'true' : true; },
-  set listThumbSquare(val) { localStorage.setItem('listThumbSquare', val.toString()); },
+  get fixWidth() { return localStorage.getItem('fixWidth') ? localStorage.getItem('fixWidth') === 'true' : true; },
+  set fixWidth(val) { localStorage.setItem('fixWidth', val.toString()); },
+
+  get fixHeight() { return localStorage.getItem('fixHeight') ? localStorage.getItem('fixHeight') === 'true' : true; },
+  set fixHeight(val) { localStorage.setItem('fixHeight', val.toString()); },
 
   get listTitle() { return localStorage.getItem('listTitle') ? localStorage.getItem('listTitle') === 'true' : true; },
   set listTitle(val) { localStorage.setItem('listTitle', val.toString()); },
@@ -209,7 +212,7 @@ window.options = {
   set theme(val) { localStorage.setItem('theme', val.toString()); },
 };
 
-export async function theme() {
+async function setTheme() {
   window.theme = window.themes[window.options.theme];
   log.debug(null, 'Options:', window.options);
   log.debug(null, `Theme: ${window.theme?.name} ${window.options.theme}`);
@@ -226,7 +229,7 @@ export async function theme() {
   document.documentElement.style.setProperty('--inactive', window.theme.inactive);
 }
 
-export async function done() {
+async function done() {
   $('.navbarbutton').animate({ opacity: 1.0 }, 1000);
   $('#btn-user').prop('title', '');
   if (parent.location.href !== location.href) {
@@ -237,4 +240,4 @@ export async function done() {
   }
 }
 
-export { config as default };
+export { config as default, setTheme, done };

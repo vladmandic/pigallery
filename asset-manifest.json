@@ -25393,11 +25393,11 @@
       ]
     },
     "client/shared/blockhash.js": {
-      "bytes": 5557,
+      "bytes": 5653,
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 10926,
+      "bytes": 11093,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25539,7 +25539,7 @@
       ]
     },
     "client/index/list.js": {
-      "bytes": 8669,
+      "bytes": 8728,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25602,7 +25602,7 @@
       ]
     },
     "client/index/options.js": {
-      "bytes": 8035,
+      "bytes": 8226,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25632,7 +25632,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 34764,
+      "bytes": 34791,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25894,7 +25894,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 5262854
+      "bytes": 5263127
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -25928,19 +25928,19 @@
           "bytesInOutput": 6500
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7233
+          "bytesInOutput": 7406
         },
         "client/process/processImage.js": {
           "bytesInOutput": 1928
         }
       },
-      "bytes": 2994736
+      "bytes": 2994909
     },
     "dist/index/index.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 1022772
+      "bytes": 1023640
     },
     "dist/index/index.js": {
       "imports": [],
@@ -25959,7 +25959,7 @@
           "bytesInOutput": 11533
         },
         "client/shared/blockhash.js": {
-          "bytesInOutput": 5605
+          "bytesInOutput": 5709
         },
         "client/index/nearest.js": {
           "bytesInOutput": 3234
@@ -25971,13 +25971,13 @@
           "bytesInOutput": 1552
         },
         "client/index/index.js": {
-          "bytesInOutput": 35166
+          "bytesInOutput": 35193
         },
         "assets/marked.esm.js": {
           "bytesInOutput": 59917
         },
         "client/shared/config.js": {
-          "bytesInOutput": 8734
+          "bytesInOutput": 8910
         },
         "client/index/indexdb.js": {
           "bytesInOutput": 4886
@@ -25992,22 +25992,22 @@
           "bytesInOutput": 993
         },
         "client/index/list.js": {
-          "bytesInOutput": 8821
+          "bytesInOutput": 8880
         },
         "client/index/enumerate.js": {
           "bytesInOutput": 6299
         },
         "client/index/options.js": {
-          "bytesInOutput": 7851
+          "bytesInOutput": 8063
         }
       },
-      "bytes": 558356
+      "bytes": 558934
     },
     "dist/process/process.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7201355
+      "bytes": 7201217
     },
     "dist/process/process.js": {
       "imports": [],
@@ -26068,16 +26068,16 @@
           "bytesInOutput": 773
         },
         "client/shared/blockhash.js": {
-          "bytesInOutput": 5602
+          "bytesInOutput": 5706
         },
         "client/process/process.js": {
-          "bytesInOutput": 4984
+          "bytesInOutput": 4987
         },
         "client/shared/tf.js": {
           "bytesInOutput": 42
         },
         "client/shared/config.js": {
-          "bytesInOutput": 8734
+          "bytesInOutput": 7827
         },
         "node_modules/@tensorflow/tfjs/package.json": {
           "bytesInOutput": 23
@@ -29779,13 +29779,13 @@
           "bytesInOutput": 994
         }
       },
-      "bytes": 6253866
+      "bytes": 6253066
     },
     "dist/prototype/prototype.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 460840
+      "bytes": 461113
     },
     "dist/prototype/prototype.js": {
       "imports": [],
@@ -29798,7 +29798,7 @@
           "bytesInOutput": 1642
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7233
+          "bytesInOutput": 7406
         },
         "client/prototype/prototype.js": {
           "bytesInOutput": 340
@@ -29807,13 +29807,13 @@
           "bytesInOutput": 990
         }
       },
-      "bytes": 230274
+      "bytes": 230447
     },
     "dist/video/video.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7325746
+      "bytes": 7325419
     },
     "dist/video/video.js": {
       "imports": [],
@@ -29883,7 +29883,7 @@
           "bytesInOutput": 773
         },
         "client/video/video.js": {
-          "bytesInOutput": 11948
+          "bytesInOutput": 11950
         },
         "node_modules/@tensorflow/tfjs/package.json": {
           "bytesInOutput": 23
@@ -33600,29 +33600,29 @@
           "bytesInOutput": 12378
         },
         "client/shared/config.js": {
-          "bytesInOutput": 8749
+          "bytesInOutput": 7839
         }
       },
-      "bytes": 6334258
+      "bytes": 6333350
     },
     "dist/index/worker.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 10691
+      "bytes": 10880
     },
     "dist/index/worker.js": {
       "imports": [],
       "exports": [],
       "inputs": {
         "client/shared/blockhash.js": {
-          "bytesInOutput": 5580
+          "bytesInOutput": 5684
         },
         "client/index/worker.js": {
           "bytesInOutput": 780
         }
       },
-      "bytes": 7724
+      "bytes": 7828
     },
     "dist/index/pwa-serviceworker.js.map": {
       "imports": [],

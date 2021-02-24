@@ -175,10 +175,10 @@ async function simmilarImage(image) {
   const t0 = window.performance.now();
   window.options.listDivider = 'simmilarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
-  for (const img of window.filtered) img.simmilarity = hash.distance(img.phash, object.phash);
+  for (const img of window.filtered) img.simmilarity = 100 - Math.trunc(100 * hash.distance(img.phash, object.phash));
   window.filtered = window.filtered
-    .filter((a) => a.simmilarity < 70)
-    .sort((a, b) => a.simmilarity - b.simmilarity);
+    .filter((a) => a.simmilarity > 30)
+    .sort((a, b) => b.simmilarity - a.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} images`);
   list.redraw();
   enumerate.enumerate().then(() => folderHandlers());
@@ -809,7 +809,7 @@ async function main() {
   window.addEventListener('beforeinstallprompt', (evt) => installable(evt));
   if (config.registerPWA) await pwa.register('/dist/index/pwa-serviceworker.js');
   window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
-  await config.theme();
+  await config.setTheme();
   await animate();
   await user.get();
   await showNavbar();
