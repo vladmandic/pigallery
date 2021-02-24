@@ -12,7 +12,7 @@ async function main() {
 async function init() {
   log.debug(window.location.href);
   await user.get();
-  await config.theme();
+  await config.setTheme();
   await main();
   // @ts-ignore
   if (!window.user.admin) {
