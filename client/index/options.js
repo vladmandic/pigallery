@@ -71,7 +71,7 @@ function resetOptions() {
   // eslint-disable-next-line no-use-before-define
   showOptions();
   $('#docs').hide();
-  config.theme();
+  config.setTheme();
   list.redraw();
 }
 
@@ -85,7 +85,8 @@ function saveOptions() {
   window.options.listDetails = $('#listDetails')[0].checked;
   window.options.listTitle = $('#listTitle')[0].checked;
   window.options.listThumbSize = $('#listThumbSize').val();
-  window.options.listThumbSquare = $('#listThumbSquare')[0].checked;
+  window.options.fixWidth = $('#fixWidth')[0].checked;
+  window.options.fixHeight = $('#fixHeight')[0].checked;
   window.options.viewBoxes = $('#viewBoxes')[0].checked;
   window.options.viewFaces = $('#viewFaces')[0].checked;
   window.options.cacheModels = $('#cacheModels')[0].checked;
@@ -101,7 +102,7 @@ function saveOptions() {
   window.options.listShadow = $('#listShadow')[0].checked;
   */
   $('#docs').hide();
-  config.theme();
+  config.setTheme();
   list.redraw();
 }
 
@@ -145,7 +146,8 @@ function userOptions() {
     <label class="label">Show details <input class="options" type="checkbox" id="listDetails" ${window.options.listDetails ? 'checked' : ''} /></label>
     <label class="label">Show group headers <input class="options" type="checkbox" id="listTitle" ${window.options.listTitle ? 'checked' : ''} /></label>
     <label class="label">Thumbnail size <input class="options" type="number" id="listThumbSize" value="${window.options.listThumbSize}" /></label>
-    <label class="label">Use square thumbnails <input class="options" type="checkbox" id="listThumbSquare" ${window.options.listThumbSquare ? 'checked' : ''} /></label>
+    <label class="label">Fix width thumbnails <input class="options" type="checkbox" id="fixWidth" ${window.options.fixWidth ? 'checked' : ''} /></label>
+    <label class="label">Fix height thumbnails <input class="options" type="checkbox" id="fixHeight" ${window.options.fixHeight ? 'checked' : ''} /></label>
 
     <h1>Details view:</h1>
     <label class="label">Draw bounding box around detected objects <input class="options" type="checkbox" id="viewBoxes" ${window.options.viewBoxes ? 'checked' : ''} /></label>
