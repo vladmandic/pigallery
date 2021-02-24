@@ -28,7 +28,7 @@ async function getVideoCanvas(video, canvases, config) {
   return canvases.process;
 }
 
-async function clearAll(canvases) {
+async function clear(canvases) {
   for (const canvas of Object.values(canvases)) {
     log.debug('Clear canvas', canvas);
     draw.clear(canvas);
@@ -108,12 +108,14 @@ async function main(config, objects) {
   // if (res.human.canvas) input = res.human.canvas;
   input.className = 'canvases';
   input.style.display = 'block';
-  // input.id = res.human?.canvas ? 'canvas-processed' : 'canvas-raw';
   input.id = 'canvas-raw';
   document.getElementById('canvases')?.appendChild(input);
 
-  const req = await fetch('/api/models/get');
-  if (req && req.ok) config.models = await req.json();
+  // load model list once
+  if (!config.models) {
+    const req = await fetch('/api/models/get');
+    if (req && req.ok) config.models = await req.json();
+  }
 
   for (const m of config.models.classify) {
     const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
@@ -170,7 +172,7 @@ async function main(config, objects) {
   objects.perf.Tensors = mem.numTensors;
   if (objects.perf['Total time'] > (objects.perf.FirstFrame || 0)) objects.perf.FirstFrame = objects.perf['Total time'];
   updatePerf(config, objects);
-  // get next frame immediately if frame rate above 33
+  // get next frame immediately if frame rate above 33 else slow down processing by 3ms
   if (objects.perf['Total time'] > 3) requestAnimationFrame(() => main(config, objects));
   else setTimeout(() => main(config, objects), 3);
 }
@@ -178,5 +180,5 @@ async function main(config, objects) {
 export {
   main,
   init,
-  clearAll as clear,
+  clear,
 };

@@ -1,8 +1,14 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2021/02/22 mandic00@live.com
+### **HEAD -> master** 2021/02/24 mandic00@live.com
+- video fix
+- perception matching
 
-### **origin/master, origin/HEAD** 2021/02/22 mandic00@live.com
+### **3.1.2** 2021/02/23 mandic00@live.com
+- fix folder selection
+- redo image viewer
+- fix autoreload
+- fix uri encoding
 - changed human config
 - enable auto reload
 

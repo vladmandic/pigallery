@@ -42,12 +42,12 @@
   "dependencies": {
     "@tensorflow/tfjs": "^3.1.0",
     "@tensorflow/tfjs-backend-wasm": "^3.1.0",
-    "@vladmandic/human": "^0.20.10",
+    "@vladmandic/human": "^0.20.11",
     "@vladmandic/pilogger": "^0.2.14",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.1",
     "clean-css": "^5.1.0",
-    "esbuild": "^0.8.50",
+    "esbuild": "^0.8.51",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
@@ -57,7 +57,7 @@
     "nedb-promises": "^4.1.1",
     "node-fetch": "^2.6.1",
     "session-file-store": "^1.5.0",
-    "simple-git": "^2.35.1"
+    "simple-git": "^2.35.2"
   },
   "devDependencies": {
     "@tensorflow/tfjs-node": "^3.1.0",
