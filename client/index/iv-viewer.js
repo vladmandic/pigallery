@@ -2,6 +2,8 @@
 
 // Based on iv-viewer - 2.0.1 Author : Sudhanshu Yadav git+https://github.com/s-yadav/iv-viewer.git
 
+import * as log from '../shared/log.js';
+
 const imageViewHtml = `
   <div class="iv-loader"></div>
   <div class="iv-snap-view">
@@ -647,8 +649,12 @@ class ImageViewer {
   }
 
   refresh() {
-    this.calculateDimensions();
-    this.resetZoom();
+    try {
+      this.calculateDimensions();
+      this.resetZoom();
+    } catch {
+      log.debug('Error in iv-viewer.refresh');
+    }
   }
 
   load(imageSrc, hiResImageSrc) {
@@ -672,10 +678,10 @@ class ImageViewer {
 
 ImageViewer.defaults = {
   zoomValue: 100,
-  minZoom: 10,
+  minZoom: 25,
   maxZoom: 500,
-  zoomStep: 15,
-  zoomWheelStep: 5,
+  zoomStep: 2,
+  zoomWheelStep: 1,
   snapView: true,
   refreshOnResize: true,
   zoomOnMouseWheel: true,

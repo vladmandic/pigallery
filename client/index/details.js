@@ -89,6 +89,8 @@ export function drawBoxes(object) {
   if (!canvas) return;
   canvas.style.left = `${img.offsetLeft}px`;
   canvas.style.top = `${img.offsetTop}px`;
+  canvas.style.width = `${img.width}px`;
+  canvas.style.height = `${img.height}px`;
   canvas.width = img.width;
   canvas.height = img.height;
 
@@ -119,8 +121,8 @@ export function drawBoxes(object) {
       const y = (obj.box?.y || obj.box[1]) * resizeY;
       let width = (obj.box.width || obj.box[2]) * resizeX;
       let height = (obj.box.height || obj.box[3]) * resizeY;
-      if (x + width > canvas.width) width = canvas.width - x;
-      if (y + height > canvas.height) height = canvas.height - y;
+      if (x + width > canvas.clientWidth) width = canvas.clientWidth - x;
+      if (y + height > canvas.clientHeight) height = canvas.clientHeight - y;
       roundRect(ctx, x, y, width, height, 10, 4, 'lightyellow', null, 0.4, obj.class);
     }
   }
