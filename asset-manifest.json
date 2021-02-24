@@ -25637,7 +25637,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 34791,
+      "bytes": 34799,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25946,7 +25946,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 1042963
+      "bytes": 1042981
     },
     "dist/index/index.js": {
       "imports": [],
@@ -25978,7 +25978,7 @@
           "bytesInOutput": 1560
         },
         "client/index/index.js": {
-          "bytesInOutput": 35193
+          "bytesInOutput": 35205
         },
         "assets/marked.esm.js": {
           "bytesInOutput": 59917
@@ -26008,7 +26008,7 @@
           "bytesInOutput": 8063
         }
       },
-      "bytes": 559196
+      "bytes": 559208
     },
     "dist/process/process.js.map": {
       "imports": [],
