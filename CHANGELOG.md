@@ -1,6 +1,10 @@
 # PiGallery Change Log
 
-### **HEAD -> master** 2021/02/24 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2021/02/24 mandic00@live.com
+
+### **3.1.3** 2021/02/24 mandic00@live.com
+- fix video module
+- viewer fix
 - video fix
 - perception matching
 

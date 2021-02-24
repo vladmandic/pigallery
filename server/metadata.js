@@ -326,13 +326,19 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
       if (image && image[0]) {
         const stat = fs.statSync(a);
         if (stat.ctime.getTime() !== image[0].exif.ctime.getTime()) {
-          log.data(`FS ctime updated ${a} ${image[0].exif.ctime} ${stat.ctime}`);
+          log.data(`  FS ctime updated ${a} ${image[0].exif.ctime} ${stat.ctime}`);
           process.push(a);
           updated++;
         } else if (stat.mtime.getTime() !== image[0].exif.mtime.getTime()) {
-          log.data(`FS mtime updated ${a} ${image[0].exif.mtime} ${stat.mtime}`);
+          log.data(`  FS mtime updated ${a} ${image[0].exif.mtime} ${stat.mtime}`);
           process.push(a);
           updated++;
+        /*
+        else if (!image[0].location || !image[0].location.country) {
+          log.data(`  Location data missing ${a}`);
+          process.push(a);
+          updated++;
+        */
         } else processed++;
       } else {
         process.push(a);
@@ -359,6 +365,7 @@ async function checkRecords(list) {
 async function testExif(dir) {
   // eslint-disable-next-line no-console
   console.log('Test', dir);
+  global.config = JSON.parse(fs.readFileSync('./config.json').toString());
   await init();
   /*
   global.db = nedb.create({ filename: global.config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
