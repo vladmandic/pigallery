@@ -1,6 +1,8 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2021/02/24 mandic00@live.com
+### **3.1.4** 2021/02/25 mandic00@live.com
+
+### **origin/master, origin/HEAD** 2021/02/24 mandic00@live.com
 - pwa fix
 
 ### **3.1.3** 2021/02/24 mandic00@live.com
