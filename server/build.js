@@ -87,7 +87,7 @@ async function compile() {
       minifyIdentifiers: false,
       bundle: true,
       sourcemap: true,
-      external: ['fs', 'crypto', 'util', 'string_decoder'],
+      external: ['fs', 'crypto', 'util', 'os', 'string_decoder'],
       logLevel: 'error',
       platform: 'browser',
       target: 'es2018',

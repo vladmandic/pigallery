@@ -1,6 +1,6 @@
 {
   "name": "@vladmandic/pigallery",
-  "version": "3.1.4",
+  "version": "3.2.0",
   "description": "PiGallery: Photo Gallery and Analysis using TensorFlow/JS and EXIF metadata",
   "main": "server/pigallery.js",
   "sideEffects": false,
@@ -42,7 +42,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "^3.2.0",
     "@tensorflow/tfjs-backend-wasm": "^3.2.0",
-    "@vladmandic/human": "^0.20.11",
+    "@vladmandic/human": "^0.30.1",
     "@vladmandic/pilogger": "^0.2.14",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.1",
