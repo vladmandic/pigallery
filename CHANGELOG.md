@@ -1,6 +1,7 @@
 # PiGallery Change Log
 
 ### **HEAD -> master, origin/master, origin/HEAD** 2021/02/24 mandic00@live.com
+- pwa fix
 
 ### **3.1.3** 2021/02/24 mandic00@live.com
 - fix video module
