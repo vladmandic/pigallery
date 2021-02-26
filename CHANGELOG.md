@@ -1,6 +1,9 @@
 # PiGallery Change Log
 
-### **HEAD -> master, origin/master, origin/HEAD** 2021/02/25 mandic00@live.com
+### **3.3.1** 2021/02/26 mandic00@live.com
+- refactoring
+
+### **origin/master, origin/HEAD** 2021/02/25 mandic00@live.com
 
 ### **3.2.1** 2021/02/25 mandic00@live.com
 
