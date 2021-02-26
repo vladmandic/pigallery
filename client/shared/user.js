@@ -19,6 +19,7 @@ export async function get() {
     $('#user').text(window.user.user.split('@')[0]);
     log.div('log', true, `User: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
   } else {
-    window.location.replace('/auth');
+    location.replace('/auth');
   }
+  return window.user;
 }

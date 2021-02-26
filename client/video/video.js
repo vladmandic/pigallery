@@ -28,7 +28,7 @@ async function cameraStart(play = true) {
   const video = document.getElementById('video');
   const constraints = {
     audio: false,
-    video: { width: { ideal: window.innerWidth, max: 3840 }, height: { ideal: window.innerHeight, max: 3840 }, facingMode: config.facing ? 'user' : 'environment' },
+    video: { width: { ideal: window.innerWidth, max: 3840 }, height: { ideal: window.innerHeight, max: 3840 }, facingMode: config.default.facing ? 'user' : 'environment' },
   };
   // const devices = await navigator.mediaDevices.enumerateDevices();
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -224,19 +224,8 @@ async function menuSetup() {
   });
 }
 
-// eslint-disable-next-line no-unused-vars
-async function xhrFetch(url) {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = () => resolve(new Response(xhr.responseText, { status: xhr.status }));
-    xhr.onerror = (err) => reject(new TypeError(err));
-    xhr.open('GET', url);
-    xhr.send(null);
-  });
-}
-
 async function main() {
-  log.debug(window.location.href);
+  log.debug(location.href);
   await user.get();
   await config.setTheme();
   await config.done();

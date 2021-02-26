@@ -136,7 +136,7 @@ export async function scroll() {
   const scrollHeight = $('#results').prop('scrollHeight');
   const bottom = $('#results').scrollTop() + $('#all').height();
   if (((bottom + 16) >= scrollHeight) && (current < window.filtered.length)) {
-    const t0 = window.performance.now();
+    const t0 = performance.now();
     const res = document.getElementById('results');
     const count = Math.min(window.options.listItemCount, window.filtered.length - current);
     let i = current;
@@ -164,10 +164,9 @@ export async function redraw() {
   const dt = new Date();
   const base = new Date(dt.getFullYear(), dt.getMonth(), 0).getTime();
   const hash = Math.trunc((dt.getTime() - base) / 1000);
-  window.location = `#${hash}`;
-  const t0 = window.performance.now();
-  const res = document.getElementById('results');
-  res.innerHTML = '';
+  location.href = `#${hash}`;
+  const t0 = performance.now();
+  document.getElementById('results').innerHTML = '';
   current = 0;
 
   $('#results').off('scroll');

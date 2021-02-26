@@ -110,10 +110,6 @@ export async function detect(model, image, userConfig) {
   if (!model.config.profile) {
     if (model.config.map.classes) res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]);
     else res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores]);
-    // res = await model.executeAsync(imageT);
-    // window.tensor0 = model;
-    // window.tensors1 = res;
-    // window.tensors2 = res.map((a) => a.dataSync());
   } else {
     const memBefore = tf.memory();
     const profileData = await tf.profile(() => model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]));

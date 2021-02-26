@@ -1,11 +1,10 @@
-// @ts-nocheck
-
 const fs = require('fs');
 const chokidar = require('chokidar');
 const log = require('@vladmandic/pilogger');
 const build = require('./build.js');
 
 const monitor = ['config.json', 'package.json', 'server', 'client', 'assets'];
+let config;
 
 async function processChange(f, msg) {
   log.data('Monitor: file', msg, f);
@@ -14,8 +13,8 @@ async function processChange(f, msg) {
   } else if (f.endsWith('.json')) {
     log.info('Reloading configuration');
     try {
-      global.config = JSON.parse(fs.readFileSync('./config.json').toString());
-      global.config.node = JSON.parse(fs.readFileSync('./package.json').toString());
+      config = JSON.parse(fs.readFileSync('./config.json').toString());
+      config.node = JSON.parse(fs.readFileSync('./package.json').toString());
     } catch (err) {
       log.warn('Configuration file cannot be reloaded');
     }
@@ -24,7 +23,8 @@ async function processChange(f, msg) {
   }
 }
 
-async function watch() {
+async function watch(cfg) {
+  config = cfg;
   const watcher = chokidar.watch(monitor, {
     persistent: true,
     ignorePermissionErrors: false,

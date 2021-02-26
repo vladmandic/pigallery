@@ -79,7 +79,7 @@ if (!listening) {
     console.log(ts(), `PWA: ${evt.type}`);
     if (refreshed) return;
     refreshed = true;
-    window.location.reload();
+    location.reload();
   });
 
   listening = true;

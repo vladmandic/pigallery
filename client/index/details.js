@@ -99,7 +99,7 @@ export function drawBoxes(object) {
   const ratioImage = last.naturalSize.width / last.naturalSize.height;
   const vertical = ratioImage < ratioScreen;
   $('#popup').css('display', vertical ? 'flex' : 'block');
-  if (vertical) $('#popup-details').height(`${document.getElementById('popup').clientHeight}px`);
+  if (vertical) $('#popup-details').height(`${document.getElementById('popup')?.clientHeight}px`);
   else $('#popup-details').height(`${document.getElementById('popup').clientHeight - document.getElementById('popup-canvas').clientHeight}px`);
   // canvas.style.width = `${canvas.width}px`;
   // canvas.style.height = `${canvas.height}px`;
@@ -196,7 +196,7 @@ async function hideNavbar() {
 // show details popup
 export async function show(img) {
   hideNavbar();
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   if (!img && last) img = last.image;
   if (!img) return;
   if (window.options.viewRaw) {

@@ -1,4 +1,4 @@
-// heavily based on https://github.com/darkskyapp/sphere-knn
+// based on https://github.com/darkskyapp/sphere-knn
 // simplified and modified to implement persistent lookup array for increased performance
 
 const geo = {};

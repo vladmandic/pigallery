@@ -18,7 +18,7 @@
       ]
     },
     "client/shared/tf.js": {
-      "bytes": 207,
+      "bytes": 131,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/dist/tf.es2017.js",
@@ -27,7 +27,7 @@
       ]
     },
     "client/shared/log.js": {
-      "bytes": 1532,
+      "bytes": 1525,
       "imports": []
     },
     "client/process/modelClassify.js": {
@@ -40,11 +40,11 @@
       ]
     },
     "client/process/custom.js": {
-      "bytes": 728,
+      "bytes": 713,
       "imports": []
     },
     "client/process/modelDetect.js": {
-      "bytes": 8364,
+      "bytes": 8201,
       "imports": [
         {
           "path": "client/shared/tf.js",
@@ -25397,7 +25397,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 11107,
+      "bytes": 11108,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25410,7 +25410,7 @@
       ]
     },
     "client/process/processImage.js": {
-      "bytes": 10998,
+      "bytes": 10914,
       "imports": [
         {
           "path": "client/shared/tf.js",
@@ -25443,7 +25443,7 @@
       ]
     },
     "client/compare/compare.js": {
-      "bytes": 12860,
+      "bytes": 12762,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25480,7 +25480,7 @@
       "imports": []
     },
     "client/index/indexdb.js": {
-      "bytes": 5692,
+      "bytes": 5652,
       "imports": [
         {
           "path": "client/shared/log.js",
@@ -25506,7 +25506,7 @@
       ]
     },
     "client/index/details.js": {
-      "bytes": 17837,
+      "bytes": 17831,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25531,7 +25531,7 @@
       ]
     },
     "client/shared/user.js": {
-      "bytes": 950,
+      "bytes": 965,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25544,7 +25544,7 @@
       ]
     },
     "client/index/list.js": {
-      "bytes": 8728,
+      "bytes": 8693,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25569,7 +25569,7 @@
       "imports": []
     },
     "client/index/map.js": {
-      "bytes": 3259,
+      "bytes": 3248,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25594,7 +25594,7 @@
       ]
     },
     "client/index/enumerate.js": {
-      "bytes": 6335,
+      "bytes": 6307,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25628,7 +25628,7 @@
       ]
     },
     "client/index/pwa-register.js": {
-      "bytes": 1455,
+      "bytes": 1420,
       "imports": [
         {
           "path": "client/shared/log.js",
@@ -25637,7 +25637,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 34799,
+      "bytes": 34615,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25694,7 +25694,7 @@
       ]
     },
     "client/process/process.js": {
-      "bytes": 5541,
+      "bytes": 5414,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25722,23 +25722,6 @@
         }
       ]
     },
-    "client/prototype/prototype.js": {
-      "bytes": 559,
-      "imports": [
-        {
-          "path": "client/shared/config.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "client/shared/log.js",
-          "kind": "import-statement"
-        },
-        {
-          "path": "client/shared/user.js",
-          "kind": "import-statement"
-        }
-      ]
-    },
     "assets/panzoom.js": {
       "bytes": 47577,
       "imports": []
@@ -25752,7 +25735,7 @@
       "imports": []
     },
     "client/video/runDetect.js": {
-      "bytes": 1958,
+      "bytes": 1827,
       "imports": [
         {
           "path": "client/shared/tf.js",
@@ -25790,7 +25773,7 @@
       ]
     },
     "client/video/runHuman.js": {
-      "bytes": 8645,
+      "bytes": 8400,
       "imports": [
         {
           "path": "node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
@@ -25840,7 +25823,7 @@
       "imports": []
     },
     "client/video/video.js": {
-      "bytes": 13519,
+      "bytes": 13166,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25890,7 +25873,7 @@
       ]
     },
     "client/index/pwa-serviceworker.js": {
-      "bytes": 3026,
+      "bytes": 3019,
       "imports": []
     }
   },
@@ -25899,7 +25882,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 5323336
+      "bytes": 5322823
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -25916,13 +25899,10 @@
           "bytesInOutput": 2744547
         },
         "client/shared/log.js": {
-          "bytesInOutput": 1652
-        },
-        "client/process/custom.js": {
-          "bytesInOutput": 772
+          "bytesInOutput": 1645
         },
         "client/compare/compare.js": {
-          "bytesInOutput": 8546
+          "bytesInOutput": 8483
         },
         "client/shared/tf.js": {
           "bytesInOutput": 42
@@ -25930,23 +25910,26 @@
         "client/process/modelClassify.js": {
           "bytesInOutput": 3778
         },
+        "client/process/custom.js": {
+          "bytesInOutput": 729
+        },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 6500
+          "bytesInOutput": 6465
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7406
+          "bytesInOutput": 7407
         },
         "client/process/processImage.js": {
           "bytesInOutput": 1928
         }
       },
-      "bytes": 2995572
+      "bytes": 2995551
     },
     "dist/index/index.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 1042981
+      "bytes": 1042475
     },
     "dist/index/index.js": {
       "imports": [],
@@ -25957,7 +25940,7 @@
           "bytesInOutput": 219060
         },
         "client/shared/log.js": {
-          "bytesInOutput": 1667
+          "bytesInOutput": 1660
         },
         "node_modules/moment/moment.js": {
           "bytesInOutput": 134440
@@ -25972,49 +25955,49 @@
           "bytesInOutput": 3234
         },
         "client/index/map.js": {
-          "bytesInOutput": 3314
+          "bytesInOutput": 3304
         },
         "client/index/pwa-register.js": {
-          "bytesInOutput": 1560
+          "bytesInOutput": 1545
         },
         "client/index/index.js": {
-          "bytesInOutput": 35205
+          "bytesInOutput": 35028
         },
         "assets/marked.esm.js": {
           "bytesInOutput": 59917
         },
         "client/shared/config.js": {
-          "bytesInOutput": 8924
+          "bytesInOutput": 8925
         },
         "client/index/indexdb.js": {
-          "bytesInOutput": 4886
+          "bytesInOutput": 4944
         },
         "client/index/details.js": {
-          "bytesInOutput": 16501
+          "bytesInOutput": 16527
         },
         "client/index/iv-viewer.js": {
           "bytesInOutput": 26965
         },
         "client/shared/user.js": {
-          "bytesInOutput": 993
+          "bytesInOutput": 1008
         },
         "client/index/list.js": {
-          "bytesInOutput": 8880
+          "bytesInOutput": 8845
         },
         "client/index/enumerate.js": {
-          "bytesInOutput": 6299
+          "bytesInOutput": 6271
         },
         "client/index/options.js": {
           "bytesInOutput": 8063
         }
       },
-      "bytes": 559208
+      "bytes": 559036
     },
     "dist/process/process.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7299566
+      "bytes": 7298970
     },
     "dist/process/process.js": {
       "imports": [],
@@ -26031,7 +26014,7 @@
           "bytesInOutput": 2765831
         },
         "client/shared/log.js": {
-          "bytesInOutput": 1669
+          "bytesInOutput": 1662
         },
         "node_modules/seedrandom/lib/alea.js": {
           "bytesInOutput": 2140
@@ -26072,20 +26055,17 @@
         "node_modules/@tensorflow/tfjs-backend-wasm/wasm-out/tfjs-backend-wasm.js": {
           "bytesInOutput": 38149
         },
-        "client/process/custom.js": {
-          "bytesInOutput": 773
-        },
         "client/shared/blockhash.js": {
           "bytesInOutput": 5706
         },
         "client/process/process.js": {
-          "bytesInOutput": 4987
+          "bytesInOutput": 4908
         },
         "client/shared/tf.js": {
           "bytesInOutput": 42
         },
         "client/shared/config.js": {
-          "bytesInOutput": 8924
+          "bytesInOutput": 8925
         },
         "node_modules/@tensorflow/tfjs/package.json": {
           "bytesInOutput": 23
@@ -29775,54 +29755,28 @@
           "bytesInOutput": 325733
         },
         "client/process/processImage.js": {
-          "bytesInOutput": 10457
+          "bytesInOutput": 10373
         },
         "client/process/modelClassify.js": {
           "bytesInOutput": 3848
         },
+        "client/process/custom.js": {
+          "bytesInOutput": 730
+        },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 6609
+          "bytesInOutput": 6574
         },
         "client/shared/user.js": {
-          "bytesInOutput": 994
+          "bytesInOutput": 1009
         }
       },
-      "bytes": 6241119
-    },
-    "dist/prototype/prototype.js.map": {
-      "imports": [],
-      "exports": [],
-      "inputs": {},
-      "bytes": 470562
-    },
-    "dist/prototype/prototype.js": {
-      "imports": [],
-      "exports": [],
-      "entryPoint": "client/prototype/prototype.js",
-      "inputs": {
-        "node_modules/jquery/dist/jquery.js": {
-          "bytesInOutput": 218574
-        },
-        "client/shared/log.js": {
-          "bytesInOutput": 1642
-        },
-        "client/shared/config.js": {
-          "bytesInOutput": 7406
-        },
-        "client/prototype/prototype.js": {
-          "bytesInOutput": 343
-        },
-        "client/shared/user.js": {
-          "bytesInOutput": 990
-        }
-      },
-      "bytes": 230450
+      "bytes": 6240887
     },
     "dist/video/video.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7429486
+      "bytes": 7428477
     },
     "dist/video/video.js": {
       "imports": [],
@@ -29881,16 +29835,13 @@
           "bytesInOutput": 49245
         },
         "client/shared/log.js": {
-          "bytesInOutput": 1657
+          "bytesInOutput": 1650
         },
         "client/video/draw.js": {
           "bytesInOutput": 8059
         },
         "client/video/gesture.js": {
           "bytesInOutput": 2384
-        },
-        "client/process/custom.js": {
-          "bytesInOutput": 773
         },
         "client/video/video.js": {
           "bytesInOutput": 11815
@@ -33586,7 +33537,7 @@
           "bytesInOutput": 325733
         },
         "client/shared/user.js": {
-          "bytesInOutput": 988
+          "bytesInOutput": 1003
         },
         "client/video/run.js": {
           "bytesInOutput": 7234
@@ -33594,8 +33545,11 @@
         "client/video/runDetect.js": {
           "bytesInOutput": 1707
         },
+        "client/process/custom.js": {
+          "bytesInOutput": 730
+        },
         "client/process/modelDetect.js": {
-          "bytesInOutput": 6576
+          "bytesInOutput": 6541
         },
         "client/video/runClassify.js": {
           "bytesInOutput": 1220
@@ -33610,16 +33564,16 @@
           "bytesInOutput": 15031
         },
         "client/shared/config.js": {
-          "bytesInOutput": 9066
+          "bytesInOutput": 9067
         }
       },
-      "bytes": 6324200
+      "bytes": 6324131
     },
     "dist/index/worker.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 11063
+      "bytes": 11062
     },
     "dist/index/worker.js": {
       "imports": [],
@@ -33639,7 +33593,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 5008
+      "bytes": 4995
     },
     "dist/index/pwa-serviceworker.js": {
       "imports": [],
@@ -33647,10 +33601,10 @@
       "entryPoint": "client/index/pwa-serviceworker.js",
       "inputs": {
         "client/index/pwa-serviceworker.js": {
-          "bytesInOutput": 2688
+          "bytesInOutput": 2681
         }
       },
-      "bytes": 2892
+      "bytes": 2885
     }
   }
 }

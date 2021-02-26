@@ -1,9 +1,10 @@
-// @ts-nocheck
-
 const fs = require('fs');
 const path = require('path');
 const log = require('@vladmandic/pilogger');
 const metadata = require('./metadata.js');
+
+let config;
+let db;
 
 function sign(req) {
   const forwarded = (req.headers['forwarded'] || '').match(/for="\[(.*)\]:/);
@@ -12,10 +13,12 @@ function sign(req) {
   return `${user}@${ip}`;
 }
 
-function api(app) {
+function api(app, inConfig, inDB) {
   log.state('RESTful API ready');
   app.set('json spaces', 2);
-  metadata.init();
+  config = inConfig;
+  db = inDB;
+  metadata.init(config, db);
 
   // log namespace
 
@@ -39,16 +42,16 @@ function api(app) {
     let passwd;
     let found = {};
     if (req.body.authShare) {
-      found = { email: global.config.share.email, passwd: global.config.share.passwd };
+      found = { email: config.share.email, passwd: config.share.passwd };
     } else {
       email = req.body.authEmail;
       passwd = req.body.authPassword;
-      found = global.config.users.find((a) => ((a.email && a.email === email) && (a.passwd && a.passwd === passwd) && (a.disabled ? a.disabled === 'false' : true)));
+      found = config.users.find((a) => ((a.email && a.email === email) && (a.passwd && a.passwd === passwd) && (a.disabled ? a.disabled === 'false' : true)));
     }
     if (found) {
       req.session.user = found.email;
       req.session.admin = found.admin || false;
-      req.session.root = found.mediaRoot || global.config.server.mediaRoot;
+      req.session.root = found.mediaRoot || config.server.mediaRoot;
       req.session.share = req.body.authShare;
     }
     log.info('API/User/Auth', sign(req), email, req.session.user !== undefined);
@@ -65,7 +68,7 @@ function api(app) {
   app.get('/api/share/dir', async (req, res) => {
     if (req.session.share) res.json([]);
     else {
-      let shares = await global.db.find({ images: { $exists: true } });
+      let shares = await db.find({ images: { $exists: true } });
       if (!shares) shares = [];
       const data = shares.map((a) => ({ key: a.share, processed: a.processed, name: a.name, creator: a.creator, size: a.images.length }));
       log.info('API/Share/Dir', sign(req), 'shares:', data.length);
@@ -75,10 +78,10 @@ function api(app) {
 
   app.get('/api/share/get', async (req, res) => {
     if (req.query.id) {
-      const data = await global.db.findOne({ share: req.query.id });
+      const data = await db.findOne({ share: req.query.id });
       const images = [];
       for (const image of data.images) {
-        images.push(await global.db.findOne({ image }));
+        images.push(await db.findOne({ image }));
       }
       log.info(`API/Share/Get ${sign(req)} creator: ${data.creator} name: "${data.name}" key: ${data.share} images:`, images.length);
       res.json(images);
@@ -89,9 +92,9 @@ function api(app) {
 
   app.get('/api/share/del', async (req, res) => {
     if (req.query.rm) {
-      const data = await global.db.findOne({ share: req.query.rm });
+      const data = await db.findOne({ share: req.query.rm });
       log.info(`API/Share/Del ${sign(req)} ${data.creator} name: "${data.name}" key: ${data.share} images:`, data.images.length);
-      global.db.remove({ share: data.share }, { multi: false });
+      db.remove({ share: data.share }, { multi: false });
       res.status(200).send('true');
     } else {
       res.status(400).json([]);
@@ -107,7 +110,7 @@ function api(app) {
       obj.processed = new Date();
       obj.images = data['images[]'];
       obj.share = (obj.processed.getTime() / 1000).toString(36);
-      global.db.update({ share: obj.share }, obj, { upsert: true });
+      db.update({ share: obj.share }, obj, { upsert: true });
       log.info(`API/Share/Put ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images.length);
       res.status(200).json({ key: obj.share });
     } else {
@@ -121,7 +124,7 @@ function api(app) {
     if (req.session.admin) {
       const list = [];
       let filesAll = [];
-      for (const location of global.config.locations) {
+      for (const location of config.locations) {
         const folder = await metadata.list(location.folder, location.match, location.recursive, location.force);
         list.push({ location, files: folder.process });
         filesAll = [...filesAll, ...folder.files];
@@ -161,20 +164,20 @@ function api(app) {
       const data = [];
       if (!req.session.share || req.session.share === '') {
         const root = new RegExp(`^${req.session.root || 'media/'}`);
-        const limit = req.query.limit || global.config.server.resultsLimit;
+        const limit = req.query.limit || config.server.resultsLimit;
         const time = req.query.time ? new Date(parseInt(req.query.time)) : new Date(0);
-        const records = await global.db
+        const records = await db
           .find({ image: root, processed: { $gte: time } })
           .sort({ processed: -1 })
           .limit(limit);
         for (const i in records) data.push(records[i]);
         log.info(`API/Record/Get ${sign(req)} root: ${req.session.root} images:`, data.length, 'limit:', limit, 'chunk:', chunks, 'since:', new Date(time));
       } else {
-        const records = await global.db.findOne({ share: req.session.share });
+        const records = await db.findOne({ share: req.session.share });
         for (const image of records.images) {
-          data.push(await global.db.findOne({ image }));
+          data.push(await db.findOne({ image }));
         }
-        log.info(`API/Record/Get Share ${sign(req)} creator: ${data.creator} name: "${data.name}" key: ${data.share} images: ${data.length}`);
+        log.info(`API/Record/Get Share ${sign(req)} images:`, data.length);
       }
       pagedData = data;
       pagedSize = JSON.stringify(pagedData).length;
@@ -198,10 +201,10 @@ function api(app) {
 
   app.get('/api/record/del', async (req, res) => {
     if (req.query.rm) {
-      const data = await global.db.findOne({ image: req.query.rm });
+      const data = await db.findOne({ image: req.query.rm });
       if (data) {
         log.info(`API/Record/Del ${sign(req)} req: ${req.query.rm} res:`, data.image);
-        global.db.remove({ image: data.image }, { multi: false });
+        db.remove({ image: data.image }, { multi: false });
         res.json(data.image);
       } else {
         res.status(400).json({ error: 'image not found' });
@@ -229,7 +232,7 @@ function api(app) {
     }
   });
 
-  app.get(`${global.config.server.mediaRoot}/*`, async (req, res) => {
+  app.get(`${config.server.mediaRoot}/*`, async (req, res) => {
     const fileName = decodeURIComponent(req.url);
     if (fileName.startsWith('/')) fileName.substr(1);
     if (!fileName.startsWith(req.session.root)) {

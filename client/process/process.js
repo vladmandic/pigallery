@@ -15,20 +15,20 @@ async function warmupModels() {
   if (stopping) return;
   log.div('process-log', true, 'TensorFlow flags: <span style="font-size: 0.6rem">', tf.ENV.flags, '</span>');
   log.div('process-log', true, 'TensorFlow warming up ...');
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   const res = await process.process('assets/warmup.jpg');
   if (res.error) {
     log.div('process-log', true, 'Aborting current run due to error during warmup');
-    if (config.default.autoreload) setTimeout(() => window.location.reload(true), 2500);
-    // setTimeout(() => window.location.replace(`${window.location.origin}?process`), 2500);
+    if (config.default.autoreload) setTimeout(() => location.reload(), 2500);
+    // setTimeout(() => location.replace(`${location.origin}?process`), 2500);
   }
-  const t1 = window.performance.now();
+  const t1 = performance.now();
   log.div('process-log', true, `TensorFlow warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
 }
 
 // calls main detectxion and then print results for all images matching spec
 async function processFiles() {
-  const p0 = window.performance.now();
+  const p0 = performance.now();
   running = true;
   log.div('process-active', false, 'Starting ...');
   log.div('log', true, 'Image database update requested ...');
@@ -51,14 +51,14 @@ async function processFiles() {
   await process.load();
   log.div('process-state', false, 'Warming up ...');
   await warmupModels();
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   const promises = [];
   log.div('process-log', true, `Processing images: ${files.length} batch: ${config.default.batchProcessing}`);
   let error = false;
   let stuckTimer = new Date();
   const checkAlive = setInterval(() => { // reload window if no progress for 60sec
     const now = new Date();
-    if (config.default.autoreload && now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) window.location.reload(true);
+    if (config.default.autoreload && now.getTime() > (stuckTimer.getTime() + (5 * 60 * 1000))) location.reload();
   }, 10000);
   for (const url of files) {
     if (!error && !stopping) {
@@ -88,7 +88,7 @@ async function processFiles() {
   }
   if (promises.length > 0) await Promise.all(promises);
   clearInterval(checkAlive);
-  const t1 = window.performance.now();
+  const t1 = performance.now();
   if (stopping) log.div('process-log', true, 'Aborting current run due to user stop request');
   if (files.length > 0) {
     log.div('process-log', true, `Processed ${results.length} of ${files.length} images in ${Math.round(t1 - t0).toLocaleString()}ms ${Math.round((t1 - t0) / results.length).toLocaleString()}ms avg`);
@@ -96,10 +96,10 @@ async function processFiles() {
   }
   if (error) {
     log.div('process-log', true, 'Aborting current run due to error');
-    if (config.default.autoreload) setTimeout(() => window.location.reload(true), 2500);
+    if (config.default.autoreload) setTimeout(() => location.reload(), 2500);
   }
   log.div('process-active', false, 'Idle ...');
-  const p1 = window.performance.now();
+  const p1 = performance.now();
   log.div('process-log', true, `Image Analysis done: ${Math.round(p1 - p0).toLocaleString()}ms`);
   log.div('process-log', true, 'Reload image database now');
   running = false;
@@ -107,12 +107,10 @@ async function processFiles() {
 
 async function main() {
   log.debug(parent.location.href === location.href ? 'Running in stand-alone mode' : 'Running in frame');
-  await user.get();
+  const usr = await user.get();
   await config.setTheme();
-  // @ts-ignore
-  if (!window.user.admin) {
-    // @ts-ignore
-    log.div('process-active', true, 'Image database update not authorized: ', window.user);
+  if (!usr.admin) {
+    log.div('process-active', true, 'Image database update not authorized: ', usr);
     return;
   }
   await config.done();
