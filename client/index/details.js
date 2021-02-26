@@ -36,6 +36,9 @@ function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeSt
   ctx.lineWidth = 1;
   if (title) {
     ctx.font = 'small-caps 1rem Lato';
+    ctx.fillStyle = 'black';
+    ctx.fillText(title, x + 3, y + 16);
+    ctx.fillStyle = strokeStyle;
     ctx.fillText(title, x + 4, y + 16);
   }
 }

@@ -407,8 +407,8 @@ class ImageViewer {
       };
       const moveListener = (eMove) => {
         const newDist = getTouchPointsDistance(eMove.touches);
-        const zoomValue = this.state.zoomValue + (newDist - startDist) / 2;
-        this.zoom(zoomValue, center);
+        const zoomValue = this.state.zoomValue + (newDist - startDist) / this.options.zoomPinchSensitivity;
+        if (zoomValue > this.options.minZoom && zoomValue < this.options.maxZoom) this.zoom(zoomValue, center);
       };
       const endListener = (eEnd) => {
         this.events.pinchMove();
@@ -678,9 +678,10 @@ class ImageViewer {
 
 ImageViewer.defaults = {
   zoomValue: 100,
-  minZoom: 25,
-  maxZoom: 500,
+  minZoom: 40,
+  maxZoom: 400,
   zoomStep: 2,
+  zoomPinchSensitivity: 50,
   zoomWheelStep: 1,
   snapView: true,
   refreshOnResize: true,

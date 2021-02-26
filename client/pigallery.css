@@ -1,6 +1,6 @@
 @font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('/assets/lato.ttf') format('truetype'); }
 html { font-size: 18px; }
-body { font-size: 1rem; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; width: 100vw; height: 100vh; background: var(--background); color: var(--text); scrollbar-color: var(--body); }
+body { font-size: 1rem; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; width: 100vw; height: 100vh; background: var(--background); color: var(--text); scrollbar-color: var(--body); text-shadow: black 0 1px; }
 ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0; }
 ::-webkit-scrollbar-thumb { background: var(--body); }
 ::-webkit-scrollbar-track { margin: 8px; }
@@ -15,7 +15,7 @@ a:hover { color: var(--link); text-decoration: none; }
 p { margin: 0; }
 .row { width: 100%; margin: 0; align-content: start; }
 .col { text-align: left; margin: 0.5rem; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
-.log { width: 100vw; height: 4rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; pointer-events: none; }
+.log { width: 100vw; height: 3.2rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; pointer-events: none; line-height: 1.2; }
 .popper { padding: 8px; background: var(--text); color: var(--body); box-shadow: 2px 2px var(--background); border-radius: 4px; z-index: 50; }
 .navbar { background: var(--body); height: 5rem; top: 0; position: sticky; }
 .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); opacity: 0.1; }
