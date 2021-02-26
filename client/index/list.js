@@ -81,7 +81,7 @@ function printResult(object) {
   thumb.id = object.id;
   const fixWidth = window.options.fixWidth ? `width=${window.options.listThumbSize}px` : '';
   const fixHeight = window.options.fixHeight ? `height=${window.options.listThumbSize}px` : '';
-  const title = `${object.image}\n${timestamp}\n${classified}\n${detected}\n${location}\n${camera}`;
+  const title = `${object.image}\nDate: ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}\n${classified}\n${detected}\n${location}\n${camera}`;
   thumb.innerHTML = `
     <img loading="lazy" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" align="middle" ${fixWidth} ${fixHeight} title="${title}">
     <div class="thumb-top">
