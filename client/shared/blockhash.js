@@ -1,8 +1,7 @@
 /* eslint-disable func-names */
 
-// Perceptual image hash
-// Based on https://github.com/commonsmachinery/blockhash-js
-// Which is an implementation ofBlock Mean Value Based Image Perceptual Hashing by Bian Yang, Fan Gu and Xiamu Niu
+// Perceptual image hash based on https://github.com/commonsmachinery/blockhash-js
+// Which is an implementation of 'Block Mean Value Based Image Perceptual Hashing' by Bian Yang, Fan Gu and Xiamu Niu
 
 const one_bits = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
 

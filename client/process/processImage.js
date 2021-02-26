@@ -51,7 +51,7 @@ export async function load() {
   }
   log.div('process-log', true, 'Face Detection model:');
   log.div('process-log', true, `  ${JSONtoStr(config.models.person)}`);
-  const t0 = window.performance.now();
+  const t0 = performance.now();
 
   log.div('process-log', true, 'TensorFlow models loading ...');
 
@@ -77,7 +77,7 @@ export async function load() {
     }
   }
 
-  const t1 = window.performance.now();
+  const t1 = performance.now();
   log.div('process-log', true, `TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
   log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
   await resetBackend(config.backEnd);
@@ -152,21 +152,21 @@ export async function process(name) {
   obj.image = name;
   let model;
 
-  const t0 = window.performance.now();
+  const t0 = performance.now();
 
   // load & preprocess image
-  const ti0 = window.performance.now();
+  const ti0 = performance.now();
   const image = await getImage(name);
   obj.processedSize = { width: image.canvas.width, height: image.canvas.height };
   obj.naturalSize = { width: image.naturalWidth, height: image.naturalHeight };
   obj.pixels = image.naturalHeight * image.naturalWidth;
   obj.thumbnail = image.thumbnail;
-  const ti1 = window.performance.now();
+  const ti1 = performance.now();
 
   log.debug(`Processing: ${name} size: ${obj.naturalSize.width} x ${obj.naturalSize.height} input: ${obj.processedSize.width} x ${obj.processedSize.height}`);
 
   obj.classify = [];
-  const tc0 = window.performance.now();
+  const tc0 = performance.now();
   const promisesClassify = [];
   try {
     if (!error && models.classify) {
@@ -180,10 +180,10 @@ export async function process(name) {
     error = err;
     error.where = 'classify';
   }
-  const tc1 = window.performance.now();
+  const tc1 = performance.now();
 
   obj.detect = [];
-  const td0 = window.performance.now();
+  const td0 = performance.now();
   const promisesDetect = [];
   try {
     if (!error && models.detect) {
@@ -197,7 +197,7 @@ export async function process(name) {
     error = err;
     error.where = 'detect';
   }
-  const td1 = window.performance.now();
+  const td1 = performance.now();
 
   if (!error) {
     let resClassify = [];
@@ -232,7 +232,7 @@ export async function process(name) {
 
   if (!error) obj.phash = await hash.data(image.data);
 
-  const tp0 = window.performance.now();
+  const tp0 = performance.now();
   try {
     if (!error && models.human) {
       obj.person = [];
@@ -259,9 +259,9 @@ export async function process(name) {
     model = models.human;
     model.name = 'human';
   }
-  const tp1 = window.performance.now();
+  const tp1 = performance.now();
 
-  const t1 = window.performance.now();
+  const t1 = performance.now();
   obj.perf = { total: Math.round(t1 - t0), load: Math.round(ti1 - ti0), classify: Math.round(tc1 - tc0), detect: Math.round(td1 - td0), person: Math.round(tp1 - tp0) };
   if (error) {
     log.div('process-log', true, `Error processing: <span style="color: lightcoral">${name}</span> Natural size: ${obj.naturalSize.width} x ${obj.naturalSize.height} Process size: ${obj.processedSize.width} x ${obj.processedSize.height}`);

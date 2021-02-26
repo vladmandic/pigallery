@@ -35,7 +35,7 @@ async function init() {
     log.div('log', true, `Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
     if (!window.user.admin) $('#btn-update').css('color', 'gray');
   } else {
-    window.location.replace('/auth');
+    location.replace('/auth');
   }
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
   await resetBackend(config.default.backEnd);
@@ -56,13 +56,13 @@ async function loadClassify(options) {
   let engine;
   const stats = {};
   engine = await tf.engine();
-  stats.time0 = window.performance.now();
+  stats.time0 = performance.now();
   stats.bytes0 = engine.state.numBytes;
   stats.tensors0 = engine.state.numTensors;
 
   const model = await modelClassify.load(options);
   engine = await tf.engine();
-  stats.time1 = window.performance.now();
+  stats.time1 = performance.now();
   stats.bytes1 = engine.state.numBytes;
   stats.tensors1 = engine.state.numTensors;
 
@@ -76,14 +76,14 @@ async function loadClassify(options) {
 async function loadDetect(options) {
   let engine;
   const stats = {};
-  stats.time0 = window.performance.now();
+  stats.time0 = performance.now();
   engine = await tf.engine();
   stats.bytes0 = engine.state.numBytes;
   stats.tensors0 = engine.state.numTensors;
 
   const model = await modelDetect.load(options);
   engine = await tf.engine();
-  stats.time1 = window.performance.now();
+  stats.time1 = performance.now();
   stats.bytes1 = engine.state.numBytes;
   stats.tensors1 = engine.state.numTensors;
 
@@ -155,9 +155,9 @@ async function classify() {
     const image = await processImage.getImage(files[i]);
     for (const m in models) {
       if (stop) continue;
-      const t0 = window.performance.now();
+      const t0 = performance.now();
       const data = await modelClassify.classify(models[m].model, image.canvas);
-      const t1 = window.performance.now();
+      const t1 = performance.now();
       stats[m] += (t1 - t0);
       results.push({ model: models[m], data });
       log.debug('Classify', files[i], models[m], data);
@@ -178,7 +178,7 @@ async function person() {
 
   let engine;
   let stats = {};
-  stats.time0 = window.performance.now();
+  stats.time0 = performance.now();
   engine = await tf.engine();
   stats.bytes0 = engine.state.numBytes;
   stats.tensors0 = engine.state.numTensors;
@@ -205,7 +205,7 @@ async function person() {
   log.div('log', true, faceapi.tf.ENV.flags);
 
   engine = await tf.engine();
-  stats.time1 = window.performance.now();
+  stats.time1 = performance.now();
   stats.bytes1 = engine.state.numBytes;
   stats.tensors1 = engine.state.numTensors;
 
@@ -226,7 +226,7 @@ async function person() {
     const results = [];
     const image = await processImage.getImage(files[i]);
 
-    const t0 = window.performance.now();
+    const t0 = performance.now();
 
     data = await faceapi
       .detectAllFaces(image.canvas, options.options)
@@ -238,14 +238,14 @@ async function person() {
     results.push({ model: 'FaceAPI', data });
     log.debug('FaceApi', files[i], data);
 
-    const t1 = window.performance.now();
+    const t1 = performance.now();
     stats[0] += t1 - t0;
 
     // data = await human.detect(image.canvas, config.default.human);
     log.debug('Human', files[i], data);
     results.push({ model: 'Human', data: [data] });
 
-    const t2 = window.performance.now();
+    const t2 = performance.now();
     stats[1] += t2 - t1;
 
     print(files[i], image, results);
@@ -288,9 +288,9 @@ async function detect() {
     const image = await processImage.getImage(files[i]);
     for (const m in models) {
       if (stop) continue;
-      const t0 = window.performance.now();
+      const t0 = performance.now();
       const data = await modelDetect.detect(models[m].model, image.canvas);
-      const t1 = window.performance.now();
+      const t1 = performance.now();
       stats[m] += (t1 - t0);
       // tbd: human
       results.push({ model: models[m], data });

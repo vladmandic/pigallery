@@ -1,6 +1,5 @@
-// @ts-nocheck
-
 /* global L */
+// @ts-nocheck
 
 import $ from 'jquery';
 import * as db from './indexdb.js';
@@ -11,7 +10,7 @@ import * as list from './list.js';
 let mapContainer;
 
 async function find(lat, lon) {
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   // get data
   let all;
   const sort = window.options.listSortOrder;
@@ -51,14 +50,14 @@ async function load() {
       });
     */
     $.getScript('/assets/mapquest.js').done(() => {
-      $.getScript('/assets/leaflet-heat.js').done(() => resolve());
+      $.getScript('/assets/leaflet-heat.js').done(() => resolve(true));
     });
   });
 }
 
 async function show(visible) {
   if (typeof L === 'undefined') await load();
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   log.debug(t0, `Map show: ${visible}`);
   if (!visible && mapContainer) {
     mapContainer.off();

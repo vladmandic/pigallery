@@ -24,8 +24,6 @@ export async function run(name, input, config, objects) {
   const canvas = objects.canvases[name];
 
   const res = await modelDetect.detect(objects.models[name], input);
-  // ctx = canvas.getContext('2d');
-  // ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, canvas.width, canvas.height);
   draw.clear(canvas);
   if (res) {
     if (!objects.detected[name]) objects.detected[name] = [];

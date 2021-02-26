@@ -5,7 +5,7 @@ import * as log from '../shared/log.js';
 
 // exctract top classe from classification & detection and builds sidebar menu
 async function enumerateClasses() {
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   $('#classes').html('');
   if (!Array.isArray(window.filtered)) window.filtered = [];
   const classesList = [];
@@ -34,7 +34,7 @@ async function enumerateClasses() {
 
 // extracts all locations from loaded images and builds sidebar menu
 async function enumerateLocations() {
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   $('#locations').html('');
   if (!Array.isArray(window.filtered)) window.filtered = [];
   let countries = [];
@@ -69,7 +69,7 @@ async function enumerateLocations() {
 
 // builds folder list from all loaded images and builds sidebar menu, can be used with entire image list or per-object
 async function enumerateFolders() {
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   $('#folders').html('');
   const root = window.user && window.user.root ? window.user.root : 'media/';
   const depth = root.split('/').length - 1;
@@ -113,7 +113,7 @@ async function enumerateFolders() {
 
 async function enumerateShares() {
   if (!window.user.admin) return;
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   $('#shares').html('');
   window.shares = [];
   const shares = await fetch('/api/share/dir');

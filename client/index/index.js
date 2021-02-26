@@ -30,7 +30,7 @@ async function busy(text) {
 // eslint-disable-next-line no-unused-vars
 async function time(fn, arg) {
   if (window.debug) {
-    const t0 = window.performance.now();
+    const t0 = performance.now();
     await fn(arg);
     log.debug(t0, `Timed ${fn.name}`);
   } else {
@@ -52,7 +52,7 @@ async function folderHandlers() {
     if (!path || path.length < 1) return;
     $('.folder').off();
     const type = evt.target.getAttribute('type');
-    const t0 = window.performance.now();
+    const t0 = performance.now();
     busy(`Selected ${type}<br>${path}`);
     switch (type) {
       case 'folder':
@@ -77,7 +77,7 @@ async function folderHandlers() {
         const share = window.shares.find((a) => a.key === path);
         if (!share.name || !share.key) return;
         $('#share-name').val(share.name);
-        $('#share-url').val(`${window.location.origin}?share=${share.key}`);
+        $('#share-url').val(`${location.origin}?share=${share.key}`);
         $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
         window.share = share.key;
         window.filtered = await indexdb.refresh();
@@ -113,7 +113,7 @@ function filterWord(word) {
 async function filterResults(input) {
   busy(`Searching for<br>${input}`);
   list.clearPrevious();
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   const words = [];
   let selective = null;
   for (const word of input.split(' ')) {
@@ -172,7 +172,7 @@ function shuffle(array) {
 // sort by image simmilarity
 async function simmilarImage(image) {
   busy('Searching for<br>simmilar images');
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   window.options.listDivider = 'simmilarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
   for (const img of window.filtered) img.simmilarity = 100 - Math.trunc(100 * hash.distance(img.phash, object.phash));
@@ -200,7 +200,7 @@ function euclideanDistance(embedding1, embedding2) {
 
 async function simmilarPerson(image) {
   busy('Searching for<br>simmilar people');
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   window.options.listDivider = 'simmilarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
   const descriptor = (object.person && object.person[0] && object.person[0].descriptor) ? new Float32Array(Object.values(object.person[0].descriptor)) : null;
@@ -225,7 +225,7 @@ async function simmilarPerson(image) {
 
 async function simmilarClasses(image) {
   busy('Searching for<br>simmilar classes');
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   window.options.listDivider = 'simmilarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
 
@@ -257,7 +257,7 @@ async function sortResults(sort) {
   // eslint-disable-next-line no-use-before-define
   await loadGallery(window.options.listLimit, true);
 
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   log.debug(t0, `Sorting: ${sort.replace('navlinebutton fad sort fa-', '')}`);
   if (sort.includes('random')) {
     window.filtered = await indexdb.all();
@@ -282,7 +282,7 @@ async function sortResults(sort) {
   list.redraw();
   $('#splash').toggle(false);
   log.debug(t0, `Cached images: ${window.filtered.length} fetched initial`);
-  const t1 = window.performance.now();
+  const t1 = performance.now();
   stats.initial = Math.floor(t1 - t0);
   $('#all').focus();
   busy('Loading remaining<br>images in background');
@@ -316,14 +316,14 @@ async function findDuplicates() {
   busy('Searching for<br>duplicate images');
 
   log.div('log', true, 'Analyzing images for simmilarity ...');
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   list.clearPrevious();
 
   const f = '/dist/index/worker.js';
   const worker = new Worker(f);
   worker.addEventListener('message', (msg) => {
     window.filtered = msg.data;
-    const t1 = window.performance.now();
+    const t1 = performance.now();
     log.div('log', true, `Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
     sortResults('simmilarity');
     busy(false);
@@ -344,7 +344,7 @@ async function loadGallery(limit, refresh = false) {
     return;
   }
   busy('Loading images<br>in background');
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   if (!refresh) {
     log.div('log', true, 'Downloading image cache ...');
     await indexdb.reset();
@@ -386,7 +386,7 @@ async function loadGallery(limit, refresh = false) {
   }
   await Promise.all(promisesReq);
   await Promise.all(promisesData);
-  const t1 = window.performance.now();
+  const t1 = performance.now();
 
   const dt = window.options.lastUpdated === 0 ? 'start' : new Date(window.options.lastUpdated).toLocaleDateString();
   const current = await indexdb.count();
@@ -453,7 +453,7 @@ function showNavbar(elem) {
   }
   $(document).on('pagecontainerbeforechange', (evt, data) => {
     if (typeof data.toPage === 'string' && data.options.direction === 'back') {
-      data.toPage = window.location;
+      data.toPage = location;
       data.options.transition = 'flip';
     }
   });
@@ -485,7 +485,7 @@ async function initSharesHandler() {
 
   $('#btn-shareadd').off();
   $('#btn-shareadd').on('click', () => {
-    const t0 = window.performance.now();
+    const t0 = performance.now();
     if ($('#btn-shareadd').hasClass('fa-plus-square')) {
       const share = {};
       share.creator = window.user.user;
@@ -498,7 +498,7 @@ async function initSharesHandler() {
         return;
       }
       $.post('/api/share/put', share)
-        .done((res) => $('#share-url').val(`${window.location.origin}?share=${res.key}`))
+        .done((res) => $('#share-url').val(`${location.origin}?share=${res.key}`))
         .fail(() => $('#share-url').val('error creating share'));
       enumerate.shares();
     } else {
@@ -521,7 +521,7 @@ async function initSharesHandler() {
 // handle keypresses on main
 async function initHotkeys() {
   $('html').on('keydown', () => {
-    const top = $('#results').scrollTop();
+    const top = $('#results').scrollTop() || 0;
     const line = window.options.listThumbSize / 2 + 16;
     const page = ($('#results').height() || 0) - window.options.listThumbSize;
     const bottom = $('#results').prop('scrollHeight');
@@ -557,7 +557,7 @@ async function initHotkeys() {
 
 function initSidebarHandlers() {
   $('#resettitle').on('click', () => {
-    window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
+    window.share = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
     sortResults(window.options.listSortOrder);
   });
   $('#folderstitle').on('click', () => $('#folders').toggle('slow'));
@@ -642,12 +642,12 @@ async function initMenuHandlers() {
     log.debug('Logout');
     await showNavbar();
     $.post('/api/user/auth');
-    let loc = window.location.href;
+    let loc = location.href;
     if (loc.includes('share=')) loc = '/auth';
     if ($('#btn-user').hasClass('fa-user-slash')) loc = '/auth';
     $('#btn-user').toggleClass('fa-user-slash fa-user');
     document.cookie = 'connect.sid=null; expires=Thu, 1 Jan 2000 12:00:00 UTC; path=/';
-    window.location.replace(loc);
+    location.replace(loc);
   });
 
   // navbar search
@@ -732,7 +732,7 @@ async function initMenuHandlers() {
 
   // navbar images number
   $('#btn-number').on('click', async () => {
-    const t0 = window.performance.now();
+    const t0 = performance.now();
     sortResults(window.options.listSortOrder);
     log.debug(t0, 'Reset filtered results');
   });
@@ -741,7 +741,7 @@ async function initMenuHandlers() {
 }
 
 async function hashChange(evt) {
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   log.debug(t0, `URL Hash change: ${evt.newURL}`);
   const target = parseInt(evt.newURL.substr(evt.newURL.indexOf('#') + 1));
   const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1));
@@ -804,11 +804,11 @@ async function installable(evt) {
 }
 
 async function main() {
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   log.debug(null, 'Starting PiGallery');
   window.addEventListener('beforeinstallprompt', (evt) => installable(evt));
   if (config.default.registerPWA) await pwa.register('/dist/index/pwa-serviceworker.js');
-  window.share = (window.location.search && window.location.search.startsWith('?share=')) ? window.location.search.split('=')[1] : null;
+  window.share = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
   await config.setTheme();
   await animate();
   await user.get();

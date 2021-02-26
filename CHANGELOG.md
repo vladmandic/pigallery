@@ -1,8 +1,8 @@
 # PiGallery Change Log
 
-### **3.2.1** 2021/02/25 mandic00@live.com
+### **HEAD -> master, origin/master, origin/HEAD** 2021/02/25 mandic00@live.com
 
-### **origin/master, origin/HEAD** 2021/02/25 mandic00@live.com
+### **3.2.1** 2021/02/25 mandic00@live.com
 
 ### **3.1.4** 2021/02/25 mandic00@live.com
 - fix processing theme

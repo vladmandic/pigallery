@@ -11,7 +11,7 @@ let last = { index: 'date', direction: true, start: 1, end: Number.MAX_SAFE_INTE
 
 export async function open() {
   if (window.share) return null;
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   return new Promise((resolve) => {
     const request = indexedDB.open(database, 1);
     request.onerror = (evt) => {
@@ -20,7 +20,7 @@ export async function open() {
     };
     request.onupgradeneeded = (evt) => {
       log.debug(t0, 'IndexDB request create');
-      db = evt.target.result;
+      db = evt.target?.result;
       const tbl = db.createObjectStore(table, { keyPath: 'image' });
       tbl.createIndex('name', 'image', { unique: true });
       tbl.createIndex('date', 'exif.created', { unique: false });
@@ -28,7 +28,7 @@ export async function open() {
     };
     request.onsuccess = (evt) => {
       log.debug(t0, 'IndexDB request open');
-      db = evt.target.result;
+      db = evt.target?.result;
       window.db = db;
       db.onerror = (event) => log.div('log', true, 'IndexDB DB error:', event.target.error || event);
       db.onsuccess = (event) => log.div('log', true, `IndexDB DB open: ${event}`);
@@ -42,7 +42,7 @@ export async function open() {
 }
 
 export async function reset() {
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   return new Promise((resolve) => {
     log.debug(t0, 'IndexDB reset');
     if (db) db.close();
@@ -77,9 +77,9 @@ export async function get(name) {
 }
 
 export async function getShare() {
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   const res = await fetch(`/api/share/get?id=${window.share}`);
-  let json = {};
+  let json = [];
   if (res.ok) json = await res.json();
   const filtered = [];
   for (const img of json) {
@@ -91,7 +91,7 @@ export async function getShare() {
 }
 
 export async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER, tag = null) {
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   last = { index, direction, start: 1, end: Number.MAX_SAFE_INTEGER };
   return new Promise((resolve) => {
     if (window.share) {
@@ -162,9 +162,9 @@ export async function test() {
   await reset();
   log.div('log', true, `IndexDB count on reset ${await count()} records`);
   for (const result of window.results) put(result);
-  const t0 = window.performance.now();
+  const t0 = performance.now();
   log.div('log', true, `IndexDB count on put ${await count()} records`);
-  const t1 = window.performance.now();
+  const t1 = performance.now();
   log.debug(t0, `IndexDB insert ${window.results.length} records`);
   window.results = await all();
   log.debug(t1, `IndexDB retrieve ${window.results.length} records`);

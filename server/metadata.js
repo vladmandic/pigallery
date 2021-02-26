@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 const fs = require('fs');
 const path = require('path');
 const proc = require('process');
@@ -8,33 +6,36 @@ const moment = require('moment');
 const exif = require('jpeg-exif');
 const parser = require('exif-parser');
 const log = require('@vladmandic/pilogger');
-// const nedb = require('nedb-promises');
 const distance = require('./nearest.js');
 
 let wordNet = {};
+let config;
+let db;
 
-async function init() {
+async function init(inConfig, inDB) {
   let data;
-  data = fs.readFileSync(global.config.server.descriptionsDB, 'utf8');
+  config = inConfig;
+  db = inDB;
+  data = fs.readFileSync(config.server.descriptionsDB, 'utf8');
   let terms = 0;
   for (const line of data.split('\n')) {
     if (line.includes('_wnid')) terms++;
   }
   wordNet = JSON.parse(data);
-  log.state('Loaded WordNet database:', global.config.server.descriptionsDB, terms, 'terms in', data.length, 'bytes');
-  data = fs.readFileSync(global.config.server.citiesDB);
-  const cities = JSON.parse(data);
+  log.state('Loaded WordNet database:', config.server.descriptionsDB, terms, 'terms in', data.length, 'bytes');
+  data = fs.readFileSync(config.server.citiesDB);
+  const cities = JSON.parse(data.toString());
   const large = cities.data.filter((a) => a.population > 100000);
-  log.state('Loaded all cities database:', global.config.server.citiesDB, cities.data.length, 'all cities', large.length, 'large cities');
+  log.state('Loaded all cities database:', config.server.citiesDB, cities.data.length, 'all cities', large.length, 'large cities');
   distance.init(cities.data, large);
   data = null;
 }
 
 function storeObject(data) {
-  if (data.image === global.config.server.warmupImage) return;
+  if (data.image === config.server.warmupImage) return;
   const json = data;
   json.processed = new Date();
-  global.db.update({ image: json.image }, json, { upsert: true });
+  db.update({ image: json.image }, json, { upsert: true });
   log.data(`DB Insert "${json.image}"`, JSON.stringify(json).length, 'bytes');
 }
 
@@ -216,6 +217,7 @@ async function getExif(url) {
       const stream = fs.createReadStream(url, { highWaterMark: 65536, start: 0, end: 65535, flags: 'r', autoClose: true, emitClose: true });
       stream
         .on('data', (buf) => {
+          // @ts-ignore
           chunk = Buffer.concat([chunk, buf]);
           if (chunk.length >= 65536) {
             stream.close();
@@ -283,7 +285,7 @@ function readDir(folder, match = null, recursive = false) {
       const name = path.join(folder, file);
       const stat = fs.statSync(name);
       if (stat.isFile()) {
-        if (global.config.exclude.includes(file)) log.info('FS Exclude:', name);
+        if (config.exclude.includes(file)) log.info('FS Exclude:', name);
         else if (match) {
           if (name.includes(match)) files.push(name);
         } else {
@@ -308,9 +310,9 @@ function readDir(folder, match = null, recursive = false) {
 }
 
 async function listFiles(folder, match = '', recursive = false, force = false) {
-  let files = readDir(`${global.config.server.mediaRoot}${folder}`, match, recursive);
+  let files = readDir(`${config.server.mediaRoot}${folder}`, match, recursive);
   files = files.filter((a) => {
-    for (const ext of global.config.server.allowedImageFileTypes) {
+    for (const ext of config.server.allowedImageFileTypes) {
       if (a.toLowerCase().endsWith(ext)) return true;
     }
     return false;
@@ -322,7 +324,7 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
     process = files;
   } else {
     for (const a of files) {
-      const image = await global.db.find({ image: a });
+      const image = await db.find({ image: a });
       if (image && image[0]) {
         const stat = fs.statSync(a);
         if (stat.ctime.getTime() !== image[0].exif.ctime.getTime()) {
@@ -350,29 +352,29 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
 }
 
 async function checkRecords(list) {
-  let all = await global.db.find({ hash: { $exists: true } });
+  let all = await db.find({ hash: { $exists: true } });
   all = all.map((a) => a.image);
   const deleted = all.filter((a) => !list.includes(a));
   for (const item of deleted) {
     log.data('Delete:', item);
-    global.db.remove({ image: item });
+    db.remove({ image: item });
   }
   const before = all.length;
-  const after = await global.db.count({});
+  const after = await db.count({});
   if (deleted.length > 0) log.info(`DB Remove ${deleted.length} deleted images from cache (before: ${before}, after: ${after})`);
 }
 
 async function testExif(dir) {
   // eslint-disable-next-line no-console
   console.log('Test', dir);
-  global.config = JSON.parse(fs.readFileSync('./config.json').toString());
+  config = JSON.parse(fs.readFileSync('./config.json').toString());
   await init();
   /*
-  global.db = nedb.create({ filename: global.config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
-  await global.db.loadDatabase();
+  db = nedb.create({ filename: config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
+  await db.loadDatabase();
   const list = [];
   let filesAll = [];
-  for (const location of global.config.locations) {
+  for (const location of config.locations) {
     const folder = await listFiles(location.folder, location.match, location.recursive, location.force);
     list.push({ location, files: folder.process });
     filesAll = [...filesAll, ...folder.files];

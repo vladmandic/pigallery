@@ -186,10 +186,6 @@ export async function run(input, config, objects) {
   // const t1 = performance.now();
   // objects.perf.Human = Math.trunc(t1 - t0);
 
-  // draw image from video
-  // const ctx = canvas.getContext('2d');
-  // if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, canvas.width, canvas.height);
-  // else ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, canvas.width, canvas.height);
   // draw all results
   if (!objects.canvases.human) draw.appendCanvas('human', input.width, input.height, objects);
   // recreate canvas if resolution changed
@@ -204,6 +200,7 @@ export async function run(input, config, objects) {
   ctx = canvas.getContext('2d');
 
   draw.clear(canvas);
+  // draw image from video if processed by human, else ignore
   if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
   // else ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
 

@@ -23,13 +23,8 @@ async function init() {
   service = await esbuild.startService();
   clean = new CleanCSS({
     level: {
-      1: {
-        all: true,
-        // transform: (propertyName, propertyValue) => ((propertyName === 'src' && propertyValue.indexOf('webfonts/') > -1) ? propertyValue.replace('webfonts/', '/assets/') : propertyValue),
-      },
-      2: {
-        all: true,
-      },
+      1: { all: true },
+      2: { all: true },
     },
   });
 }
