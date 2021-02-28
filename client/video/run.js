@@ -1,4 +1,4 @@
-import { tf } from '../shared/tf.js';
+import { tf, wasm } from '../shared/tf.js';
 import * as log from '../shared/log.js';
 import * as draw from './draw.js';
 import * as gesture from './gesture.js';
@@ -63,16 +63,18 @@ async function resetBackend(backendName) {
 async function init(config) {
   // document.getElementById('status').innerText = 'initializing';
   // @ts-ignore
-  if (config.backEnd === 'wasm') tf.wasm.setPaths('/assets');
+  if (config.backEnd === 'wasm') await wasm.setWasmPaths('/assets/');
   await resetBackend(config.backEnd);
   tf.ENV.set('DEBUG', false);
-  for (const [key, val] of Object.entries(config.webgl)) {
-    log.debug('Setting WebGL:', key, val);
-    tf.ENV.set(key, val);
-  }
-  if (config.memory) {
-    log.debug('Setting WebGL: WEBGL_DELETE_TEXTURE_THRESHOLD:', config.memory);
-    tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
+  if (config.backEnd === 'webgl') {
+    for (const [key, val] of Object.entries(config.webgl)) {
+      log.debug('Setting WebGL:', key, val);
+      tf.ENV.set(key, val);
+    }
+    if (config.memory) {
+      log.debug('Setting WebGL: WEBGL_DELETE_TEXTURE_THRESHOLD:', config.memory);
+      tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
+    }
   }
   await tf.ready();
   await tf.enableProdMode();

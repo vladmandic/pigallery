@@ -1,4 +1,4 @@
-import { tf } from '../shared/tf.js';
+import { tf, wasm } from '../shared/tf.js';
 // eslint-disable-next-line import/order
 import Human from '@vladmandic/human/dist/human.esm-nobundle.js';
 import * as log from '../shared/log.js';
@@ -80,6 +80,7 @@ export async function load() {
   const t1 = performance.now();
   log.div('process-log', true, `TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
   log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
+  if (config.backEnd === 'wasm') await wasm.setWasmPaths('/assets/');
   await resetBackend(config.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
@@ -88,13 +89,15 @@ export async function load() {
   log.div('process-log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
   log.div('process-log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
   log.div('process-log', true, `  Auto re-load on error: ${config.autoreload}`);
-  if (config.memory) {
-    log.div('process-log', true, '  WebGL: Enabling memory deallocator');
-    tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
-  }
-  for (const [key, val] of Object.entries(config.webgl)) {
-    log.div('process-log', true, '  WebGL:', key, val);
-    tf.ENV.set(key, val);
+  if (config.backEnd === 'webgl') {
+    if (config.memory) {
+      log.div('process-log', true, '  WebGL: Enabling memory deallocator');
+      tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
+    }
+    for (const [key, val] of Object.entries(config.webgl)) {
+      log.div('process-log', true, '  WebGL:', key, val);
+      tf.ENV.set(key, val);
+    }
   }
   const engine = await tf.engine();
   log.div('process-log', true, `TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
