@@ -1,6 +1,6 @@
 // @ts-nocheck
 import $ from 'jquery';
-import { tf } from '../shared/tf.js';
+import { tf, wasm } from '../shared/tf.js';
 // import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
 // import Human from '@vladmandic/human';
 import * as log from '../shared/log.js';
@@ -38,12 +38,15 @@ async function init() {
     location.replace('/auth');
   }
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
+  await wasm.setWasmPaths('/assets/');
   await resetBackend(config.default.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
-  for (const [key, val] of Object.entries(config.default.webgl)) {
-    log.debug('  WebGL Setting', key, val);
-    tf.ENV.set(key, val);
+  if (config.default.backEnd === 'webgl') {
+    for (const [key, val] of Object.entries(config.default.webgl)) {
+      log.debug('  WebGL Setting', key, val);
+      tf.ENV.set(key, val);
+    }
   }
   log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.default.batchProcessing} image resize: ${config.default.maxSize}px shape: ${config.default.squareImage ? 'square' : 'native'}`);
   if (!config.default.models) {
@@ -313,7 +316,7 @@ async function main() {
     log.div('log', true, 'Stop requested');
     stop = true;
   });
-  await config.default.done();
+  await config.done();
 }
 
 window.onload = main;

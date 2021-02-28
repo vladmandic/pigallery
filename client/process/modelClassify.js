@@ -52,7 +52,7 @@ async function decodeValues(model, values) {
     .map((a) => {
       const id = parseInt(a.index) - model.config.offset; // offset indexes for some models
       const wnid = model.labels[id] ? model.labels[id][0] : a.index;
-      const label = model.labels[id] ? model.labels[id][1].toLowerCase() : `unknown id:${a.index}`;
+      const label = model.labels[id] ? model.labels[id][1]?.toLowerCase() : `unknown id:${a.index}`;
       const score = Math.min(1, Math.trunc(model.config.scaleScore * 10000 * a.score) / 10000); // limit score to 100% in case of scaled scores
       return { id, wnid, score, class: label };
     });
