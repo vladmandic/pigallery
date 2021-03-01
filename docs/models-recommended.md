@@ -19,21 +19,21 @@
         "scores": "Identity_4:0",
         "classes": "Identity_2:0"
       } },
-    { "name": "NudeNet", "modelPath": "models/various/nudenet",
-      "minScore": 0.3, "postProcess": "nsfw", "switchAxis": true,
-      "map": {
-        "boxes": "filtered_detections/map/TensorArrayStack/TensorArrayGatherV3:0",
-        "scores": "filtered_detections/map/TensorArrayStack_1/TensorArrayGatherV3:0",
-        "classes": "filtered_detections/map/TensorArrayStack_2/TensorArrayGatherV3:0"
-      } },
     { "name": "OpenImages SSD MobileNet v2", "modelPath": "models/openimages/ssd-mobilenet-v2",
       "minScore": 0.15, "normalizeInput": 0.00392156862745098, "maxResults": 20,
         "map": {
         "boxes": "module_apply_default/hub_input/strided_slice:0",
         "scores": "module_apply_default/hub_input/strided_slice_1:0",
         "classes": "module_apply_default/hub_input/strided_slice_2:0"
+      } },
+    { "name": "NudeNet", "modelPath": "models/various/nudenet",
+      "minScore": 0.3, "postProcess": "nsfw", "switchAxis": true,
+      "map": {
+        "boxes": "filtered_detections/map/TensorArrayStack/TensorArrayGatherV3:0",
+        "scores": "filtered_detections/map/TensorArrayStack_1/TensorArrayGatherV3:0",
+        "classes": "filtered_detections/map/TensorArrayStack_2/TensorArrayGatherV3:0"
       } }
-  ],
+    ],
   "video": [],
   "person": { "name": "Human",
     "videoOptimized": false, "filter": { "enabled": false }, "gesture": { "enabled": false }, "body": { "enabled": false }, "hand": { "enabled": false },
