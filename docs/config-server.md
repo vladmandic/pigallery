@@ -1,4 +1,9 @@
-Default server configuration is created during setup step and written to `config.json`
+# Server Configuration
+
+## Default Configuration
+
+Default server configuration is created during setup step  
+using `./setup.js` and written to `config.json`
 
 ```json
   {
@@ -53,3 +58,10 @@ Default server configuration is created during setup step and written to `config
     }
   }
 ```
+
+## Configuration Reset
+
+To delete generated image database and all user configuration file effecively resetting configuration to factory,  
+run `npm start reset`
+
+After reset, you have to recreate configuration files using `./setup.js`

@@ -15,8 +15,7 @@
 - Person age, gender & emotion modelling and NSFW classification
 - Image geo-location including nearest city for quick searches
 - Lexicon definitions for complete image description
-- Analysis is always incremental so only new or modified images will be analyzed
-- All data is stored in a server-side database and original image is never modified
+
 
 ### As an image gallery viewer, **PiGallery** provides
 
@@ -33,10 +32,16 @@
 - Multiple display themes (light & dark) and fully configurable user interface
 - Play with machine learning detection of live video using your camera
 
+### And on a server side
+- Analysis is always incremental so only new or modified images will be analyzed
+- All data is stored in a server-side database and original image is never modified
+
 ### And it's **FAST**
 
-- Initial access (no cache) of database with 10,000 images completes in less than 1 minute (depending on your network speed)
-- Subsequent access (cached) with incremental database updates: less than 5 seconds for application startup and gallery load
+- Initial access (no cache) of database with 10,000 images completes in less than 1 minute  
+  (depending on your network speed)
+- Subsequent access (cached) with incremental database updates:
+  less than 5 seconds for application startup and gallery load
 
 <br>
 
@@ -184,22 +189,20 @@
 
 - Select `Live Video` to process live video from your device camera
 
-<br>
+<br><hr><br>
 
 ### Configuration Details:
 
-- [Server configuration documentation]('docs/SERVER-CONFIG.md')
-- [Client configuration documentation]('docs/CLIENT-CONFIG.md')
-- [Model configuration documentation]('docs/MODELS.md')
+- [Server configuration documentation]('docs/client-server.md')
+- [Client configuration documentation]('docs/client-config.md')
+- [Model configuration documentation]('docs/config-models.md')
 
-<br>
+Additional nodes:
 
-### Reset
-
-To delete generated image database and all user configuration file effecively resetting configuration to factory,  
-run `npm start reset`
-
-After reset, you have to recreate configuration files using `./setup.js`
+- [Default models configuration]('docs/models-default.md')
+- [Recommended models configuration]('docs/models-recommended.md')
+- [Some alternative models configuration]('docs/models-alternative.md')
+- [Model conversion notes]('docs/models-convert.md')
 
 <br><hr><br>
 
@@ -282,19 +285,11 @@ Result of all metadata processing is a very flexbile search engine - take a look
 
 <br><hr><br>
 
-### Documentation:
-
-- **Main**: <https://github.com/vladmandic/pigallery/README.md>  
-- **Server Configuration**: <https://github.com/vladmandic/pigallery/SERVER-CONFIG.md>  
-- **Client Configuration**: <https://github.com/vladmandic/pigallery/CLIENT-CONFIG.md>  
-- **Model Configuration**: <https://github.com/vladmandic/pigallery/MODELS.md>  
-- **Development Todo List**: <https://github.com/vladmandic/pigallery/TODO.md>  
-
 ### Links:
 
 - **Code Repository**: <https://github.com/vladmandic/pigallery>  
+- **Todo List**: <https://github.com/vladmandic/pigallery/docs/todo.md>  
 - **Changelog**: <https://github.com/vladmandic/pigallery/CHANGELOG.md>  
-- **Todo List**: <https://github.com/vladmandic/pigallery/TODO.md>  
 - **License**: <https://github.com/vladmandic/pigallery/LICENSE>  
 
 <br>

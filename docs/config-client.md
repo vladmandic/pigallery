@@ -1,6 +1,6 @@
 # Configuration Details
 
-Active client configuration can be edited in the client app via 'User' -> 'Settings'  
+Majority of active client configuration can be edited in the client app directly via 'User' -> 'Settings' without the need to modify configuration files  
 
 To modify client configuration advanced parameters, edit `client/shared/config.js`  
 
@@ -21,7 +21,3 @@ Main parameters are:
     memory: false,        // set webgl memory hard limit
   }
 ```
-
-Active model configuration can be seen in the client app via 'User' -> 'Params'  
-
-To modify model configuration, edit `model.json` to select active models for both image processing and live video  
