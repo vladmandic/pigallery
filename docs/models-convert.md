@@ -1,4 +1,6 @@
-#### Convert Generic
+# Random Notes on Model Conversion
+
+## Convert Generic
 
 Simplest way to convert typical TensorFlow **saved** model to a **graph** model that can be used by TFJS:
 
@@ -13,7 +15,8 @@ Simplest way to convert typical TensorFlow **saved** model to a **graph** model 
     <src_folder> \
     <tgt_folder>
 ```
-#### Conversion Notes
+
+### Conversion Notes
 
 - Different conversions may require additional parameters like:
   - `--signature_name <name`
@@ -25,7 +28,7 @@ Simplest way to convert typical TensorFlow **saved** model to a **graph** model 
   - `--quantize_uint16 True`
 - Models that output features (e.g. notop models) do not have activations above base layers so output is not directly usable
 
-### Model Mapping
+## Model Mapping
 
 Included tool `server/signature.js` can analyze model signature of both **saved** and **graph** models.  
 Converted graph models are typically missing correct model signature, so need to map expected output to tensor names.
@@ -33,6 +36,7 @@ Converted graph models are typically missing correct model signature, so need to
 For example, comparing output of **saved** model and converted **graph** model, correct tensor names can be matched using tensor id values:
 
 `$ server/signature.js ~/models/coco/ssd-mobilenet-v2/saved/`
+
 ```js
 2021-02-16 17:23:43.832428: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
 2021-02-16 17:23:43.875960: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2299965000 Hz
@@ -59,6 +63,7 @@ For example, comparing output of **saved** model and converted **graph** model, 
 ```
 
 `$ server/signature.js ~/models/coco/ssd-mobilenet-v2/`
+
 ```js
 2021-02-16 17:23:40.526248: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
 2021-02-16 17:23:40.563928: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2299965000 Hz
@@ -83,6 +88,7 @@ For example, comparing output of **saved** model and converted **graph** model, 
 ```
 
 So resulting model map for a converted model would be:
+
 ```json
   { "name":"COCO SSD MobileNet v2", "modelPath":"models/coco/ssd-mobilenet-v2",
     "map": { 

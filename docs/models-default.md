@@ -1,12 +1,15 @@
 # Models available online or embedded in PiGallery
 
 ## Image Classification
+
 MobileNet v3 trained on ImageNet 1k dataset
 
 ## Object Detection
+
 MobileNet v2 with SSD trained on COCO dataset
 
 ## Person Analysis
+
 Human library with embedded models
 
 <br><hr>
