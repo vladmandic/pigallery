@@ -134,7 +134,8 @@ async function classify() {
   stop = false;
   log.server('Compare: Classify');
   log.div('log', true, 'Loading models ...');
-  for (const def of config.default.models.classify) await loadClassify(def);
+  const enabled = config.default.models.classify.filter((a) => a.enabled);
+  for (const def of enabled) await loadClassify(def);
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
   await modelClassify.classify(models[0].model, warmup.canvas);
@@ -163,7 +164,7 @@ async function classify() {
       const t1 = performance.now();
       stats[m] += (t1 - t0);
       results.push({ model: models[m], data });
-      log.debug('Classify', files[i], models[m], data);
+      log.debug('Classify', Math.trunc(t1 - t0), 'ms', files[i], models[m], data);
     }
     print(files[i], image, results);
   }
@@ -173,98 +174,13 @@ async function classify() {
   }
 }
 
-async function person() {
-  /*
-  stop = false;
-  og.div('log', true, `FaceAPI version: ${faceapi.tf.version_core} backend ${faceapi.tf.getBackend()}`);
-  log.div('log', true, 'Loading models ...');
-
-  let engine;
-  let stats = {};
-  stats.time0 = performance.now();
-  engine = await tf.engine();
-  stats.bytes0 = engine.state.numBytes;
-  stats.tensors0 = engine.state.numTensors;
-
-  const options = config.models.person[0];
-  if (options.exec === 'yolo') await faceapi.nets.tinyFaceDetector.load(options.modelPath);
-  if (options.exec === 'ssd') await faceapi.nets.ssdMobilenetv1.load(options.modelPath);
-  await faceapi.nets.ageGenderNet.load(options.modelPath);
-  await faceapi.nets.faceLandmark68Net.load(options.modelPath);
-  await faceapi.nets.faceRecognitionNet.load(options.modelPath);
-  await faceapi.nets.faceExpressionNet.load(options.modelPath);
-  if (options.exec === 'yolo') options.options = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: options.score, inputSize: options.tensorSize });
-  if (options.exec === 'ssd') options.options = new faceapi.SsdMobilenetv1Options({ minConfidence: options.score, maxResults: options.topK });
-
-  const human = new Human();
-  await human.load(config.default.human);
-
-  log.div('log', true, 'Warming up ...');
-  const warmup = await processImage.getImage('assets/warmup.jpg');
-  await faceapi.detectAllFaces(warmup.canvas, options.options);
-  await human.detect(warmup.canvas, config.default.human);
-  log.div('log', true, 'TensorFlow Memory:', faceapi.tf.memory());
-  log.div('log', true, 'TensorFlow Flags:');
-  log.div('log', true, faceapi.tf.ENV.flags);
-
-  engine = await tf.engine();
-  stats.time1 = performance.now();
-  stats.bytes1 = engine.state.numBytes;
-  stats.tensors1 = engine.state.numTensors;
-
-  stats.size = Math.round((stats.bytes1 - stats.bytes0) / 1024 / 1024);
-  stats.tensors = Math.round(stats.tensors1 - stats.tensors0);
-  stats.time = Math.round(stats.time1 - stats.time0);
-  log.div('log', true, `Loaded models: FaceAPI/Human in ${stats.time.toLocaleString()} ms ${stats.size.toLocaleString()} MB ${stats.tensors.toLocaleString()} tensors`);
-
-  const api = await fetch('/api/file/dir?folder=Tests/Persons/');
-  const files = await api.json();
-  log.div('log', true, `Received list from server: ${files.length} images`);
-
-  stats = [0, 0];
-  let data;
-  for (const i in files) {
-    if ((limit > 0) && (i >= limit)) stop = true;
-    if (stop) continue;
-    const results = [];
-    const image = await processImage.getImage(files[i]);
-
-    const t0 = performance.now();
-
-    data = await faceapi
-      .detectAllFaces(image.canvas, options.options)
-      .withFaceLandmarks()
-      .withFaceExpressions()
-      .withFaceDescriptors()
-      .withAgeAndGender();
-
-    results.push({ model: 'FaceAPI', data });
-    log.debug('FaceApi', files[i], data);
-
-    const t1 = performance.now();
-    stats[0] += t1 - t0;
-
-    // data = await human.detect(image.canvas, config.default.human);
-    log.debug('Human', files[i], data);
-    results.push({ model: 'Human', data: [data] });
-
-    const t2 = performance.now();
-    stats[1] += t2 - t1;
-
-    print(files[i], image, results);
-  }
-  log.div('log', true, 'Finished:', tf.memory());
-  log.div('log', true, `FaceApi: ${Math.round(stats[0]).toLocaleString()} ms / ${Math.round(stats[0] / files.length)} avg`);
-  log.div('log', true, `Human: ${Math.round(stats[1]).toLocaleString()} ms / ${Math.round(stats[1] / files.length)} avg`);
-  */
-}
-
 // eslint-disable-next-line no-unused-vars
 async function detect() {
   stop = false;
   log.server('Compare: Detect');
   log.div('log', true, 'Loading models ...');
-  for (const def of config.default.models.detect) await loadDetect(def);
+  const enabled = config.default.models.detect.filter((a) => a.enabled);
+  for (const def of enabled) await loadDetect(def);
   if (!models[0].model) return;
 
   log.div('log', true, 'Warming up ...');
@@ -290,14 +206,14 @@ async function detect() {
     const results = [];
     const image = await processImage.getImage(files[i]);
     for (const m in models) {
-      if (stop) continue;
+      if (stop || !m) continue;
       const t0 = performance.now();
       const data = await modelDetect.detect(models[m].model, image.canvas);
       const t1 = performance.now();
       stats[m] += (t1 - t0);
       // tbd: human
       results.push({ model: models[m], data });
-      log.debug('Detect', files[i], models[m], data);
+      log.debug('Detect', Math.trunc(t1 - t0), 'ms', files[i], models[m], data);
     }
     print(files[i], image, results);
   }
@@ -311,7 +227,6 @@ async function main() {
   await init();
   $('#btn-classify').on('click', () => classify());
   $('#btn-detect').on('click', () => detect());
-  $('#btn-person').on('click', () => person());
   $('#btn-stop').on('click', () => {
     log.div('log', true, 'Stop requested');
     stop = true;

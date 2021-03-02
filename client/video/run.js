@@ -120,21 +120,27 @@ async function main(config, objects) {
   }
 
   for (const m of config.models.classify) {
-    const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
-    if (data) objects.results.push(data);
-    else draw.clear(objects.canvases[m.name]);
+    if (m.enabled) {
+      const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
+      if (data) objects.results.push(data);
+      else draw.clear(objects.canvases[m.name]);
+    }
   }
 
   for (const m of config.models.various) {
-    const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
-    if (data) objects.results.push(data);
-    else draw.clear(objects.canvases[m.name]);
+    if (m.enabled) {
+      const data = (config.classify[m.name]) ? await runClassify.run(m.name, input, config, objects) : null;
+      if (data) objects.results.push(data);
+      else draw.clear(objects.canvases[m.name]);
+    }
   }
 
   for (const m of config.models.detect) {
-    const data = (config.detect[m.name]) ? await runDetect.run(m.name, input, config, objects) : null;
-    if (data) objects.results.push(data);
-    else draw.clear(objects.canvases[m.name]);
+    if (m.enabled) {
+      const data = (config.detect[m.name]) ? await runDetect.run(m.name, input, config, objects) : null;
+      if (data) objects.results.push(data);
+      else draw.clear(objects.canvases[m.name]);
+    }
   }
 
   objects.gestures = await gesture.analyze(objects.results);

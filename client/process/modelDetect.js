@@ -108,8 +108,16 @@ export async function detect(model, image, userConfig) {
   // execute model
   let res;
   if (!model.config.profile) {
-    if (model.config.map.classes) res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]);
-    else res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores]);
+    try {
+      if (model.config.map.classes) res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]);
+      else res = await model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores]);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Detect Execute Error:', err);
+      // eslint-disable-next-line no-console
+      console.error('Model Config:', model.name, model.config, model.signature);
+      throw new Error('Detect Execute Error');
+    }
   } else {
     const memBefore = tf.memory();
     const profileData = await tf.profile(() => model.executeAsync(imageT, [model.config.map.boxes, model.config.map.scores, model.config.map.classes]));
@@ -138,9 +146,18 @@ export async function detect(model, image, userConfig) {
   boxesT.dispose();
 
   // sort & filter results using nms feature
-  const nmsT = await tf.image.nonMaxSuppressionAsync(boxes, scores, model.config.maxResults, model.config.iouThreshold, model.config.minScore / model.config.scaleScore);
-  const nms = await nmsT.data();
-  nmsT.dispose();
+  let nms = [];
+  try {
+    const nmsT = await tf.image.nonMaxSuppressionAsync(boxes, scores, model.config.maxResults, model.config.iouThreshold, model.config.minScore / model.config.scaleScore);
+    nms = await nmsT.data();
+    nmsT.dispose();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Detect NMS Error:', err);
+    // eslint-disable-next-line no-console
+    console.error('Model Config:', model.name, model.config, model.signature);
+    throw new Error('Detect NMS Error');
+  }
   // console.log(`executeAsync: ${Math.trunc(t1 - t0)} ms`);
   // console.log(`allocated: ${Math.trunc(tf.memory().numBytesInGPUAllocated / 1024 / 1024)} MB free: ${Math.trunc(tf.memory().numBytesInGPUFree / 1024 / 1024)} MB limit: ${Math.trunc(tf.engine().backendInstance.numMBBeforeWarning)} MB`);
 
@@ -175,7 +192,7 @@ export async function detect(model, image, userConfig) {
       if (data) results.unshift(...data);
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log('Post process error:', err.message);
+      console.error('Post process error:', err.message);
     }
   }
   // cleanup and return results

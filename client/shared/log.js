@@ -10,17 +10,21 @@ function str(...msg) {
 
 async function debug(...msg) {
   // const ts = `${moment().format('HH:mm:ss.SS')}:`;
+  const threshold = 100;
   const dt = new Date();
   const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
+  let time;
   if (typeof msg[0] === 'number') {
     const t0 = msg[0];
     const t1 = performance.now();
     const duration = t1 - t0;
-    if (duration && (typeof duration === 'number')) msg[0] = duration > 10 ? `${Math.round(t1 - t0).toLocaleString()} ms:` : null;
+    if (duration && (typeof duration === 'number')) time = duration >= threshold ? Math.round(t1 - t0) : null;
+    msg.shift();
   }
-  if (msg[0] === null) msg.shift();
   // eslint-disable-next-line no-console
-  console.log(ts, ...msg);
+  if (time) console.log(ts, '[', time, 'ms ]', ...msg);
+  // eslint-disable-next-line no-console
+  else console.log(ts, ...msg);
   return ts;
 }
 

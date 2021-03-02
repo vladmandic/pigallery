@@ -42,15 +42,15 @@ export async function load() {
   }
 
   log.div('process-log', true, 'Image Classification models:');
-  for (const model of config.models.classify) {
-    log.div('process-log', true, `  ${JSONtoStr(model)}`);
+  for (const model of config.models.classify.filter((a) => a.enabled)) {
+    log.div('process-log', true, `  ${model.name}`);
   }
   log.div('process-log', true, 'Object Detection models:');
-  for (const model of config.models.detect) {
-    log.div('process-log', true, `  ${JSONtoStr(model)}`);
+  for (const model of config.models.detect.filter((a) => a.enabled)) {
+    log.div('process-log', true, `  ${model.name}`);
   }
   log.div('process-log', true, 'Face Detection model:');
-  log.div('process-log', true, `  ${JSONtoStr(config.models.person)}`);
+  log.div('process-log', true, `  ${config.models.person.name}`);
   const t0 = performance.now();
 
   log.div('process-log', true, 'TensorFlow models loading ...');
@@ -63,7 +63,7 @@ export async function load() {
 
   models.classify = [];
   if (config.models.classify && config.models.classify.length > 0) {
-    for (const cfg of config.models.classify) {
+    for (const cfg of config.models.classify.filter((a) => a.enabled)) {
       const res = await modelClassify.load(cfg);
       models.classify.push(res);
     }
@@ -71,7 +71,7 @@ export async function load() {
 
   models.detect = [];
   if (config.models.detect && config.models.detect.length > 0) {
-    for (const cfg of config.models.detect) {
+    for (const cfg of config.models.detect.filter((a) => a.enabled)) {
       const res = await modelDetect.load(cfg);
       models.detect.push(res);
     }
