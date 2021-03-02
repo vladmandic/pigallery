@@ -1,9 +1,16 @@
 # PiGallery Change Log
 
+### **3.3.4** 2021/03/02 mandic00@live.com
+- redesign full models
+
+### **3.3.3** 2021/03/01 mandic00@live.com
+
+### **3.3.2** 2021/02/28 mandic00@live.com
+- add wasm backend option
+- better zoom
+
 ### **3.3.1** 2021/02/26 mandic00@live.com
 - refactoring
-
-### **origin/master, origin/HEAD** 2021/02/25 mandic00@live.com
 
 ### **3.2.1** 2021/02/25 mandic00@live.com
 
