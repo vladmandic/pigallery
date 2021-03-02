@@ -1,4 +1,8 @@
 # PiGallery Change Log
+- markdown cleanup
+
+## **origin/master, origin/HEAD** 2021/03/02 mandic00@live.com
+
 
 ## **3.3.4** 2021/03/02 mandic00@live.com
 
