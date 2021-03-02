@@ -214,7 +214,7 @@ export async function show(img) {
     return;
   }
 
-  log.debug(null, 'Details for object', object);
+  log.debug('Details for object', object);
 
   // const top = $('#navbar').height() + 6;
   $('#popup').toggle(true);
@@ -252,15 +252,11 @@ export async function show(img) {
   let person = '';
   let nsfw = '';
   for (const i in object.person) {
-    if (object.person[i].age) {
-      person += `Person ${1 + parseInt(i)} | 
-          <font color="${window.theme.link}">gender: ${(100 * object.person[i].genderScore).toFixed(0)}% ${object.person[i].gender}</font> | 
-          <font color="${window.theme.link}">age: ${object.person[i].age.toFixed(1)}</font> | 
-          <font color="${window.theme.link}">emotion: ${(100 * object.person[i].emotionScore).toFixed(0)}% ${object.person[i].emotion}<br></font>`;
-    }
-    if (object.person[i].class) {
-      nsfw += `Class: ${(100 * object.person[i].scoreClass).toFixed(0)}% ${object.person[i].class} `;
-    }
+    person += `Person ${1 + parseInt(i)} | `;
+    if (object.person[i].genderScore > 0 && object.person[i].gender !== '') person += `<font color="${window.theme.link}">gender: ${(100 * object.person[i].genderScore).toFixed(0)}% ${object.person[i].gender}</font> | `;
+    if (object.person[i].age > 0) person += `<font color="${window.theme.link}">age: ${object.person[i].age.toFixed(1)}</font> | `;
+    if (object.person[i].emotionScore > 0 && object.person[i].emotion !== '') person += `<font color="${window.theme.link}">emotion: ${(100 * object.person[i].emotionScore).toFixed(0)}% ${object.person[i].emotion}<br></font>`;
+    if (object.person[i].class) nsfw += `Class: ${(100 * object.person[i].scoreClass).toFixed(0)}% ${object.person[i].class} `;
     if (object.person.length === 1) person = person.replace('Person 1', 'Person');
   }
 

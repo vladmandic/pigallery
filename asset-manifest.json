@@ -25510,7 +25510,7 @@
       ]
     },
     "client/index/details.js": {
-      "bytes": 17933,
+      "bytes": 18070,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25611,7 +25611,7 @@
       ]
     },
     "client/index/options.js": {
-      "bytes": 8226,
+      "bytes": 8214,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25641,7 +25641,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 34606,
+      "bytes": 34600,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -26434,7 +26434,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 1043043
+      "bytes": 1043255
     },
     "dist/index/index.js": {
       "imports": [],
@@ -26478,7 +26478,7 @@
           "bytesInOutput": 4944
         },
         "client/index/details.js": {
-          "bytesInOutput": 16629
+          "bytesInOutput": 16794
         },
         "client/index/iv-viewer.js": {
           "bytesInOutput": 27109
@@ -26493,10 +26493,10 @@
           "bytesInOutput": 6271
         },
         "client/index/options.js": {
-          "bytesInOutput": 8063
+          "bytesInOutput": 8051
         }
       },
-      "bytes": 559390
+      "bytes": 559543
     },
     "dist/process/process.js.map": {
       "imports": [],
