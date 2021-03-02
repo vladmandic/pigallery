@@ -65,7 +65,7 @@ async function globalOptions() {
 }
 
 function resetOptions() {
-  log.debug(null, 'Options reset');
+  log.debug('Options reset');
   localStorage.clear();
   sessionStorage.clear();
   // eslint-disable-next-line no-use-before-define
@@ -76,7 +76,7 @@ function resetOptions() {
 }
 
 function saveOptions() {
-  log.debug(null, 'Options save');
+  log.debug('Options save');
   window.options.dateShort = $('#dateShort').val();
   window.options.dateLong = $('#dateLong').val();
   window.options.fontSize = $('#fontSize').val();

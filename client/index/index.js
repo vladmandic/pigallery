@@ -850,6 +850,6 @@ async function main() {
   log.div('log', true, 'Ready:', stats.ready, 'ms');
 }
 
-// window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);
+// window.onpopstate = (evt) => log.debug(`URL Pop state: ${evt.target.location.href}`);
 window.onhashchange = (evt) => hashChange(evt);
 window.onload = main;
