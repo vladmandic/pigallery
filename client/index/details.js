@@ -2,9 +2,9 @@
 
 import $ from 'jquery';
 import moment from 'moment';
-import * as log from '../shared/log.js';
-import ColorThief from '../../assets/color-thief.umd.js';
-import ImageViewer from './iv-viewer.js';
+import * as log from '../shared/log';
+import ColorThief from '../../assets/color-thief.umd';
+import ImageViewer from './iv-viewer';
 
 let viewer;
 let thief;

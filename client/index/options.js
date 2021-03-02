@@ -1,9 +1,9 @@
 // @ts-nocheck
 
 import $ from 'jquery';
-import * as log from '../shared/log.js';
-import * as list from './list.js';
-import * as config from '../shared/config.js';
+import * as log from '../shared/log';
+import * as list from './list';
+import * as config from '../shared/config';
 
 function JSONtoStr(json) {
   let text = '';

@@ -2,8 +2,8 @@
 
 import $ from 'jquery';
 import moment from 'moment';
-import * as log from '../shared/log.js';
-import * as details from './details.js';
+import * as log from '../shared/log';
+import * as details from './details';
 
 // adds dividiers to list view based on sort order
 let previous;
@@ -72,7 +72,7 @@ function printResult(object) {
   }
 
   const camera = (object.exif && object.exif.make) ? `Camera | ${object.exif.make || ''} ${object.exif.model || ''} ${object.exif.lens || ''}` : '';
-  const settings = (object.exif && object.exif.iso) ? `Settings | ${object.exif.fov ? object.exif.fov + 'mm' : ''} ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec` : '';
+  const settings = (object.exif && object.exif.iso) ? `Settings | ${object.exif.fov ? `${object.exif.fov}mm` : ''} ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec` : '';
   const timestamp = object.exif.created ? moment(object.exif.created).format(window.options.dateShort) : 'Date unknown';
   const root = window.user && window.user.root ? window.user.root : 'media/';
 

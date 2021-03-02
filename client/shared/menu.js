@@ -83,7 +83,6 @@ class Menu {
     this.id = 0;
     this.instance = instance;
     instance++;
-    this._maxFPS = 0;
     this.hidden = false;
   }
 
@@ -238,6 +237,7 @@ class Menu {
       evt.target?.setAttribute('value', evt.target?.value);
       if (callback) callback(evt.target?.value);
     });
+    // eslint-disable-next-line prefer-destructuring
     el.input = el.children[0];
     return el;
   }

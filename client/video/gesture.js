@@ -1,3 +1,5 @@
+/* eslint-disable dot-notation */
+
 const gestures = [];
 const find = {};
 

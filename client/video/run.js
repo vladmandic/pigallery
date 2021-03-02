@@ -1,10 +1,10 @@
-import { tf, wasm } from '../shared/tf.js';
-import * as log from '../shared/log.js';
-import * as draw from './draw.js';
-import * as gesture from './gesture.js';
-import * as runDetect from './runDetect.js';
-import * as runClassify from './runClassify.js';
-import * as runHuman from './runHuman.js';
+import { tf, wasm } from '../shared/tf';
+import * as log from '../shared/log';
+import * as draw from './draw';
+import * as gesture from './gesture';
+import * as runDetect from './runDetect';
+import * as runClassify from './runClassify';
+import * as runHuman from './runHuman';
 
 async function getVideoCanvas(video, canvases, config) {
   const el = document.getElementById('video');

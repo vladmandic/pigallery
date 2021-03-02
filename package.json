@@ -52,7 +52,7 @@
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
     "jpeg-exif": "^1.1.4",
-    "jquery": "^3.5.1",
+    "jquery": "^3.6.0",
     "moment": "^2.29.1",
     "nedb-promises": "^4.1.1",
     "node-fetch": "^2.6.1",

@@ -2,10 +2,10 @@
 // @ts-nocheck
 
 import $ from 'jquery';
-import * as db from './indexdb.js';
-import * as log from '../shared/log.js';
-import * as nearest from './nearest.js';
-import * as list from './list.js';
+import * as db from './indexdb';
+import * as log from '../shared/log';
+import * as nearest from './nearest';
+import * as list from './list';
 
 let mapContainer;
 
@@ -25,6 +25,7 @@ async function find(lat, lon) {
   const points = all
     .filter((a) => (a.exif && a.exif.lat && a.exif.lon))
     .map((a) => ({ lat: a.exif.lat, lon: a.exif.lon }));
+  // eslint-disable-next-line no-underscore-dangle
   const count = Math.trunc(11 - mapContainer._zoom / 2);
   const coord = nearest.find(points, lat, lon, count);
   window.filtered = all.filter((a) => {

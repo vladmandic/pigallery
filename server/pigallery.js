@@ -80,7 +80,7 @@ async function main() {
   app.use((req, res, next) => {
     res.on('finish', () => {
       if (res.statusCode !== 200 && res.statusCode !== 302 && res.statusCode !== 304 && !req.url.endsWith('.map') && (req.url !== '/true')) {
-        const forwarded = (req.headers['forwarded'] || '').match(/for="\[(.*)\]:/);
+        const forwarded = (req.headers.forwarded || '').match(/for="\[(.*)\]:/);
         const ip = (Array.isArray(forwarded) ? forwarded[1] : null) || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
         // @ts-ignore
         log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);

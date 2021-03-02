@@ -37,8 +37,9 @@ async function div(id, append, ...msg) {
   const elem = document.getElementById(id);
   const ts = await debug(...msg);
   if (elem) {
+    // eslint-disable-next-line no-regex-spaces
     const html = `<span class="timestamp">${ts}</span> ${str(...msg).replace(/  /g, ' &nbsp ')}`;
-    if (append) elem.innerHTML += html + '<br>';
+    if (append) elem.innerHTML += `${html}<br>`;
     else elem.innerHTML = html;
     elem.scrollTop = elem.scrollHeight;
     elem.scrollIntoView(false);

@@ -1,11 +1,11 @@
-import { tf, wasm } from '../shared/tf.js';
+import { tf, wasm } from '../shared/tf';
 // eslint-disable-next-line import/order
-import Human from '@vladmandic/human/dist/human.esm-nobundle.js';
-import * as log from '../shared/log.js';
-import * as modelClassify from './modelClassify.js';
-import * as modelDetect from './modelDetect.js';
-import * as hash from '../shared/blockhash.js';
-import config from '../shared/config.js';
+import Human from '@vladmandic/human/dist/human.esm-nobundle';
+import * as log from '../shared/log';
+import * as modelClassify from './modelClassify';
+import * as modelDetect from './modelDetect';
+import * as hash from '../shared/blockhash';
+import config from '../shared/config';
 
 const models = {};
 let error;
@@ -280,11 +280,9 @@ export async function process(name) {
   }
 
   if (!error) {
-    fetch('/api/record/put', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(obj),
-    }).then((post) => post.json());
+    fetch('/api/record/put', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj) })
+      .then((post) => post.json())
+      .catch(null);
   }
   return obj;
 }

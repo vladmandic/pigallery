@@ -2,7 +2,7 @@
 /* eslint-disable no-multi-spaces */
 
 import $ from 'jquery';
-import * as log from './log.js';
+import * as log from './log';
 
 window.debug = false;
 

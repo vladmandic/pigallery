@@ -1,7 +1,9 @@
 // @ts-nocheck
-import $ from 'jquery';
-import * as log from './log.js';
 
+import $ from 'jquery';
+import * as log from './log';
+
+// eslint-disable-next-line import/prefer-default-export
 export async function get() {
   $('#progress').html('Authenticating');
   if (window.share) {

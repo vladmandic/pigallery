@@ -1,5 +1,7 @@
 #!/usr/bin/env -S node --no-deprecation --trace-warnings
 
+/* eslint-disable dot-notation, node/shebang */
+
 const fs = require('fs');
 const path = require('path');
 const log = require('@vladmandic/pilogger');

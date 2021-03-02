@@ -2,7 +2,7 @@
 
 // Based on iv-viewer - 2.0.1 Author : Sudhanshu Yadav git+https://github.com/s-yadav/iv-viewer.git
 
-import * as log from '../shared/log.js';
+import * as log from '../shared/log';
 
 const imageViewHtml = `
   <div class="iv-loader"></div>
@@ -364,6 +364,7 @@ class ImageViewer {
         this.sliders.zoomSlider.onMove(eStart);
       },
       onMove: (e) => {
+        // eslint-disable-next-line prefer-destructuring
         const pageX = e.pageX; // || e.touches && (e.touches.length > 0) ? e.touches[0]?.pageX : 0;
         const newLeft = clamp(pageX - leftOffset - handleWidth / 2, 0, this.state.zoomSliderLength);
         const zoomValue = 100 + (this.options.maxZoom - 100) * newLeft / this.state.zoomSliderLength;

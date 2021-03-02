@@ -36,6 +36,7 @@ const search = (item, array, comparator) => {
   let mid;
   let comp;
   while (low <= high) {
+    // eslint-disable-next-line no-bitwise
     mid = (low + high) >>> 1;
     comp = comparator(array[mid], item);
     if (comp < 0) low = mid + 1;
