@@ -1,9 +1,9 @@
 import $ from 'jquery';
-import { tf } from '../shared/tf.js';
-import * as log from '../shared/log.js';
-import * as config from '../shared/config.js';
-import * as process from './processImage.js';
-import * as user from '../shared/user.js';
+import { tf } from '../shared/tf';
+import * as log from '../shared/log';
+import * as config from '../shared/config';
+import * as process from './processImage';
+import * as user from '../shared/user';
 
 const results = [];
 let id = 0;
@@ -71,6 +71,7 @@ async function processFiles() {
         id += 1;
         stuckTimer = new Date();
       } else {
+        // eslint-disable-next-line no-loop-func
         promises.push(process.process(url).then((obj) => {
           results[id] = obj;
           log.div('process-active', false, `[${results.length}/${files.length}] Processed ${obj.image} in ${obj.perf.total.toLocaleString()} ms size ${JSON.stringify(obj).length.toLocaleString()} bytes`);
@@ -78,6 +79,7 @@ async function processFiles() {
           error = (obj.error === true) || error;
           id += 1;
           stuckTimer = new Date();
+          return true;
         }));
       }
       if (promises.length >= config.default.batchProcessing) {

@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import * as log from '../shared/log.js';
+import * as log from '../shared/log';
 
 let db;
 let id = 0;
@@ -95,6 +95,7 @@ export async function all(index = 'date', direction = true, start = 1, end = Num
   last = { index, direction, start: 1, end: Number.MAX_SAFE_INTEGER };
   return new Promise((resolve) => {
     if (window.share) {
+      // eslint-disable-next-line promise/catch-or-return
       getShare().then((res) => resolve(res));
     } else {
       const res = [];

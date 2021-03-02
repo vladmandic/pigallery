@@ -1,4 +1,4 @@
-import * as hash from '../shared/blockhash.js';
+import * as hash from '../shared/blockhash';
 
 onmessage = async (msg) => {
   // console.log('Worker received message', msg.data);

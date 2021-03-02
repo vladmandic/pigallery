@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import $ from 'jquery';
-import * as log from '../shared/log.js';
+import * as log from '../shared/log';
 
 // exctract top classe from classification & detection and builds sidebar menu
 async function enumerateClasses() {

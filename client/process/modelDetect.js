@@ -1,5 +1,5 @@
-import { tf } from '../shared/tf.js';
-import * as custom from './custom.js';
+import { tf } from '../shared/tf';
+import * as custom from './custom';
 
 const defaults = {
   modelPath: null, // required
@@ -24,7 +24,7 @@ export async function load(userConfig) {
     // requestInit: { mode: 'no-cors' },
     fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
   };
-  const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? model.config.modelPath + '/model.json' : model.config.modelPath; // append model.json if not present
+  const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? `${model.config.modelPath}/model.json` : model.config.modelPath; // append model.json if not present
   try {
     const saveConfig = model.config;
     // @ts-ignore
@@ -35,7 +35,7 @@ export async function load(userConfig) {
     throw new Error(`Error loading model: $${modelPath} message:${err.message}`);
   }
   try {
-    const res = model.config.classes ? await fetch(model.config.classes) : await fetch(model.config.modelPath + '/classes.json'); // load classes json file from modelpath/classes.json or user provided url
+    const res = model.config.classes ? await fetch(model.config.classes) : await fetch(`${model.config.modelPath}/classes.json`); // load classes json file from modelpath/classes.json or user provided url
     if (res && res.ok) model.labels = await res.json();
     else throw new Error(`classes file is missing: ${model.config.classes} status: ${res.status}`);
   } catch (err) {
@@ -65,6 +65,7 @@ function profile(data) {
   const maxResults = 5;
   const time = data.kernels
     .filter((a) => a.kernelTimeMs > 0)
+    // eslint-disable-next-line no-return-assign
     .reduce((a, b) => a += b.kernelTimeMs, 0);
   const slowest = data.kernels
     .map((a, i) => { a.id = i; return a; })

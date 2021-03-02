@@ -1,8 +1,9 @@
-import { tf } from '../shared/tf.js';
-import * as log from '../shared/log.js';
-import * as draw from './draw.js';
-import * as modelDetect from '../process/modelDetect.js';
+import { tf } from '../shared/tf';
+import * as log from '../shared/log';
+import * as draw from './draw';
+import * as modelDetect from '../process/modelDetect';
 
+// eslint-disable-next-line import/prefer-default-export
 export async function run(name, input, config, objects) {
   const t0 = performance.now();
   if (!objects.models[name]) {

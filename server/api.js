@@ -7,7 +7,7 @@ let config;
 let db;
 
 function sign(req) {
-  const forwarded = (req.headers['forwarded'] || '').match(/for="\[(.*)\]:/);
+  const forwarded = (req.headers.forwarded || '').match(/for="\[(.*)\]:/);
   const ip = (Array.isArray(forwarded) ? forwarded[1] : null) || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
   const user = req.session.share ? '' : req.session.user;
   return `${user}@${ip}`;
@@ -247,7 +247,7 @@ function api(app, inConfig, inDB) {
     const fileSize = stat.size;
     const splitName = fileName.split('.');
     const fileExt = splitName[splitName.length - 1].toLowerCase();
-    const share = req.session.share ? 'Share: ' + req.session.share : '';
+    const share = req.session.share ? `Share: ${req.session.share}` : '';
     log.info(`API/File ${sign(req)} ${share} ${fileName} ${fileSize} bytes`);
     let contentType;
     if (fileExt === 'jpeg' || fileExt === 'jpg') contentType = 'image/jpeg';

@@ -1,13 +1,13 @@
 // @ts-nocheck
 import $ from 'jquery';
-import { tf, wasm } from '../shared/tf.js';
+import { tf, wasm } from '../shared/tf';
 // import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
 // import Human from '@vladmandic/human';
-import * as log from '../shared/log.js';
-import * as modelClassify from '../process/modelClassify.js';
-import * as modelDetect from '../process/modelDetect.js';
-import * as processImage from '../process/processImage.js';
-import * as config from '../shared/config.js';
+import * as log from '../shared/log';
+import * as modelClassify from '../process/modelClassify';
+import * as modelDetect from '../process/modelDetect';
+import * as processImage from '../process/processImage';
+import * as config from '../shared/config';
 
 const models = [];
 // @ts-ignore

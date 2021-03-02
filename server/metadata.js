@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+
 const fs = require('fs');
 const path = require('path');
 const proc = require('process');
@@ -171,7 +173,7 @@ function getLocation(json) {
   if (!json.lon || !json.lat) return {};
   const loc = distance.nearest(json.lat, json.lon, 'all', 1);
   const near = distance.nearest(json.lat, json.lon, 'large', 1);
-  const state = isNaN(loc[0].state) ? loc[0].state : '';
+  const state = Number.isNaN(loc[0].state) ? loc[0].state : '';
   const res = { city: loc[0].name, near: near[0].name, state, country: loc[0].country, continent: loc[0].continent };
   return res;
 }

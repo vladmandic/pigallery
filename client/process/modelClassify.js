@@ -1,4 +1,4 @@
-import { tf } from '../shared/tf.js';
+import { tf } from '../shared/tf';
 
 const defaults = {
   modelPath: null,
@@ -22,7 +22,7 @@ export async function load(userConfig) {
     // requestInit: { mode: 'no-cors' },
     fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
   };
-  const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? model.config.modelPath + '/model.json' : model.config.modelPath; // append model.json if not present
+  const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? `${model.config.modelPath}/model.json` : model.config.modelPath; // append model.json if not present
   try {
     const saveConfig = model.config;
     if (model.config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
@@ -34,7 +34,7 @@ export async function load(userConfig) {
     throw new Error(`Error loading model: ${modelPath} message:${err.message}`);
   }
   try {
-    const res = model.config.classes ? await fetch(model.config.classes) : await fetch(model.config.modelPath + '/classes.json'); // load classes json file from modelpath/classes.json or user provided url
+    const res = model.config.classes ? await fetch(model.config.classes) : await fetch(`${model.config.modelPath}/classes.json`); // load classes json file from modelpath/classes.json or user provided url
     model.labels = await res.json();
   } catch (err) {
     throw new Error(`Error loading classes: $${model.config.classes} message:${err.message}`);

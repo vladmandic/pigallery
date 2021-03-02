@@ -1,18 +1,18 @@
 // @ts-nocheck
 
 import $ from 'jquery';
-import * as log from '../shared/log.js';
-import * as marked from '../../assets/marked.esm.js';
-import * as config from '../shared/config.js';
-import * as indexdb from './indexdb.js';
-import * as details from './details.js';
-import * as hash from '../shared/blockhash.js';
-import * as user from '../shared/user.js';
-import * as list from './list.js';
-import * as map from './map.js';
-import * as enumerate from './enumerate.js';
-import * as optionsConfig from './options.js';
-import * as pwa from './pwa-register.js';
+import * as log from '../shared/log';
+import * as marked from '../../assets/marked.esm';
+import * as config from '../shared/config';
+import * as indexdb from './indexdb';
+import * as details from './details';
+import * as hash from '../shared/blockhash';
+import * as user from '../shared/user';
+import * as list from './list';
+import * as map from './map';
+import * as enumerate from './enumerate';
+import * as optionsConfig from './options';
+import * as pwa from './pwa-register';
 
 // global variables
 window.filtered = [];
@@ -44,7 +44,8 @@ async function folderHandlers() {
   $('.collapsible').children('li').hide();
   $('.collapsible').on('click', async (evt) => {
     $(evt.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-right');
-    $(evt.target).parent().parent().find('li').toggle('slow');
+    $(evt.target).parent().parent().find('li')
+      .toggle('slow');
   });
   $('.folder').off();
   $('.folder').on('click', async (evt) => {
@@ -57,9 +58,10 @@ async function folderHandlers() {
     switch (type) {
       case 'folder':
         log.debug(t0, `Selected path: ${path}`);
+        // eslint-disable-next-line no-case-declarations
         const root = window.user && window.user.root ? window.user.root : 'media/';
         if (window.filtered.length < await indexdb.count()) window.filtered = await indexdb.refresh();
-        if (path !== root) window.filtered = window.filtered.filter((a) => escape(a.image).startsWith(path));
+        if (path !== (root)) window.filtered = window.filtered.filter((a) => escape(a.image).startsWith(path));
         break;
       case 'location':
         log.debug(t0, `Selected location: ${path}`);
@@ -74,6 +76,7 @@ async function folderHandlers() {
         break;
       case 'share':
         $('#share').toggle(true);
+        // eslint-disable-next-line no-case-declarations
         const share = window.shares.find((a) => a.key === path);
         if (!share.name || !share.key) return;
         $('#share-name').val(share.name);
@@ -81,8 +84,6 @@ async function folderHandlers() {
         $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
         window.share = share.key;
         window.filtered = await indexdb.refresh();
-        // eslint-disable-next-line no-use-before-define
-        // await sortResults(window.options.listSortOrder);
         break;
       default:
     }
@@ -139,7 +140,7 @@ async function filterResults(input) {
   }
   $('#search-result').html(`"${input}"<br>found ${window.filtered.length || 0} images`);
   log.debug(t0, `Searching for "${input}" found ${window.filtered.length || 0} images`);
-  enumerate.enumerate().then(() => folderHandlers());
+  enumerate.enumerate().then(folderHandlers).catch(false);
   list.redraw();
   busy();
 }
@@ -181,7 +182,7 @@ async function simmilarImage(image) {
     .sort((a, b) => b.simmilarity - a.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} images`);
   list.redraw();
-  enumerate.enumerate().then(() => folderHandlers());
+  enumerate.enumerate().then(folderHandlers).catch(false);
   list.scroll();
   busy();
 }
@@ -218,7 +219,7 @@ async function simmilarPerson(image) {
     .sort((a, b) => b.simmilarity - a.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} persons`);
   list.redraw();
-  enumerate.enumerate().then(() => folderHandlers());
+  enumerate.enumerate().then(folderHandlers).catch(false);
   list.scroll();
   busy();
 }
@@ -242,7 +243,7 @@ async function simmilarClasses(image) {
     .sort((a, b) => b.simmilarity - a.simmilarity);
   log.debug(t0, `Simmilar: ${window.filtered.length} classes`);
   list.redraw();
-  enumerate.enumerate().then(() => folderHandlers());
+  enumerate.enumerate().then(folderHandlers).catch(false);
   list.scroll();
   busy();
 }
@@ -304,7 +305,7 @@ async function sortResults(sort) {
   busy('Enumerating images');
   // await enumerate.enumerate();
   // folderHandlers();
-  enumerate.enumerate().then(() => folderHandlers());
+  enumerate.enumerate().then(folderHandlers).catch(false);
   stats.enumerate = Math.floor(window.performance.now() - t1);
   list.scroll();
   // log.div('log', true, 'Displaying: ', window.filtered.length, ' images');
@@ -367,9 +368,11 @@ async function loadGallery(limit, refresh = false) {
   for (let page = 1; page < pages; page++) {
     const promise = fetch(`/api/record/get?limit=${limit}&time=${since}&chunks=${chunkSize}&page=${page}`);
     promisesReq.push(promise);
+    // eslint-disable-next-line no-loop-func, promise/catch-or-return
     promise.then((result) => {
       const req = result.json();
       promisesData.push(req);
+      // eslint-disable-next-line promise/catch-or-return, promise/no-nesting
       req.then(async (json) => {
         dlSize += JSON.stringify(json).length;
         progress = Math.min(100, Math.round(100 * dlSize / totalSize));
@@ -381,7 +384,9 @@ async function loadGallery(limit, refresh = false) {
         log.debug('Donwloading', `page:${page} progress:${progress}% bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
         if (progress === 100) $('#progress').html(`Creating cache<br>${totalSize.toLocaleString()} bytes`);
         else $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+        return true;
       });
+      return true;
     });
   }
   await Promise.all(promisesReq);
@@ -506,7 +511,7 @@ async function initSharesHandler() {
       // @ts-ignore
       const key = $('#share-url').val().split('=')[1];
       log.debug(t0, `Share remove: ${name} ${key}`);
-      fetch(`/api/share/del?rm=${key}`).then(() => enumerate.shares());
+      fetch(`/api/share/del?rm=${key}`).then(enumerate.shares).catch(false);
     }
   });
 
@@ -799,7 +804,7 @@ async function installable(evt) {
   document.getElementById('install').addEventListener('click', () => {
     document.getElementById('install').style.display = 'none';
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((res) => log.debug('Application Install: ', res.outcome));
+    deferredPrompt.userChoice.then((res) => log.debug('Application Install: ', res.outcome)).catch(false);
   });
 }
 
@@ -825,7 +830,8 @@ async function main() {
   if (window.share) log.debug(`Direct link to share: ${window.share}`);
   $('body').on('contextmenu', (evt) => showContextPopup(evt));
   $('body').css('display', 'block');
-  $('.collapsible').parent().parent().find('li').toggle(false);
+  $('.collapsible').parent().parent().find('li')
+    .toggle(false);
   await resizeViewport();
   await perfDetails();
   await list.resize();

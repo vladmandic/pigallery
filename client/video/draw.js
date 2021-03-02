@@ -78,12 +78,12 @@ function curve({ points = [], canvas = null, lineWidth = 2, color = 'white', tit
   ctx.beginPath();
   ctx.moveTo(points[0][0], points[0][1]);
   for (let i = 0; i < points.length - 1; i++) {
-    const x_mid = (points[i][0] + points[i + 1][0]) / 2;
-    const y_mid = (points[i][1] + points[i + 1][1]) / 2;
-    const cp_x1 = (x_mid + points[i][0]) / 2;
-    const cp_x2 = (x_mid + points[i + 1][0]) / 2;
-    ctx.quadraticCurveTo(cp_x1, points[i][1], x_mid, y_mid);
-    ctx.quadraticCurveTo(cp_x2, points[i + 1][1], points[i + 1][0], points[i + 1][1]);
+    const xMid = (points[i][0] + points[i + 1][0]) / 2;
+    const yMid = (points[i][1] + points[i + 1][1]) / 2;
+    const cpX1 = (xMid + points[i][0]) / 2;
+    const cpX2 = (xMid + points[i + 1][0]) / 2;
+    ctx.quadraticCurveTo(cpX1, points[i][1], xMid, yMid);
+    ctx.quadraticCurveTo(cpX2, points[i + 1][1], points[i + 1][0], points[i + 1][1]);
   }
   ctx.strokeStyle = color;
   ctx.fillStyle = color;

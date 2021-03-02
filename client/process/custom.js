@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/prefer-default-export
 export async function nsfw(model, detected) {
   if (!detected) return null;
   const labelPerson = [6, 7];

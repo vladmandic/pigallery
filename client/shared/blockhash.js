@@ -1,4 +1,4 @@
-/* eslint-disable func-names */
+/* eslint-disable func-names, camelcase */
 
 // Perceptual image hash based on https://github.com/commonsmachinery/blockhash-js
 // Which is an implementation of 'Block Mean Value Based Image Perceptual Hashing' by Bian Yang, Fan Gu and Xiamu Niu
@@ -170,6 +170,7 @@ function distance(hash1, hash2) {
   for (let i = 0; i < hash1.length; i++) {
     const n1 = parseInt(hash1[i], 16);
     const n2 = parseInt(hash2[i], 16);
+    // eslint-disable-next-line no-bitwise
     d += one_bits[n1 ^ n2];
   }
   differences.push(d);

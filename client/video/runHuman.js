@@ -1,5 +1,5 @@
-import Human from '@vladmandic/human/dist/human.esm-nobundle.js';
-import * as draw from './draw.js';
+import Human from '@vladmandic/human/dist/human.esm-nobundle';
+import * as draw from './draw';
 
 const human = new Human();
 let canvas;
@@ -160,6 +160,7 @@ function drawHand(result, ui) {
       }
     }
     if (ui.drawPolygons) {
+      // eslint-disable-next-line no-loop-func
       const addPart = (part) => {
         for (let i = 1; i < part.length; i++) {
           ctx.lineWidth = ui.lineWidth;

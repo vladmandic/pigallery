@@ -1,7 +1,8 @@
-import { tf } from '../shared/tf.js';
-import * as log from '../shared/log.js';
-import * as modelClassify from '../process/modelClassify.js';
+import { tf } from '../shared/tf';
+import * as log from '../shared/log';
+import * as modelClassify from '../process/modelClassify';
 
+// eslint-disable-next-line import/prefer-default-export
 export async function run(name, input, config, objects) {
   const t0 = performance.now();
   if (!objects.models[name]) {

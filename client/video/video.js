@@ -1,15 +1,15 @@
 // @ts-nocheck
 
 import $ from 'jquery';
-import { tf } from '../shared/tf.js';
+import { tf } from '../shared/tf';
 // eslint-disable-next-line import/order
-import Human from '@vladmandic/human/dist/human.esm-nobundle.js';
-import panzoom from '../../assets/panzoom.js';
-import * as log from '../shared/log.js';
-import * as user from '../shared/user.js';
-import * as run from './run.js';
-import Menu from '../shared/menu.js';
-import * as config from '../shared/config.js';
+import Human from '@vladmandic/human/dist/human.esm-nobundle';
+import panzoom from '../../assets/panzoom';
+import * as log from '../shared/log';
+import * as user from '../shared/user';
+import * as run from './run';
+import Menu from '../shared/menu';
+import * as config from '../shared/config';
 
 let perfMonitor;
 
@@ -42,7 +42,7 @@ async function cameraStart(play = true) {
     document.getElementById('menu-startstop').classList.add('fa-pause-circle');
     $('#btn-startstop').text('stop');
     // catch block for overlapping events
-    video.play().then(() => {}).catch(() => {});
+    video.play().then(() => true).catch(() => {});
   }
 }
 
@@ -187,13 +187,13 @@ async function menuSetup() {
   objects.menus.params.toggle();
 
   objects.menus.filters = new Menu(document.body, '');
-  objects.menus.filters.addRange('Brightness', config.default.human.filter, 'brightness', -1.0, 1.0, 0.05, (val) => config.default.human.filter.brightness = parseFloat(val));
-  objects.menus.filters.addRange('Contrast', config.default.human.filter, 'contrast', -1.0, 1.0, 0.05, (val) => config.default.human.filter.contrast = parseFloat(val));
-  objects.menus.filters.addRange('Sharpness', config.default.human.filter, 'sharpness', 0, 1.0, 0.05, (val) => config.default.human.filter.sharpness = parseFloat(val));
-  objects.menus.filters.addRange('Blur', config.default.human.filter, 'blur', 0, 20, 1, (val) => config.default.human.filter.blur = parseInt(val));
-  objects.menus.filters.addRange('Saturation', config.default.human.filter, 'saturation', -1.0, 1.0, 0.05, (val) => config.default.human.filter.saturation = parseFloat(val));
-  objects.menus.filters.addRange('Hue', config.default.human.filter, 'hue', 0, 360, 5, (val) => config.default.human.filter.hue = parseInt(val));
-  objects.menus.filters.addRange('Pixelate', config.default.human.filter, 'pixelate', 0, 32, 1, (val) => config.default.human.filter.pixelate = parseInt(val));
+  objects.menus.filters.addRange('Brightness', config.default.human.filter, 'brightness', -1.0, 1.0, 0.05, (val) => { config.default.human.filter.brightness = parseFloat(val); });
+  objects.menus.filters.addRange('Contrast', config.default.human.filter, 'contrast', -1.0, 1.0, 0.05, (val) => { config.default.human.filter.contrast = parseFloat(val); });
+  objects.menus.filters.addRange('Sharpness', config.default.human.filter, 'sharpness', 0, 1.0, 0.05, (val) => { config.default.human.filter.sharpness = parseFloat(val); });
+  objects.menus.filters.addRange('Blur', config.default.human.filter, 'blur', 0, 20, 1, (val) => { config.default.human.filter.blur = parseInt(val); });
+  objects.menus.filters.addRange('Saturation', config.default.human.filter, 'saturation', -1.0, 1.0, 0.05, (val) => { config.default.human.filter.saturation = parseFloat(val); });
+  objects.menus.filters.addRange('Hue', config.default.human.filter, 'hue', 0, 360, 5, (val) => { config.default.human.filter.hue = parseInt(val); });
+  objects.menus.filters.addRange('Pixelate', config.default.human.filter, 'pixelate', 0, 32, 1, (val) => { config.default.human.filter.pixelate = parseInt(val); });
   objects.menus.filters.addBool('negative', config.default.human.filter, 'negative');
   objects.menus.filters.addBool('sepia', config.default.human.filter, 'sepia');
   objects.menus.filters.addBool('vintage', config.default.human.filter, 'vintage');

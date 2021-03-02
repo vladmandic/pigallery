@@ -36,7 +36,9 @@ async function cached(evt) {
 }
 
 function refresh() {
+  // eslint-disable-next-line promise/catch-or-return
   caches.open(cacheName)
+    // eslint-disable-next-line promise/no-nesting
     .then((cache) => cache.addAll(cacheFiles)
       .then(
         () => console.log(ts(), 'PWA Cache refresh:', cacheFiles.length, 'files'),
