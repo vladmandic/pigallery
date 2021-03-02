@@ -3,6 +3,7 @@
 ## Scene Classification
 
 Combination of:
+
 - EfficientNet variation B4 trained on ImageNet 1k dataset
 - Inception v4 trained on DeepDetect v4 dataset
 - ResNet variation 152 trained on Places365 dataset
@@ -10,6 +11,7 @@ Combination of:
 ## Object Detection
 
 Combination of:
+
 - CenterNet variation ResNet 50-v2 trained on COCO dataset
 - MobileNet v2 with SSD trained on OpenImages v4 dataset
 - NudeNet trained on custom dataset

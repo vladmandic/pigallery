@@ -5,6 +5,7 @@ Majority of active client configuration can be edited in the client app directly
 To modify client configuration advanced parameters, edit `client/shared/config.js`  
 
 Main parameters are:
+
 ```js
   const config = {
     backEnd: 'webgl',     // back-end used by tensorflow for image processing, can be webgl, cpu, wasm

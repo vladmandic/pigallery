@@ -4,7 +4,7 @@
 
 <br>
 
-## Key features:
+## Key features
 
 ### At it's core, **PiGallery** builds a database of images which includes
 
@@ -15,7 +15,6 @@
 - Person age, gender & emotion modelling and NSFW classification
 - Image geo-location including nearest city for quick searches
 - Lexicon definitions for complete image description
-
 
 ### As an image gallery viewer, **PiGallery** provides
 
@@ -33,6 +32,7 @@
 - Play with machine learning detection of live video using your camera
 
 ### And on a server side
+
 - Analysis is always incremental so only new or modified images will be analyzed
 - All data is stored in a server-side database and original image is never modified
 
@@ -69,14 +69,14 @@
 
 ## Install, Configure & Run
 
-### Install:
+### Install
 
 - Install NodeJS: <https://nodejs.org/en/>
 - Download PiGallery:  
   using Git: `git clone --depth 1 https://github.com/vladmandic/pigallery`  
   or download archive from <https://github.com/vladmandic/pigallery/releases/>
 
-### Configure:
+### Configure
 
 - Configure PiGallery:  
   `./setup.js` or `npm run setup`:  
@@ -115,7 +115,7 @@
   Default models configuration created
   ```
 
-### Run:
+### Run
 
 - Run server application:  
   `npm start`  
@@ -191,7 +191,7 @@
 
 <br><hr><br>
 
-### Configuration Details:
+### Configuration Details
 
 - [Server configuration documentation]('docs/client-server.md')
 - [Client configuration documentation]('docs/client-config.md')
@@ -284,7 +284,7 @@ Result of all metadata processing is a very flexbile search engine - take a look
 
 <br><hr><br>
 
-### Links:
+### Links
 
 - **Code Repository**: <https://github.com/vladmandic/pigallery>  
 - **Todo List**: <https://github.com/vladmandic/pigallery/docs/todo.md>  

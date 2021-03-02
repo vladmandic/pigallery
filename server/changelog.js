@@ -13,12 +13,17 @@ async function update(f) {
   const log = all.all.sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
 
   let previous = '';
+  const headings = [];
   for (const l of log) {
     const msg = l.message.toLowerCase();
     if ((l.refs !== '') || msg.match(/^[0-9].[0-9].[0-9]/)) {
       const dt = moment(l.date).format('YYYY/MM/DD');
       const ver = msg.match(/[0-9].[0-9].[0-9]/) ? msg : l.refs;
-      text += `\n### **${ver}** ${dt} ${l.author_email}\n`;
+      const heading = `\n## **${ver}** ${dt} ${l.author_email}\n\n`;
+      if (!headings.includes(heading) && !ver.startsWith('tag') && !ver.startsWith('HEAD')) {
+        headings.push(heading);
+        text += `\n## **${ver}** ${dt} ${l.author_email}\n\n`;
+      }
     } else if ((msg.length > 2) && !msg.startsWith('update') && (previous !== msg)) {
       previous = msg;
       text += `- ${msg}\n`;

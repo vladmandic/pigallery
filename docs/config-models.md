@@ -13,6 +13,7 @@ Application ships with [Human](https://github.com/vladmandic/human) module that 
 
 Application does NOT include any pre-packaged **classification** or **detection** models - it is up to user to provide them.  
 By default, enabled 3rd party models are:
+
 - Image Classification: `MobileNet v3 trained on ImageNet dataset`, provided by [tfhub.net](https://tfhub.dev/google/imagenet/mobilenet_v3_large_100_224/classification/5)
 - Object Detection: `MobileNet v2 with SSD trained on COCO dataset`, provided by [tfhub.net](https://tfhub.dev/tensorflow/tfjs-model/ssd_mobilenet_v2/1/default/1)
 
@@ -51,6 +52,7 @@ For other types of models, see notes on coversion.
 ### Model Parameters
 
 **General options:**
+
 - name: <string>: logical name of a model
 - modelPath: <url>: url to model, with or without /model.json, also supports loading from tfhub
 - classes: <url>: set to url or leave as null to load classes.json from modelPath
