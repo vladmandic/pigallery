@@ -805,7 +805,7 @@ async function installable(evt) {
 
 async function main() {
   const t0 = performance.now();
-  log.debug(null, 'Starting PiGallery');
+  log.debug('Starting PiGallery');
   window.addEventListener('beforeinstallprompt', (evt) => installable(evt));
   if (config.default.registerPWA) await pwa.register('/dist/index/pwa-serviceworker.js');
   window.share = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
@@ -822,7 +822,7 @@ async function main() {
   window.simmilarPerson = simmilarPerson;
   window.simmilarClasses = simmilarClasses;
   window.deleteImage = deleteImage;
-  if (window.share) log.debug(null, `Direct link to share: ${window.share}`);
+  if (window.share) log.debug(`Direct link to share: ${window.share}`);
   $('body').on('contextmenu', (evt) => showContextPopup(evt));
   $('body').css('display', 'block');
   $('.collapsible').parent().parent().find('li').toggle(false);
@@ -845,9 +845,9 @@ async function main() {
 
   const cache = caches ? await caches.open('pigallery') : null;
   stats.cache = cache ? (await cache.matchAll()).length : 0;
-  log.div('log', true, 'Ready: ', stats.ready, 'ms');
-  log.server('Stats: ', stats);
   await config.done();
+  log.server('Load stats:', stats);
+  log.div('log', true, 'Ready:', stats.ready, 'ms');
 }
 
 // window.onpopstate = (evt) => log.debug(null, `URL Pop state: ${evt.target.location.href}`);

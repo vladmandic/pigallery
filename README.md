@@ -201,7 +201,6 @@ Additional nodes:
 
 - [Default models configuration]('docs/models-default.md')
 - [Recommended models configuration]('docs/models-recommended.md')
-- [Some alternative models configuration]('docs/models-alternative.md')
 - [Model conversion notes]('docs/models-convert.md')
 
 <br><hr><br>
