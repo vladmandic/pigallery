@@ -7,24 +7,18 @@ import * as runClassify from './runClassify';
 import * as runHuman from './runHuman';
 
 async function getVideoCanvas(video, canvases, config) {
-  const el = document.getElementById('video');
-  if (!el) return null;
-  if (config.ui.overlay) el.style.visibility = 'hidden';
-  else el.style.visibility = 'visible';
   if (video.paused || video.ended || (video.readyState <= 2)) return null;
   if (!canvases.process) {
     canvases.process = document.createElement('canvas');
-    canvases.process.style.pointerEvents = 'none';
     canvases.process.id = 'canvas-process';
+    canvases.process.visibility = 'hidden';
   } else {
     draw.clear(canvases.process);
   }
   const matrix = video.style.transform.match(/matrix\((.*)\)/)[1].split(',').map((a) => parseFloat(a));
-  const targetWidth = matrix[0] * video.videoWidth;
-  const targetHeight = matrix[0] * video.videoHeight;
   canvases.process.width = Math.trunc(video.offsetWidth * config.ui.scale / 100);
   canvases.process.height = Math.trunc(video.offsetHeight * config.ui.scale / 100);
-  canvases.process.getContext('2d').drawImage(video, matrix[4], matrix[5], targetWidth, targetHeight, 0, 0, canvases.process.width, canvases.process.height);
+  canvases.process.getContext('2d').drawImage(video, matrix[4], matrix[5], matrix[0] * video.videoWidth, matrix[0] * video.videoHeight, 0, 0, canvases.process.width, canvases.process.height);
   return canvases.process;
 }
 
@@ -108,10 +102,10 @@ async function main(config, objects) {
 
   // this is canvas with actual image, all other are overlays
   // if (res.human.canvas) input = res.human.canvas;
-  input.className = 'canvases';
-  input.style.display = 'block';
-  input.id = 'canvas-raw';
-  document.getElementById('canvases')?.appendChild(input);
+  // input.className = 'canvases';
+  // input.style.display = 'block';
+  // input.id = 'canvas-raw';
+  // document.getElementById('canvases')?.appendChild(input);
 
   // load model list once
   if (!config.models) {

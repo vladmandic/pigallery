@@ -9,7 +9,6 @@ function appendCanvas(name, width, height, objects) {
   objects.canvases[name].width = width;
   objects.canvases[name].height = height;
   objects.canvases[name].style.zIndex = Object.keys(objects.canvases).length;
-  objects.canvases[name].style.pointerEvents = 'none';
   objects.canvases[name].getContext('2d', { desynchronized: true }).imageSmoothingEnabled = false;
   (document.getElementById('canvases') || document.createElement('canvas')).appendChild(objects.canvases[name]);
 }
@@ -196,12 +195,4 @@ function clear(canvas) {
   if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 }
 
-exports.connect = connect;
-exports.rect = rect;
-exports.point = point;
-exports.crop = crop;
-exports.clear = clear;
-exports.curve = curve;
-exports.spline = spline;
-exports.bezier = bezier;
-exports.appendCanvas = appendCanvas;
+export { connect, rect, point, crop, clear, curve, spline, bezier, appendCanvas };

@@ -42,7 +42,7 @@ async function cameraStart(play = true) {
     document.getElementById('menu-startstop').classList.add('fa-pause-circle');
     $('#btn-startstop').text('stop');
     // catch block for overlapping events
-    video.play().then(() => true).catch(() => {});
+    video.play().then(true).catch(() => {});
   }
 }
 

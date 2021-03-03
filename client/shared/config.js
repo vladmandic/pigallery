@@ -43,7 +43,6 @@ const config = {
   ui: {
     scale: 100,
     maxFrames: 10,
-    overlay: true,
     useDepth: true,
     drawBoxes: true,
     drawPoints: false,
