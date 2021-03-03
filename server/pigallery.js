@@ -53,7 +53,7 @@ async function main() {
   app.set('trust proxy', true);
 
   // update changelog
-  changelog.update('CHANGELOG.md');
+  changelog.update('../docs/change-log.md');
 
   // initialize esbuild bundler
   await build.init();
@@ -105,7 +105,7 @@ async function main() {
     }
   }
   // define routes for static files
-  for (const f of ['/favicon.ico', '/pigallery.webmanifest', '/asset-manifest.json', '/README.md', '/CHANGELOG.md', '/MODELS.md', '/TODO.md', '/LICENSE']) {
+  for (const f of ['/favicon.ico', '/pigallery.webmanifest', '/asset-manifest.json', '/README.md', '/LICENSE']) {
     // @ts-ignore
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
@@ -121,6 +121,7 @@ async function main() {
   app.use('/media', express.static(path.join(root, './media'), optionsStatic));
   app.use('/client', express.static(path.join(root, './client'), optionsStatic));
   app.use('/dist', express.static(path.join(root, './dist'), optionsStatic));
+  app.use('/docs', express.static(path.join(root, './docs'), optionsStatic));
   app.use('/@vladmandic', express.static(path.join(root, './node_modules/@vladmandic'), optionsStatic));
 
   // start http server

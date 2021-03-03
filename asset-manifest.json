@@ -25641,7 +25641,7 @@
       ]
     },
     "client/index/index.js": {
-      "bytes": 34806,
+      "bytes": 34812,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25698,7 +25698,7 @@
       ]
     },
     "client/process/process.js": {
-      "bytes": 5471,
+      "bytes": 5391,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -26426,7 +26426,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 1044705
+      "bytes": 1044711
     },
     "dist/index/index.js": {
       "imports": [],
@@ -26458,7 +26458,7 @@
           "bytesInOutput": 1545
         },
         "client/index/index.js": {
-          "bytesInOutput": 35102
+          "bytesInOutput": 35108
         },
         "assets/marked.esm.js": {
           "bytesInOutput": 59917
@@ -26488,13 +26488,13 @@
           "bytesInOutput": 8051
         }
       },
-      "bytes": 559390
+      "bytes": 559396
     },
     "dist/process/process.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7302733
+      "bytes": 7302644
     },
     "dist/process/process.js": {
       "imports": [],
@@ -26556,7 +26556,7 @@
           "bytesInOutput": 5706
         },
         "client/process/process.js": {
-          "bytesInOutput": 4931
+          "bytesInOutput": 4925
         },
         "client/shared/tf.js": {
           "bytesInOutput": 42
@@ -30267,7 +30267,7 @@
           "bytesInOutput": 1009
         }
       },
-      "bytes": 6241660
+      "bytes": 6241654
     },
     "dist/video/video.js.map": {
       "imports": [],

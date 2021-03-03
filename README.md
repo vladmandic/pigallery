@@ -124,23 +124,30 @@
   - Server log is written to file specified in the `config.json` (default is `pigallery.log`)
 
   ```js
-  2021-02-16 10:45:19 INFO:  @vladmandic/pigallery version 2.2.9
-  2021-02-16 10:45:19 INFO:  User: vlado Platform: linux Arch: x64 Node: v15.4.0
-  2021-02-16 10:45:19 STATE:  Application log: /home/vlado/dev/pigallery/pigallery.log
-  2021-02-16 10:45:19 INFO:  Authentication required: true
-  2021-02-16 10:45:19 INFO:  Media root: media/
-  2021-02-16 10:45:19 INFO:  Allowed image file types: [ '.jpeg', '.jpg', [length]: 2 ]
-  2021-02-16 10:45:19 STATE:  Change log updated: /home/vlado/dev/pigallery/CHANGELOG.md
-  2021-02-16 10:45:20 STATE:  Client application rebuild: 704 ms 40 imports in 383638 bytes 1248 modules in 8531007 bytes 7 outputs in 7201354 bytes
-  2021-02-16 10:45:22 STATE:  Client CSS rebuild: 1903 ms imports 554067 byes outputs 454018 bytes
-  2021-02-16 10:45:22 STATE:  RESTful API ready
-  2021-02-16 10:45:22 STATE:  Loaded WordNet database: assets/wordnet-synset.json 60942 terms in 24034816 bytes
-  2021-02-16 10:45:23 STATE:  Loaded all cities database: assets/cities.json 195175 all cities 4426 large cities
-  2021-02-16 10:45:24 STATE:  Server HTTP listening: { address: '::', family: 'IPv6', port: 10010 }
-  2021-02-16 10:45:24 STATE:  Server HTTPS listening: { address: '::', family: 'IPv6', port: 10011 }
-  2021-02-16 10:45:24 STATE:  Monitoring: [ 'config.json', 'package.json', 'server', 'client', 'assets', [length]: 5 ]
-  2021-02-16 10:45:24 STATE:  Image DB loaded: pigallery.db records: 0
-  ```
+  2021-03-03 10:08:36 INFO:  @vladmandic/pigallery version 3.3.5
+  2021-03-03 10:08:36 INFO:  User: vlado Platform: linux Arch: x64 Node: v15.7.0
+  2021-03-03 10:08:36 STATE:  Application log: /home/vlado/dev/pigallery/pigallery.log
+  2021-03-03 10:08:36 INFO:  Authentication required: true
+  2021-03-03 10:08:36 INFO:  Media root: media/
+  2021-03-03 10:08:36 INFO:  Allowed image file types: [ '.jpeg', '.jpg', [length]: 2 ]
+  2021-03-03 10:08:36 DATA:  Build sources: [ 'client/compare/compare.js', 'client/index/index.js', 'client/process/process.js', 'client/video/video.js', [ 'client/index/worker.js', 'client/index/pwa-serviceworker.js' ]
+  2021-03-03 10:08:36 STATE:  Change log updated: /home/vlado/dev/pigallery/docs/change-log.md
+  2021-03-03 10:08:38 STATE:  Client application rebuild: 1545 ms 37 imports in 352312 bytes 1245 modules in 8452413 bytes 6 outputs in 16622342 bytes
+  2021-03-03 10:08:40 STATE:  Client CSS rebuild: 2491 ms imports 554134 byes outputs 453911 bytes
+  2021-03-03 10:08:40 STATE:  Mounted: auth from client/auth.html
+  2021-03-03 10:08:40 STATE:  Mounted: compare from client/compare.html
+  2021-03-03 10:08:40 STATE:  Mounted: index from client/index.html
+  2021-03-03 10:08:40 STATE:  Mounted: offline from client/offline.html
+  2021-03-03 10:08:40 STATE:  Mounted: process from client/process.html
+  2021-03-03 10:08:40 STATE:  Mounted: video from client/video.html
+  2021-03-03 10:08:40 STATE:  Server HTTP listening: { address: '::', family: 'IPv6', port: 10010 }
+  2021-03-03 10:08:40 STATE:  Server HTTPS listening: { address: '::', family: 'IPv6', port: 10011 }
+  2021-03-03 10:08:40 STATE:  Monitoring: [ 'config.json', 'package.json', 'server', 'client', 'assets' ]
+  2021-03-03 10:08:48 STATE:  Image DB loaded: pigallery.db records: 7581
+  2021-03-03 10:08:48 STATE:  Shares: Samples creator: mandic00@live.com key: qoy6ic.ibnwn images: 110
+  2021-03-03 10:08:48 STATE:  RESTful API ready
+  2021-03-03 10:08:48 STATE:  Loaded WordNet database: assets/wordnet-synset.json 60942 terms in 24034816 bytes
+  2021-03-03 10:08:50 STATE:  Loaded all cities database: assets/cities.json 195175 all cities 4426 large cities    ```
 
 - Use your browser to navigate to server:  
   `https://localhost:10010` or `https://localhost:10011` (default values)
@@ -290,7 +297,7 @@ Result of all metadata processing is a very flexbile search engine - take a look
 
 - **Code Repository**: <https://github.com/vladmandic/pigallery>  
 - **Todo List**: <https://github.com/vladmandic/pigallery/docs/todo.md>  
-- **Changelog**: <https://github.com/vladmandic/pigallery/CHANGELOG.md>  
+- **Changelog**: <https://github.com/vladmandic/pigallery/docs/change-log.md>  
 - **License**: <https://github.com/vladmandic/pigallery/LICENSE>  
 
 <br>
