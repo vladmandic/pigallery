@@ -7,3 +7,4 @@
 - Switch backend DB from NEDB to Mongo
 - Document HTTPrest API
 - Conditional model execution and chaining
+- Redo Human video gestures
