@@ -1,6 +1,5 @@
-import { tf, wasm } from '../shared/tf';
-// eslint-disable-next-line import/order
 import Human from '@vladmandic/human/dist/human.esm-nobundle';
+import { tf, wasm } from '../shared/tf';
 import * as log from '../shared/log';
 import * as modelClassify from './modelClassify';
 import * as modelDetect from './modelDetect';

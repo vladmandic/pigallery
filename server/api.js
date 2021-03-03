@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const log = require('@vladmandic/pilogger');
 const metadata = require('./metadata.js');
+const exif = require('./exif.js');
 
 let config;
 let db;
@@ -217,11 +218,11 @@ function api(app, inConfig, inDB) {
   app.post('/api/record/put', async (req, res) => {
     if (req.session.admin) {
       const data = req.body;
-      const exif = await metadata.exif(data.image);
+      const exifData = await exif.get(data.image);
       const hash = await metadata.hash(data.image, 'sha256');
-      const location = await metadata.location(exif);
+      const location = await exif.location(exif);
       const descriptions = await metadata.descriptions(data);
-      const result = { ...data, exif, location, descriptions, hash };
+      const result = { ...data, exif: exifData, location, descriptions, hash };
       const tags = await metadata.tags(result);
       result.tags = tags;
       res.status(200).json(result);

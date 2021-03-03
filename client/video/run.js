@@ -1,7 +1,6 @@
 import { tf, wasm } from '../shared/tf';
 import * as log from '../shared/log';
 import * as draw from './draw';
-import * as gesture from './gesture';
 import * as runDetect from './runDetect';
 import * as runClassify from './runClassify';
 import * as runHuman from './runHuman';
@@ -56,18 +55,19 @@ async function resetBackend(backendName) {
 
 async function init(config) {
   // document.getElementById('status').innerText = 'initializing';
-  // @ts-ignore
-  if (config.backEnd === 'wasm') await wasm.setWasmPaths('/assets/');
-  await resetBackend(config.backEnd);
-  tf.ENV.set('DEBUG', false);
-  if (config.backEnd === 'webgl') {
-    for (const [key, val] of Object.entries(config.webgl)) {
-      log.debug('Setting WebGL:', key, val);
-      tf.ENV.set(key, val);
-    }
-    if (config.memory) {
-      log.debug('Setting WebGL: WEBGL_DELETE_TEXTURE_THRESHOLD:', config.memory);
-      tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
+  if (config.backEnd && config.backEnd !== '') {
+    if (config.backEnd === 'wasm') await wasm.setWasmPaths('/assets/');
+    await resetBackend(config.backEnd);
+    tf.ENV.set('DEBUG', false);
+    if (config.backEnd === 'webgl') {
+      for (const [key, val] of Object.entries(config.webgl)) {
+        log.debug('Setting WebGL:', key, val);
+        tf.ENV.set(key, val);
+      }
+      if (config.memory) {
+        log.debug('Setting WebGL: WEBGL_DELETE_TEXTURE_THRESHOLD:', config.memory);
+        tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
+      }
     }
   }
   await tf.ready();
@@ -76,7 +76,9 @@ async function init(config) {
 
   const engine = await tf.engine();
   log.div('log', true, `TF State: ${engine.state.numBytes.toLocaleString()} bytes ${engine.state.numDataBuffers.toLocaleString()} buffers ${engine.state.numTensors.toLocaleString()} tensors`);
-  log.div('log', true, `TF GPU Memory: used ${engine.backendInstance.numBytesInGPU.toLocaleString()} bytes free ${Math.floor(1024 * 1024 * engine.backendInstance.numMBBeforeWarning).toLocaleString()} bytes`);
+  if (engine.backendInstance.numBytesInGPU) {
+    log.div('log', true, `TF GPU Memory: used ${engine.backendInstance.numBytesInGPU.toLocaleString()} bytes free ${Math.floor(1024 * 1024 * engine.backendInstance.numMBBeforeWarning).toLocaleString()} bytes`);
+  }
   // eslint-disable-next-line no-console
   log.debug('TF Flags:', engine.ENV.flags);
   // eslint-disable-next-line no-console
@@ -88,7 +90,6 @@ async function main(config, objects) {
   const t0 = performance.now();
   objects.detected = {};
   objects.classified = {};
-  objects.gestures = [];
   objects.human = [];
   objects.results = [];
 
@@ -99,13 +100,6 @@ async function main(config, objects) {
   const res = await runHuman.run(input, config, objects);
   if (res.human) objects.results.push(res);
   else draw.clear(objects.canvases.human);
-
-  // this is canvas with actual image, all other are overlays
-  // if (res.human.canvas) input = res.human.canvas;
-  // input.className = 'canvases';
-  // input.style.display = 'block';
-  // input.id = 'canvas-raw';
-  // document.getElementById('canvases')?.appendChild(input);
 
   // load model list once
   if (!config.models) {
@@ -137,8 +131,6 @@ async function main(config, objects) {
     }
   }
 
-  objects.gestures = await gesture.analyze(objects.results);
-
   const t1 = performance.now();
   if (objects.results && objects.results[0] && objects.results[0].human) {
     const item = objects.results[0].human.performance;
@@ -159,7 +151,7 @@ async function main(config, objects) {
     for (const [key, val] of Object.entries(objects.classified)) {
       if (val.length > 0) msg += `classified: ${key}: ${log.str([...val])}<br>`;
     }
-    if (objects.gestures.length > 0) msg += `gestures: ${log.str([...objects.gestures])}<br>`;
+    // if (objects.gestures.length > 0) msg += `gestures: ${log.str([...objects.gestures])}<br>`;
     el.innerHTML = msg;
   } else {
     el.innerHTML = '';

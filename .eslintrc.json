@@ -31,6 +31,7 @@
     "no-restricted-syntax": "off",
     "node/no-unsupported-features/es-syntax": "off",
     "object-curly-newline": "off",
+    "prefer-destructuring": "off",
     "radix": "off"
   }
 }

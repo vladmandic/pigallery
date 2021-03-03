@@ -111,6 +111,7 @@ function initHumanConfig() {
     config.default.human.hand.enabled = false;
     config.default.human.hand.detector.modelPath = '@vladmandic/human/models/handdetect.json';
     config.default.human.hand.skeleton.modelPath = '@vladmandic/human/models/handskeleton.json';
+    config.default.human.gesture.enabled = true;
   }
 }
 
