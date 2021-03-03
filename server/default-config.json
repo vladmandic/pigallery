@@ -5,7 +5,7 @@
   "share": {
     "email": "share@pigallery.ddns.net", "passwd": "d1ff1cuTpa33w0RD", "admin": false, "mediaRoot": "share/" },
   "locations": [
-    { "folder": "Samples/", "match": "", "recursive": false }
+    { "folder": "Samples/", "match": "", "recursive": false, "force": false }
   ],
   "exclude": [
   ],
