@@ -57,7 +57,7 @@ Combination of:
     ],
   "video": [],
   "person": { "name": "Human",
-    "videoOptimized": false, "deubg": false, "filter": { "enabled": false }, "gesture": { "enabled": false }, "body": { "enabled": false }, "hand": { "enabled": false },
+    "videoOptimized": false, "debug": false, "filter": { "enabled": false }, "gesture": { "enabled": false }, "body": { "enabled": false }, "hand": { "enabled": false },
     "face": {
       "detector": { "modelPath": "@vladmandic/human/models/blazeface-back.json", "rotation": true },
       "mesh": { "modelPath": "@vladmandic/human/models/facemesh.json" },

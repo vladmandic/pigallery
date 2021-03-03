@@ -11,6 +11,9 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **HEAD -> master** 2021/03/03 mandic00@live.com
 
+
+### **origin/master** 2021/03/03 mandic00@live.com
+
 - added human gestures
 - fix video panzoom
 
