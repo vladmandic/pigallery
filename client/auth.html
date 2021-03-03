@@ -297,18 +297,14 @@
       let canvas;
       const Vector3 = {};
       const Matrix44 = {};
-      Vector3.create = function (x, y, z) {
-        return { x, y, z };
-      };
-      Vector3.dot = function (v0, v1) {
-        return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
-      };
-      Vector3.cross = function (v, v0, v1) {
+      Vector3.create = (x, y, z) => ({ x, y, z });
+      Vector3.dot = (v0, v1) => v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
+      Vector3.cross = (v, v0, v1) => {
         v.x = v0.y * v1.z - v0.z * v1.y;
         v.y = v0.z * v1.x - v0.x * v1.z;
         v.z = v0.x * v1.y - v0.y * v1.x;
       };
-      Vector3.normalize = function (v) {
+      Vector3.normalize = (v) => {
         let l = v.x * v.x + v.y * v.y + v.z * v.z;
         if (l > 0.00001) {
           l = 1.0 / Math.sqrt(l);
@@ -317,7 +313,7 @@
           v.z *= l;
         }
       };
-      Vector3.arrayForm = function (v) {
+      Vector3.arrayForm = (v) => {
         if (v.array) {
           v.array[0] = v.x;
           v.array[1] = v.y;
@@ -327,10 +323,8 @@
         }
         return v.array;
       };
-      Matrix44.createIdentity = function () {
-        return new Float32Array([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
-      };
-      Matrix44.loadProjection = function (m, aspect, vdeg, near, far) {
+      Matrix44.createIdentity = () => new Float32Array([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]);
+      Matrix44.loadProjection = (m, aspect, vdeg, near, far) => {
         const h = near * Math.tan(vdeg * Math.PI / 180.0 * 0.5) * 2.0;
         const w = h * aspect;
         m[0] = 2.0 * near / w;
@@ -350,7 +344,7 @@
         m[14] = -2.0 * far * near / (far - near);
         m[15] = 0.0;
       };
-      Matrix44.loadLookAt = function (m, vpos, vlook, vup) {
+      Matrix44.loadLookAt = (m, vpos, vlook, vup) => {
         const frontv = Vector3.create(vpos.x - vlook.x, vpos.y - vlook.y, vpos.z - vlook.z);
         Vector3.normalize(frontv);
         const sidev = Vector3.create(1.0, 0.0, 0.0);
@@ -393,7 +387,7 @@
         halfArray: new Float32Array(3),
         // and some render targets. see setViewport()
       };
-      renderSpec.setSize = function (w, h) {
+      renderSpec.setSize = (w, h) => {
         renderSpec.width = w;
         renderSpec.height = h;
         renderSpec.aspect = renderSpec.width / renderSpec.height;
@@ -507,7 +501,7 @@
       };
       const pointFlower = {};
       let sceneStandBy = false;
-      const BlossomParticle = function () {
+      const BlossomParticle = () => {
         this.velocity = new Array(3);
         this.rotation = new Array(3);
         this.position = new Array(3);
@@ -516,30 +510,30 @@
         this.alpha = 1.0;
         this.zkey = 0.0;
       };
-      BlossomParticle.prototype.setVelocity = function (vx, vy, vz) {
+      BlossomParticle.prototype.setVelocity = (vx, vy, vz) => {
         this.velocity[0] = vx;
         this.velocity[1] = vy;
         this.velocity[2] = vz;
       };
-      BlossomParticle.prototype.setRotation = function (rx, ry, rz) {
+      BlossomParticle.prototype.setRotation = (rx, ry, rz) => {
         this.rotation[0] = rx;
         this.rotation[1] = ry;
         this.rotation[2] = rz;
       };
-      BlossomParticle.prototype.setPosition = function (nx, ny, nz) {
+      BlossomParticle.prototype.setPosition = (nx, ny, nz) => {
         this.position[0] = nx;
         this.position[1] = ny;
         this.position[2] = nz;
       };
-      BlossomParticle.prototype.setEulerAngles = function (rx, ry, rz) {
+      BlossomParticle.prototype.setEulerAngles = (rx, ry, rz) => {
         this.euler[0] = rx;
         this.euler[1] = ry;
         this.euler[2] = rz;
       };
-      BlossomParticle.prototype.setSize = function (s) {
+      BlossomParticle.prototype.setSize = (s) => {
         this.size = s;
       };
-      BlossomParticle.prototype.update = function (dt) {
+      BlossomParticle.prototype.update = (dt) => {
         this.position[0] += this.velocity[0] * dt;
         this.position[1] += this.velocity[1] * dt;
         this.position[2] += this.velocity[2] * dt;
@@ -589,7 +583,7 @@
         const PI2 = Math.PI * 2.0;
         const tmpv3 = Vector3.create(0, 0, 0);
         let tmpv = 0;
-        const symmetryrand = function () { return (Math.random() * 2.0 - 1.0); };
+        const symmetryrand = () => (Math.random() * 2.0 - 1.0);
         for (let i = 0; i < pointFlower.numFlowers; i++) {
           const tmpprtcl = pointFlower.particles[i];
           // velocity
@@ -625,14 +619,14 @@
       function renderPointFlowers() {
         // update
         const PI2 = Math.PI * 2.0;
-        const repeatPos = function (prt, cmp, limit) {
+        const repeatPos = (prt, cmp, limit) => {
           if (Math.abs(prt.position[cmp]) - prt.size * 0.5 > limit) {
             // out of area
             if (prt.position[cmp] > 0) prt.position[cmp] -= limit * 2.0;
             else prt.position[cmp] += limit * 2.0;
           }
         };
-        const repeatEuler = function (prt, cmp) {
+        const repeatEuler = (prt, cmp) => {
           // eslint-disable-next-line operator-assignment
           prt.euler[cmp] = prt.euler[cmp] % PI2;
           if (prt.euler[cmp] < 0.0) {
@@ -662,6 +656,7 @@
         let imisc = pointFlower.miscArrayOffset;
         for (let i = 0; i < pointFlower.numFlowers; i++) {
           const prtcl = pointFlower.particles[i];
+          // eslint-disable-next-line prefer-destructuring
           pointFlower.dataArray[ipos] = prtcl.position[0];
           pointFlower.dataArray[ipos + 1] = prtcl.position[1];
           pointFlower.dataArray[ipos + 2] = prtcl.position[2];
@@ -806,11 +801,12 @@
       // post process
       function renderPostProcess() {
         gl.disable(gl.DEPTH_TEST);
-        const bindRT = function (rt, isclear) {
+        const bindRT = (rt, isclear) => {
           gl.bindFramebuffer(gl.FRAMEBUFFER, rt.frameBuffer);
           gl.viewport(0, 0, rt.width, rt.height);
           if (isclear) {
             gl.clearColor(0, 0, 0, 0);
+            // eslint-disable-next-line no-bitwise
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
           }
         };
@@ -838,6 +834,7 @@
         // display
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.viewport(0, 0, renderSpec.width, renderSpec.height);
+        // eslint-disable-next-line no-bitwise
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         useEffect(effectLib.finalComp, renderSpec.mainRT);
         gl.uniform1i(effectLib.finalComp.program.uniforms.uBloom, 1);
@@ -867,6 +864,7 @@
         gl.bindFramebuffer(gl.FRAMEBUFFER, renderSpec.mainRT.frameBuffer);
         gl.viewport(0, 0, renderSpec.mainRT.width, renderSpec.mainRT.height);
         gl.clearColor(0.005, 0, 0.05, 0);
+        // eslint-disable-next-line no-bitwise
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         renderBackground();
         renderPointFlowers();
@@ -886,7 +884,7 @@
         renderSpec.setSize(gl.canvas.width, gl.canvas.height);
         gl.clearColor(0.2, 0.2, 0.5, 1.0);
         gl.viewport(0, 0, renderSpec.width, renderSpec.height);
-        const rtfunc = function (rtname, rtw, rth) {
+        const rtfunc = (rtname, rtw, rth) => {
           const rt = renderSpec[rtname];
           if (rt) deleteRenderTarget(rt);
           renderSpec[rtname] = createRenderTarget(rtw, rth);

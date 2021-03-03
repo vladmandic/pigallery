@@ -1,5 +1,5 @@
 import { tf } from '../shared/tf';
-import * as custom from './custom';
+import * as postProcess from './postProcess';
 
 const defaults = {
   modelPath: null, // required
@@ -189,7 +189,7 @@ export async function detect(model, image, userConfig) {
   const results = detected.filter((a) => a.score > model.config.minScore); // filter by score one more time as nms can miss items
   if (model.config.postProcess) {
     try {
-      const data = await custom[model.config.postProcess](model, detected); // hack to call a named function
+      const data = await postProcess[model.config.postProcess](model, detected); // hack to call a named function
       if (data) results.unshift(...data);
     } catch (err) {
       // eslint-disable-next-line no-console

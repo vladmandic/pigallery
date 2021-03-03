@@ -208,7 +208,6 @@ export async function run(input, config, objects) {
   if (result.face) drawFace(result.face, config.ui);
   if (result.body) drawBody(result.body, config.ui);
   if (result.hand) drawHand(result.hand, config.ui);
-
   for (const face of result.face) {
     let label = '';
     if (face.agConfidence) label += `${Math.trunc(100 * face.agConfidence)}% ${face.gender || ''} `;
@@ -218,6 +217,11 @@ export async function run(input, config, objects) {
     label += ']';
     objects.human.push(label);
   }
+  let label = 'gesture:';
+  for (const gesture of result.gesture) {
+    label += ` ${Object.keys(gesture)[0]} ${Object.values(gesture)[1]}`;
+  }
+  if (label !== 'gesture:') objects.human.push(label);
   return { human: result };
 }
 
