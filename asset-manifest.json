@@ -25332,7 +25332,7 @@
       ]
     },
     "node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-      "bytes": 277645,
+      "bytes": 277793,
       "imports": [
         {
           "path": "node_modules/@tensorflow/tfjs/package.json",
@@ -25401,7 +25401,7 @@
       "imports": []
     },
     "client/shared/config.js": {
-      "bytes": 11059,
+      "bytes": 11060,
       "imports": [
         {
           "path": "node_modules/jquery/dist/jquery.js",
@@ -25878,7 +25878,7 @@
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 5631215
+      "bytes": 5631216
     },
     "dist/compare/compare.js": {
       "imports": [],
@@ -26414,19 +26414,19 @@
           "bytesInOutput": 6910
         },
         "client/shared/config.js": {
-          "bytesInOutput": 7810
+          "bytesInOutput": 7811
         },
         "client/process/processImage.js": {
           "bytesInOutput": 1928
         }
       },
-      "bytes": 3500045
+      "bytes": 3500046
     },
     "dist/index/index.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 1044711
+      "bytes": 1044712
     },
     "dist/index/index.js": {
       "imports": [],
@@ -26464,7 +26464,7 @@
           "bytesInOutput": 59917
         },
         "client/shared/config.js": {
-          "bytesInOutput": 8879
+          "bytesInOutput": 8880
         },
         "client/index/indexdb.js": {
           "bytesInOutput": 4944
@@ -26488,13 +26488,13 @@
           "bytesInOutput": 8051
         }
       },
-      "bytes": 559396
+      "bytes": 559397
     },
     "dist/process/process.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7302644
+      "bytes": 7303051
     },
     "dist/process/process.js": {
       "imports": [],
@@ -27912,7 +27912,7 @@
           "bytesInOutput": 846
         },
         "client/shared/config.js": {
-          "bytesInOutput": 8883
+          "bytesInOutput": 8884
         },
         "node_modules/@tensorflow/tfjs/package.json": {
           "bytesInOutput": 24
@@ -30249,7 +30249,7 @@
           "bytesInOutput": 63
         },
         "node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-          "bytesInOutput": 326260
+          "bytesInOutput": 326418
         },
         "client/process/processImage.js": {
           "bytesInOutput": 10261
@@ -30267,13 +30267,13 @@
           "bytesInOutput": 1009
         }
       },
-      "bytes": 6241654
+      "bytes": 6241813
     },
     "dist/video/video.js.map": {
       "imports": [],
       "exports": [],
       "inputs": {},
-      "bytes": 7417941
+      "bytes": 7418348
     },
     "dist/video/video.js": {
       "imports": [],
@@ -34022,7 +34022,7 @@
           "bytesInOutput": 63
         },
         "node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-          "bytesInOutput": 326260
+          "bytesInOutput": 326418
         },
         "assets/panzoom.js": {
           "bytesInOutput": 43353
@@ -34058,10 +34058,10 @@
           "bytesInOutput": 15009
         },
         "client/shared/config.js": {
-          "bytesInOutput": 9021
+          "bytesInOutput": 9022
         }
       },
-      "bytes": 6310528
+      "bytes": 6310687
     },
     "dist/index/worker.js.map": {
       "imports": [],
