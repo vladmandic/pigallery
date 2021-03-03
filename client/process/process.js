@@ -19,8 +19,6 @@ async function warmupModels() {
   const res = await process.process('assets/warmup.jpg');
   if (res.error) {
     log.div('process-log', true, 'Aborting current run due to error during warmup');
-    if (config.default.autoreload) setTimeout(() => location.reload(), 2500);
-    // setTimeout(() => location.replace(`${location.origin}?process`), 2500);
   }
   const t1 = performance.now();
   log.div('process-log', true, `TensorFlow warmed up in ${Math.round(t1 - t0).toLocaleString()}ms`);
@@ -98,7 +96,10 @@ async function processFiles() {
   }
   if (error) {
     log.div('process-log', true, 'Aborting current run due to error');
-    if (config.default.autoreload) setTimeout(() => location.reload(), 2500);
+    if (config.default.autoreload) {
+      log.div('process-log', true, 'Reloading in 30sec ...');
+      setTimeout(() => location.reload(), 30000);
+    }
   }
   log.div('process-active', false, 'Idle ...');
   const p1 = performance.now();
