@@ -1,8 +1,10 @@
 # PiGallery Change Log
+
+## **3.3.5** 2021/03/02 mandic00@live.com
+
+- stricter eslint rules
 - markdown cleanup
-
-## **origin/master, origin/HEAD** 2021/03/02 mandic00@live.com
-
+- details view formatting
 
 ## **3.3.4** 2021/03/02 mandic00@live.com
 
