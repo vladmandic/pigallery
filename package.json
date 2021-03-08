@@ -42,12 +42,12 @@
   "dependencies": {
     "@tensorflow/tfjs": "^3.2.0",
     "@tensorflow/tfjs-backend-wasm": "^3.2.0",
-    "@vladmandic/human": "^0.40.1",
+    "@vladmandic/human": "^0.40.9",
     "@vladmandic/pilogger": "^0.2.14",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.1",
     "clean-css": "^5.1.1",
-    "esbuild": "^0.8.55",
+    "esbuild": "^0.8.57",
     "exif-parser": "^0.1.12",
     "express": "^5.0.0-alpha.8",
     "express-session": "^1.17.1",
@@ -57,13 +57,13 @@
     "nedb-promises": "^4.1.1",
     "node-fetch": "^2.6.1",
     "session-file-store": "^1.5.0",
-    "simple-git": "^2.36.0"
+    "simple-git": "^2.36.1"
   },
   "devDependencies": {
     "@tensorflow/tfjs-node": "^3.2.0",
     "eslint": "^7.21.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-html": "^6.1.1",
+    "eslint-plugin-html": "^6.1.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-json": "^2.1.2",
     "eslint-plugin-node": "^11.1.0",

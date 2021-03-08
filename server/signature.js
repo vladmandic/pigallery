@@ -1,7 +1,5 @@
 #!/usr/bin/env -S node --no-deprecation --trace-warnings
 
-/* eslint-disable dot-notation, node/shebang */
-
 const fs = require('fs');
 const path = require('path');
 const log = require('@vladmandic/pilogger');
@@ -10,19 +8,22 @@ const tf = require('@tensorflow/tfjs-node');
 
 async function analyzeGraph(modelPath) {
   const model = await tf.loadGraphModel(`file://${modelPath}`);
-  log.info('graph model:', modelPath);
+  log.info('graph model:', path.resolve(modelPath));
   if (model.modelSignature['inputs']) {
     const inputs = Object.values(model.modelSignature['inputs'])[0];
-    log.data('inputs:', { name: inputs.name, dtype: inputs.dtype, shape: inputs.tensorShape.dim });
+    const shape = inputs.tensorShape.dim.map((a) => parseInt(a.size));
+    log.data('inputs:', { name: inputs.name, dtype: inputs.dtype, shape });
   } else {
     const inputs = model.modelSignature['inputs'][0];
-    log.data('inputs:', { name: inputs.name, dtype: inputs.attrParams.dtype.value, shape: inputs.attrParams.shape.value });
+    const shape = inputs.attrParams.shape.value.map((a) => parseInt(a.size));
+    log.data('inputs:', { name: inputs.name, dtype: inputs.attrParams.dtype.value, shape });
   }
   const outputs = [];
   let i = 0;
   if (model.modelSignature['outputs']) {
     for (const [key, val] of Object.entries(model.modelSignature['outputs'])) {
-      outputs.push({ id: i++, name: key, dytpe: val.dtype, shape: val.tensorShape?.dim });
+      const shape = val.tensorShape?.dim.map((a) => parseInt(a.size));
+      outputs.push({ id: i++, name: key, dytpe: val.dtype, shape });
     }
   } else {
     for (const out of model.modelSignature['outputs']) {
@@ -34,16 +35,20 @@ async function analyzeGraph(modelPath) {
 
 async function analyzeSaved(modelPath) {
   const meta = await tf.node.getMetaGraphsFromSavedModel(modelPath);
-  log.info('saved model:', modelPath);
+  log.info('saved model:', path.resolve(modelPath));
   const sign = Object.values(meta[0].signatureDefs)[0];
   log.data('tags:', meta[0].tags);
   log.data('signature:', Object.keys(meta[0].signatureDefs));
   const inputs = Object.values(sign.inputs)[0];
-  log.data('inputs:', { name: inputs.name, dtype: inputs.dtype, dimensions: inputs?.shape?.length });
+  // @ts-ignore
+  const inputShape = inputs.shape?.map((a) => a.array[0]);
+  log.data('inputs:', { name: inputs.name, dtype: inputs.dtype, shape: inputShape });
   const outputs = [];
   let i = 0;
   for (const [key, val] of Object.entries(sign.outputs)) {
-    outputs.push({ id: i++, name: key, dytpe: val.dtype, dimensions: val?.shape?.length });
+    // @ts-ignore
+    const shape = val.shape?.map((a) => a.array[0]);
+    outputs.push({ id: i++, name: key, dytpe: val.dtype, shape });
   }
   log.data('outputs:', outputs);
 }
@@ -59,7 +64,7 @@ async function main() {
     process.exit(0);
   }
   const stat = fs.statSync(param);
-  log.data('Stat:', stat.size, 'bytes, created on', stat.birthtime);
+  log.data('Stat:', 'created on', stat.birthtime);
   if (stat.isFile()) {
     if (param.endsWith('.json')) analyzeGraph(param);
     // if (param.endsWith('.pb')) analyzeSaved(param);
