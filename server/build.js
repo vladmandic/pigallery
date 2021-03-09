@@ -7,20 +7,18 @@ const log = require('@vladmandic/pilogger');
 const root = 'client';
 const jsFiles = ['client/index/worker.js', 'client/index/pwa-serviceworker.js'];
 const cssFiles = ['assets/bootstrap.css', 'assets/fontawesome.css', 'client/index/iv-viewer.css', 'assets/mapquest.css', 'client/pigallery.css'];
-let service;
 let clean;
 const metafile = './asset-manifest.json';
 
-const banner = `
+const banner = { js: `
   /*
   PiGallery
   homepage: <https://github.com/vladmandic/pigallery>
   author: <https://github.com/vladmandic>'
   */
-`;
+` };
 
 async function init() {
-  service = await esbuild.startService();
   clean = new CleanCSS({
     level: {
       1: { all: true },
@@ -29,13 +27,18 @@ async function init() {
   });
 }
 
-async function buildStats() {
+async function buildStats(meta) {
   const stats = { modules: 0, moduleBytes: 0, imports: 0, importBytes: 0, outputs: 0, outputBytes: 0, outputFiles: [] };
+  try {
+    fs.writeFileSync(metafile, JSON.stringify(meta, null, 2));
+  } catch (err) {
+    log.error('Failed to write metafile:', metafile, err);
+  }
   if (!fs.existsSync(metafile)) return stats;
   const data = fs.readFileSync(metafile);
   const json = JSON.parse(data.toString());
-  if (json && json.inputs && json.outputs) {
-    for (const [key, val] of Object.entries(json.inputs)) {
+  if (json && json.metafile?.inputs && json.metafile?.outputs) {
+    for (const [key, val] of Object.entries(json.metafile.inputs)) {
       if (key.startsWith('node_modules')) {
         stats.modules += 1;
         stats.moduleBytes += val.bytes;
@@ -44,7 +47,7 @@ async function buildStats() {
         stats.importBytes += val.bytes;
       }
     }
-    for (const [key, val] of Object.entries(json.outputs)) {
+    for (const [key, val] of Object.entries(json.metafile.outputs)) {
       if (!key.endsWith('.map')) {
         stats.outputs += 1;
         // @ts-ignore
@@ -57,10 +60,6 @@ async function buildStats() {
 }
 
 async function compile() {
-  if (!service) {
-    log.error('ESBuild not initialized');
-    return;
-  }
   if (!clean) {
     log.error('CleanCSS not initialized');
     return;
@@ -73,7 +72,7 @@ async function compile() {
   log.data('Build sources:', files, jsFiles);
   try {
     const t0 = process.hrtime.bigint();
-    await service.build({
+    const meta = await esbuild.build({
       banner,
       entryPoints: [...files, ...jsFiles],
       outdir: './dist',
@@ -87,10 +86,10 @@ async function compile() {
       platform: 'browser',
       target: 'es2018',
       format: 'esm',
-      metafile,
+      metafile: true,
     });
     const t1 = process.hrtime.bigint();
-    const s = await buildStats();
+    const s = await buildStats(meta);
     log.state('Client application rebuild:', Math.trunc(parseInt((t1 - t0).toString()) / 1000 / 1000), 'ms', s.imports, 'imports in', s.importBytes, 'bytes', s.modules, 'modules in', s.moduleBytes, 'bytes', s.outputs, 'outputs in', s.outputBytes, 'bytes');
   } catch (err) {
     log.error('Client application build error', JSON.stringify(err.errors || err, null, 2));

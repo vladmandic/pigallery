@@ -56,7 +56,7 @@ exports.update = update;
 
 try {
   if (require.main === module) {
-    update('../docs/change-log.md');
+    update('../CHANGELOG.md');
   }
 } catch {
   //

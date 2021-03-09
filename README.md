@@ -1,3 +1,10 @@
+![Version](https://img.shields.io/github/package-json/v/vladmandic/pigallery?style=flat-square)
+![Last Commit](https://img.shields.io/github/last-commit/vladmandic/pigallery?style=flat-square)
+![License](https://img.shields.io/github/license/vladmandic/pigallery?style=flat-square)
+![GitHub Status Checks](https://img.shields.io/github/checks-status/vladmandic/pigallery/main?style=flat-square])
+![Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/vladmandic/pigallery?style=flat-square)
+![Code Size](https://img.shields.io/github/languages/code-size/vladmandic/pigallery?style=flat-square)
+
 # PiGallery
 
 ## Secure & fast multi-user image gallery with machine learning image processing and analysis
@@ -297,7 +304,7 @@ Result of all metadata processing is a very flexbile search engine - take a look
 
 - **Code Repository**: <https://github.com/vladmandic/pigallery>  
 - **Todo List**: <https://github.com/vladmandic/pigallery/docs/todo.md>  
-- **Changelog**: <https://github.com/vladmandic/pigallery/docs/change-log.md>  
+- **Changelog**: <https://github.com/vladmandic/pigallery/CHANGELOG.md>  
 - **License**: <https://github.com/vladmandic/pigallery/LICENSE>  
 
 <br>

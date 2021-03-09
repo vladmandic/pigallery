@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+// @ts-ignore
 const log = require('@vladmandic/pilogger');
 // eslint-disable-next-line node/no-unpublished-require, import/no-extraneous-dependencies
 const tf = require('@tensorflow/tfjs-node');
@@ -9,27 +10,43 @@ const tf = require('@tensorflow/tfjs-node');
 async function analyzeGraph(modelPath) {
   const model = await tf.loadGraphModel(`file://${modelPath}`);
   log.info('graph model:', path.resolve(modelPath));
+  log.info('size:', tf.engine().memory());
+
+  const inputs = [];
   if (model.modelSignature['inputs']) {
-    const inputs = Object.values(model.modelSignature['inputs'])[0];
-    const shape = inputs.tensorShape.dim.map((a) => parseInt(a.size));
-    log.data('inputs:', { name: inputs.name, dtype: inputs.dtype, shape });
+    log.info('model inputs based on signature');
+    for (const [key, val] of Object.entries(model.modelSignature['inputs'])) {
+      const shape = val.tensorShape.dim.map((a) => parseInt(a.size));
+      inputs.push({ name: key, dtype: val.dtype, shape });
+    }
+  } else if (model.executor.graph['inputs']) {
+    log.info('model inputs based on executor');
+    for (const t of model.executor.graph['inputs']) {
+      inputs.push({ name: t.name, dtype: t.attrParams.dtype.value, shape: t.attrParams.shape.value });
+    }
+    // const shape = input.attrParam.map((a) => parseInt(a.size));
   } else {
-    const inputs = model.modelSignature['inputs'][0];
-    const shape = inputs.attrParams.shape.value.map((a) => parseInt(a.size));
-    log.data('inputs:', { name: inputs.name, dtype: inputs.attrParams.dtype.value, shape });
+    log.warn('model inputs: cannot determine');
   }
+
   const outputs = [];
   let i = 0;
   if (model.modelSignature['outputs']) {
+    log.info('model outputs based on signature');
     for (const [key, val] of Object.entries(model.modelSignature['outputs'])) {
       const shape = val.tensorShape?.dim.map((a) => parseInt(a.size));
       outputs.push({ id: i++, name: key, dytpe: val.dtype, shape });
     }
-  } else {
-    for (const out of model.modelSignature['outputs']) {
-      outputs.push({ id: i++, name: out.name });
+  } else if (model.executor.graph['outputs']) {
+    log.info('model outputs based on executor');
+    for (const t of model.executor.graph['outputs']) {
+      outputs.push({ id: i++, name: t.name, dtype: t.attrParams.dtype?.value, shape: t.attrParams.shape?.value });
     }
+  } else {
+    log.warn('model outputs: cannot determine');
   }
+
+  log.data('inputs:', inputs);
   log.data('outputs:', outputs);
 }
 
@@ -64,7 +81,7 @@ async function main() {
     process.exit(0);
   }
   const stat = fs.statSync(param);
-  log.data('Stat:', 'created on', stat.birthtime);
+  log.data('created on:', stat.birthtime);
   if (stat.isFile()) {
     if (param.endsWith('.json')) analyzeGraph(param);
     // if (param.endsWith('.pb')) analyzeSaved(param);

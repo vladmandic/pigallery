@@ -624,7 +624,7 @@ async function initMenuHandlers() {
   $('#btn-changelog').on('click', async () => {
     await showNavbar($('#docs'));
     if ($('#docs').css('display') !== 'none') {
-      const res = await fetch('/docs/change-log.md');
+      const res = await fetch('/CHANGELOG.md');
       const md = await res.text();
       if (md) $('#docs').html(marked.default(md));
     }

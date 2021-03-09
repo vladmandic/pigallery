@@ -175,6 +175,7 @@ export async function detect(model, image, userConfig) {
     const width = model.config.switchAxis ? imageT.shape[1] : imageT.shape[2];
     const height = model.config.switchAxis ? imageT.shape[2] : imageT.shape[1];
     detected.push({
+      model: model.config.name,
       score: Math.min(1, Math.trunc(model.config.scaleScore * 10000 * scores[id]) / 10000), // limit score to 100% in case of scaled scores
       id: classes[id],
       class: model.labels[classes[id]]?.displayName || 'unknown',
@@ -186,7 +187,7 @@ export async function detect(model, image, userConfig) {
       },
     });
   }
-  const results = detected.filter((a) => a.score > model.config.minScore); // filter by score one more time as nms can miss items
+  const results = detected.filter((a) => (a.score > model.config.minScore)); // filter by score one more time as nms can miss items
   if (model.config.postProcess) {
     try {
       const data = await postProcess[model.config.postProcess](model, detected); // hack to call a named function
