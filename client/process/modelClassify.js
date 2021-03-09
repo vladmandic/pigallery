@@ -54,7 +54,7 @@ async function decodeValues(model, values) {
       const wnid = model.labels[id] ? model.labels[id][0] : a.index;
       const label = model.labels[id] ? model.labels[id][1]?.toLowerCase() : `unknown id:${a.index}`;
       const score = Math.min(1, Math.trunc(model.config.scaleScore * 10000 * a.score) / 10000); // limit score to 100% in case of scaled scores
-      return { id, wnid, score, class: label };
+      return { id, wnid, score, class: label, model: model.config.name };
     });
   if (results.length > (2 * model.config.maxResults)) results.length = 2 * model.config.maxResults; // rought cut to guard against huge result sets
   const duplicates = [];

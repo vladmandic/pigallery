@@ -209,12 +209,7 @@ export async function process(name) {
       error = err;
       error.where = 'classify promise';
     }
-    for (const i in resClassify) {
-      if (resClassify[i]) {
-        for (const j in resClassify[i]) resClassify[i][j].model = config.models.classify[i].name;
-        obj.classify.push(...resClassify[i]);
-      }
-    }
+    for (const i in resClassify) obj.classify.push(...resClassify[i]); // merge all classification results from specific model
   }
   if (!error) {
     let resDetect = [];
@@ -224,12 +219,7 @@ export async function process(name) {
       error = err;
       error.where = 'detect promise';
     }
-    for (const i in resDetect) {
-      if (resDetect[i]) {
-        for (const j in resDetect[i]) resDetect[i][j].model = config.models.detect[i].name;
-        obj.detect.push(...resDetect[i]);
-      }
-    }
+    for (const i in resDetect) obj.detect.push(...resDetect[i]); // merge all detection results from specific model
   }
 
   if (!error) obj.phash = await hash.data(image.data);

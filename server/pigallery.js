@@ -53,7 +53,7 @@ async function main() {
   app.set('trust proxy', true);
 
   // update changelog
-  changelog.update('../docs/change-log.md');
+  changelog.update('../CHANGELOG.md');
 
   // initialize esbuild bundler
   await build.init();
