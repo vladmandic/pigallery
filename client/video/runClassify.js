@@ -9,8 +9,8 @@ export async function run(name, input, config, objects) {
     // @ts-ignore
     document.getElementById('status').innerText = `loading model: ${name} ...`;
     const memory0 = await tf.memory();
-    const options = config.models.classify.find((a) => a.name === name) || config.models.various.find((a) => a.name === name);
-    objects.models[name] = await modelClassify.load(options);
+    const modelOptions = config.models.classify.find((a) => a.name === name) || config.models.various.find((a) => a.name === name);
+    objects.models[name] = await modelClassify.load(modelOptions);
     const memory1 = await tf.memory();
     // @ts-ignore
     document.getElementById('status').innerText = '';

@@ -214,7 +214,7 @@ export async function show(img) {
     return;
   }
 
-  log.debug('Details for object', object);
+  log.debug('Details for object:', object);
 
   // const top = $('#navbar').height() + 6;
   $('#popup').toggle(true);

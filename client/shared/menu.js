@@ -211,12 +211,12 @@ class Menu {
   async addList(title, items, selected, callback) {
     const el = document.createElement('div');
     el.className = 'menu-item';
-    let options = '';
+    let menuOptions = '';
     for (const item of items) {
       const def = item === selected ? 'selected' : '';
-      options += `<option value="${item}" ${def}>${item}</option>`;
+      menuOptions += `<option value="${item}" ${def}>${item}</option>`;
     }
-    el.innerHTML = `<div class="menu-list"><select name="${this.ID}" class="menu-list-item">${options}</select><label for="${this.ID}"></label></div>${title}`;
+    el.innerHTML = `<div class="menu-list"><select name="${this.ID}" class="menu-list-item">${menuOptions}</select><label for="${this.ID}"></label></div>${title}`;
     el.style.fontFamily = document.body.style.fontFamily;
     el.style.fontSize = document.body.style.fontSize;
     el.style.fontVariant = document.body.style.fontVariant;

@@ -198,10 +198,10 @@ class Slider {
 }
 
 class ImageViewer {
-  constructor(element, options = {}) {
+  constructor(element, imageViewerOptions = {}) {
     const { container, domElement, imageSrc, hiResImageSrc } = this.findContainerAndImageSrc(element);
     this.elements = { container, domElement };
-    this.options = { ...ImageViewer.defaults, ...options };
+    this.options = { ...ImageViewer.defaults, ...imageViewerOptions };
     this.events = {};
     this.frames = {};
     this.sliders = {};

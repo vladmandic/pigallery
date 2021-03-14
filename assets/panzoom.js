@@ -125,26 +125,26 @@ const require_amator = __commonJS((exports, module) => {
   module.exports = animate;
   module.exports.makeAggregateRaf = makeAggregateRaf;
   module.exports.sharedScheduler = makeAggregateRaf();
-  function animate(source, target, options) {
+  function animate(source, target, panZoomOptions) {
     const start = Object.create(null);
     const diff = Object.create(null);
-    options = options || {};
-    let easing = typeof options.easing === 'function' ? options.easing : animations[options.easing];
+    panZoomOptions = panZoomOptions || {};
+    let easing = typeof panZoomOptions.easing === 'function' ? panZoomOptions.easing : animations[panZoomOptions.easing];
     if (!easing) {
-      if (options.easing) {
-        console.warn(`Unknown easing function in amator: ${options.easing}`);
+      if (panZoomOptions.easing) {
+        console.warn(`Unknown easing function in amator: ${panZoomOptions.easing}`);
       }
       easing = animations.ease;
     }
-    const step = typeof options.step === 'function' ? options.step : noop;
-    const done = typeof options.done === 'function' ? options.done : noop;
-    const scheduler = getScheduler(options.scheduler);
+    const step = typeof panZoomOptions.step === 'function' ? panZoomOptions.step : noop;
+    const done = typeof panZoomOptions.done === 'function' ? panZoomOptions.done : noop;
+    const scheduler = getScheduler(panZoomOptions.scheduler);
     const keys = Object.keys(target);
     keys.forEach((key) => {
       start[key] = source[key];
       diff[key] = target[key] - source[key];
     });
-    const durationInMs = typeof options.duration === 'number' ? options.duration : 400;
+    const durationInMs = typeof panZoomOptions.duration === 'number' ? panZoomOptions.duration : 400;
     const durationInFrames = Math.max(1, durationInMs * 0.06);
     let previousAnimationId;
     let frame = 0;
@@ -974,7 +974,7 @@ const require_panzoom = __commonJS((exports, module) => {
         e.preventDefault();
         e.stopPropagation();
         const clientRect = owner.getBoundingClientRect();
-        var offset = Math.min(clientRect.width, clientRect.height);
+        let offset = Math.min(clientRect.width, clientRect.height);
         const moveSpeedRatio = 0.05;
         const dx = offset * moveSpeedRatio * x;
         const dy = offset * moveSpeedRatio * y;
@@ -982,7 +982,7 @@ const require_panzoom = __commonJS((exports, module) => {
       }
       if (z) {
         const scaleMultiplier = getScaleMultiplier(z * 100);
-        var offset = transformOrigin ? getTransformOriginOffset() : midPoint();
+        let offset = transformOrigin ? getTransformOriginOffset() : midPoint();
         publicZoomTo(offset.x, offset.y, scaleMultiplier);
       }
     }
@@ -996,7 +996,7 @@ const require_panzoom = __commonJS((exports, module) => {
     function onTouch(e) {
       beforeTouch(e);
       if (e.touches.length === 1) {
-        return handleSingleFingerTouch(e, e.touches[0]);
+        return handleSingleFingerTouch(e);
       } if (e.touches.length === 2) {
         pinchZoomLength = getPinchZoomLength(e.touches[0], e.touches[1]);
         multiTouch = true;
@@ -1040,7 +1040,7 @@ const require_panzoom = __commonJS((exports, module) => {
       if (e.touches.length === 1) {
         e.stopPropagation();
         const touch = e.touches[0];
-        var offset = getOffsetXY(touch);
+        let offset = getOffsetXY(touch);
         const point = transformToScreen(offset.x, offset.y);
         const dx = point.x - mouseX;
         const dy = point.y - mouseY;
@@ -1061,7 +1061,7 @@ const require_panzoom = __commonJS((exports, module) => {
         mouseX = (firstTouchPoint.x + secondTouchPoint.x) / 2;
         mouseY = (firstTouchPoint.y + secondTouchPoint.y) / 2;
         if (transformOrigin) {
-          var offset = getTransformOriginOffset();
+          let offset = getTransformOriginOffset();
           mouseX = offset.x;
           mouseY = offset.y;
         }
@@ -1073,21 +1073,21 @@ const require_panzoom = __commonJS((exports, module) => {
     }
     function handleTouchEnd(e) {
       if (e.touches.length > 0) {
-        var offset = getOffsetXY(e.touches[0]);
+        let offset = getOffsetXY(e.touches[0]);
         const point = transformToScreen(offset.x, offset.y);
         mouseX = point.x;
         mouseY = point.y;
       } else {
         const now = new Date();
-        if (now - lastTouchEndTime < doubleTapSpeedInMS) {
+        if (Number(now) - lastTouchEndTime < doubleTapSpeedInMS) {
           if (transformOrigin) {
-            var offset = getTransformOriginOffset();
+            let offset = getTransformOriginOffset();
             smoothZoom(offset.x, offset.y, zoomDoubleClickSpeed);
           } else {
             smoothZoom(lastSingleFingerOffset.x, lastSingleFingerOffset.y, zoomDoubleClickSpeed);
           }
         }
-        lastTouchEndTime = now;
+        lastTouchEndTime = Number(now);
         triggerPanEnd();
         releaseTouches();
       }
@@ -1301,6 +1301,7 @@ const require_panzoom = __commonJS((exports, module) => {
     const started = Date.now();
     tryAttach();
     function tryAttach() {
+      // @ts-ignore
       const el = document.querySelector(query);
       if (!el) {
         const now = Date.now();
@@ -1312,21 +1313,21 @@ const require_panzoom = __commonJS((exports, module) => {
         console.error('Cannot find the panzoom element', globalName);
         return;
       }
-      const options = collectOptions(panzoomScript);
-      console.log(options);
-      window[globalName] = createPanZoom(el, options);
+      const panZoomOptions = collectOptions(panzoomScript);
+      console.log(panZoomOptions);
+      window[globalName] = createPanZoom(el, panZoomOptions);
     }
     function collectOptions(script) {
       const attrs = script.attributes;
-      const options = {};
+      const panZoomOptions = {};
       for (let j = 0; j < attrs.length; ++j) {
         const attr = attrs[j];
         const nameValue = getPanzoomAttributeNameValue(attr);
         if (nameValue) {
-          options[nameValue.name] = nameValue.value;
+          panZoomOptions[nameValue.name] = nameValue.value;
         }
       }
-      return options;
+      return panZoomOptions;
     }
     function getPanzoomAttributeNameValue(attr) {
       if (!attr.name) return;

@@ -62,11 +62,11 @@ Combination of:
       "detector": { "modelPath": "@vladmandic/human/models/blazeface-back.json", "rotation": true },
       "mesh": { "modelPath": "@vladmandic/human/models/facemesh.json" },
       "iris": { "modelPath": "@vladmandic/human/models/iris.json" },
-      "age": { "modelPath": "@vladmandic/human/models/age-ssrnet-imdb.json" },
+      "age": { "modelPath": "@vladmandic/human/models/age.json" },
       "gender": { "modelPath": "@vladmandic/human/models/gender.json" },
-      "emotion": { "modelPath": "@vladmandic/human/models/emotion-large.json" },
-      "embedding": { "modelPath": "@vladmandic/human/models/mobilefacenet.json", "enabled": true }
-    } },
+      "emotion": { "modelPath": "@vladmandic/human/models/emotion.json" },
+      "embedding": { "modelPath": "@vladmandic/human/models/mobileface.json", "enabled": true }
+  } },
   "various": [
     { "name": "Food Items", "modelPath": "models/various/food", "enabled": true,
       "minScore": 0.4, "tensorSize": 192, "scaleScore": 500, "maxResults": 3 },

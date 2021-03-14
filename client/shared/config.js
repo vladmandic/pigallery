@@ -211,8 +211,8 @@ window.options = {
   set theme(val) { localStorage.setItem('theme', val.toString()); },
 };
 
-async function setTheme() {
-  window.theme = window.themes[window.options.theme];
+async function setTheme(theme) {
+  window.theme = theme ? window.themes[theme] : window.themes[window.options.theme];
   log.debug('Options:', window.options);
   log.debug(`Theme: ${window.theme?.name} ${window.options.theme}`);
   if (!window.theme) return;
