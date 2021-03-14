@@ -4,7 +4,7 @@ import * as log from '../shared/log';
 import * as modelClassify from './modelClassify';
 import * as modelDetect from './modelDetect';
 import * as hash from '../shared/blockhash';
-import config from '../shared/config';
+import * as config from '../shared/config';
 
 const models = {};
 let error;
@@ -35,42 +35,42 @@ async function resetBackend(backendName) {
 export async function load() {
   log.div('process-log', true, 'Starting Image Analsys');
 
-  if (!config.models) {
+  if (!config.default.models) {
     const req = await fetch('/api/models/get');
-    if (req && req.ok) config.models = await req.json();
+    if (req && req.ok) config.default.models = await req.json();
   }
 
   log.div('process-log', true, 'Image Classification models:');
-  for (const model of config.models.classify.filter((a) => a.enabled)) {
+  for (const model of config.default.models.classify.filter((a) => a.enabled)) {
     log.div('process-log', true, `  ${model.name}`);
   }
   log.div('process-log', true, 'Object Detection models:');
-  for (const model of config.models.detect.filter((a) => a.enabled)) {
+  for (const model of config.default.models.detect.filter((a) => a.enabled)) {
     log.div('process-log', true, `  ${model.name}`);
   }
   log.div('process-log', true, 'Face Detection model:');
-  log.div('process-log', true, `  ${config.models.person.name}`);
+  log.div('process-log', true, `  ${config.default.models.person.name}`);
   const t0 = performance.now();
 
   log.div('process-log', true, 'TensorFlow models loading ...');
 
-  if (config.models.person) {
-    const human = new Human(config.models.person);
-    await human.load(config.models.person);
+  if (config.default.models.person) {
+    const human = new Human(config.default.models.person);
+    await human.load(config.default.models.person);
     models.human = human;
   }
 
   models.classify = [];
-  if (config.models.classify && config.models.classify.length > 0) {
-    for (const cfg of config.models.classify.filter((a) => a.enabled)) {
+  if (config.default.models.classify && config.default.models.classify.length > 0) {
+    for (const cfg of config.default.models.classify.filter((a) => a.enabled)) {
       const res = await modelClassify.load(cfg);
       models.classify.push(res);
     }
   }
 
   models.detect = [];
-  if (config.models.detect && config.models.detect.length > 0) {
-    for (const cfg of config.models.detect.filter((a) => a.enabled)) {
+  if (config.default.models.detect && config.default.models.detect.length > 0) {
+    for (const cfg of config.default.models.detect.filter((a) => a.enabled)) {
       const res = await modelDetect.load(cfg);
       models.detect.push(res);
     }
@@ -79,21 +79,21 @@ export async function load() {
   const t1 = performance.now();
   log.div('process-log', true, `TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
   log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
-  if (config.backEnd === 'wasm') await wasm.setWasmPaths('/assets/');
-  await resetBackend(config.backEnd);
+  if (config.default.backEnd === 'wasm') await wasm.setWasmPaths('/assets/');
+  await resetBackend(config.default.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);
   log.div('process-log', true, 'Configuration:');
   log.div('process-log', true, `  Backend: ${tf.getBackend().toUpperCase()}`);
-  log.div('process-log', true, `  Parallel processing: ${config.batchProcessing} parallel images`);
-  log.div('process-log', true, `  Forced image resize: ${config.maxSize}px maximum shape: ${config.squareImage ? 'square' : 'native'}`);
-  log.div('process-log', true, `  Auto re-load on error: ${config.autoreload}`);
-  if (config.backEnd === 'webgl') {
-    if (config.memory) {
+  log.div('process-log', true, `  Parallel processing: ${config.default.batchProcessing} parallel images`);
+  log.div('process-log', true, `  Forced image resize: ${config.default.maxSize}px maximum shape: ${config.default.squareImage ? 'square' : 'native'}`);
+  log.div('process-log', true, `  Auto re-load on error: ${config.default.autoreload}`);
+  if (config.default.backEnd === 'webgl') {
+    if (config.default.memory) {
       log.div('process-log', true, '  WebGL: Enabling memory deallocator');
       tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
     }
-    for (const [key, val] of Object.entries(config.webgl)) {
+    for (const [key, val] of Object.entries(config.default.webgl)) {
       log.div('process-log', true, '  WebGL:', key, val);
       tf.ENV.set(key, val);
     }
@@ -102,13 +102,13 @@ export async function load() {
   log.div('process-log', true, `TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
 }
 
-export async function getImage(url, maxSize = config.maxSize) {
+export async function getImage(url, maxSize = config.default.maxSize) {
   return new Promise((resolve) => {
     const image = new Image();
     image.addEventListener('load', () => {
       const ratio = 1.0 * image.height / image.width;
       if (Math.max(image.width, image.height) > maxSize) {
-        if (config.squareImage) {
+        if (config.default.squareImage) {
           image.height = maxSize;
           image.width = maxSize;
         } else {
@@ -124,13 +124,13 @@ export async function getImage(url, maxSize = config.maxSize) {
       ctx.drawImage(image, 0, 0, image.width, image.height);
       const data = ctx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height);
 
-      if (Math.max(image.width, image.height) > config.renderThumbnail) {
-        if (config.squareImage) {
-          image.height = config.renderThumbnail;
-          image.width = config.renderThumbnail;
+      if (Math.max(image.width, image.height) > config.default.renderThumbnail) {
+        if (config.default.squareImage) {
+          image.height = config.default.renderThumbnail;
+          image.width = config.default.renderThumbnail;
         } else {
-          image.width = ratio <= 1 ? config.renderThumbnail : 1.0 * config.renderThumbnail / ratio;
-          image.height = ratio >= 1 ? config.renderThumbnail : 1.0 * config.renderThumbnail * ratio;
+          image.width = ratio <= 1 ? config.default.renderThumbnail : 1.0 * config.default.renderThumbnail / ratio;
+          image.height = ratio >= 1 ? config.default.renderThumbnail : 1.0 * config.default.renderThumbnail * ratio;
         }
       }
       const thumbnailCanvas = document.createElement('canvas');
@@ -147,7 +147,7 @@ export async function getImage(url, maxSize = config.maxSize) {
 }
 
 export async function process(name) {
-  // if (config.batchProcessing === 1) tf.engine().startScope();
+  // if (config.default.batchProcessing === 1) tf.engine().startScope();
   const mem = tf.memory();
   log.div('process-state', false, `Engine state: ${mem.numBytes.toLocaleString()} bytes ${mem.numTensors.toLocaleString()} tensors ${mem.numDataBuffers.toLocaleString()} buffers ${mem.numBytesInGPU ? mem.numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj = {};
@@ -174,7 +174,7 @@ export async function process(name) {
     if (!error && models.classify) {
       for (const m of models.classify) {
         model = m;
-        if (config.batchProcessing === 1) promisesClassify.push(await modelClassify.classify(model, image.canvas));
+        if (config.default.batchProcessing === 1) promisesClassify.push(await modelClassify.classify(model, image.canvas));
         else promisesClassify.push(modelClassify.classify(model, image.canvas));
       }
     }
@@ -191,7 +191,7 @@ export async function process(name) {
     if (!error && models.detect) {
       for (const m of models.detect) {
         model = m;
-        if (config.batchProcessing === 1) promisesDetect.push(await modelDetect.detect(model, image.canvas));
+        if (config.default.batchProcessing === 1) promisesDetect.push(await modelDetect.detect(model, image.canvas));
         else promisesDetect.push(modelDetect.detect(model, image.canvas));
       }
     }
@@ -228,7 +228,7 @@ export async function process(name) {
   try {
     if (!error && models.human) {
       obj.person = [];
-      const res = await models.human.detect(image.canvas, config.models.person);
+      const res = await models.human.detect(image.canvas, config.default.models.person);
       if (res && res.face) {
         for (const person of res.face) {
           obj.person.push({

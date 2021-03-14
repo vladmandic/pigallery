@@ -9,12 +9,12 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
+### **HEAD -> master** 2021/03/10 mandic00@live.com
+
+
 ### **3.4.1** 2021/03/09 mandic00@live.com
 
 - fix model names upgrade tfjs & esbuild
-
-### **origin/master** 2021/03/08 mandic00@live.com
-
 
 ### **3.3.7** 2021/03/04 mandic00@live.com
 

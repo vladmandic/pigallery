@@ -102,10 +102,10 @@ function initHumanConfig() {
     config.default.human.face.detector.modelPath = '@vladmandic/human/models/blazeface-back.json';
     config.default.human.face.mesh.modelPath = '@vladmandic/human/models/facemesh.json';
     config.default.human.face.iris.modelPath = '@vladmandic/human/models/iris.json';
-    config.default.human.face.age.modelPath = '@vladmandic/human/models/age-ssrnet-imdb.json';
+    config.default.human.face.age.modelPath = '@vladmandic/human/models/age.json';
     config.default.human.face.gender.modelPath = '@vladmandic/human/models/gender.json';
-    config.default.human.face.emotion.modelPath = '@vladmandic/human/models/emotion-large.json';
-    config.default.human.face.embedding.modelPath = '@vladmandic/human/models/mobilefacenet.json';
+    config.default.human.face.emotion.modelPath = '@vladmandic/human/models/emotion.json';
+    config.default.human.face.embedding.modelPath = '@vladmandic/human/models/mobileface.json';
     config.default.human.body.enabled = false;
     config.default.human.body.modelPath = '@vladmandic/human/models/posenet.json';
     config.default.human.hand.enabled = false;

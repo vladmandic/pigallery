@@ -1,9 +1,9 @@
 import $ from 'jquery';
 import { tf } from '../shared/tf';
 import * as log from '../shared/log';
+import * as user from '../shared/user';
 import * as config from '../shared/config';
 import * as process from './processImage';
-import * as user from '../shared/user';
 
 const results = [];
 let id = 0;

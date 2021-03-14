@@ -30,17 +30,17 @@ Human library with embedded models
       "minScore":0.3, "scaleOutput":true, "maxResults":20, "offset": 1,
       "map": { "boxes": "Postprocessor/ExpandDims_1", "scores": "Postprocessor/Slice", "classes": null }
     }
- ],
- "person": { "name": "Human",
-  "videoOptimized": false, "debug": false, "filter": { "enabled": false }, "gesture": { "enabled": false }, "body": { "enabled": false }, "hand": { "enabled": false },
-  "face": {
-    "detector": { "modelPath": "@vladmandic/human/models/blazeface-back.json", "rotation": true },
-    "mesh": { "modelPath": "@vladmandic/human/models/facemesh.json" },
-    "iris": { "modelPath": "@vladmandic/human/models/iris.json" },
-    "age": { "modelPath": "@vladmandic/human/models/age-ssrnet-imdb.json" },
-    "gender": { "modelPath": "@vladmandic/human/models/gender.json" },
-    "emotion": { "modelPath": "@vladmandic/human/models/emotion-large.json" },
-    "embedding": { "modelPath": "@vladmandic/human/models/mobilefacenet.json", "enabled": true }
+  ],
+  "person": { "name": "Human",
+    "videoOptimized": false, "debug": false, "filter": { "enabled": false }, "gesture": { "enabled": false }, "body": { "enabled": false }, "hand": { "enabled": false },
+    "face": {
+      "detector": { "modelPath": "@vladmandic/human/models/blazeface-back.json", "rotation": true },
+      "mesh": { "modelPath": "@vladmandic/human/models/facemesh.json" },
+      "iris": { "modelPath": "@vladmandic/human/models/iris.json" },
+      "age": { "modelPath": "@vladmandic/human/models/age.json" },
+      "gender": { "modelPath": "@vladmandic/human/models/gender.json" },
+      "emotion": { "modelPath": "@vladmandic/human/models/emotion.json" },
+      "embedding": { "modelPath": "@vladmandic/human/models/mobileface.json", "enabled": true }
   } },
 "video": [],
   "various": []
