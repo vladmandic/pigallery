@@ -25539,7 +25539,7 @@
         ]
       },
       "node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-        "bytes": 291798,
+        "bytes": 292064,
         "imports": [
           {
             "path": "node_modules/@tensorflow/tfjs/package.json",
@@ -26701,7 +26701,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7467002
+        "bytes": 7468287
       },
       "dist/process/process.js": {
         "imports": [],
@@ -26709,13 +26709,13 @@
         "entryPoint": "client/process/process.js",
         "inputs": {
           "node_modules/jquery/dist/jquery.js": {
-            "bytesInOutput": 218874
+            "bytesInOutput": 218878
           },
           "(disabled):node_modules/node-fetch/browser.js": {
             "bytesInOutput": 45
           },
           "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-            "bytesInOutput": 2785962
+            "bytesInOutput": 2785961
           },
           "node_modules/@tensorflow/tfjs-core/node_modules/seedrandom/lib/alea.js": {
             "bytesInOutput": 2140
@@ -26751,10 +26751,10 @@
             "bytesInOutput": 48
           },
           "node_modules/@tensorflow/tfjs-backend-wasm/wasm-out/tfjs-backend-wasm-threaded-simd.js": {
-            "bytesInOutput": 90996
+            "bytesInOutput": 91024
           },
           "node_modules/@tensorflow/tfjs-backend-wasm/wasm-out/tfjs-backend-wasm.js": {
-            "bytesInOutput": 38135
+            "bytesInOutput": 38153
           },
           "client/shared/log.js": {
             "bytesInOutput": 1744
@@ -27366,7 +27366,7 @@
             "bytesInOutput": 1239
           },
           "node_modules/@tensorflow/tfjs-core/dist/ops/rand_util.js": {
-            "bytesInOutput": 4154
+            "bytesInOutput": 4158
           },
           "node_modules/@tensorflow/tfjs-core/dist/ops/random_gamma.js": {
             "bytesInOutput": 1226
@@ -27642,7 +27642,7 @@
             "bytesInOutput": 1681
           },
           "node_modules/@tensorflow/tfjs-core/dist/ops/linalg/band_part.js": {
-            "bytesInOutput": 1935
+            "bytesInOutput": 1928
           },
           "node_modules/@tensorflow/tfjs-core/dist/ops/linalg/gram_schmidt.js": {
             "bytesInOutput": 1868
@@ -30261,7 +30261,7 @@
             "bytesInOutput": 4428
           },
           "node_modules/@tensorflow/tfjs-layers/dist/layers/recurrent.js": {
-            "bytesInOutput": 39653
+            "bytesInOutput": 39655
           },
           "node_modules/@tensorflow/tfjs-layers/dist/layers/convolutional_recurrent.js": {
             "bytesInOutput": 12397
@@ -30519,7 +30519,7 @@
             "bytesInOutput": 63
           },
           "node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-            "bytesInOutput": 343903
+            "bytesInOutput": 344270
           },
           "client/process/processImage.js": {
             "bytesInOutput": 9961
@@ -30534,13 +30534,13 @@
             "bytesInOutput": 7053
           }
         },
-        "bytes": 6334596
+        "bytes": 6335011
       },
       "dist/video/video.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7582408
+        "bytes": 7583693
       },
       "dist/video/video.js": {
         "imports": [],
@@ -30548,13 +30548,13 @@
         "entryPoint": "client/video/video.js",
         "inputs": {
           "node_modules/jquery/dist/jquery.js": {
-            "bytesInOutput": 218668
+            "bytesInOutput": 218672
           },
           "(disabled):node_modules/node-fetch/browser.js": {
             "bytesInOutput": 45
           },
           "node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-            "bytesInOutput": 2785827
+            "bytesInOutput": 2785826
           },
           "node_modules/@tensorflow/tfjs-core/node_modules/seedrandom/lib/alea.js": {
             "bytesInOutput": 2135
@@ -30590,10 +30590,10 @@
             "bytesInOutput": 48
           },
           "node_modules/@tensorflow/tfjs-backend-wasm/wasm-out/tfjs-backend-wasm-threaded-simd.js": {
-            "bytesInOutput": 91026
+            "bytesInOutput": 91054
           },
           "node_modules/@tensorflow/tfjs-backend-wasm/wasm-out/tfjs-backend-wasm.js": {
-            "bytesInOutput": 38135
+            "bytesInOutput": 38153
           },
           "node_modules/@tensorflow/tfjs-backend-cpu/node_modules/seedrandom/lib/alea.js": {
             "bytesInOutput": 2136
@@ -31202,7 +31202,7 @@
             "bytesInOutput": 1239
           },
           "node_modules/@tensorflow/tfjs-core/dist/ops/rand_util.js": {
-            "bytesInOutput": 4154
+            "bytesInOutput": 4158
           },
           "node_modules/@tensorflow/tfjs-core/dist/ops/random_gamma.js": {
             "bytesInOutput": 1226
@@ -31478,7 +31478,7 @@
             "bytesInOutput": 1681
           },
           "node_modules/@tensorflow/tfjs-core/dist/ops/linalg/band_part.js": {
-            "bytesInOutput": 1935
+            "bytesInOutput": 1928
           },
           "node_modules/@tensorflow/tfjs-core/dist/ops/linalg/gram_schmidt.js": {
             "bytesInOutput": 1868
@@ -34091,7 +34091,7 @@
             "bytesInOutput": 4428
           },
           "node_modules/@tensorflow/tfjs-layers/dist/layers/recurrent.js": {
-            "bytesInOutput": 39653
+            "bytesInOutput": 39655
           },
           "node_modules/@tensorflow/tfjs-layers/dist/layers/convolutional_recurrent.js": {
             "bytesInOutput": 12397
@@ -34349,7 +34349,7 @@
             "bytesInOutput": 63
           },
           "node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-            "bytesInOutput": 343897
+            "bytesInOutput": 344264
           },
           "assets/panzoom.js": {
             "bytesInOutput": 43592
@@ -34388,7 +34388,7 @@
             "bytesInOutput": 9086
           }
         },
-        "bytes": 6404007
+        "bytes": 6404422
       },
       "dist/index/worker.js.map": {
         "imports": [],
