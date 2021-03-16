@@ -72,7 +72,7 @@ async function compile() {
   log.data('Build sources:', files, jsFiles);
   try {
     const t0 = process.hrtime.bigint();
-    const meta = await esbuild.build({
+    const meta = esbuild.buildSync({
       banner,
       entryPoints: [...files, ...jsFiles],
       outdir: './dist',
@@ -87,6 +87,7 @@ async function compile() {
       target: 'es2018',
       format: 'esm',
       metafile: true,
+      watch: false,
     });
     const t1 = process.hrtime.bigint();
     const s = await buildStats(meta);
@@ -112,9 +113,11 @@ async function compile() {
   }
 }
 
-exports.init = init;
-exports.compile = compile;
-
 if (require.main === module) {
-  //
+  log.header();
+  init();
+  compile();
+} else {
+  exports.init = init;
+  exports.compile = compile;
 }
