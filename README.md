@@ -12,7 +12,7 @@
 
 ## Key features
 
-### At it's core, **PiGallery** builds a database of images which includes
+### At it's core, **PiGallery** builds a searchable database of images  
 
 - Image thumbnails for fast display
 - Image analysis using machine learning using multiple image classification and object detection models
