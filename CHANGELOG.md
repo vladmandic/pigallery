@@ -9,6 +9,9 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
+### **HEAD -> master** 2021/03/16 mandic00@live.com
+
+
 ### **3.4.2** 2021/03/14 mandic00@live.com
 
 - added architecture notes
