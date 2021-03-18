@@ -10,7 +10,6 @@ import * as processImage from '../process/processImage';
 import * as config from '../shared/config';
 
 const models = [];
-// @ts-ignore
 window.cache = [];
 let stop = false;
 const limit = 0;

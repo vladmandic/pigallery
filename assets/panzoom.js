@@ -1301,7 +1301,6 @@ const require_panzoom = __commonJS((exports, module) => {
     const started = Date.now();
     tryAttach();
     function tryAttach() {
-      // @ts-ignore
       const el = document.querySelector(query);
       if (!el) {
         const now = Date.now();

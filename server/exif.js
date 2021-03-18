@@ -57,7 +57,6 @@ async function getExif(url) {
       const stream = fs.createReadStream(url, { highWaterMark: 65536, start: 0, end: 65535, flags: 'r', autoClose: true, emitClose: true });
       stream
         .on('data', (buf) => {
-          // @ts-ignore
           chunk = Buffer.concat([chunk, buf]);
           if (chunk.length >= 65536) {
             stream.close();
