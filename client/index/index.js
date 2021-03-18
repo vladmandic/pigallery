@@ -497,7 +497,6 @@ async function initSharesHandler() {
       share.name = $('#share-name').val();
       share.images = window.filtered.map((a) => a.image);
       log.debug(t0, `Share create: creator: ${share.creator} name: ${share.name} images: ${share.images.length.toLocaleString()} size: ${JSON.stringify(share).length.toLocaleString()} bytes`);
-      // @ts-ignore
       if (!share.creator || !share.name || ((share.name.length < 2) || !share.images) || (share.images.length < 1)) {
         $('#share-url').val('invalid data');
         return;
@@ -508,7 +507,6 @@ async function initSharesHandler() {
       enumerate.shares();
     } else {
       const name = $('#share-name').val();
-      // @ts-ignore
       const key = $('#share-url').val().split('=')[1];
       log.debug(t0, `Share remove: ${name} ${key}`);
       fetch(`/api/share/del?rm=${key}`).then(enumerate.shares).catch(false);

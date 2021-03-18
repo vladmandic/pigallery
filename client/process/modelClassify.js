@@ -17,7 +17,6 @@ export async function load(userConfig) {
   let model = { config: { ...defaults, ...userConfig } };
   if (!model.config.modelPath) throw new Error('Error loading model: path is null');
   const loadOpts = {
-    // @ts-ignore
     // fetchFunc: (...args) => fetch(...args),
     // requestInit: { mode: 'no-cors' },
     fromTFHub: model.config.modelPath.includes('tfhub.dev'), // dynamically change flag depending on model url
@@ -26,7 +25,6 @@ export async function load(userConfig) {
   try {
     const saveConfig = model.config;
     if (model.config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
-    // @ts-ignore
     else model = await tf.loadGraphModel(modelPath, loadOpts);
     model.config = saveConfig;
     model.name = model.config.name;

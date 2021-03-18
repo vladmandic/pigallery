@@ -64,7 +64,6 @@ function colorHex(str) {
   return ctx.fillStyle;
 }
 
-// @ts-ignore
 window.themes = [
   {
     name: 'Light',
@@ -130,7 +129,6 @@ window.themes = [
 ];
 
 // user configurable options & defalt values, stored in browsers local storage
-// @ts-ignore
 window.options = {
   get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || '500'); },
   set listItemCount(val) { localStorage.setItem('listItemCount', val.toString()); },

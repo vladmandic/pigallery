@@ -5,7 +5,7 @@
         "column": 12,
         "file": "client/index/index.js",
         "length": 9,
-        "line": 729,
+        "line": 727,
         "lineText": "    details.slideshow(true);",
         "namespace": ""
       },
@@ -10720,7 +10720,7 @@
         "imports": []
       },
       "client/process/modelClassify.js": {
-        "bytes": 4934,
+        "bytes": 4898,
         "imports": [
           {
             "path": "client/shared/tf.js",
@@ -10733,7 +10733,7 @@
         "imports": []
       },
       "client/process/modelDetect.js": {
-        "bytes": 8901,
+        "bytes": 8865,
         "imports": [
           {
             "path": "client/shared/tf.js",
@@ -26168,11 +26168,11 @@
         ]
       },
       "client/shared/blockhash.js": {
-        "bytes": 5707,
+        "bytes": 5607,
         "imports": []
       },
       "client/shared/config.js": {
-        "bytes": 11096,
+        "bytes": 11068,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26218,7 +26218,7 @@
         ]
       },
       "client/compare/compare.js": {
-        "bytes": 9492,
+        "bytes": 9478,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26403,7 +26403,7 @@
         ]
       },
       "client/index/pwa-register.js": {
-        "bytes": 1417,
+        "bytes": 1377,
         "imports": [
           {
             "path": "client/shared/log.js",
@@ -26412,7 +26412,7 @@
         ]
       },
       "client/index/index.js": {
-        "bytes": 34806,
+        "bytes": 34766,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26498,7 +26498,7 @@
         ]
       },
       "assets/panzoom.js": {
-        "bytes": 43472,
+        "bytes": 43452,
         "imports": []
       },
       "client/video/draw.js": {
@@ -26506,7 +26506,7 @@
         "imports": []
       },
       "client/video/runDetect.js": {
-        "bytes": 1882,
+        "bytes": 1846,
         "imports": [
           {
             "path": "client/shared/tf.js",
@@ -26527,7 +26527,7 @@
         ]
       },
       "client/video/runClassify.js": {
-        "bytes": 1421,
+        "bytes": 1385,
         "imports": [
           {
             "path": "client/shared/tf.js",
@@ -26544,7 +26544,7 @@
         ]
       },
       "client/video/runHuman.js": {
-        "bytes": 8640,
+        "bytes": 8622,
         "imports": [
           {
             "path": "node_modules/.pnpm/@vladmandic/human@1.1.9/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
@@ -26557,7 +26557,7 @@
         ]
       },
       "client/video/run.js": {
-        "bytes": 7248,
+        "bytes": 7214,
         "imports": [
           {
             "path": "client/shared/tf.js",
@@ -26649,7 +26649,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5720429
+        "bytes": 5720308
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -27197,7 +27197,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1044855
+        "bytes": 1044636
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27265,7 +27265,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7548239
+        "bytes": 7548028
       },
       "dist/process/process.js": {
         "imports": [],
@@ -31179,7 +31179,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7663647
+        "bytes": 7663389
       },
       "dist/video/video.js": {
         "imports": [],
@@ -35108,7 +35108,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 11112
+        "bytes": 11007
       },
       "dist/index/worker.js": {
         "imports": [],

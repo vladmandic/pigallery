@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-// @ts-ignore
 const log = require('@vladmandic/pilogger');
 const http = require('http');
 const https = require('https');
@@ -29,7 +28,6 @@ function forceSSL(req, res, next) {
   return next();
 }
 
-// @ts-ignore
 function allowFrames(req, res, next) {
   res.setHeader('X-Frame-Options', 'SAMEORIGIN'); // allow | deny
   next();
@@ -40,7 +38,7 @@ async function main() {
     config = JSON.parse(fs.readFileSync('./config.json').toString());
   } catch (err) {
     log.error('Configuration file config.json cannot be read');
-    // process.exit(0);
+    process.exit(0);
   }
   log.configure({ logFile: config?.server?.logFile || 'pigallery.log' });
   log.header();
@@ -82,13 +80,11 @@ async function main() {
       if (res.statusCode !== 200 && res.statusCode !== 302 && res.statusCode !== 304 && !req.url.endsWith('.map') && (req.url !== '/true')) {
         const forwarded = (req.headers.forwarded || '').match(/for="\[(.*)\]:/);
         const ip = (Array.isArray(forwarded) ? forwarded[1] : null) || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
-        // @ts-ignore
         log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);
       }
     });
     if (req.url.startsWith('/api/user/auth')) next();
     else if (!req.url.startsWith('/api/')) next();
-    // @ts-ignore
     else if (req.session.user || !config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
   });
@@ -100,19 +96,15 @@ async function main() {
       const mount = f.substr(0, f.indexOf('.html'));
       const name = path.join('./client', f);
       log.state(`Mounted: ${mount} from ${name}`);
-      // @ts-ignore
       app.get(`/${mount}`, (req, res) => res.sendFile(name, { root }));
     }
   }
   // define routes for static files
   for (const f of ['/favicon.ico', '/pigallery.webmanifest', '/asset-manifest.json', '/README.md', '/LICENSE']) {
-    // @ts-ignore
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
   // define route for root
-  // @ts-ignore
   app.get('/', (req, res) => res.sendFile('index.html', { root: './client' }));
-  // @ts-ignore
   app.get('/true', (req, res) => res.status(200).send(true)); // used for is-alive checks
   // define routes for folders
   const optionsStatic = { maxAge: '365d', cacheControl: true, etag: true, lastModified: true };

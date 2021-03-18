@@ -1,9 +1,8 @@
-![Version](https://img.shields.io/github/package-json/v/vladmandic/pigallery?style=flat-square)
-![Last Commit](https://img.shields.io/github/last-commit/vladmandic/pigallery?style=flat-square)
-![License](https://img.shields.io/github/license/vladmandic/pigallery?style=flat-square)
-![GitHub Status Checks](https://img.shields.io/github/checks-status/vladmandic/pigallery/main?style=flat-square])
-![Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/vladmandic/pigallery?style=flat-square)
-![Code Size](https://img.shields.io/github/languages/code-size/vladmandic/pigallery?style=flat-square)
+![Version](https://img.shields.io/github/package-json/v/vladmandic/pigallery?style=flat-square?svg=true)
+![Last Commit](https://img.shields.io/github/last-commit/vladmandic/pigallery?style=flat-square?svg=true)
+![License](https://img.shields.io/github/license/vladmandic/pigallery?style=flat-square?svg=true)
+![Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/vladmandic/pigallery?style=flat-square?svg=true)
+![Code Size](https://img.shields.io/github/languages/code-size/vladmandic/pigallery?style=flat-square?svg=true)
 
 # PiGallery
 
