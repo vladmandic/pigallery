@@ -82,6 +82,7 @@ const bmvbhash = function (data, bits) {
   for (let i = 0; i < bits; i++) {
     blocks.push([]);
     for (let j = 0; j < bits; j++) {
+      // @ts-ignore
       blocks[i].push(0);
     }
   }
@@ -132,9 +133,13 @@ const bmvbhash = function (data, bits) {
           block_right = Math.ceil(x / block_width);
         }
       }
+      // @ts-ignore
       blocks[block_top][block_left] += avgvalue * weight_top * weight_left;
+      // @ts-ignore
       blocks[block_top][block_right] += avgvalue * weight_top * weight_right;
+      // @ts-ignore
       blocks[block_bottom][block_left] += avgvalue * weight_bottom * weight_left;
+      // @ts-ignore
       blocks[block_bottom][block_right] += avgvalue * weight_bottom * weight_right;
     }
   }

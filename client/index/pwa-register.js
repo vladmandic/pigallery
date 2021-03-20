@@ -20,7 +20,9 @@ async function register(path) {
       else log.debug(t0, 'PWA Error:', err);
     }
     if (navigator.serviceWorker.controller) {
+      // @ts-ignore
       navigator.serviceWorker.controller.postMessage({ key: 'cacheModels', val: window.options.cacheModels });
+      // @ts-ignore
       navigator.serviceWorker.controller.postMessage({ key: 'cacheAssets', val: window.options.cacheAssets });
       log.debug(t0, 'PWA Active:', navigator.serviceWorker.controller.scriptURL);
       const cache = await caches.open('pigallery');

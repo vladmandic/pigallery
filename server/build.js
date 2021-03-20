@@ -50,6 +50,7 @@ async function buildStats(meta) {
     for (const [key, val] of Object.entries(json.metafile.outputs)) {
       if (!key.endsWith('.map')) {
         stats.outputs += 1;
+        // @ts-ignore
         stats.outputFiles.push(key);
         stats.outputBytes += val.bytes;
       }

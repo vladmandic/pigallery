@@ -25,6 +25,7 @@ export async function load(userConfig) {
   try {
     const saveConfig = model.config;
     if (model.config.modelType === 'layers') model = await tf.loadLayersModel(modelPath, loadOpts);
+    // @ts-ignore
     else model = await tf.loadGraphModel(modelPath, loadOpts);
     model.config = saveConfig;
     model.name = model.config.name;
