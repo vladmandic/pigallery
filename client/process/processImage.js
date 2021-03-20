@@ -87,14 +87,14 @@ export async function load() {
   log.div('process-log', true, `  Backend: ${tf.getBackend().toUpperCase()}`);
   log.div('process-log', true, `  Parallel processing: ${config.default.batchProcessing} parallel images`);
   log.div('process-log', true, `  Forced image resize: ${config.default.maxSize}px maximum shape: ${config.default.squareImage ? 'square' : 'native'}`);
-  log.div('process-log', true, `  Auto re-load on error: ${config.default.autoreload}`);
+  log.div('process-log', true, `  Auto reload on error: ${config.default.autoreload}`);
   if (config.default.backEnd === 'webgl') {
     if (config.default.memory) {
       log.div('process-log', true, '  WebGL: Enabling memory deallocator');
       tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
     }
     for (const [key, val] of Object.entries(config.default.webgl)) {
-      log.div('process-log', true, '  WebGL:', key, val);
+      log.div('process-log', true, '  WebGL: ', key.toLowerCase(), ': ', val);
       tf.ENV.set(key, val);
     }
   }
