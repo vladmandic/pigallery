@@ -9,8 +9,12 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/03/16 mandic00@live.com
+### **HEAD -> master** 2021/03/20 mandic00@live.com
 
+
+### **origin/master** 2021/03/18 mandic00@live.com
+
+- create codeql-analysis.yml
 
 ### **3.4.2** 2021/03/14 mandic00@live.com
 
