@@ -174,30 +174,41 @@
   specified in `models.json`:
 
   ```js
-  12:28:43.491 Requesting file list from server ...
-  12:28:43.531   Analyzing folder: Samples/ matching: * recursive: false force: false pending: 110
-  12:28:43.532 Starting Image Analsys
-  12:28:43.533 Initializing TensorFlow/JS version 3.1.0
-  12:28:43.610 Configuration:
-  12:28:43.610   Backend: WEBGL
-  12:28:43.610   Parallel processing: 1 parallel images
-  12:28:43.610   Forced image resize: 720px maximum shape: native
-  12:28:43.610 Image Classification models:
-  12:28:43.611   name:MobileNet v3, modelPath:https://storage.googleapis.com/tfhub-tfjs-modules/google/tfjs-model/imagenet/mobilenet_v3_large_100_224/classification/5/default/1/model.json, classes:assets/classes-imagenet.json, offset:1, tensorSize:224
-  12:28:43.611 Object Detection models:
-  12:28:43.611   name:COCO SSD MobileNet v2, modelPath:https://storage.googleapis.com/tfhub-tfjs-modules/tensorflow/tfjs-model/ssd_mobilenet_v1/1/default/1/model.json, classes:assets/classes-coco.json, minScore:0.3, scaleOutput:true, maxResults:20, offset:1, map:boxes:Postprocessor/ExpandDims_1, scores:Postprocessor/Slice, classes:null
-  12:28:43.611 Face Detection model:
-  12:28:43.611   name:FaceAPI SSD/MobileNet v1, modelPath:@vladmandic/face-api/model/, score:0.3, topK:10, size:416
-  12:28:46.453 TensorFlow models loaded: 2,841ms
-  12:28:46.456 TensorFlow engine state: Bytes: 98,242,588 Buffers: 759 Tensors: 759
-  12:28:46.464 TensorFlow models warming up ...
-  12:28:58.518 TensorFlow models warmed up in 12,054ms
-  12:28:58.532 Processing images: 110 batch: 1
-  12:29:04.472 Aborting current run due to user stop request
-  12:29:04.472 Processed 7 of 110 images in 5,939ms 848ms avg
-  12:29:04.472 Results: 7 images in total 100,034 bytes average 14,291 bytes
-  12:29:04.473 Image Analysis done: 20,983ms
-  12:29:04.473 Reload image database now
+  12:09:03.640 Requesting file list from server ...
+  12:09:05.218   Analyzing folder: Samples/ matching: * recursive: false force: false pending: 110
+  12:09:05.219   Analyzing folder: People/ matching: * recursive: true force: false pending: 2309
+  12:09:05.219   Analyzing folder: Photos/ matching: * recursive: true force: false pending: 4368
+  12:09:05.220   Analyzing folder: Pictures/Samsung Gallery/Snapseed matching: * recursive: false force: false pending: 812
+  12:09:05.220   Analyzing folder: Pictures/Camera Roll/ matching: -01.jp recursive: false force: false pending: 0
+  12:09:05.221 Starting Image Analsys
+  12:09:05.239 Image Classification models:
+  12:09:05.239   ImageNet EfficientNet B4
+  12:09:05.239   DeepDetect Inception v3
+  12:09:05.239   Places365 ResNet-152
+  12:09:05.239 Object Detection models:
+  12:09:05.239   COCO CenterNet ResNet50-v2
+  12:09:05.240   OpenImages SSD MobileNet v2
+  12:09:05.240   NudeNet
+  12:09:05.240 Face Detection model:
+  12:09:05.240   Human
+  12:09:05.240 TensorFlow models loading ...
+  12:09:17.876 TensorFlow models loaded: 12,636ms
+  12:09:17.876 Initializing TensorFlow/JS version 3.3.0
+  12:09:17.881 Configuration:
+  12:09:17.882   Backend: WEBGL
+  12:09:17.882   Parallel processing: 1 parallel images
+  12:09:17.882   Forced image resize: 720px maximum shape: native
+  12:09:17.882   Auto reload on error: true
+  12:09:17.882   WebGL: Enabling memory deallocator
+  12:09:17.882   WebGL: webgl_delete_texture_threshold: 0
+  12:09:17.882   WebGL: webgl_force_f16_textures: false
+  12:09:17.882   WebGL: webgl_pack_depthwiseconv: false
+  12:09:17.882   WebGL: webgl_cpu_forward: true
+  12:09:17.905 TensorFlow engine state: Bytes: 781,759,369 Buffers: 10,345 Tensors: 10,345
+  12:09:17.916 TensorFlow flags: IS_BROWSER:true, IS_NODE:false, DEBUG:false, WEBGL_VERSION:2, HAS_WEBGL:true, PROD:true, WEBGL_CHECK_NUMERICAL_PROBLEMS:false, TENSORLIKE_CHECK_SHAPE_CONSISTENCY:false, WEBGL_DELETE_TEXTURE_THRESHOLD:0, WEBGL_FORCE_F16_TEXTURES:false, WEBGL_PACK_DEPTHWISECONV:false, WEBGL_CPU_FORWARD:true
+  12:09:17.916 TensorFlow warming up ...
+  12:09:47.239 TensorFlow warmed up in 29,323ms
+  12:09:47.245 Processing images: 7599 batch: 1
   ```
 
 - Select `Live Video` to process live video from your device camera

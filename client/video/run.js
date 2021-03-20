@@ -61,7 +61,7 @@ async function init(config) {
     tf.ENV.set('DEBUG', false);
     if (config.backEnd === 'webgl') {
       for (const [key, val] of Object.entries(config.webgl)) {
-        log.debug('Setting WebGL:', key, val);
+        log.debug('Setting WebGL: ', key.toLowerCase(), ': ', val);
         tf.ENV.set(key, val);
       }
       if (config.memory) {

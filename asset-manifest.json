@@ -26185,7 +26185,7 @@
         ]
       },
       "client/process/processImage.js": {
-        "bytes": 11185,
+        "bytes": 11205,
         "imports": [
           {
             "path": "node_modules/.pnpm/@vladmandic/human@1.1.10/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
@@ -26557,7 +26557,7 @@
         ]
       },
       "client/video/run.js": {
-        "bytes": 7248,
+        "bytes": 7269,
         "imports": [
           {
             "path": "client/shared/tf.js",
@@ -26649,7 +26649,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5720373
+        "bytes": 5720393
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -27265,7 +27265,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7550434
+        "bytes": 7550464
       },
       "dist/process/process.js": {
         "imports": [],
@@ -31161,7 +31161,7 @@
             "bytesInOutput": 346908
           },
           "client/process/processImage.js": {
-            "bytesInOutput": 9961
+            "bytesInOutput": 9981
           },
           "client/process/modelClassify.js": {
             "bytesInOutput": 3914
@@ -31173,13 +31173,13 @@
             "bytesInOutput": 7044
           }
         },
-        "bytes": 6436876
+        "bytes": 6436896
       },
       "dist/video/video.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7665823
+        "bytes": 7665854
       },
       "dist/video/video.js": {
         "imports": [],
@@ -35072,7 +35072,7 @@
             "bytesInOutput": 1018
           },
           "client/video/run.js": {
-            "bytesInOutput": 6788
+            "bytesInOutput": 6809
           },
           "client/video/draw.js": {
             "bytesInOutput": 2266
@@ -35102,7 +35102,7 @@
             "bytesInOutput": 9090
           }
         },
-        "bytes": 6506300
+        "bytes": 6506321
       },
       "dist/index/worker.js.map": {
         "imports": [],
