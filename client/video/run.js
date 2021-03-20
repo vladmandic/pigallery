@@ -142,6 +142,7 @@ async function main(config, objects) {
   if (!el) return;
   if (config.ui.text) {
     let msg = '';
+    // @ts-ignore
     msg += `camera: ${video?.videoWidth} x ${video?.videoHeight} processing: ${input.width} x ${input.height}<br>`;
     if (objects.human.length > 0) msg += `human: ${log.str([...objects.human])}<br>`;
     for (const [key, val] of Object.entries(objects.detected)) {
@@ -155,6 +156,7 @@ async function main(config, objects) {
   } else {
     el.innerHTML = '';
   }
+  // @ts-ignore
   document.getElementById('status').innerText = '';
   objects.perf['Total time'] = Math.trunc(t1 - t0);
   const mem = tf.memory();

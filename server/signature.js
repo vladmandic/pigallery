@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+// @ts-ignore
 const log = require('@vladmandic/pilogger');
 // eslint-disable-next-line node/no-unpublished-require, import/no-extraneous-dependencies
 const tf = require('@tensorflow/tfjs-node');
@@ -18,8 +19,10 @@ async function analyzeGraph(modelPath) {
       const shape = val.tensorShape.dim.map((a) => parseInt(a.size));
       inputs.push({ name: key, dtype: val.dtype, shape });
     }
+  // @ts-ignore
   } else if (model.executor.graph['inputs']) {
     log.info('model inputs based on executor');
+    // @ts-ignore
     for (const t of model.executor.graph['inputs']) {
       inputs.push({ name: t.name, dtype: t.attrParams.dtype.value, shape: t.attrParams.shape.value });
     }
@@ -36,8 +39,10 @@ async function analyzeGraph(modelPath) {
       const shape = val.tensorShape?.dim.map((a) => parseInt(a.size));
       outputs.push({ id: i++, name: key, dytpe: val.dtype, shape });
     }
+  // @ts-ignore
   } else if (model.executor.graph['outputs']) {
     log.info('model outputs based on executor');
+    // @ts-ignore
     for (const t of model.executor.graph['outputs']) {
       outputs.push({ id: i++, name: t.name, dtype: t.attrParams.dtype?.value, shape: t.attrParams.shape?.value });
     }
@@ -56,11 +61,13 @@ async function analyzeSaved(modelPath) {
   log.data('tags:', meta[0].tags);
   log.data('signature:', Object.keys(meta[0].signatureDefs));
   const inputs = Object.values(sign.inputs)[0];
+  // @ts-ignore
   const inputShape = inputs.shape?.map((a) => a.array[0]);
   log.data('inputs:', { name: inputs.name, dtype: inputs.dtype, shape: inputShape });
   const outputs = [];
   let i = 0;
   for (const [key, val] of Object.entries(sign.outputs)) {
+    // @ts-ignore
     const shape = val.shape?.map((a) => a.array[0]);
     outputs.push({ id: i++, name: key, dytpe: val.dtype, shape });
   }
