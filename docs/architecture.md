@@ -103,7 +103,7 @@ Scrolling:
 
 Sorting:
 
-- By name, size, date, simmilarity
+- By name, size, date, similarity
 
 Map:
 
@@ -131,10 +131,10 @@ Image-Level Operations:
   - Delete, View Details, Download
 - View simmiar by:
   - Description: Performs logical compare of all tags for the specific image  
-    to all images in database to find simmilar images and sort them by simmilarity
-  - Simmilar images: Performs binary hash compare of perception hash for the specific image  
+    to all images in database to find similar images and sort them by similarity
+  - Similar images: Performs binary hash compare of perception hash for the specific image  
     to all images in database
-  - Simmilar faces: Performs Euclidean distance compare of face embedding for the specific image  
+  - Similar faces: Performs Euclidean distance compare of face embedding for the specific image  
     to all images in database
 
 #### 2.1.3. Details View

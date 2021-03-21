@@ -13,8 +13,8 @@ onmessage = async (msg) => {
       const b = all[j];
       const distance = (a.hash === b.hash) ? 0 : (hash.distance(a.phash, b.phash) + 1);
       if (distance < 35) {
-        a.simmilarity = distance;
-        b.simmilarity = distance;
+        a.similarity = distance;
+        b.similarity = distance;
         duplicate = true;
         duplicates.push(b);
       }
@@ -22,6 +22,6 @@ onmessage = async (msg) => {
     if (duplicate) duplicates.push(a);
   }
   duplicates = [...new Set(duplicates)];
-  duplicates = duplicates.sort((a, b) => (a.simmilarity - b.simmilarity));
+  duplicates = duplicates.sort((a, b) => (a.similarity - b.similarity));
   postMessage(duplicates, 'pigallery');
 };

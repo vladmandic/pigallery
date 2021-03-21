@@ -170,64 +170,65 @@ function shuffle(array) {
   return array;
 }
 
-// sort by image simmilarity
-async function simmilarImage(image) {
-  busy('Searching for<br>simmilar images');
+// sort by image similarity
+async function similarImage(image) {
+  busy('Searching for<br>similar images');
   const t0 = performance.now();
-  window.options.listDivider = 'simmilarity';
+  window.options.listDivider = 'similarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
-  for (const img of window.filtered) img.simmilarity = 100 - Math.trunc(100 * hash.distance(img.phash, object.phash));
+  for (const img of window.filtered) img.similarity = 100 - Math.trunc(100 * hash.distance(img.phash, object.phash));
   window.filtered = window.filtered
-    .filter((a) => a.simmilarity > 30)
-    .sort((a, b) => b.simmilarity - a.simmilarity);
-  log.debug(t0, `Simmilar: ${window.filtered.length} images`);
+    .filter((a) => a.similarity > 30)
+    .sort((a, b) => b.similarity - a.similarity);
+  log.debug(t0, `Similar: ${window.filtered.length} images`);
   list.redraw();
   enumerate.enumerate().then(folderHandlers).catch(false);
   list.scroll();
   busy();
 }
 
-function euclideanDistance(embedding1, embedding2) {
+function euclideanDistance(embedding1, embedding2, order = 2) {
   if (!embedding1 || !embedding2) return 0;
   if (embedding1?.length === 0 || embedding2?.length === 0) return 0;
   if (embedding1?.length !== embedding2?.length) return 0;
-  // general minkowski distance
-  // euclidean distance is limited case where order is 2
-  const order = 2;
-  const distance = 10.0 * ((embedding1.map((val, i) => (val - embedding2[i])).reduce((dist, diff) => dist + (diff ** order), 0) ** (1 / order)));
-  const rounded = Math.trunc(100 * (1 - distance)) / 100;
-  return rounded;
+  // general minkowski distance, euclidean distance is limited case where order is 2
+  const distance = 4.0 * embedding1
+    .map((val, i) => (Math.abs(embedding1[i] - embedding2[i]) ** order)) // distance squared
+    .reduce((sum, now) => (sum + now), 0) // sum all distances
+    ** (1 / order); // get root of
+  const res = Math.max(0, 100 - distance) / 100.0;
+  return res;
 }
 
-async function simmilarPerson(image) {
-  busy('Searching for<br>simmilar people');
+async function similarPerson(image) {
+  busy('Searching for<br>similar people');
   const t0 = performance.now();
-  window.options.listDivider = 'simmilarity';
+  window.options.listDivider = 'similarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
   const descriptor = (object.person && object.person[0] && object.person[0].descriptor) ? new Float32Array(Object.values(object.person[0].descriptor)) : null;
   if (!descriptor) {
-    log.debug(t0, 'Simmilar Search aborted as no person found in image');
+    log.debug(t0, 'Similar Search aborted as no person found in image');
     busy();
     return;
   }
   for (const i in window.filtered) {
     const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
-    window.filtered[i].simmilarity = target ? 100 * euclideanDistance(target, descriptor) : 0;
+    window.filtered[i].similarity = target ? 100 * euclideanDistance(target, descriptor) : 0;
   }
   window.filtered = window.filtered
-    .filter((a) => (a.person && a.person[0]) && (a.simmilarity > 50))
-    .sort((a, b) => b.simmilarity - a.simmilarity);
-  log.debug(t0, `Simmilar: ${window.filtered.length} persons`);
+    .filter((a) => (a.person && a.person[0]) && (a.similarity > 50))
+    .sort((a, b) => a.similarity - b.similarity);
+  log.debug(t0, `Similar: ${window.filtered.length} persons`);
   list.redraw();
   enumerate.enumerate().then(folderHandlers).catch(false);
   list.scroll();
   busy();
 }
 
-async function simmilarClasses(image) {
-  busy('Searching for<br>simmilar classes');
+async function similarClasses(image) {
+  busy('Searching for<br>similar classes');
   const t0 = performance.now();
-  window.options.listDivider = 'simmilarity';
+  window.options.listDivider = 'similarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
 
   const valid = ['classified', 'detected', 'camera', 'conditions', 'zoom', 'near'];
@@ -236,12 +237,12 @@ async function simmilarClasses(image) {
   for (const i in window.filtered) {
     const t = window.filtered[i].tags.filter((obj) => valid.includes(Object.keys(obj)[0])).map((a) => Object.values(a)[0]);
     const found = tags.filter((a) => t.includes(a));
-    window.filtered[i].simmilarity = Math.round(100.0 * found.length / count);
+    window.filtered[i].similarity = Math.round(100.0 * found.length / count);
   }
   window.filtered = window.filtered
-    .filter((a) => a.simmilarity > 55)
-    .sort((a, b) => b.simmilarity - a.simmilarity);
-  log.debug(t0, `Simmilar: ${window.filtered.length} classes`);
+    .filter((a) => a.similarity > 55)
+    .sort((a, b) => b.similarity - a.similarity);
+  log.debug(t0, `Similar: ${window.filtered.length} classes`);
   list.redraw();
   enumerate.enumerate().then(folderHandlers).catch(false);
   list.scroll();
@@ -273,12 +274,12 @@ async function sortResults(sort) {
   if (sort.includes('numeric-up')) window.filtered = await indexdb.all('date', true, 1, window.options.listItemCount);
   if (sort.includes('amount-down')) window.filtered = await indexdb.all('size', false, 1, window.options.listItemCount);
   if (sort.includes('amount-up')) window.filtered = await indexdb.all('size', true, 1, window.options.listItemCount);
-  // if (sort.includes('simmilarity')) window.filtered = await db.all('simmilarity', false); // simmilarity is calculated, not stored in indexdb
+  // if (sort.includes('similarity')) window.filtered = await db.all('similarity', false); // similarity is calculated, not stored in indexdb
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) window.options.listDivider = 'month';
   else if (sort.includes('amount-down') || sort.includes('amount-up')) window.options.listDivider = 'size';
   else if (sort.includes('alpha-down') || sort.includes('alpha-up')) window.options.listDivider = 'folder';
-  else if (sort.includes('simmilarity')) window.options.listDivider = 'simmilarity';
+  else if (sort.includes('similarity')) window.options.listDivider = 'similarity';
   else window.options.listDivider = '';
   list.redraw();
   $('#splash').toggle(false);
@@ -316,7 +317,7 @@ async function sortResults(sort) {
 async function findDuplicates() {
   busy('Searching for<br>duplicate images');
 
-  log.div('log', true, 'Analyzing images for simmilarity ...');
+  log.div('log', true, 'Analyzing images for similarity ...');
   const t0 = performance.now();
   list.clearPrevious();
 
@@ -325,8 +326,8 @@ async function findDuplicates() {
   worker.addEventListener('message', (msg) => {
     window.filtered = msg.data;
     const t1 = performance.now();
-    log.div('log', true, `Found ${window.filtered.length} simmilar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
-    sortResults('simmilarity');
+    log.div('log', true, `Found ${window.filtered.length} similar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    sortResults('similarity');
     busy(false);
   });
   const all = await indexdb.all();
@@ -821,9 +822,9 @@ async function main() {
   initHotkeys();
   await indexdb.open();
   window.details = details;
-  window.simmilarImage = simmilarImage;
-  window.simmilarPerson = simmilarPerson;
-  window.simmilarClasses = simmilarClasses;
+  window.similarImage = similarImage;
+  window.similarPerson = similarPerson;
+  window.similarClasses = similarClasses;
   window.deleteImage = deleteImage;
   if (window.share) log.debug(`Direct link to share: ${window.share}`);
   $('body').on('contextmenu', (evt) => showContextPopup(evt));
