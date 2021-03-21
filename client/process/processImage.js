@@ -102,11 +102,28 @@ export async function load() {
   log.div('process-log', true, `TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
 }
 
-export async function getImage(url, maxSize = config.default.maxSize) {
+export async function getImage(url, maxSize) {
   return new Promise((resolve) => {
     const image = new Image();
     image.addEventListener('load', () => {
       const ratio = 1.0 * image.height / image.width;
+
+      if (Math.max(image.width, image.height) > (3 * maxSize)) {
+        if (config.default.squareImage) {
+          image.height = 3 * maxSize;
+          image.width = 3 * maxSize;
+        } else {
+          image.width = ratio <= 1 ? 3.0 * maxSize : 3.0 * maxSize / ratio;
+          image.height = ratio >= 1 ? 3.0 * maxSize : 3.0 * maxSize * ratio;
+        }
+      }
+      const offscreenCanvasHi = document.createElement('canvas');
+      offscreenCanvasHi.height = image.height;
+      offscreenCanvasHi.width = image.width;
+      const ctxHi = offscreenCanvasHi.getContext('2d');
+      if (!ctxHi) return;
+      ctxHi.drawImage(image, 0, 0, image.width, image.height);
+
       if (Math.max(image.width, image.height) > maxSize) {
         if (config.default.squareImage) {
           image.height = maxSize;
@@ -140,7 +157,7 @@ export async function getImage(url, maxSize = config.default.maxSize) {
       if (thumbnailCtx) thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
       const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.8);
 
-      resolve({ image, canvas: offscreenCanvas, data, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
+      resolve({ image, canvas: offscreenCanvas, hires: offscreenCanvasHi, data, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
     });
     image.src = url;
   });
@@ -158,7 +175,7 @@ export async function process(name) {
 
   // load & preprocess image
   const ti0 = performance.now();
-  const image = await getImage(name);
+  const image = await getImage(name, config.default.maxSize);
   obj.processedSize = { width: image.canvas.width, height: image.canvas.height };
   obj.naturalSize = { width: image.naturalWidth, height: image.naturalHeight };
   obj.pixels = image.naturalHeight * image.naturalWidth;
@@ -228,7 +245,7 @@ export async function process(name) {
   try {
     if (!error && models.human) {
       obj.person = [];
-      const res = await models.human.detect(image.canvas, config.default.models.person);
+      const res = await models.human.detect(image.hires, config.default.models.person);
       if (res && res.face) {
         for (const person of res.face) {
           obj.person.push({
