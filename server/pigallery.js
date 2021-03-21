@@ -69,9 +69,9 @@ async function main() {
 
   // load expressjs middleware
   config.cookie.store = new FileStore({ path: config.cookie.path, retries: 1, logFn: log.warn, ttl: 24 * 3600, reapSyncFallback: true });
+  app.use(express.json({ limit: 10485760 }));
+  app.use(express.urlencoded({ extended: true, parameterLimit: 10485760, limit: 10485760 }));
   app.use(session(config.cookie));
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: false, limit: '1mb', parameterLimit: 10000 }));
   if (config.server.allowPWA) app.use(allowPWA);
   if (config.server.forceHTTPS) app.use(forceSSL);
   app.use(allowFrames);
