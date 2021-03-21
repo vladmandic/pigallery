@@ -10,9 +10,9 @@ let previous;
 function addDividers(object) {
   if (!window.options.listTitle) return '';
   let divider;
-  if (window.options.listDivider === 'simmilarity' && object.simmilarity) {
-    const curr = `${object.simmilarity}%`;
-    const prev = previous ? `${previous.simmilarity}%` : 'none';
+  if (window.options.listDivider === 'similarity' && object.similarity) {
+    const curr = `${object.similarity}%`;
+    const prev = previous ? `${previous.similarity}%` : 'none';
     if (curr !== prev) divider = curr;
   }
   if (window.options.listDivider === 'month') {
@@ -90,9 +90,9 @@ function printResult(object) {
       <a class="btn-tiny fa fa-file" href="${object.image}" download title="Download image"></a>
     </div>
     <div class="thumb-bottom">
-      <p class="btn-tiny fa fa-images" onclick="simmilarClasses('${escape(object.image)}');" title="Find images with simmilar description"></p>
-      <p class="btn-tiny fa fa-photo-video" onclick="simmilarImage('${escape(object.image)}');" title="Find images with simmilar features"></p>
-      <p class="btn-tiny fa fa-id-card" onclick="simmilarPerson('${escape(object.image)}');" title="Find images with simmilar faces"></p>
+      <p class="btn-tiny fa fa-images" onclick="similarClasses('${escape(object.image)}');" title="Find images with similar description"></p>
+      <p class="btn-tiny fa fa-photo-video" onclick="similarImage('${escape(object.image)}');" title="Find images with similar features"></p>
+      <p class="btn-tiny fa fa-id-card" onclick="similarPerson('${escape(object.image)}');" title="Find images with similar faces"></p>
     </div>
   `;
 

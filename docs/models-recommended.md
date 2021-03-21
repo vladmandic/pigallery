@@ -57,15 +57,20 @@ Combination of:
     ],
   "video": [],
   "person": { "name": "Human",
-    "videoOptimized": false, "debug": false, "filter": { "enabled": false }, "gesture": { "enabled": false }, "body": { "enabled": false }, "hand": { "enabled": false },
+    "videoOptimized": false, "debug": false,
+    "filter": { "enabled": false },
+    "gesture": { "enabled": false },
+    "body": { "enabled": false },
+    "hand": { "enabled": false },
     "face": {
-      "detector": { "modelPath": "@vladmandic/human/models/blazeface-back.json", "rotation": true },
-      "mesh": { "modelPath": "@vladmandic/human/models/facemesh.json" },
-      "iris": { "modelPath": "@vladmandic/human/models/iris.json" },
-      "age": { "modelPath": "@vladmandic/human/models/age.json" },
-      "gender": { "modelPath": "@vladmandic/human/models/gender.json" },
-      "emotion": { "modelPath": "@vladmandic/human/models/emotion.json" },
-      "embedding": { "modelPath": "@vladmandic/human/models/mobileface.json", "enabled": true }
+      "detector": { "enabled": true, "modelPath": "@vladmandic/human/models/blazeface-back.json", "rotation": true },
+      "mesh": { "enabled": true, "modelPath": "@vladmandic/human/models/facemesh.json" },
+      "iris": { "enabled": true, "modelPath": "@vladmandic/human/models/iris.json" },
+      "emotion": { "enabled": true, "modelPath": "@vladmandic/human/models/emotion.json" },
+      "description": { "enabled": true, "modelPath": "@vladmandic/human/models/faceres.json" },
+      "age": { "enabled": false },
+      "gender": { "enabled": false },
+      "embedding": { "enabled": false }
   } },
   "various": [
     { "name": "Food Items", "modelPath": "models/various/food", "enabled": true,

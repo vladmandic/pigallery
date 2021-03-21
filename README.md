@@ -16,7 +16,7 @@
 
 - Image thumbnails for fast display
 - Image analysis using machine learning using multiple image classification and object detection models
-- Image perception hash to quickly locate duplicate image regardless of size or to search for simmilar images
+- Image perception hash to quickly locate duplicate image regardless of size or to search for similar images
 - Image conditions using analysis of camera settings (light, dark, zoom, wide, etc.)
 - Person age, gender & emotion modelling and NSFW classification
 - Image geo-location including nearest city for quick searches
@@ -32,7 +32,7 @@
 - Flexible natural language search
 - Quickly share generated albums with public users
 - Locate and select images on a world map
-- Find duplicate and/or simmilar images
+- Find duplicate and/or similar images
 - View image slideshow
 - Multiple display themes (light & dark) and fully configurable user interface
 - Play with machine learning detection of live video using your camera
@@ -249,7 +249,7 @@ Processing builds tags from all available image metadata:
   - Face age/gender/emotion detection
   - NSFW detection
   - Perception hash calculation
-    Used to compare image simmilarity between any images or to find simmilar images
+    Used to compare image similarity between any images or to find similar images
 - Lexicon lookups for any detected terms
   - This includes hierarchical lookups - for example, *gown* will also include *dress, clothing, etc.*
 
