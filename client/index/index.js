@@ -196,7 +196,7 @@ function euclideanDistance(embedding1, embedding2, order = 2) {
     .map((val, i) => (Math.abs(embedding1[i] - embedding2[i]) ** order)) // distance squared
     .reduce((sum, now) => (sum + now), 0) // sum all distances
     ** (1 / order); // get root of
-  const res = Math.max(0, 100 - distance) / 100.0;
+  const res = Math.round(10 * Math.max(0, 100 - distance)) / 1000;
   return res;
 }
 
@@ -205,19 +205,38 @@ async function similarPerson(image) {
   const t0 = performance.now();
   window.options.listDivider = 'similarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
-  const descriptor = (object.person && object.person[0] && object.person[0].descriptor) ? new Float32Array(Object.values(object.person[0].descriptor)) : null;
-  if (!descriptor) {
+  const descriptor = [];
+  if (object.person) {
+    for (const p of object.person) {
+      if (p.descriptor) descriptor.push(new Float32Array(Object.values(p.descriptor)));
+    }
+  }
+  if (!descriptor || descriptor.length === 0) {
     log.debug(t0, 'Similar Search aborted as no person found in image');
     busy();
     return;
   }
   for (const i in window.filtered) {
-    const target = (window.filtered[i].person && window.filtered[i].person[0] && window.filtered[i].person[0].descriptor) ? new Float32Array(Object.values(window.filtered[i].person[0].descriptor)) : null;
-    window.filtered[i].similarity = target ? 100 * euclideanDistance(target, descriptor) : 0;
+    const target = [];
+    if (window.filtered[i].person) {
+      for (const p of window.filtered[i].person) {
+        if (p.descriptor) target.push(new Float32Array(Object.values(p.descriptor)));
+      }
+      let best = 1;
+      for (const x of descriptor) {
+        for (const y of target) {
+          const distance = euclideanDistance(x, y);
+          if (distance < best) best = distance;
+        }
+      }
+      window.filtered[i].similarity = 100 * best;
+    } else {
+      window.filtered[i].similarity = 100;
+    }
   }
   window.filtered = window.filtered
     .filter((a) => (a.person && a.person[0]) && (a.similarity > 50))
-    .sort((a, b) => a.similarity - b.similarity);
+    .sort((a, b) => b.similarity - a.similarity);
   log.debug(t0, `Similar: ${window.filtered.length} persons`);
   list.redraw();
   enumerate.enumerate().then(folderHandlers).catch(false);

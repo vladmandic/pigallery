@@ -11,8 +11,8 @@ function addDividers(object) {
   if (!window.options.listTitle) return '';
   let divider;
   if (window.options.listDivider === 'similarity' && object.similarity) {
-    const curr = `${object.similarity}%`;
-    const prev = previous ? `${previous.similarity}%` : 'none';
+    const curr = `${object.similarity.toFixed(1)}%`;
+    const prev = previous ? `${previous.similarity.toFixed(1)}%` : 'none';
     if (curr !== prev) divider = curr;
   }
   if (window.options.listDivider === 'month') {
