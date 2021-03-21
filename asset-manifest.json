@@ -26102,8 +26102,8 @@
           }
         ]
       },
-      "node_modules/.pnpm/@vladmandic/human@1.2.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-        "bytes": 296169,
+      "node_modules/.pnpm/@vladmandic/human@1.2.3/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
+        "bytes": 296390,
         "imports": [
           {
             "path": "node_modules/.pnpm/@tensorflow/tfjs@3.3.0/node_modules/@tensorflow/tfjs/package.json",
@@ -26188,7 +26188,7 @@
         "bytes": 12121,
         "imports": [
           {
-            "path": "node_modules/.pnpm/@vladmandic/human@1.2.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
+            "path": "node_modules/.pnpm/@vladmandic/human@1.2.3/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
@@ -26547,7 +26547,7 @@
         "bytes": 8641,
         "imports": [
           {
-            "path": "node_modules/.pnpm/@vladmandic/human@1.2.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
+            "path": "node_modules/.pnpm/@vladmandic/human@1.2.3/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
@@ -26601,7 +26601,7 @@
             "kind": "import-statement"
           },
           {
-            "path": "node_modules/.pnpm/@vladmandic/human@1.2.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
+            "path": "node_modules/.pnpm/@vladmandic/human@1.2.3/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
@@ -27265,7 +27265,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7562350
+        "bytes": 7562764
       },
       "dist/process/process.js": {
         "imports": [],
@@ -31157,8 +31157,8 @@
           "node_modules/.pnpm/@tensorflow/tfjs-data@3.3.0_@tensorflow+tfjs-core@3.3.0/node_modules/@tensorflow/tfjs-data/dist/version.js": {
             "bytesInOutput": 63
           },
-          "node_modules/.pnpm/@vladmandic/human@1.2.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-            "bytesInOutput": 349456
+          "node_modules/.pnpm/@vladmandic/human@1.2.3/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
+            "bytesInOutput": 349699
           },
           "client/process/processImage.js": {
             "bytesInOutput": 10122
@@ -31173,13 +31173,13 @@
             "bytesInOutput": 7060
           }
         },
-        "bytes": 6441384
+        "bytes": 6441627
       },
       "dist/video/video.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7676714
+        "bytes": 7677128
       },
       "dist/video/video.js": {
         "imports": [],
@@ -35062,8 +35062,8 @@
           "node_modules/.pnpm/@tensorflow/tfjs-data@3.3.0_@tensorflow+tfjs-core@3.3.0/node_modules/@tensorflow/tfjs-data/dist/version.js": {
             "bytesInOutput": 63
           },
-          "node_modules/.pnpm/@vladmandic/human@1.2.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-            "bytesInOutput": 349450
+          "node_modules/.pnpm/@vladmandic/human@1.2.3/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
+            "bytesInOutput": 349693
           },
           "assets/panzoom.js": {
             "bytesInOutput": 43597
@@ -35102,7 +35102,7 @@
             "bytesInOutput": 9090
           }
         },
-        "bytes": 6510659
+        "bytes": 6510902
       },
       "dist/index/worker.js.map": {
         "imports": [],
