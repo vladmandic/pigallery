@@ -107,7 +107,7 @@ export async function getImage(url, maxSize) {
     const image = new Image();
     image.addEventListener('load', () => {
       const ratio = 1.0 * image.height / image.width;
-
+      /*
       if (Math.max(image.width, image.height) > (3 * maxSize)) {
         if (config.default.squareImage) {
           image.height = 3 * maxSize;
@@ -123,7 +123,7 @@ export async function getImage(url, maxSize) {
       const ctxHi = offscreenCanvasHi.getContext('2d');
       if (!ctxHi) return;
       ctxHi.drawImage(image, 0, 0, image.width, image.height);
-
+      */
       if (Math.max(image.width, image.height) > maxSize) {
         if (config.default.squareImage) {
           image.height = maxSize;
@@ -157,7 +157,7 @@ export async function getImage(url, maxSize) {
       if (thumbnailCtx) thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
       const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.8);
 
-      resolve({ image, canvas: offscreenCanvas, hires: offscreenCanvasHi, data, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
+      resolve({ image, canvas: offscreenCanvas, /* hires: offscreenCanvasHi, */ data, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
     });
     image.src = url;
   });
@@ -245,7 +245,7 @@ export async function process(name) {
   try {
     if (!error && models.human) {
       obj.person = [];
-      const res = await models.human.detect(image.hires, config.default.models.person);
+      const res = await models.human.detect(image.canvas, config.default.models.person);
       if (res && res.face) {
         for (const person of res.face) {
           obj.person.push({
@@ -288,7 +288,11 @@ export async function process(name) {
   if (!error) {
     fetch('/api/record/put', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj) })
       .then((post) => post.json())
-      .catch(null);
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error(err);
+        log.div('process-log', true, `Error posting: ${obj.image} size: ${JSON.stringify(obj).length}`);
+      });
   }
   return obj;
 }
