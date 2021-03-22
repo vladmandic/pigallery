@@ -6,6 +6,7 @@ const parser = require('exif-parser');
 const proc = require('process');
 const moment = require('moment');
 const distance = require('./nearest.js');
+const metadata = require('./metadata');
 
 function getTime(time) {
   if (!time) return null;
@@ -25,8 +26,8 @@ function getLocation(json) {
   if (!json.lon || !json.lat) return {};
   const loc = distance.nearest(json.lat, json.lon, 'all', 1);
   const near = distance.nearest(json.lat, json.lon, 'large', 1);
-  const state = Number.isNaN(loc[0].state) ? loc[0].state : '';
-  const res = { city: loc[0].name, near: near[0].name, state, country: loc[0].country, continent: loc[0].continent };
+  const state = loc[0] && Number.isNaN(parseInt(loc[0].state)) ? loc[0].state : '';
+  const res = { city: loc[0]?.name, near: near[0]?.name, state, country: loc[0]?.country, continent: loc[0]?.continent };
   return res;
 }
 
@@ -117,6 +118,8 @@ async function testExif(dir) {
   console.log('list', list);
   console.log('all', filesAll);
   */
+  const config = JSON.parse(fs.readFileSync('./config.json').toString());
+  await metadata.init(config, null);
   if (fs.statSync(dir).isFile()) {
     const data = await getExif(dir);
     const geo = await getLocation(data);

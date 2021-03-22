@@ -739,7 +739,7 @@ async function initMenuHandlers() {
   });
 
   // navline list sort
-  $('.sort').click((evt) => {
+  $('.sort').on('click', (evt) => {
     window.options.listSortOrder = evt.target.className;
     sortResults(evt.target.className);
   });

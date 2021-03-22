@@ -220,7 +220,7 @@ function api(app, inConfig, inDB) {
       const data = req.body;
       const exifData = await exif.get(data.image);
       const hash = await metadata.hash(data.image, 'sha256');
-      const location = await exif.location(exif);
+      const location = await exif.location(exifData);
       const descriptions = await metadata.descriptions(data);
       const result = { ...data, exif: exifData, location, descriptions, hash };
       const tags = await metadata.tags(result);

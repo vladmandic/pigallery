@@ -1,6 +1,6 @@
 # @vladmandic/pigallery  
 
-Version: **3.4.6**  
+Version: **3.4.7**  
 Description: **PiGallery: Photo Gallery and Analysis using TensorFlow/JS and EXIF metadata**  
 
 Author: **Vladimir Mandic <mandic00@live.com>**  
@@ -9,8 +9,10 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/03/21 mandic00@live.com
+### **3.4.7** 2021/03/22 mandic00@live.com
 
+- new person matching
+- add hires option
 
 ### **3.4.6** 2021/03/21 mandic00@live.com
 

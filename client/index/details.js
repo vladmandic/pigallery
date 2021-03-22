@@ -9,6 +9,23 @@ import ImageViewer from './iv-viewer';
 let viewer;
 let thief;
 
+function isTextSelected(input) {
+  const selectedText = document.getSelection()?.toString();
+  if (selectedText.length !== 0) {
+    if (input) {
+      input.focus();
+      input.setSelectionRange(input.selectionStart, input.selectionEnd);
+    }
+    return true;
+  }
+  if (input && input.value.substring(input.selectionStart, input.selectionEnd).length !== 0) {
+    input.focus();
+    input.setSelectionRange(input.selectionStart, input.selectionEnd);
+    return true;
+  }
+  return false;
+}
+
 function point(ctx, x, y, z = null) {
   const defaultColor = 'lightblue';
   const defaultSize = 2;
@@ -245,7 +262,7 @@ export async function show(img) {
   let person = '';
   let nsfw = '';
   for (const i in object.person) {
-    person += `Person ${1 + parseInt(i)} | `;
+    person += `Person ${1 + parseInt(i)} ${(100 * object.person[i].confidence).toFixed(0)}% | `;
     if (object.person[i].genderScore > 0 && object.person[i].gender !== '') person += `<font color="${window.theme.link}">gender: ${(100 * object.person[i].genderScore).toFixed(0)}% ${object.person[i].gender}</font> | `;
     if (object.person[i].age > 0) person += `<font color="${window.theme.link}">age: ${object.person[i].age.toFixed(1)}</font> | `;
     if (object.person[i].emotionScore > 0 && object.person[i].emotion !== '') person += `<font color="${window.theme.link}">emotion: ${(100 * object.person[i].emotionScore).toFixed(0)}% ${object.person[i].emotion}<br></font>`;
@@ -284,7 +301,7 @@ export async function show(img) {
   const conditions = object.tags.filter((a) => (a.conditions)).map((a) => a.conditions);
 
   $('#details-download').off();
-  $('#details-download').click(() => window.open(object.image, '_blank'));
+  $('#details-download').on('click', () => window.open(object.image, '_blank'));
   const html = `
       <h2>Image: <font color="${window.theme.link}">${object.image}</font></h2>
       <h2>Image Data</h2>
@@ -375,7 +392,7 @@ export function handlers() {
   $('#popup').on('click', (e) => {
     // if (event.screenX < 20) showNextDetails(true);
     // else if (event.clientX > $('#popup').width() - 20) showNextDetails(false);
-    if (!e.target.className.startsWith('iv-')) {
+    if (!isTextSelected() && !e.target.className.startsWith('iv-')) {
       clear();
       $('#popup').toggle('fast');
       $('#optionsview').toggle(false);

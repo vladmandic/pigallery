@@ -155,7 +155,7 @@ export async function scroll() {
   // $('.listitem').mouseenter((evt) => thumbButtons(evt, true));
   // $('.listitem').mouseleave((evt) => thumbButtons(evt, false));
   $('.listitem').contextmenu((evt) => $(evt.target).parent().find('.btn-tiny').show());
-  $('.description').click((evt) => $(evt.target).parent().find('.btn-tiny').show());
+  $('.description').on('click', (evt) => $(evt.target).parent().find('.btn-tiny').show());
   $('.description').toggle(window.options.listDetails);
 }
 

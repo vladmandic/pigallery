@@ -23,7 +23,7 @@ class Position {
   }
 
   static extract(position) {
-    return position.object;
+    return position ? position.object : null;
   }
 }
 
@@ -105,7 +105,7 @@ function lookup(position, node, n) {
         node = node.right;
       }
     }
-    dist = distance(position, node.position);
+    dist = position && node && node.position ? distance(position, node.position) : Number.POSITIVE_INFINITY;
     insert({ object: node, dist }, array, byDistance);
     if (array.length > n) array.pop();
   }
