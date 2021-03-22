@@ -133,36 +133,18 @@ export function drawBoxes(object) {
   // draw faces
   if (window.options.viewFaces && object.person) {
     for (const i in object.person) {
-      if (object.person[i].box) {
+      if (object.person[i].boxRaw) {
         // draw box around face
-        const x = object.person[i].box[0] * resizeX;
-        const y = object.person[i].box[1] * resizeY;
-        let width = object.person[i].box[2] * resizeX;
-        let height = object.person[i].box[3] * resizeY;
+        const x = object.person[i].boxRaw[0] * resizeX * object.processedSize.width;
+        const y = object.person[i].boxRaw[1] * resizeY * object.processedSize.height;
+        let width = object.person[i].boxRaw[2] * resizeX * object.processedSize.width;
+        let height = object.person[i].boxRaw[3] * resizeY * object.processedSize.height;
         if (x + width > canvas.width) width = canvas.width - x;
         if (y + height > canvas.height) height = canvas.height - y;
         roundRect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`);
-        // draw face points
-        /*
-        ctx.fillStyle = 'lightblue';
-        ctx.globalAlpha = 0.5;
-        const pointSize = 2;
-        for (const pt of object.person[i].points) {
-          ctx.beginPath();
-          ctx.arc(pt.x * resizeX, pt.y * resizeY, pointSize, 0, 2 * Math.PI);
-          ctx.fill();
-        }
-        */
-        /*
-        const jaw = person.boxes.landmarks.getJawOutline() || [];
-        const nose = person.boxes.landmarks.getNose() || [];
-        const mouth = person.boxes.landmarks.getMouth() || [];
-        const leftEye = person.boxes.landmarks.getLeftEye() || [];
-        const rightEye = person.boxes.landmarks.getRightEye() || [];
-        const leftEyeBrow = person.boxes.landmarks.getLeftEyeBrow() || [];
-        const rightEyeBrow = person.boxes.landmarks.getRightEyeBrow() || [];
-        faceDetails = `Points jaw:${jaw.length} mouth:${mouth.length} nose:${nose.length} left-eye:${leftEye.length} right-eye:${rightEye.length} left-eyebrow:${leftEyeBrow.length} right-eyebrow:${rightEyeBrow.length}`;
-        */
+      }
+      if (object.person[i].landmarks) {
+        // draw face landmarks
       }
     }
   }
