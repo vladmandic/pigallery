@@ -169,8 +169,6 @@ async function main() {
 
   // initialize api calls
   api.init(app, config, db);
-
-  // await db.remove({ images: { $exists: true } }, { multi: true });
 }
 
 main();

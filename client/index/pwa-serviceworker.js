@@ -23,6 +23,8 @@ async function cached(evt) {
   if (found) stats.hit += 1;
   else stats.miss += 1;
 
+  // const uri = new URL(evt.request.url);
+  // console.log(evt.request.method, uri);
   if (!found) found = await fetch(evt.request);
 
   if (found && found.type === 'basic' && found.ok) {
@@ -70,6 +72,7 @@ if (!listening) {
     if (evt.request.cache === 'only-if-cached' && evt.request.mode !== 'same-origin') return; // required for chrome bug
     if (evt.request.method !== 'GET') return; // only cache get requests
     if (uri.origin !== location.origin) return; // skip non-local requests
+    if (uri.pathname === '/') return; // skip root access requests
     if (evt.request.url.includes('/api/')) return; // skip api calls
     // if (evt.request.url.includes('/models/')) return; // skip caching model data
     const response = cached(evt);

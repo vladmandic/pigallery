@@ -5,10 +5,11 @@
 - User DB management client-side
 - Move compare to main app as test feature
 - Switch backend DB from NEDB to Mongo
+- Separate DB into Record/Thumbnails/Embedding
 - Conditional model execution and chaining
 - Host models in object storage
+- Optimize NodeJS V8 memory utilization
 
 ## Models
 
-- CenterFace: <https://github.com/Star-Clouds/CenterFace>
 - EfficientPose: <https://github.com/daniegr/EfficientPose>

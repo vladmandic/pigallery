@@ -182,6 +182,10 @@ export async function process(name) {
 
   log.debug(`Processing: ${name} size: ${obj.naturalSize.width} x ${obj.naturalSize.height} input: ${obj.processedSize.width} x ${obj.processedSize.height}`);
 
+  // image perception hash
+  obj.phash = await hash.data(image.data);
+
+  // start image classification
   obj.classify = [];
   const tc0 = performance.now();
   const promisesClassify = [];
@@ -197,8 +201,18 @@ export async function process(name) {
     error = err;
     error.where = 'classify';
   }
+  let resClassify = [];
+  try {
+    resClassify = await Promise.all(promisesClassify);
+  } catch (err) {
+    error = err;
+    error.where = 'classify promise';
+  }
+  for (const i in resClassify) obj.classify.push(...resClassify[i]); // merge all classification results from specific model
   const tc1 = performance.now();
+  // end image classification
 
+  // start object detection
   obj.detect = [];
   const td0 = performance.now();
   const promisesDetect = [];
@@ -215,30 +229,17 @@ export async function process(name) {
     error.where = 'detect';
   }
   const td1 = performance.now();
-
-  if (!error) {
-    let resClassify = [];
-    try {
-      resClassify = await Promise.all(promisesClassify);
-    } catch (err) {
-      error = err;
-      error.where = 'classify promise';
-    }
-    for (const i in resClassify) obj.classify.push(...resClassify[i]); // merge all classification results from specific model
+  let resDetect = [];
+  try {
+    resDetect = await Promise.all(promisesDetect);
+  } catch (err) {
+    error = err;
+    error.where = 'detect promise';
   }
-  if (!error) {
-    let resDetect = [];
-    try {
-      resDetect = await Promise.all(promisesDetect);
-    } catch (err) {
-      error = err;
-      error.where = 'detect promise';
-    }
-    for (const i in resDetect) obj.detect.push(...resDetect[i]); // merge all detection results from specific model
-  }
+  for (const i in resDetect) obj.detect.push(...resDetect[i]); // merge all detection results from specific model
+  // end object detection
 
-  if (!error) obj.phash = await hash.data(image.data);
-
+  // start human detection
   const tp0 = performance.now();
   try {
     if (!error && models.human) {
@@ -248,9 +249,8 @@ export async function process(name) {
         for (const person of res.face) {
           obj.person.push({
             confidence: person.confidence,
-            box: person.box,
             boxRaw: person.boxRaw,
-            landmarks: person.annotations,
+            meshRaw: person.meshRaw,
             iris: person.iris,
             age: person.age,
             gender: person.gender,
@@ -269,22 +269,26 @@ export async function process(name) {
     model.name = 'human';
   }
   const tp1 = performance.now();
+  // end human detection
 
   const t1 = performance.now();
   obj.perf = { total: Math.round(t1 - t0), load: Math.round(ti1 - ti0), classify: Math.round(tc1 - tc0), detect: Math.round(td1 - td0), person: Math.round(tp1 - tp0) };
+
+  // handle errors
   if (error) {
     log.div('process-log', true, `Error processing: <span style="color: lightcoral">${name}</span> Natural size: ${obj.naturalSize.width} x ${obj.naturalSize.height} Process size: ${obj.processedSize.width} x ${obj.processedSize.height}`);
+    // eslint-disable-next-line no-console
+    console.error('Error processing:', name, obj);
     log.div('process-log', true, `Error during: ${error?.where} model: ${model?.name} error type: <span style="color: lightcoral">${error?.name}</span> message: <span style="color: lightcoral">${error?.message}</span>`);
     // log.div('process-log', true, `Error stack: <pre style="color: lightcoral">${error.stack}</pre>`);
     log.server(`Error processing: ${name} during: ${error?.where} model: ${model?.name} error:${error?.name} ${error?.message}`);
     // ignore NudeNet TypeError: Cannot read property '0' of undefined
-    // eslint-disable-next-line no-console
-    console.error(error);
     if (model?.name !== 'NudeNet') obj.error = true;
     else error = null;
     if (!error) log.div('process-log', true, 'Continuing processing due to non-critical error');
   }
 
+  // post results to server
   if (!error) {
     fetch('/api/record/put', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj) })
       .then((post) => post.json())
