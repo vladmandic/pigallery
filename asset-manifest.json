@@ -26185,7 +26185,7 @@
         ]
       },
       "client/process/processImage.js": {
-        "bytes": 12199,
+        "bytes": 12081,
         "imports": [
           {
             "path": "node_modules/.pnpm/@vladmandic/human@1.2.3/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
@@ -26649,7 +26649,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5721396
+        "bytes": 5721653
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -27188,10 +27188,10 @@
             "bytesInOutput": 7836
           },
           "client/process/processImage.js": {
-            "bytesInOutput": 1911
+            "bytesInOutput": 2505
           }
         },
-        "bytes": 3528853
+        "bytes": 3529447
       },
       "dist/index/index.js.map": {
         "imports": [],
@@ -27265,7 +27265,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7562885
+        "bytes": 7563142
       },
       "dist/process/process.js": {
         "imports": [],
@@ -31161,7 +31161,7 @@
             "bytesInOutput": 349699
           },
           "client/process/processImage.js": {
-            "bytesInOutput": 10200
+            "bytesInOutput": 10806
           },
           "client/process/modelClassify.js": {
             "bytesInOutput": 3916
@@ -31173,7 +31173,7 @@
             "bytesInOutput": 7060
           }
         },
-        "bytes": 6441705
+        "bytes": 6442311
       },
       "dist/video/video.js.map": {
         "imports": [],

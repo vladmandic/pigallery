@@ -107,7 +107,7 @@ export async function getImage(url, maxSize) {
     const image = new Image();
     image.addEventListener('load', () => {
       const ratio = 1.0 * image.height / image.width;
-      /*
+
       if (Math.max(image.width, image.height) > (3 * maxSize)) {
         if (config.default.squareImage) {
           image.height = 3 * maxSize;
@@ -117,13 +117,12 @@ export async function getImage(url, maxSize) {
           image.height = ratio >= 1 ? 3.0 * maxSize : 3.0 * maxSize * ratio;
         }
       }
-      const offscreenCanvasHi = document.createElement('canvas');
-      offscreenCanvasHi.height = image.height;
-      offscreenCanvasHi.width = image.width;
-      const ctxHi = offscreenCanvasHi.getContext('2d');
-      if (!ctxHi) return;
-      ctxHi.drawImage(image, 0, 0, image.width, image.height);
-      */
+      const canvasHiRes = document.createElement('canvas');
+      canvasHiRes.height = image.height;
+      canvasHiRes.width = image.width;
+      const ctxHiRes = canvasHiRes.getContext('2d');
+      if (ctxHiRes) ctxHiRes.drawImage(image, 0, 0, image.width, image.height);
+
       if (Math.max(image.width, image.height) > maxSize) {
         if (config.default.squareImage) {
           image.height = maxSize;
@@ -133,13 +132,12 @@ export async function getImage(url, maxSize) {
           image.height = ratio >= 1 ? maxSize : 1.0 * maxSize * ratio;
         }
       }
-      const offscreenCanvas = document.createElement('canvas');
-      offscreenCanvas.height = image.height;
-      offscreenCanvas.width = image.width;
-      const ctx = offscreenCanvas.getContext('2d');
-      if (!ctx) return;
-      ctx.drawImage(image, 0, 0, image.width, image.height);
-      const data = ctx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+      const canvasNorm = document.createElement('canvas');
+      canvasNorm.height = image.height;
+      canvasNorm.width = image.width;
+      const ctxNorm = canvasNorm.getContext('2d');
+      if (ctxNorm) ctxNorm.drawImage(image, 0, 0, image.width, image.height);
+      const data = ctxNorm ? ctxNorm.getImageData(0, 0, image.width, image.height) : null;
 
       if (Math.max(image.width, image.height) > config.default.renderThumbnail) {
         if (config.default.squareImage) {
@@ -150,14 +148,14 @@ export async function getImage(url, maxSize) {
           image.height = ratio >= 1 ? config.default.renderThumbnail : 1.0 * config.default.renderThumbnail * ratio;
         }
       }
-      const thumbnailCanvas = document.createElement('canvas');
-      thumbnailCanvas.height = image.height;
-      thumbnailCanvas.width = image.width;
-      const thumbnailCtx = thumbnailCanvas.getContext('2d');
-      if (thumbnailCtx) thumbnailCtx.drawImage(image, 0, 0, image.width, image.height);
-      const thumbnail = thumbnailCanvas.toDataURL('image/jpeg', 0.8);
+      const canvasThumb = document.createElement('canvas');
+      canvasThumb.height = image.height;
+      canvasThumb.width = image.width;
+      const ctxThumb = canvasThumb.getContext('2d');
+      if (ctxThumb) ctxThumb.drawImage(image, 0, 0, image.width, image.height);
+      const thumbnail = canvasThumb.toDataURL('image/jpeg', 0.8);
 
-      resolve({ image, canvas: offscreenCanvas, /* hires: offscreenCanvasHi, */ data, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
+      resolve({ image, canvas: canvasNorm, hires: canvasHiRes, data, naturalHeight: image.naturalHeight, naturalWidth: image.naturalWidth, thumbnail });
     });
     image.src = url;
   });
@@ -245,7 +243,7 @@ export async function process(name) {
   try {
     if (!error && models.human) {
       obj.person = [];
-      const res = await models.human.detect(image.canvas, config.default.models.person);
+      const res = await models.human.detect(image.hires, config.default.models.person);
       if (res && res.face) {
         for (const person of res.face) {
           obj.person.push({
