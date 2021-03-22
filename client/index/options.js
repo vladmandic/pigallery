@@ -161,8 +161,8 @@ function userOptions() {
 async function showOptions() {
   const html = userOptions();
   $('#docs').html(html);
-  $('#btnSaveConfig').click(saveOptions);
-  $('#btnResetConfig').click(resetOptions);
+  $('#btnSaveConfig').on('click', saveOptions);
+  $('#btnResetConfig').on('click', resetOptions);
 }
 
 async function showParams() {
