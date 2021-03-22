@@ -251,6 +251,8 @@ export async function process(name) {
           obj.person.push({
             confidence: person.confidence,
             box: person.box,
+            boxRaw: person.boxRaw,
+            landmarks: person.annotations,
             iris: person.iris,
             age: person.age,
             gender: person.gender,

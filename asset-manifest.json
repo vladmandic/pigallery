@@ -26185,7 +26185,7 @@
         ]
       },
       "client/process/processImage.js": {
-        "bytes": 12121,
+        "bytes": 12199,
         "imports": [
           {
             "path": "node_modules/.pnpm/@vladmandic/human@1.2.3/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
@@ -26281,7 +26281,7 @@
         ]
       },
       "client/index/details.js": {
-        "bytes": 18062,
+        "bytes": 17218,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26649,7 +26649,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5721316
+        "bytes": 5721396
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -27197,7 +27197,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1045361
+        "bytes": 1044594
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27241,7 +27241,7 @@
             "bytesInOutput": 4944
           },
           "client/index/details.js": {
-            "bytesInOutput": 17032
+            "bytesInOutput": 17214
           },
           "client/index/iv-viewer.js": {
             "bytesInOutput": 27131
@@ -27259,13 +27259,13 @@
             "bytesInOutput": 8156
           }
         },
-        "bytes": 561473
+        "bytes": 561655
       },
       "dist/process/process.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7562764
+        "bytes": 7562885
       },
       "dist/process/process.js": {
         "imports": [],
@@ -31161,7 +31161,7 @@
             "bytesInOutput": 349699
           },
           "client/process/processImage.js": {
-            "bytesInOutput": 10122
+            "bytesInOutput": 10200
           },
           "client/process/modelClassify.js": {
             "bytesInOutput": 3916
@@ -31173,7 +31173,7 @@
             "bytesInOutput": 7060
           }
         },
-        "bytes": 6441627
+        "bytes": 6441705
       },
       "dist/video/video.js.map": {
         "imports": [],
