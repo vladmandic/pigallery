@@ -132,8 +132,10 @@ async function filterResults(input) {
     window.filtered = await indexdb.refresh();
   }
   if (words.length > 0) {
-    const full = filterWord(words.join(' ').toLowerCase());
-    if (full.length > 0) window.filtered.push(...full);
+    if (words.length > 1) {
+      const full = filterWord(words.join(' ').toLowerCase());
+      if (full.length > 0) window.filtered.push(...full);
+    }
     for (const word of words) {
       if (window.filtered.length > 0) window.filtered = filterWord(word.toLowerCase());
     }
@@ -217,8 +219,12 @@ async function similarPerson(image) {
     return;
   }
   for (const i in window.filtered) {
+    const isPerson = (img) => {
+      const found = img.detect.filter((a) => a.class === 'person');
+      return found && img.person && img.person.length > 0;
+    };
     const target = [];
-    if (window.filtered[i].person) {
+    if (isPerson(window.filtered[i])) {
       for (const p of window.filtered[i].person) {
         if (p.descriptor) target.push(new Float32Array(Object.values(p.descriptor)));
       }

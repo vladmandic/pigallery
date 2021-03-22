@@ -62,7 +62,7 @@ function printResult(object) {
   if (object.person && object.person[0]) {
     person = 'People';
     for (const i of object.person) {
-      person += ` | ${i.gender} ${i.age.toFixed(0)}`;
+      person += ` | ${i.gender || ''} ${i.age?.toFixed(0) || ''}`;
     }
   }
 

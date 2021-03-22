@@ -9,7 +9,16 @@ import ImageViewer from './iv-viewer';
 let viewer;
 let thief;
 
-function roundRect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null, alpha = 1, title = null) {
+function point(ctx, x, y, z = null) {
+  const defaultColor = 'lightblue';
+  const defaultSize = 2;
+  ctx.fillStyle = z ? `rgba(${127.5 + (255 * (z || 0))}, ${127.5 - (255 * (z || 0))}, 255, 0.3)` : defaultColor;
+  ctx.beginPath();
+  ctx.arc(x, y, defaultSize, 0, 2 * Math.PI);
+  ctx.fill();
+}
+
+function rect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null, alpha = 1, title = null) {
   ctx.lineWidth = lineWidth;
   ctx.globalAlpha = alpha;
   ctx.beginPath();
@@ -126,7 +135,7 @@ export function drawBoxes(object) {
       let height = (obj.box.height || obj.box[3]) * resizeY;
       if (x + width > canvas.clientWidth) width = canvas.clientWidth - x;
       if (y + height > canvas.clientHeight) height = canvas.clientHeight - y;
-      roundRect(ctx, x, y, width, height, 10, 4, 'lightyellow', null, 0.4, obj.class);
+      rect(ctx, x, y, width, height, 10, 4, 'lightyellow', null, 0.4, obj.class);
     }
   }
 
@@ -141,10 +150,12 @@ export function drawBoxes(object) {
         let height = object.person[i].boxRaw[3] * resizeY * object.processedSize.height;
         if (x + width > canvas.width) width = canvas.width - x;
         if (y + height > canvas.height) height = canvas.height - y;
-        roundRect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`);
+        rect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`);
       }
-      if (object.person[i].landmarks) {
-        // draw face landmarks
+      if (object.person[i].meshRaw) {
+        for (const pt of object.person[i].meshRaw) {
+          point(ctx, pt[0] * resizeX * object.processedSize.width, pt[1] * resizeY * object.processedSize.height, pt[2]);
+        }
       }
     }
   }
