@@ -203,6 +203,7 @@ function euclideanDistance(embedding1, embedding2, order = 2) {
 }
 
 async function similarPerson(image) {
+  let count = 0;
   busy('Searching for<br>similar people');
   const t0 = performance.now();
   window.options.listDivider = 'similarity';
@@ -218,6 +219,7 @@ async function similarPerson(image) {
     busy();
     return;
   }
+  let targets = 0;
   for (const i in window.filtered) {
     const isPerson = (img) => {
       const found = img.detect.filter((a) => a.class === 'person');
@@ -229,9 +231,11 @@ async function similarPerson(image) {
         if (p.descriptor) target.push(new Float32Array(Object.values(p.descriptor)));
       }
       let best = 1;
+      targets += target.length;
       for (const x of descriptor) {
         for (const y of target) {
-          const distance = euclideanDistance(x, y);
+          count++;
+          const distance = euclideanDistance(x, y, 3);
           if (distance < best) best = distance;
         }
       }
@@ -243,6 +247,7 @@ async function similarPerson(image) {
   window.filtered = window.filtered
     .filter((a) => (a.person && a.person[0]) && (a.similarity > 50))
     .sort((a, b) => b.similarity - a.similarity);
+  log.debug(t0, `Source: ${descriptor.length} Target: ${targets} Compares:${count}`);
   log.debug(t0, `Similar: ${window.filtered.length} persons`);
   list.redraw();
   enumerate.enumerate().then(folderHandlers).catch(false);

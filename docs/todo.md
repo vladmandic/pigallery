@@ -9,7 +9,7 @@
 - Conditional model execution and chaining
 - Host models in object storage
 - Optimize NodeJS V8 memory utilization
+- Face DB
+- Expand usage of minScore
 
 ## Models
-
-- EfficientPose: <https://github.com/daniegr/EfficientPose>
