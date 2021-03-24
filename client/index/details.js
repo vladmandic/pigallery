@@ -9,6 +9,8 @@ import ImageViewer from './iv-viewer';
 let viewer;
 let thief;
 
+let minScore = 0.0;
+
 function isTextSelected(input) {
   const selectedText = document.getSelection()?.toString();
   if (selectedText.length !== 0) {
@@ -145,37 +147,115 @@ export function drawBoxes(object) {
   // draw detected objects
   if (window.options.viewBoxes && object.detect) {
     for (const obj of object.detect) {
-      if (!obj.box) continue;
-      const x = (obj.box?.x || obj.box[0]) * resizeX;
-      const y = (obj.box?.y || obj.box[1]) * resizeY;
-      let width = (obj.box.width || obj.box[2]) * resizeX;
-      let height = (obj.box.height || obj.box[3]) * resizeY;
-      if (x + width > canvas.clientWidth) width = canvas.clientWidth - x;
-      if (y + height > canvas.clientHeight) height = canvas.clientHeight - y;
-      rect(ctx, x, y, width, height, 10, 4, 'lightyellow', null, 0.4, obj.class);
+      if (obj.box && obj.score > minScore) {
+        const x = (obj.box?.x || obj.box[0]) * resizeX;
+        const y = (obj.box?.y || obj.box[1]) * resizeY;
+        let width = (obj.box.width || obj.box[2]) * resizeX;
+        let height = (obj.box.height || obj.box[3]) * resizeY;
+        if (x + width > canvas.clientWidth) width = canvas.clientWidth - x;
+        if (y + height > canvas.clientHeight) height = canvas.clientHeight - y;
+        rect(ctx, x, y, width, height, 10, 4, 'lightyellow', null, 0.4, obj.class);
+      }
     }
   }
 
   // draw faces
   if (window.options.viewFaces && object.person) {
-    for (const i in object.person) {
-      if (object.person[i].boxRaw) {
+    for (const person of object.person) {
+      if (person.boxRaw && person.confidence > minScore) {
         // draw box around face
-        const x = object.person[i].boxRaw[0] * resizeX * object.processedSize.width;
-        const y = object.person[i].boxRaw[1] * resizeY * object.processedSize.height;
-        let width = object.person[i].boxRaw[2] * resizeX * object.processedSize.width;
-        let height = object.person[i].boxRaw[3] * resizeY * object.processedSize.height;
+        const x = person.boxRaw[0] * resizeX * object.processedSize.width;
+        const y = person.boxRaw[1] * resizeY * object.processedSize.height;
+        let width = person.boxRaw[2] * resizeX * object.processedSize.width;
+        let height = person.boxRaw[3] * resizeY * object.processedSize.height;
         if (x + width > canvas.width) width = canvas.width - x;
         if (y + height > canvas.height) height = canvas.height - y;
-        rect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${object.person[i].gender} ${object.person[i].age.toFixed(1)}y`);
+        rect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${person.gender} ${person.age.toFixed(1)}y`);
       }
-      if (object.person[i].meshRaw) {
-        for (const pt of object.person[i].meshRaw) {
+      if (person.meshRaw && person.confidence > minScore) {
+        for (const pt of person.meshRaw) {
           point(ctx, pt[0] * resizeX * object.processedSize.width, pt[1] * resizeY * object.processedSize.height, pt[2]);
         }
       }
     }
   }
+}
+
+export function drawDescription(object) {
+  let filtered = [];
+  let classified = 'Classified ';
+  filtered = object.classify.filter((a) => a.score > minScore);
+  for (const obj of combine(filtered)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
+
+  let detected = 'Detected ';
+  filtered = object.detect.filter((a) => a.score > minScore);
+  for (const obj of combine(filtered)) detected += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
+
+  let person = '';
+  let nsfw = '';
+  filtered = object.person.filter((a) => a.confidence > minScore);
+  for (const i in filtered) {
+    person += `Person ${1 + parseInt(i)} ${(100 * filtered[i].confidence).toFixed(0)}% | `;
+    if (filtered[i].genderScore > 0 && filtered[i].gender !== '') person += `<font color="${window.theme.link}">gender: ${(100 * filtered[i].genderScore).toFixed(0)}% ${filtered[i].gender}</font> | `;
+    if (filtered[i].age > 0) person += `<font color="${window.theme.link}">age: ${filtered[i].age.toFixed(1)}</font> | `;
+    if (filtered[i].emotionScore > 0 && filtered[i].emotion !== '') person += `<font color="${window.theme.link}">emotion: ${(100 * filtered[i].emotionScore).toFixed(0)}% ${filtered[i].emotion}<br></font>`;
+    if (filtered[i].class) nsfw += `Class: ${(100 * filtered[i].scoreClass).toFixed(0)}% ${filtered[i].class} `;
+    if (filtered.length === 1) person = person.replace('Person 1', 'Person');
+  }
+
+  let desc = '<h2>Lexicon</h2><ul>';
+  if (object.descriptions) {
+    for (const description of object.descriptions) {
+      for (const lines of description) {
+        desc += `<li><b>${lines.name}</b>: <i>${lines.desc}</i></li>`;
+      }
+      desc += '<br>';
+    }
+  }
+  desc += '</ul>';
+
+  let exif = '';
+  if (object.exif) {
+    if (object.exif.make) exif += `<b>Camera:</b> ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
+    if (object.exif.bytes) exif += `<b>Size:</b> ${(object.pixels / 1000 / 1000).toFixed(1)} MP in ${object.exif.bytes.toLocaleString()} bytes (compression factor ${(object.pixels / object.exif.bytes).toFixed(2)})<br>`;
+    if (object.exif.ctime) exif += `<b>CTime:</b> ${moment(object.exif.ctime).format(window.options.dateLong)} <b>MTime:</b> ${moment(object.exif.mtime).format(window.options.dateLong)}<br>`;
+    if (object.exif.created) exif += `<b>Created:</b> ${moment(object.exif.created).format(window.options.dateLong)} <b>Modified:</b> ${moment(object.exif.modified).format(window.options.dateLong)}<br>`;
+    if (object.processed) exif += `<b>Processed:</b> ${moment(object.processed).format(window.options.dateLong)}<br>`;
+    if (object.exif.software) exif += `<b>Software:</b> ${object.exif.software}<br>`;
+    if (object.exif.exposure) exif += `<b>Settings:</b> ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
+  }
+  let location = '';
+  if (object.location && object.location.city) {
+    location += `
+      <font color="${window.theme.link}">${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})</font><br>`;
+  }
+  if (object.exif && object.exif.lat) location += `Coordinates: <a target="_blank" href="https://www.google.com/maps/@${object.exif.lat},${object.exif.lon},15z"> Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)} </a><br>`;
+
+  const conditions = object.tags.filter((a) => (a.conditions)).map((a) => a.conditions);
+
+  $('#details-download').off();
+  $('#details-download').on('click', () => window.open(object.image, '_blank'));
+  const html = `
+      <h2>Image: <font color="${window.theme.link}">${object.image}</font></h2>
+      <h2>Image Data</h2>
+      <b>Resolution</b>: ${object.naturalSize.width} x ${object.naturalSize.height}<br>
+      ${exif}
+      <h2>Location</h2>
+      ${location}
+      <h2>Conditions: ${conditions?.join(', ')}</h2>
+      <h2>${classified}</h2>
+      <h2>${detected}</h2>
+      <h2>${person} ${nsfw}</h2>
+      <h2>Dominant Palette</h2>
+      ${getPalette()}
+      ${desc}
+      <h2>Tags</h2>
+        <i>${log.str(object.tags)}</i>
+      </div>
+    `;
+  if (window.options.viewDetails) $('#popup-details').html(html);
+  document.getElementById('popup-details').scrollTop = 0;
+  $('#popup-details').toggle(window.options.viewDetails);
 }
 
 async function resizeDetailsImage(object) {
@@ -241,6 +321,7 @@ export async function show(img) {
   if (!viewer) viewer = new ImageViewer(el, { zoomValue: 100, minZoom: 10, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
   await viewer.load(object.thumbnail, img);
   resizeDetailsImage(object);
+  drawDescription(object);
 
   // handle pan&zoom redraws
   if (el) {
@@ -252,77 +333,6 @@ export async function show(img) {
     el.addEventListener('wheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
     el.addEventListener('mousewheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
   }
-
-  let classified = 'Classified ';
-  for (const obj of combine(object.classify)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
-
-  let detected = 'Detected ';
-  for (const obj of combine(object.detect)) detected += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
-
-  let person = '';
-  let nsfw = '';
-  for (const i in object.person) {
-    person += `Person ${1 + parseInt(i)} ${(100 * object.person[i].confidence).toFixed(0)}% | `;
-    if (object.person[i].genderScore > 0 && object.person[i].gender !== '') person += `<font color="${window.theme.link}">gender: ${(100 * object.person[i].genderScore).toFixed(0)}% ${object.person[i].gender}</font> | `;
-    if (object.person[i].age > 0) person += `<font color="${window.theme.link}">age: ${object.person[i].age.toFixed(1)}</font> | `;
-    if (object.person[i].emotionScore > 0 && object.person[i].emotion !== '') person += `<font color="${window.theme.link}">emotion: ${(100 * object.person[i].emotionScore).toFixed(0)}% ${object.person[i].emotion}<br></font>`;
-    if (object.person[i].class) nsfw += `Class: ${(100 * object.person[i].scoreClass).toFixed(0)}% ${object.person[i].class} `;
-    if (object.person.length === 1) person = person.replace('Person 1', 'Person');
-  }
-
-  let desc = '<h2>Lexicon</h2><ul>';
-  if (object.descriptions) {
-    for (const description of object.descriptions) {
-      for (const lines of description) {
-        desc += `<li><b>${lines.name}</b>: <i>${lines.desc}</i></li>`;
-      }
-      desc += '<br>';
-    }
-  }
-  desc += '</ul>';
-
-  let exif = '';
-  if (object.exif) {
-    if (object.exif.make) exif += `<b>Camera:</b> ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
-    if (object.exif.bytes) exif += `<b>Size:</b> ${(object.pixels / 1000 / 1000).toFixed(1)} MP in ${object.exif.bytes.toLocaleString()} bytes (compression factor ${(object.pixels / object.exif.bytes).toFixed(2)})<br>`;
-    if (object.exif.ctime) exif += `<b>CTime:</b> ${moment(object.exif.ctime).format(window.options.dateLong)} <b>MTime:</b> ${moment(object.exif.mtime).format(window.options.dateLong)}<br>`;
-    if (object.exif.created) exif += `<b>Created:</b> ${moment(object.exif.created).format(window.options.dateLong)} <b>Modified:</b> ${moment(object.exif.modified).format(window.options.dateLong)}<br>`;
-    if (object.processed) exif += `<b>Processed:</b> ${moment(object.processed).format(window.options.dateLong)}<br>`;
-    if (object.exif.software) exif += `<b>Software:</b> ${object.exif.software}<br>`;
-    if (object.exif.exposure) exif += `<b>Settings:</b> ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
-  }
-  let location = '';
-  if (object.location && object.location.city) {
-    location += `
-      <font color="${window.theme.link}">${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})</font><br>`;
-  }
-  if (object.exif && object.exif.lat) location += `Coordinates: <a target="_blank" href="https://www.google.com/maps/@${object.exif.lat},${object.exif.lon},15z"> Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)} </a><br>`;
-
-  const conditions = object.tags.filter((a) => (a.conditions)).map((a) => a.conditions);
-
-  $('#details-download').off();
-  $('#details-download').on('click', () => window.open(object.image, '_blank'));
-  const html = `
-      <h2>Image: <font color="${window.theme.link}">${object.image}</font></h2>
-      <h2>Image Data</h2>
-      <b>Resolution</b>: ${object.naturalSize.width} x ${object.naturalSize.height}<br>
-      ${exif}
-      <h2>Location</h2>
-      ${location}
-      <h2>Conditions: ${conditions?.join(', ')}</h2>
-      <h2>${classified}</h2>
-      <h2>${detected}</h2>
-      <h2>${person} ${nsfw}</h2>
-      <h2>Dominant Palette</h2>
-      ${getPalette()}
-      ${desc}
-      <h2>Tags</h2>
-        <i>${log.str(object.tags)}</i>
-      </div>
-    `;
-  if (window.options.viewDetails) $('#popup-details').html(html);
-  document.getElementById('popup-details').scrollTop = 0;
-  $('#popup-details').toggle(window.options.viewDetails);
 }
 
 export async function next(left) {
@@ -439,5 +449,14 @@ export function handlers() {
   $('#details-raw').on('click', () => {
     $('#details-raw').toggleClass('fa-video fa-video-slash');
     window.options.viewRaw = !window.options.viewRaw;
+  });
+
+  // score filter handler
+  $('#minscore').on('input', () => {
+    if (last) {
+      minScore = parseFloat($('#minscore')[0].value);
+      drawDescription(last);
+      drawBoxes(last);
+    }
   });
 }

@@ -11,8 +11,8 @@ function addDividers(object) {
   if (!window.options.listTitle) return '';
   let divider;
   if (window.options.listDivider === 'similarity' && object.similarity) {
-    const curr = `${object.similarity.toFixed(1)}%`;
-    const prev = previous ? `${previous.similarity.toFixed(1)}%` : 'none';
+    const curr = `${Math.round(object.similarity)}%`;
+    const prev = previous ? `${Math.round(previous.similarity)}%` : 'none';
     if (curr !== prev) divider = curr;
   }
   if (window.options.listDivider === 'month') {
@@ -49,20 +49,21 @@ function printResult(object) {
   }
 
   let detected = 'Detected';
-  let personCount = 0;
   for (const item of details.combine(object.detect)) {
     if (item.name !== 'person') detected += ` | ${item.score}% ${item.name}`;
-    else personCount++;
   }
-  personCount = Math.max(personCount, object.person ? object.person.length : 0);
-  if (personCount === 1) detected += ' | person';
+  const personCount = object.detect.filter((a) => a.class === 'person').length;
+  if (personCount === 1) detected += ' | 1 person';
   else if (personCount > 1) detected += ` | ${personCount} persons`;
+  const faceCount = object.person ? object.person.length : 0;
+  if (faceCount === 1) detected += ' | 1 face';
+  else if (faceCount > 1) detected += ` | ${faceCount} faces`;
 
   let person = '';
   if (object.person && object.person[0]) {
     person = 'People';
     for (const i of object.person) {
-      person += ` | ${i.gender || ''} ${i.age?.toFixed(0) || ''}`;
+      if (i.gender || i.age) person += ` | ${i.gender || ''} ${i.age?.toFixed(0) || ''}`;
     }
   }
 
@@ -81,7 +82,7 @@ function printResult(object) {
   thumb.id = object.id;
   const fixWidth = window.options.fixWidth ? `width=${window.options.listThumbSize}px` : '';
   const fixHeight = window.options.fixHeight ? `height=${window.options.listThumbSize}px` : '';
-  const title = `${object.image}\nDate: ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}\n${classified}\n${detected}\n${location}\n${camera}`;
+  const title = `${object.image}\nDate: ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}\n${classified}\n${detected}\n${person}\n${location}\n${camera}`;
   thumb.innerHTML = `
     <img loading="lazy" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" align="middle" ${fixWidth} ${fixHeight} title="${title}">
     <div class="thumb-top">
