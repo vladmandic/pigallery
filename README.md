@@ -310,7 +310,14 @@ Result of all metadata processing is a very flexbile search engine - take a look
 
 <br><hr><br>
 
-### Links
+## Live Demo
+
+This demo is an anonymous share of sample images on my home server:  
+<https://pigallery.ddns.net?share=qqlny1.0cyk>
+
+<br>
+
+## Links
 
 - **Code Repository**: <https://github.com/vladmandic/pigallery>  
 - **Todo List**: <https://github.com/vladmandic/pigallery/docs/todo.md>  

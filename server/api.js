@@ -109,11 +109,16 @@ function api(app, inConfig, inDB) {
       obj.creator = data.creator;
       obj.name = data.name;
       obj.processed = new Date();
-      obj.images = data['images[]'];
+      obj.images = data['images'];
       obj.share = (obj.processed.getTime() / 1000).toString(36);
-      db.update({ share: obj.share }, obj, { upsert: true });
-      log.info(`API/Share/Put ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images.length);
-      res.status(200).json({ key: obj.share });
+      if (obj.images?.length > 0) {
+        db.update({ share: obj.share }, obj, { upsert: true });
+        log.info(`API/Share/Put ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images?.length);
+        res.status(200).json({ key: obj.share });
+      } else {
+        log.info(`API/Share/Put ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: [empty]`);
+        res.status(500).json({});
+      }
     } else {
       res.status(401).json({});
     }

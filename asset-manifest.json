@@ -7,7 +7,8 @@
         "length": 9,
         "line": 758,
         "lineText": "    details.slideshow(true);",
-        "namespace": ""
+        "namespace": "",
+        "suggestion": ""
       },
       "notes": [],
       "text": "Import \"slideshow\" will always be undefined because there is no matching export"
