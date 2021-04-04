@@ -17,7 +17,7 @@ p { margin: 0; }
 .col { text-align: left; margin: 0.5rem; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
 .log { width: 100vw; height: 3.2rem; position: fixed; bottom: 0; overflow-y: scroll; display: block; z-index: 5; cursor: text; pointer-events: none; line-height: 1.2; }
 .popper { padding: 8px; background: var(--text); color: var(--body); box-shadow: 2px 2px var(--background); border-radius: 4px; z-index: 50; }
-.navbar { background: var(--body); height: 5rem; top: 0; position: sticky; }
+.navbar { background: var(--body); height: 5rem; top: 0; position: -webkit-sticky; position: sticky; }
 .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); opacity: 0.1; }
 .navbarbutton:hover { color: var(--title); text-shadow: 0; }
 .number { font-size: 1.2rem; color: var(--inactive); }
@@ -30,11 +30,11 @@ p { margin: 0; }
 .input:hover { background: var(--foreground); }
 .input:focus { background: var(--foreground); }
 .label { display: flex; margin-left: 30px; }
-.options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); height: 1.5rem; border-radius: 1.5rem; position: sticky; left: 220px; }
+.options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); height: 1.5rem; border-radius: 1.5rem; position: -webkit-sticky; position: sticky; left: 220px; }
 .options:hover { background: var(--foreground); }
 .options:focus { background: var(--foreground); }
 .main { height: 100%; display: flex; }
-.folderbar { overflow-x: hidden; overflow-y: auto; cursor: pointer; min-width: auto; margin-top: 4rem; }
+.folderbar { overflow-x: hidden; overflow-y: auto; cursor: pointer; margin-top: 4rem; }
 .folderbar::-webkit-scrollbar { display: none; }
 .folderlist { margin: 0; min-width: 10rem; max-width: 15rem; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
 .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
@@ -47,7 +47,7 @@ p { margin: 0; }
 .all { overflow: hidden; width: 100%; display: block; }
 .map { overflow: hidden; width: 100%; height: 40%; display: none; z-index: 5; }
 .share { overflow: hidden; width: 100%; padding-bottom: 8px; background: var(--body); display: none; z-index: 5; }
-.results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; padding: 4px; scroll-snap-type: y none; }
+.results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; padding: 4px; -ms-scroll-snap-type: y none; scroll-snap-type: y none; }
 .timestamp { background: var(--body); margin-right: 4px; padding-left: 4px; padding-right: 4px; color: var(--text); }
 .listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; content-visibility: auto; }
 .divider { padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; scroll-margin-top: 8px; }
@@ -58,7 +58,7 @@ p { margin: 0; }
 .thumb-bottom { display: flex; position: absolute; bottom: 0; width: 100%; justify-content: flex-end; }
 .thumb-bottom:hover { background: rgba(0, 0, 0, 0.4); }
 .description { min-width: 250px; max-width: 250px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
-.btn-tiny { font-size: var(--btntiny); color: var(--inactive); padding: 6px; cursor: grab; z-index: 8; display: none; text-shadow: 1px 1px var(--title); }
+.btn-tiny { font-size: var(--btntiny); color: var(--inactive); padding: 6px; cursor: pointer; z-index: 8; display: none; text-shadow: 1px 1px var(--title); }
 .btn-tiny:hover { color: var(--foreground); }
 .listtitle { font-weight: bold; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; line-height: 1.4rem; }
 .thumbsize { height: 1.6rem; width: 100px; outline: none; border: none; margin-top: -4px; }
@@ -71,7 +71,7 @@ p { margin: 0; }
 .docs { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; border: none; }
 .iframe { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 0; z-index: 10; display: none; border: none; }
 .btn-close { float: right; }
-.install { font-size: 0.8rem; font-weight: bold; background: var(--foreground); color: black; position: fixed; bottom: 0; right: 0; width: fit-content; padding: 6px 23px 4px 4px; text-align: center; cursor: pointer; z-index: 1; display: none; }
+.install { font-size: 0.8rem; font-weight: bold; background: var(--foreground); color: black; position: fixed; bottom: 0; right: 0; width: -moz-fit-content; width: fit-content; padding: 6px 23px 4px 4px; text-align: center; cursor: pointer; z-index: 1; display: none; }
 .video { background: var(--body); height: calc(100vh - 5rem);color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
 .video-label { margin: 0; margin-right: 10px; display: block; }
 .video-models { margin-right: 10px; }
@@ -79,7 +79,7 @@ p { margin: 0; }
 @keyframes fade {
   to { background: var(--dominant); }
 }
-.splash { width: 100%; height: 100%; z-index: 100; position: absolute; top: 0; left: 0; background: black; text-align-last: center; display: block; }
+.splash { width: 100%; height: 100%; z-index: 100; position: absolute; top: 0; left: 0; background: black; text-align: center; display: block; }
 .palette { font-size: 3.5rem; line-height: 2.7rem; }
 .loading { color: white; position: absolute; top: 220px; left: 50%; transform: translateX(-50%); }
 .processing { position: relative; top: -78px; color: grey; font-size: 0.6rem; }

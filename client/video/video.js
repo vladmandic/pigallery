@@ -102,10 +102,8 @@ function initHumanConfig() {
     config.default.human.face.detector.modelPath = '@vladmandic/human/models/blazeface-back.json';
     config.default.human.face.mesh.modelPath = '@vladmandic/human/models/facemesh.json';
     config.default.human.face.iris.modelPath = '@vladmandic/human/models/iris.json';
-    config.default.human.face.age.modelPath = '@vladmandic/human/models/age.json';
-    config.default.human.face.gender.modelPath = '@vladmandic/human/models/gender.json';
+    config.default.human.face.description.modelPath = '@vladmandic/human/models/faceres.json';
     config.default.human.face.emotion.modelPath = '@vladmandic/human/models/emotion.json';
-    config.default.human.face.embedding.modelPath = '@vladmandic/human/models/mobileface.json';
     config.default.human.body.enabled = false;
     config.default.human.body.modelPath = '@vladmandic/human/models/posenet.json';
     config.default.human.hand.enabled = false;
@@ -127,8 +125,7 @@ async function menuSetup() {
   objects.menus.model.addBool('Face Detect', config.default.human.face, 'enabled');
   objects.menus.model.addBool('Face Mesh', config.default.human.face.mesh, 'enabled');
   objects.menus.model.addBool('Face Iris', config.default.human.face.iris, 'enabled');
-  objects.menus.model.addBool('Face Age', config.default.human.face.age, 'enabled');
-  objects.menus.model.addBool('Face Gender', config.default.human.face.gender, 'enabled');
+  objects.menus.model.addBool('Face Description', config.default.human.face.description, 'enabled');
   objects.menus.model.addBool('Face Emotion', config.default.human.face.emotion, 'enabled');
   objects.menus.model.addBool('Body Pose', config.default.human.body, 'enabled');
   objects.menus.model.addBool('Hand Pose', config.default.human.hand, 'enabled');

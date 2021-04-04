@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
   <title>PiGallery: Live Video</title>
-  <meta http-equiv="content-type">
-  <meta content="text/html">
-  <meta name="description" content="Image Gallery and Classification; Author: Vladimir Mandic <mandic00@live.com>">
-  <meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.1, maximum-scale=4.0, shrink-to-fit=yes, user-scalable=yes">
-  <meta name="theme-color" content="black"/>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, shrink-to-fit=yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="PiGallery">
-  <meta name="msapplication-tooltip" content="PiGallery: AI-powered Image Gallery and Classification">
+  <meta name="keywords" content="PiGallery">
+  <meta name="description" content="PiGallery: AI-powered Image Gallery and Image analysis using Machine Learning; Author: Vladimir Mandic <mandic00@live.com>">
+  <meta name="msapplication-tooltip" content="PiGallery: AI-powered Image Gallery and Image analysis using Machine Learning; Author: Vladimir Mandic <mandic00@live.com>">
   <link rel="author" href="/humans.txt">
   <link rel="pingback" href="/api/pingback">
   <link rel="manifest" href="/pigallery.webmanifest">
@@ -30,7 +29,7 @@
     .slide { width: 2.8rem; height: 1rem; background: black; margin: 0.6rem 0.8rem 0 0; position: relative; border-radius: 1rem; }
     .slide:after { content: 'OFF'; color: lightcoral; position: absolute; right: 0.2rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
     .slide:before { content: 'ON'; color: lightgreen; position: absolute; left: 0.3rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
-    .pulldown { display: none; background: var(--body); position: fixed; right: 0; width: fit-content; padding: 0 0.8rem 0 0.8rem; line-height: 1.8rem; z-index: 10; top: 5rem; max-height: calc(100% - 4rem); }
+    .pulldown { display: none; background: var(--body); position: fixed; right: 0; width: -moz-fit-content; width: fit-content; padding: 0 0.8rem 0 0.8rem; line-height: 1.8rem; z-index: 10; top: 5rem; max-height: calc(100% - 4rem); }
     label { width: 1.3rem; height: 0.8rem; cursor: pointer; position: absolute; top: 0.1rem; left: 0.1rem; z-index: 1; background: lightcoral; border-radius: 1rem; transition: left 0.6s ease; }
     input[type=checkbox] { visibility: hidden; }
     input[type=checkbox]:checked + label { left: 1.4rem; background: lightgreen; }
@@ -40,30 +39,30 @@
     input[type=range]::-webkit-slider-runnable-track, input[type=range]::-moz-range-track { width: 100%; height: 1rem; cursor: pointer; background: black; border-radius: 1rem; border: 1px; }
     input[type=range]::-webkit-slider-thumb, input[type=range]::-moz-range-thumb { border: 1px solid #000000; margin-top: 0.05rem; height: 0.9rem; width: 1.5rem; border-radius: 1rem; background: lightblue; cursor: pointer; -webkit-appearance: none; }
     .canvases { position: absolute; top: 0; width: 100vw; }
-    .detected { font-size: 1.5rem; padding: 0.5rem; position: fixed; z-index:20; height: fit-content; width: 100vw; overflow: auto; overflow-wrap: break-word; white-space: normal; color: white; }
+    .detected { font-size: 1.5rem; padding: 0.5rem; position: fixed; z-index:20; width: 100vw; overflow: auto; overflow-wrap: break-word; white-space: normal; color: white; }
     .detected:hover { background: rgba(0, 0, 0, 0.5); }
   </style>
   <!-- Script Module -->
-  <script type="text/javascript" src="/dist/video/video.js"></script>
+  <script src="/dist/video/video.js"></script>
 </head>
 <body style="overflow: hidden">
   <noscript><h1>You really need JS enabled...</h1></noscript>
   <!-- Menu Bar -->
   <div id="navbar" class="row navbar text-center">
-    <span onclick="location.replace('/auth')"><i id="btn-user" class="navbarbutton fad fa-user-slash"></i><p id="user">User</p></span>
-    <span><i id="menu-startstop" class="navbarbutton fad fa-play-circle" title="Start & Stop Video Camera"></i><p id="btn-startstop">play</p></span>
-    <span><i id="menu-facing" class="navbarbutton fad fa-sort-circle" title="Switch Camera View"></i><p id="btn-facing">front</p></span>
-    <span><i id="menu-models" class="navbarbutton fad fa-question-circle" title="Models"></i><p id="btn-models">Models</p></span>
-    <span><i id="menu-parameters" class="navbarbutton fad fa-info-circle" title="Parameters"></i><p id="btn-params">Parameters</p></span>
-    <span><i id="menu-filters" class="navbarbutton fad fa-draw-circle" title="Filters"></i><p id="btn-filters">Filters</p></span>
-    <span><i id="menu-performance" class="navbarbutton fad fa-spinner" title="Performance"></i><p id="btn-perf">Performance</p></span>
+    <span onclick="location.replace('/auth')"><i id="btn-user" class="navbarbutton fad fa-user-slash"></i><br><span id="user">User</span></span>
+    <span><i id="menu-startstop" class="navbarbutton fad fa-play-circle" title="Start & Stop Video Camera"></i><br><span id="btn-startstop">play</span></span>
+    <span><i id="menu-facing" class="navbarbutton fad fa-sort-circle" title="Switch Camera View"></i><br><span id="btn-facing">front</span></span>
+    <span><i id="menu-models" class="navbarbutton fad fa-question-circle" title="Models"></i><br><span id="btn-models">Models</span></span>
+    <span><i id="menu-parameters" class="navbarbutton fad fa-info-circle" title="Parameters"></i><br><span id="btn-params">Parameters</span></span>
+    <span><i id="menu-filters" class="navbarbutton fad fa-draw-circle" title="Filters"></i><br><span id="btn-filters">Filters</span></span>
+    <span><i id="menu-performance" class="navbarbutton fad fa-spinner" title="Performance"></i><br><span id="btn-perf">Performance</span></span>
   </div>
   <!-- Body -->
   <div id="detected" class="detected"></div>
   <div id="main" style="display: block; position: fixed; top: 5rem; ">
     <div id="status" style="font-size: 6rem; width: 100vw; text-align: center; position: fixed; z-index: 50; margin-top: 2rem; ">Ready</div>
     <div id="video-start" class="fad fa-play-circle" style="font-size: 15rem; width: 100vw; text-align: center; position: fixed; top: 14rem; margin-top: 10rem; z-index: 50; cursor: pointer"></div>
-    <video id="video" style="width: 100vw; position: fixed" nocontrols loop controlslist="nodownload,nofullscreen,noremoteplayback"></video>
+    <video id="video" style="width: 100vw; position: fixed"></video>
     <div id="canvases" style="position: relative"></div>
   </div>
   <div id="log" style="display: none; font-size: 0.9rem; overflow-y: scroll; padding: 4px; height: 12rem; position: fixed; bottom: 0; width: 99%"></div>
