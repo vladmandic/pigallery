@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
     <title>PiGallery: Authentication</title>
-    <meta http-equiv="content-type">
-    <meta content="text/html">
-    <meta name="Description" content="Image Gallery and Classification; Author: Vladimir Mandic <mandic00@live.com>">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=2.0, shrink-to-fit=yes, user-scalable=yes">
-    <meta name="theme-color" content="#555555"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="PiGallery">
+    <meta name="keywords" content="PiGallery">
+    <meta name="description" content="PiGallery: AI-powered Image Gallery and Image analysis using Machine Learning; Author: Vladimir Mandic <mandic00@live.com>">
+    <meta name="msapplication-tooltip" content="PiGallery: AI-powered Image Gallery and Image analysis using Machine Learning; Author: Vladimir Mandic <mandic00@live.com>">
+    <link rel="author" href="/humans.txt">
+    <link rel="pingback" href="/api/pingback">
+    <link rel="manifest" href="/pigallery.webmanifest">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" sizes="256x256" href="/assets/dash-256.png">
     <link rel="apple-touch-icon" href="/assets/dash-256.png">
     <link rel="apple-touch-startup-image" href="/assets/dash-256.png">
     <link rel="stylesheet" href="/assets/bootstrap.css">
@@ -40,7 +45,7 @@
   <div class="row">
     <div class="title" id="title">PiGallery</div>
     <form id="authForm" method="POST" action="/api/user/auth">
-      <input type="email" class="input" name="authEmail" id="inputEmail" placeholder="Enter email" autocomplete="username"><br>
+      <input type="email" class="input" name="authEmail" id="inputEmail" placeholder="Enter email" autocomplete="email"><br>
       <input type="password" class="input" name="authPassword" id="inputPassword" placeholder="Password" autocomplete="current-password">
       <button type="submit" class="submit" value="default action">LOGIN</button>
     </form>

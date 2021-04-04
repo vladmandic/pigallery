@@ -39,11 +39,11 @@ function drawFace(result, ui) {
         }
       }
 
-      for (let i = 0; i < human.facemesh.triangulation.length / 3; i++) {
+      for (let i = 0; i < human.faceTriangulation.length / 3; i++) {
         const points = [
-          human.facemesh.triangulation[i * 3 + 0],
-          human.facemesh.triangulation[i * 3 + 1],
-          human.facemesh.triangulation[i * 3 + 2],
+          human.faceTriangulation[i * 3 + 0],
+          human.faceTriangulation[i * 3 + 1],
+          human.faceTriangulation[i * 3 + 2],
         ].map((index) => face.mesh[index]);
         const path = new Path2D();
         path.moveTo(points[0][0], points[0][1]);
