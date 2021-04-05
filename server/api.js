@@ -160,10 +160,14 @@ function api(app, inConfig, inDB) {
   // record namespace
 
   let totalSize = 0;
+  let totalImages = 0;
   app.get('/api/record/get', async (req, res) => {
     const chunkSize = req.query.chunksize ? parseInt(req.query.chunksize) : 200;
     const page = req.query.page ? parseInt(req.query.page) : 0;
-    if (page === 0) totalSize = 0;
+    if (page === 0) {
+      totalSize = 0;
+      totalImages = 0;
+    }
     if (!req.session.share || req.session.share === '') {
       const root = new RegExp(`^${req.session.root || 'media/'}`);
       const time = req.query.time ? new Date(parseInt(req.query.time)) : new Date(0);
@@ -176,9 +180,11 @@ function api(app, inConfig, inDB) {
       const pages = Math.trunc(count / chunkSize);
       const json = JSON.stringify(data);
       totalSize += json.length;
-      // eslint-disable-next-line max-len
-      log.info(`API/Record/Get ${sign(req)} root: ${req.session.root}`, 'page:', page, '/', pages, 'images:', page * chunkSize + data.length, '/', count, 'pageSize:', json.length, 'estSize:', pages * json.length, 'totalSize:', totalSize, 'chunkSize:', chunkSize, 'sinceTime:', new Date(time));
-      res.set('content-TotalSize', pages * json.length);
+      const estSize = (pages - page) * json.length + totalSize;
+      totalImages += data.length;
+      log.info(`API/Record/Get ${sign(req)} root: ${req.session.root}`, `page: ${page}/${pages} images: ${totalImages}/${count}`, 'pageSize:', json.length, 'estSize:', estSize, 'totalSize:', totalSize, 'chunkSize:', chunkSize, 'sinceTime:', new Date(time));
+      res.set('content-TotalSize', estSize);
+      res.set('content-TotalImages', totalImages);
       res.set('content-Pages', pages);
       res.send(json);
     } else {
@@ -191,6 +197,7 @@ function api(app, inConfig, inDB) {
       const json = JSON.stringify(data);
       log.info(`API/Record/Get Share ${sign(req)} images:`, data.length, 'size:', json.length);
       res.set('content-TotalSize', json.length);
+      res.set('content-TotalImages', data.length);
       res.set('content-Pages', 0);
       res.send(json);
     }

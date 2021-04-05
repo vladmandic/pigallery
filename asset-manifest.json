@@ -5,7 +5,7 @@
         "column": 12,
         "file": "client/index/index.js",
         "length": 9,
-        "line": 772,
+        "line": 777,
         "lineText": "    details.slideshow(true);",
         "namespace": "",
         "suggestion": ""
@@ -26289,7 +26289,7 @@
         ]
       },
       "assets/mapquest.css": {
-        "bytes": 129689,
+        "bytes": 129706,
         "imports": []
       },
       "client/index/iv-viewer.css": {
@@ -26301,7 +26301,7 @@
         "imports": []
       },
       "client/index/indexdb.js": {
-        "bytes": 5597,
+        "bytes": 5676,
         "imports": [
           {
             "path": "client/shared/log.js",
@@ -26458,7 +26458,7 @@
         ]
       },
       "client/index/index.js": {
-        "bytes": 35955,
+        "bytes": 36377,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27341,7 +27341,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1048623
+        "bytes": 1049395
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27355,7 +27355,7 @@
             "bytesInOutput": 1731
           },
           "client/index/indexdb.js": {
-            "bytesInOutput": 4876
+            "bytesInOutput": 5029
           },
           "node_modules/.pnpm/moment@2.29.1/node_modules/moment/moment.js": {
             "bytesInOutput": 134440
@@ -27400,7 +27400,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.js": {
-            "bytesInOutput": 37087
+            "bytesInOutput": 37509
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59917
@@ -27418,7 +27418,7 @@
             "bytesInOutput": 8181
           }
         },
-        "bytes": 565557
+        "bytes": 566132
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27430,7 +27430,7 @@
             "bytesInOutput": 207942
           },
           "assets/mapquest.css": {
-            "bytesInOutput": 137872
+            "bytesInOutput": 137893
           },
           "client/index/iv-viewer.css": {
             "bytesInOutput": 3150
@@ -27439,7 +27439,7 @@
             "bytesInOutput": 10317
           }
         },
-        "bytes": 557787
+        "bytes": 557808
       },
       "dist/process/process.js.map": {
         "imports": [],

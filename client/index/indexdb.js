@@ -23,7 +23,7 @@ export async function open() {
       db = evt.target?.result;
       const tbl = db.createObjectStore(table, { keyPath: 'image' });
       tbl.createIndex('name', 'image', { unique: true });
-      tbl.createIndex('date', 'exif.created', { unique: false });
+      tbl.createIndex('date', 'timestamp', { unique: false });
       tbl.createIndex('size', 'pixels', { unique: false });
     };
     request.onsuccess = (evt) => {
@@ -127,7 +127,7 @@ export async function all(index = 'date', direction = true, start = 1, end = Num
             resolve(res);
           }
         } else {
-          log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images`);
+          log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images ${idx}`);
           resolve(res);
         }
       };
@@ -151,6 +151,7 @@ export async function count() {
 
 export async function store(objects) {
   for (const object of objects) {
+    object.timestamp = object.exif?.created || object.exif?.modified || 0;
     put(object);
   }
 }
