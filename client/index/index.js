@@ -394,7 +394,9 @@ async function loadGallery(refresh = false) {
   const since = refresh ? window.options.lastUpdated : 0;
   const first = await fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=0`);
   if (!first || !first.ok) return;
-  const totalSize = parseFloat(first.headers.get('content-TotalSize') || '');
+  let totalSize = parseFloat(first.headers.get('content-TotalSize') || '');
+  let totalImages = parseFloat(first.headers.get('content-TotalImages') || '');
+  let images = 0;
   const pages = parseInt(first.headers.get('content-Pages') || '0');
   const json0 = await first.json();
   let dlSize = JSON.stringify(json0).length;
@@ -405,12 +407,14 @@ async function loadGallery(refresh = false) {
     const promisesData = [];
     let progress = Math.min(100, Math.round(100 * dlSize / totalSize));
     perf = Math.round(dlSize / (performance.now() - t0));
-    $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+    $('#progress').html(`Downloading ${progress}%:<br>${images} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
     for (let page = 1; page <= pages; page++) {
       const promise = fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=${page}`);
       promisesReq.push(promise);
       // eslint-disable-next-line no-loop-func, promise/catch-or-return
       promise.then((result) => {
+        totalSize = parseFloat(result.headers.get('content-TotalSize') || '');
+        totalImages = parseFloat(result.headers.get('content-TotalImages') || '');
         const req = result.json();
         promisesData.push(req);
         // eslint-disable-next-line promise/catch-or-return, promise/no-nesting
@@ -419,12 +423,13 @@ async function loadGallery(refresh = false) {
           progress = Math.min(100, Math.round(100 * dlSize / totalSize));
           perf = Math.round(dlSize / (performance.now() - t0));
           const t2 = performance.now();
+          images += json.length;
           await indexdb.store(json);
           const t3 = performance.now();
           stats.store += t3 - t2;
-          log.debug('Donwloading', `page:${page} progress:${progress}% bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
-          if (progress === 100) $('#progress').html(`Creating cache<br>${totalSize.toLocaleString()} bytes`);
-          else $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+          log.debug('Donwloading', `page:${page} progress:${progress}% images:${images} / ${totalImages} bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
+          if (progress >= 98) $('#progress').html(`Creating cache<br>images:${totalImages}<br>${totalSize.toLocaleString()} bytes`);
+          else $('#progress').html(`Downloading ${progress}%:<br>${images} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
           return true;
         });
         return true;
