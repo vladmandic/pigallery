@@ -1,5 +1,12 @@
 // @ts-nocheck
 
+// css-imports used by esbuild
+import '../../assets/bootstrap.css';
+import '../../assets/fontawesome.css';
+import '../../assets/mapquest.css';
+import './iv-viewer.css';
+import '../pigallery.css';
+
 import $ from 'jquery';
 import * as log from '../shared/log';
 import * as marked from '../../assets/marked.esm';

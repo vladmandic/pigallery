@@ -45,7 +45,6 @@
     "@vladmandic/pilogger": "^0.2.15",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.1",
-    "clean-css": "^5.1.2",
     "esbuild": "^0.11.5",
     "exif-parser": "^0.1.12",
     "express": "^4.17.1",

@@ -130,7 +130,7 @@ window.themes = [
 
 // user configurable options & defalt values, stored in browsers local storage
 window.options = {
-  get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || '500'); },
+  get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || '100'); },
   set listItemCount(val) { localStorage.setItem('listItemCount', val.toString()); },
 
   get cacheModels() { return localStorage.getItem('cacheModels') ? localStorage.getItem('cacheModels') === 'true' : true; },

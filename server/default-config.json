@@ -20,7 +20,7 @@
     "logFile": "pigallery.log",
     "allowedImageFileTypes": [ ".jpeg", ".jpg" ],
     "mediaRoot": "media/",
-    "defaultLimit": 500,
+    "defaultLimit": 100,
     "db": "pigallery.db",
     "descriptionsDB": "assets/wordnet-synset.json",
     "citiesDB": "assets/cities.json",

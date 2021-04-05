@@ -5,7 +5,7 @@
         "column": 12,
         "file": "client/index/index.js",
         "length": 9,
-        "line": 758,
+        "line": 765,
         "lineText": "    details.slideshow(true);",
         "namespace": "",
         "suggestion": ""
@@ -16,6 +16,18 @@
   ],
   "metafile": {
     "inputs": {
+      "assets/bootstrap.css": {
+        "bytes": 199412,
+        "imports": []
+      },
+      "assets/fontawesome.css": {
+        "bytes": 212493,
+        "imports": []
+      },
+      "client/pigallery.css": {
+        "bytes": 9449,
+        "imports": []
+      },
       "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
         "bytes": 288580,
         "imports": []
@@ -26219,8 +26231,20 @@
         ]
       },
       "client/compare/compare.js": {
-        "bytes": 9478,
+        "bytes": 9499,
         "imports": [
+          {
+            "path": "assets/bootstrap.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "assets/fontawesome.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/pigallery.css",
+            "kind": "import-statement"
+          },
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
             "kind": "import-statement"
@@ -26250,6 +26274,14 @@
             "kind": "import-statement"
           }
         ]
+      },
+      "assets/mapquest.css": {
+        "bytes": 129689,
+        "imports": []
+      },
+      "client/index/iv-viewer.css": {
+        "bytes": 3157,
+        "imports": []
       },
       "assets/marked.esm.js": {
         "bytes": 68105,
@@ -26413,8 +26445,28 @@
         ]
       },
       "client/index/index.js": {
-        "bytes": 35466,
+        "bytes": 35663,
         "imports": [
+          {
+            "path": "assets/bootstrap.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "assets/fontawesome.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "assets/mapquest.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/index/iv-viewer.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/pigallery.css",
+            "kind": "import-statement"
+          },
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
             "kind": "import-statement"
@@ -26470,8 +26522,20 @@
         ]
       },
       "client/process/process.js": {
-        "bytes": 5391,
+        "bytes": 5526,
         "imports": [
+          {
+            "path": "assets/bootstrap.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "assets/fontawesome.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/pigallery.css",
+            "kind": "import-statement"
+          },
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
             "kind": "import-statement"
@@ -26591,8 +26655,20 @@
         "imports": []
       },
       "client/video/video.js": {
-        "bytes": 12953,
+        "bytes": 13088,
         "imports": [
+          {
+            "path": "assets/bootstrap.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "assets/fontawesome.css",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/pigallery.css",
+            "kind": "import-statement"
+          },
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
             "kind": "import-statement"
@@ -26650,7 +26726,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5729247
+        "bytes": 5729272
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -26683,6 +26759,15 @@
           },
           "client/shared/log.js": {
             "bytesInOutput": 1725
+          },
+          "assets/bootstrap.css": {
+            "bytesInOutput": 0
+          },
+          "assets/fontawesome.css": {
+            "bytesInOutput": 0
+          },
+          "client/pigallery.css": {
+            "bytesInOutput": 0
           },
           "client/compare/compare.js": {
             "bytesInOutput": 8723
@@ -27224,11 +27309,26 @@
         },
         "bytes": 3551584
       },
+      "dist/compare/compare.css": {
+        "imports": [],
+        "inputs": {
+          "assets/bootstrap.css": {
+            "bytesInOutput": 198360
+          },
+          "assets/fontawesome.css": {
+            "bytesInOutput": 207942
+          },
+          "client/pigallery.css": {
+            "bytesInOutput": 10281
+          }
+        },
+        "bytes": 416668
+      },
       "dist/index/index.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1048141
+        "bytes": 1048346
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27271,6 +27371,21 @@
           "client/index/pwa-register.js": {
             "bytesInOutput": 1545
           },
+          "assets/bootstrap.css": {
+            "bytesInOutput": 0
+          },
+          "assets/fontawesome.css": {
+            "bytesInOutput": 0
+          },
+          "assets/mapquest.css": {
+            "bytesInOutput": 0
+          },
+          "client/index/iv-viewer.css": {
+            "bytesInOutput": 0
+          },
+          "client/pigallery.css": {
+            "bytesInOutput": 0
+          },
           "client/index/index.js": {
             "bytesInOutput": 36816
           },
@@ -27292,11 +27407,32 @@
         },
         "bytes": 565365
       },
+      "dist/index/index.css": {
+        "imports": [],
+        "inputs": {
+          "assets/bootstrap.css": {
+            "bytesInOutput": 198360
+          },
+          "assets/fontawesome.css": {
+            "bytesInOutput": 207942
+          },
+          "assets/mapquest.css": {
+            "bytesInOutput": 137872
+          },
+          "client/index/iv-viewer.css": {
+            "bytesInOutput": 3150
+          },
+          "client/pigallery.css": {
+            "bytesInOutput": 10281
+          }
+        },
+        "bytes": 557751
+      },
       "dist/process/process.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7581810
+        "bytes": 7581950
       },
       "dist/process/process.js": {
         "imports": [],
@@ -27356,6 +27492,15 @@
           },
           "client/shared/blockhash.js": {
             "bytesInOutput": 5701
+          },
+          "assets/bootstrap.css": {
+            "bytesInOutput": 0
+          },
+          "assets/fontawesome.css": {
+            "bytesInOutput": 0
+          },
+          "client/pigallery.css": {
+            "bytesInOutput": 0
           },
           "client/process/process.js": {
             "bytesInOutput": 4927
@@ -31212,11 +31357,26 @@
         },
         "bytes": 6446118
       },
+      "dist/process/process.css": {
+        "imports": [],
+        "inputs": {
+          "assets/bootstrap.css": {
+            "bytesInOutput": 198360
+          },
+          "assets/fontawesome.css": {
+            "bytesInOutput": 207942
+          },
+          "client/pigallery.css": {
+            "bytesInOutput": 10281
+          }
+        },
+        "bytes": 416668
+      },
       "dist/video/video.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7695307
+        "bytes": 7695447
       },
       "dist/video/video.js": {
         "imports": [],
@@ -31273,6 +31433,15 @@
           },
           "client/shared/log.js": {
             "bytesInOutput": 1732
+          },
+          "assets/bootstrap.css": {
+            "bytesInOutput": 0
+          },
+          "assets/fontawesome.css": {
+            "bytesInOutput": 0
+          },
+          "client/pigallery.css": {
+            "bytesInOutput": 0
           },
           "client/video/video.js": {
             "bytesInOutput": 11630
@@ -35146,6 +35315,21 @@
           }
         },
         "bytes": 6514549
+      },
+      "dist/video/video.css": {
+        "imports": [],
+        "inputs": {
+          "assets/bootstrap.css": {
+            "bytesInOutput": 198360
+          },
+          "assets/fontawesome.css": {
+            "bytesInOutput": 207942
+          },
+          "client/pigallery.css": {
+            "bytesInOutput": 10281
+          }
+        },
+        "bytes": 416668
       },
       "dist/index/worker.js.map": {
         "imports": [],
