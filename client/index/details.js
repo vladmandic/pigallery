@@ -193,7 +193,7 @@ export function drawDescription(object) {
 
   let person = '';
   let nsfw = '';
-  filtered = object.person.filter((a) => a.confidence > minScore);
+  filtered = object.person && object.person.length > 0 ? object.person.filter((a) => a.confidence > minScore) : [];
   for (const i in filtered) {
     person += `Person ${1 + parseInt(i)} ${(100 * filtered[i].confidence).toFixed(0)}% | `;
     if (filtered[i].genderScore > 0 && filtered[i].gender !== '') person += `<font color="${window.theme.link}">gender: ${(100 * filtered[i].genderScore).toFixed(0)}% ${filtered[i].gender}</font> | `;

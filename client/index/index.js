@@ -372,7 +372,7 @@ async function findDuplicates() {
 }
 
 // loads images, displays gallery and enumerates sidebar
-async function loadGallery(limit, refresh = false) {
+async function loadGallery(refresh = false) {
   const chunkSize = 200;
   const cached = await indexdb.count();
   if (window.share) return;
@@ -391,7 +391,7 @@ async function loadGallery(limit, refresh = false) {
   }
   const updated = new Date().getTime();
   const since = refresh ? window.options.lastUpdated : 0;
-  const first = await fetch(`/api/record/get?limit=${limit}&time=${since}&chunks=${chunkSize}&page=0`);
+  const first = await fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=0`);
   if (!first || !first.ok) return;
   const totalSize = parseFloat(first.headers.get('content-TotalSize') || '');
   const pages = parseInt(first.headers.get('content-Pages') || '0');
@@ -403,8 +403,8 @@ async function loadGallery(limit, refresh = false) {
   let progress = Math.min(100, Math.round(100 * dlSize / totalSize));
   let perf = Math.round(dlSize / (performance.now() - t0));
   $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
-  for (let page = 1; page < pages; page++) {
-    const promise = fetch(`/api/record/get?limit=${limit}&time=${since}&chunks=${chunkSize}&page=${page}`);
+  for (let page = 1; page <= pages; page++) {
+    const promise = fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=${page}`);
     promisesReq.push(promise);
     // eslint-disable-next-line no-loop-func, promise/catch-or-return
     promise.then((result) => {
@@ -452,10 +452,13 @@ async function showContextPopup(evt) {
 
 // resize viewport
 function resizeViewport() {
+  const viewportScale = Math.min(1, Math.round(100 * window.outerWidth / 800) / 100);
+  log.debug('Viewport scale:', viewportScale);
+  document.querySelector('meta[name=viewport]').setAttribute('content', `width=device-width, shrink-to-fit=yes; initial-scale=${viewportScale}`);
   $('#main').height(window.innerHeight - ($('#log').height() || 0) - ($('#navbar').height() || 0) - 16);
   if ($('#popup').css('display') !== 'none') details.show();
-  const top = $('#optionsview').css('height');
-  const height = $('body').height() - parseInt($('#optionsview').css('height'));
+  const top = $('#optionsview').clientHeight;
+  const height = $('body').clientHeight - top;
   $('#popup').css('top', top);
   $('#popup').height(height);
   $('#docs').css('top', top);
@@ -581,7 +584,7 @@ async function initHotkeys() {
       case 191: $('#btn-search').click(); break; // key=/; open search input
       case 190: $('#btn-sort').click(); break; // key=.; open sort options
       case 188: $('#btn-desc').click(); break; // key=,; show/hide list descriptions
-      case 220: loadGallery(window.options.listLimit); break; // key=\; refresh all
+      case 220: loadGallery(); break; // key=\; refresh all
       case 222: sortResults(window.options.listSortOrder); break; // key='; remove filters
       case 27: // key=esc; close all
         $('#popup').toggle(false);

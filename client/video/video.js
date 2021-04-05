@@ -146,7 +146,7 @@ async function menuSetup() {
   objects.menus.params = new Menu(document.body, '');
   objects.menus.params.addLabel('Model parameters');
   objects.menus.params.addBool('WebGL Memory Limit', config, 'memory', (val) => {
-    log.debug('Changing WebGL: WEBGL_DELETE_TEXTURE_THRESHOLD:', val);
+    log.debug('Setting WebGL:  Memory Limit:', config.memory);
     tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', val ? 0 : -1);
   });
   objects.menus.params.addRange('Max Objects', config.default.human.face.detector, 'maxFaces', 0, 50, 1, (val) => {

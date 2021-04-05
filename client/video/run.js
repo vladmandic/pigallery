@@ -65,7 +65,7 @@ async function init(config) {
         tf.ENV.set(key, val);
       }
       if (config.memory) {
-        log.debug('Setting WebGL: WEBGL_DELETE_TEXTURE_THRESHOLD:', config.memory);
+        log.debug('Setting WebGL:  Memory Limit:', config.memory);
         tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', 0);
       }
     }
