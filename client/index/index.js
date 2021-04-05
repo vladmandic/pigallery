@@ -294,7 +294,7 @@ async function sortResults(sort) {
 
   // refresh records
   // eslint-disable-next-line no-use-before-define
-  await loadGallery(window.options.listLimit, true);
+  await loadGallery(true);
 
   const t0 = performance.now();
   log.debug(t0, `Sorting: ${sort.replace('navlinebutton fad sort fa-', '')}`);
@@ -338,7 +338,7 @@ async function sortResults(sort) {
   if (!loadTried && window.filtered.length === 0) {
     loadTried = true;
     // eslint-disable-next-line no-use-before-define
-    await loadGallery(window.options.listLimit);
+    await loadGallery(false);
   }
   busy('Enumerating images');
   // await enumerate.enumerate();
@@ -382,13 +382,14 @@ async function loadGallery(refresh = false) {
     log.div('log', true, 'Application access with share credentials and no direct share');
     return;
   }
-  busy('Loading images<br>in background');
   const t0 = performance.now();
   if (!refresh) {
+    busy('Resetting database');
     log.div('log', true, 'Downloading image cache ...');
     await indexdb.reset();
     await indexdb.open();
   }
+  busy('Loading images<br>in background');
   const updated = new Date().getTime();
   const since = refresh ? window.options.lastUpdated : 0;
   const first = await fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=0`);
@@ -397,38 +398,41 @@ async function loadGallery(refresh = false) {
   const pages = parseInt(first.headers.get('content-Pages') || '0');
   const json0 = await first.json();
   let dlSize = JSON.stringify(json0).length;
-  indexdb.store(json0);
-  const promisesReq = [];
-  const promisesData = [];
-  let progress = Math.min(100, Math.round(100 * dlSize / totalSize));
-  let perf = Math.round(dlSize / (performance.now() - t0));
-  $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
-  for (let page = 1; page <= pages; page++) {
-    const promise = fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=${page}`);
-    promisesReq.push(promise);
-    // eslint-disable-next-line no-loop-func, promise/catch-or-return
-    promise.then((result) => {
-      const req = result.json();
-      promisesData.push(req);
-      // eslint-disable-next-line promise/catch-or-return, promise/no-nesting
-      req.then(async (json) => {
-        dlSize += JSON.stringify(json).length;
-        progress = Math.min(100, Math.round(100 * dlSize / totalSize));
-        perf = Math.round(dlSize / (performance.now() - t0));
-        const t2 = performance.now();
-        await indexdb.store(json);
-        const t3 = performance.now();
-        stats.store += t3 - t2;
-        log.debug('Donwloading', `page:${page} progress:${progress}% bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
-        if (progress === 100) $('#progress').html(`Creating cache<br>${totalSize.toLocaleString()} bytes`);
-        else $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+  if (json0 && json0.length > 0) indexdb.store(json0);
+  let perf = 0;
+  if (pages > 0) {
+    const promisesReq = [];
+    const promisesData = [];
+    let progress = Math.min(100, Math.round(100 * dlSize / totalSize));
+    perf = Math.round(dlSize / (performance.now() - t0));
+    $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+    for (let page = 1; page <= pages; page++) {
+      const promise = fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=${page}`);
+      promisesReq.push(promise);
+      // eslint-disable-next-line no-loop-func, promise/catch-or-return
+      promise.then((result) => {
+        const req = result.json();
+        promisesData.push(req);
+        // eslint-disable-next-line promise/catch-or-return, promise/no-nesting
+        req.then(async (json) => {
+          dlSize += JSON.stringify(json).length;
+          progress = Math.min(100, Math.round(100 * dlSize / totalSize));
+          perf = Math.round(dlSize / (performance.now() - t0));
+          const t2 = performance.now();
+          await indexdb.store(json);
+          const t3 = performance.now();
+          stats.store += t3 - t2;
+          log.debug('Donwloading', `page:${page} progress:${progress}% bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
+          if (progress === 100) $('#progress').html(`Creating cache<br>${totalSize.toLocaleString()} bytes`);
+          else $('#progress').html(`Downloading ${progress}%:<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+          return true;
+        });
         return true;
       });
-      return true;
-    });
+    }
+    await Promise.all(promisesReq);
+    await Promise.all(promisesData);
   }
-  await Promise.all(promisesReq);
-  await Promise.all(promisesData);
   const t1 = performance.now();
 
   const dt = window.options.lastUpdated === 0 ? 'start' : new Date(window.options.lastUpdated).toLocaleDateString();
@@ -584,7 +588,7 @@ async function initHotkeys() {
       case 191: $('#btn-search').click(); break; // key=/; open search input
       case 190: $('#btn-sort').click(); break; // key=.; open sort options
       case 188: $('#btn-desc').click(); break; // key=,; show/hide list descriptions
-      case 220: loadGallery(); break; // key=\; refresh all
+      case 220: loadGallery(true); break; // key=\; refresh all
       case 222: sortResults(window.options.listSortOrder); break; // key='; remove filters
       case 27: // key=esc; close all
         $('#popup').toggle(false);
@@ -639,7 +643,7 @@ async function initMenuHandlers() {
   // navline user load
   $('#btn-load').on('click', () => {
     showNavbar();
-    loadGallery(window.options.listLimit);
+    loadGallery(false);
   });
 
   // navline process images

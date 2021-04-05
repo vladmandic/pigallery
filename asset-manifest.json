@@ -5,7 +5,7 @@
         "column": 12,
         "file": "client/index/index.js",
         "length": 9,
-        "line": 768,
+        "line": 772,
         "lineText": "    details.slideshow(true);",
         "namespace": "",
         "suggestion": ""
@@ -26458,7 +26458,7 @@
         ]
       },
       "client/index/index.js": {
-        "bytes": 35855,
+        "bytes": 35955,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27341,7 +27341,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1048472
+        "bytes": 1048623
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27400,7 +27400,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.js": {
-            "bytesInOutput": 36983
+            "bytesInOutput": 37087
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59917
@@ -27418,7 +27418,7 @@
             "bytesInOutput": 8181
           }
         },
-        "bytes": 565453
+        "bytes": 565557
       },
       "dist/index/index.css": {
         "imports": [],
