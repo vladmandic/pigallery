@@ -157,51 +157,42 @@ function api(app, inConfig, inDB) {
     }
   });
 
-  let pagedData = [];
-  let pagedSize = 0;
-  let pagedCount = 0;
-
   // record namespace
 
+  let totalSize = 0;
   app.get('/api/record/get', async (req, res) => {
-    const chunks = req.query.chunks ? parseInt(req.query.chunks) : 2000;
+    const chunkSize = req.query.chunksize ? parseInt(req.query.chunksize) : 200;
     const page = req.query.page ? parseInt(req.query.page) : 0;
-    if (page === 0) {
+    if (page === 0) totalSize = 0;
+    if (!req.session.share || req.session.share === '') {
+      const root = new RegExp(`^${req.session.root || 'media/'}`);
+      const time = req.query.time ? new Date(parseInt(req.query.time)) : new Date(0);
+      const count = await db.count({ image: root, processed: { $gte: time } });
+      const data = await db
+        .find({ image: root, processed: { $gte: time } })
+        .sort({ processed: -1 })
+        .skip(page * chunkSize)
+        .limit(chunkSize);
+      const pages = Math.trunc(count / chunkSize);
+      const json = JSON.stringify(data);
+      totalSize += json.length;
+      // eslint-disable-next-line max-len
+      log.info(`API/Record/Get ${sign(req)} root: ${req.session.root}`, 'page:', page, '/', pages, 'images:', page * chunkSize + data.length, '/', count, 'pageSize:', json.length, 'estSize:', pages * json.length, 'totalSize:', totalSize, 'chunkSize:', chunkSize, 'sinceTime:', new Date(time));
+      res.set('content-TotalSize', pages * json.length);
+      res.set('content-Pages', pages);
+      res.send(json);
+    } else {
+      const records = await db.findOne({ share: req.session.share });
       const data = [];
-      if (!req.session.share || req.session.share === '') {
-        const root = new RegExp(`^${req.session.root || 'media/'}`);
-        const limit = req.query.limit || config.server.resultsLimit;
-        const time = req.query.time ? new Date(parseInt(req.query.time)) : new Date(0);
-        const records = await db
-          .find({ image: root, processed: { $gte: time } })
-          .sort({ processed: -1 })
-          .limit(limit);
-        for (const i in records) data.push(records[i]);
-        log.info(`API/Record/Get ${sign(req)} root: ${req.session.root} images:`, data.length, 'limit:', limit, 'chunk:', chunks, 'since:', new Date(time));
-      } else {
-        const records = await db.findOne({ share: req.session.share });
-        for (const image of records.images) {
-          data.push(await db.findOne({ image }));
-        }
-        log.info(`API/Record/Get Share ${sign(req)} images:`, data.length);
+      for (const image of records.images) {
+        const record = await db.findOne({ image });
+        data.push(record);
       }
-      pagedData = data;
-      pagedSize = JSON.stringify(pagedData).length;
-      pagedCount = Math.trunc((data.length + chunks) / chunks);
-    }
-    res.set('content-TotalSize', pagedSize);
-    res.set('content-Pages', pagedCount);
-    const data = [];
-    for (let i = (page * chunks); i < (page * chunks + chunks); i++) {
-      if (pagedData[i]) data.push(pagedData[i]);
-    }
-    const json = JSON.stringify(data);
-    res.send(json);
-    log.info('API/Record/Get Chunk', 'page:', page, 'of', pagedCount, 'size:', json.length, 'total:', pagedSize);
-    if (page === pagedCount) {
-      pagedData = [];
-      pagedSize = 0;
-      pagedCount = 0;
+      const json = JSON.stringify(data);
+      log.info(`API/Record/Get Share ${sign(req)} images:`, data.length, 'size:', json.length);
+      res.set('content-TotalSize', json.length);
+      res.set('content-Pages', 0);
+      res.send(json);
     }
   });
 

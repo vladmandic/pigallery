@@ -150,10 +150,8 @@ export async function count() {
 }
 
 export async function store(objects) {
-  for (const i in objects) {
-    if (!objects[i].exif) objects[i].exif = {};
-    if (!objects[i].exif.created) objects[i].exif.created = 0;
-    put(objects[i]);
+  for (const object of objects) {
+    put(object);
   }
 }
 
