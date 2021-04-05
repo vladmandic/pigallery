@@ -1,8 +1,12 @@
 // @ts-nocheck
+
+// css-imports used by esbuild
+import '../../assets/bootstrap.css';
+import '../../assets/fontawesome.css';
+import '../pigallery.css';
+
 import $ from 'jquery';
 import { tf, wasm } from '../shared/tf';
-// import * as faceapi from '@vladmandic/face-api/dist/face-api.esm.js';
-// import Human from '@vladmandic/human';
 import * as log from '../shared/log';
 import * as modelClassify from '../process/modelClassify';
 import * as modelDetect from '../process/modelDetect';

@@ -47,7 +47,7 @@ using `./setup.js` and written to `config.json`
                              // to limit users access
       "allowedImageFileTypes": [ ".jpeg", ".jpg" ],   // list of image file exensions that application
                                                       // will enumerate for processing during search
-      "defaultLimit": 500, // number of images that server will send to browser in initial requests,
+      "defaultLimit": 100, // number of images that server will send to browser in initial requests,
                            // remaining images are loaded in the background
     },
     // how to handle sessions from authenticated users, probably no need to modify

@@ -56,7 +56,6 @@ async function main() {
   changelog.update('../CHANGELOG.md');
 
   // initialize esbuild bundler
-  await build.init();
   await build.compile();
 
   // initialize file watcher
