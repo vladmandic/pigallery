@@ -2,8 +2,6 @@
 
 // Based on iv-viewer - 2.0.1 Author : Sudhanshu Yadav git+https://github.com/s-yadav/iv-viewer.git
 
-import * as log from '../shared/log';
-
 const imageViewHtml = `
   <div class="iv-loader"></div>
   <div class="iv-snap-view">
@@ -214,23 +212,21 @@ class ImageViewer {
 
   // eslint-disable-next-line class-methods-use-this
   findContainerAndImageSrc(element) {
-    let domElement = element;
     let imageSrc;
     let hiResImageSrc;
-    if (typeof element === 'string') domElement = document.querySelector(element);
+    const domElement = (typeof element === 'string') ? document.querySelector(element) : element;
     if (domElement.imageViewer) throw new Error('An image viewer is already being initiated on the element.');
-    let container = element;
     if (domElement.tagName === 'IMG') {
       imageSrc = domElement.src;
       hiResImageSrc = domElement.getAttribute('high-res-src') || domElement.getAttribute('data-high-res-src');
-      container = wrap(domElement, { className: 'iv-container iv-image-mode', style: { display: 'inline-block', overflow: 'hidden' } });
+      element = wrap(domElement, { className: 'iv-container iv-image-mode', style: { display: 'inline-block', overflow: 'hidden' } });
       css(domElement, { opacity: 0, position: 'relative', zIndex: -1 });
     } else {
       imageSrc = domElement.getAttribute('src') || domElement.getAttribute('data-src');
       hiResImageSrc = domElement.getAttribute('high-res-src') || domElement.getAttribute('data-high-res-src');
     }
     return {
-      container,
+      container: element,
       domElement,
       imageSrc,
       hiResImageSrc,
@@ -364,7 +360,6 @@ class ImageViewer {
         this.sliders.zoomSlider.onMove(eStart);
       },
       onMove: (e) => {
-        // eslint-disable-next-line prefer-destructuring
         const pageX = e.pageX; // || e.touches && (e.touches.length > 0) ? e.touches[0]?.pageX : 0;
         const newLeft = clamp(pageX - leftOffset - handleWidth / 2, 0, this.state.zoomSliderLength);
         const zoomValue = 100 + (this.options.maxZoom - 100) * newLeft / this.state.zoomSliderLength;
@@ -376,7 +371,6 @@ class ImageViewer {
 
   initEvents() {
     this.snapViewEvents();
-    if (this.options.refreshOnResize) this.events.onWindowResize = assignEvent(window, 'resize', this.refresh);
   }
 
   snapViewEvents() {
@@ -408,7 +402,7 @@ class ImageViewer {
       };
       const moveListener = (eMove) => {
         const newDist = getTouchPointsDistance(eMove.touches);
-        const zoomValue = this.state.zoomValue + (newDist - startDist) / this.options.zoomPinchSensitivity;
+        const zoomValue = this.state.zoomValue + (newDist - startDist) / this.options.zoomSensitivity;
         if (zoomValue > this.options.minZoom && zoomValue < this.options.maxZoom) this.zoom(zoomValue, center);
       };
       const endListener = (eEnd) => {
@@ -426,16 +420,12 @@ class ImageViewer {
   }
 
   scrollZoom() {
-    let changedDelta = 0;
     const onMouseWheel = (e) => {
-      if (!this.options.zoomOnMouseWheel || !this.state.loaded) return;
+      if (!this.options.zoomWheel || !this.state.loaded) return;
+      e.preventDefault();
       this.clearFrames();
       const delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail || -e.deltaY));
       const newZoomValue = this.state.zoomValue * (100 + delta * this.options.zoomStep) / 100;
-      if (!(newZoomValue >= this.options.minZoom && newZoomValue <= this.options.maxZoom)) changedDelta += Math.abs(delta);
-      else changedDelta = 0;
-      e.preventDefault();
-      if (changedDelta > this.options.zoomWheelStep) return;
       const contOffset = this.elements.container.getBoundingClientRect();
       const x = (e.pageX || e.pageX) - (contOffset.left + document.body.scrollLeft);
       const y = (e.pageY || e.pageY) - (contOffset.top + document.body.scrollTop);
@@ -526,10 +516,10 @@ class ImageViewer {
   }
 
   calculateDimensions() {
-    const imageWidth = parseInt(css(this.elements.image, 'width'), 10);
-    const imageHeight = parseInt(css(this.elements.image, 'height'), 10);
-    const contWidth = parseInt(css(this.elements.container, 'width'), 10);
-    const contHeight = parseInt(css(this.elements.container, 'height'), 10);
+    const imageWidth = parseInt(css(this.elements.image, 'width'));
+    const imageHeight = parseInt(css(this.elements.image, 'height'));
+    const contWidth = parseInt(css(this.elements.container, 'width'));
+    const contHeight = parseInt(css(this.elements.container, 'height'));
     const snapViewWidth = this.elements.snapView.clientWidth;
     const snapViewHeight = this.elements.snapView.clientHeight;
     this.state.containerDim = { w: contWidth, h: contHeight };
@@ -650,12 +640,8 @@ class ImageViewer {
   }
 
   refresh() {
-    try {
-      this.calculateDimensions();
-      this.resetZoom();
-    } catch {
-      log.debug('Error in iv-viewer.refresh');
-    }
+    this.calculateDimensions();
+    this.resetZoom();
   }
 
   load(imageSrc, hiResImageSrc) {
@@ -679,14 +665,12 @@ class ImageViewer {
 
 ImageViewer.defaults = {
   zoomValue: 100,
-  minZoom: 40,
-  maxZoom: 400,
+  minZoom: 50,
+  maxZoom: 500,
   zoomStep: 2,
-  zoomPinchSensitivity: 50,
-  zoomWheelStep: 1,
+  zoomSensitivity: 100,
   snapView: true,
-  refreshOnResize: true,
-  zoomOnMouseWheel: true,
+  zoomWheel: true,
 };
 
 export { ImageViewer as default };

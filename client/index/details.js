@@ -92,15 +92,21 @@ export function combine(object) {
 function getPalette() {
   if (!thief) thief = new ColorThief();
   const img = document.getElementsByClassName('iv-image')[0];
-  const color = thief.getColor(img);
+  // const color = thief.getColor(img);
   const palette = thief.getPalette(img, 15);
+  let color = palette[0];
+  for (const c of palette) { // find first dark color in palette to have some contrast
+    const isDark = ((c[0] + c[1] + c[2]) / 3 / 255) < 0.5;
+    if (isDark) {
+      color = c;
+      break;
+    }
+  }
   window.dominant = [`rgb(${color})`, `rgb(${palette[0]})`];
   $('#popup').css('background', `radial-gradient(at 50% 50%, ${window.dominant[1] || window.theme.gradient} 0, ${window.dominant[0] || window.theme.background} 100%, ${window.dominant[0] || window.theme.background} 100%)`);
   $('#optionsview').css('background', window.dominant[0]);
-  let txt = '<div style="text-align: -webkit-center"><div style="width: 15rem">\n';
-  txt += `<span class="palette" style="color: rgb(${color})" title="RGB: ${color}">■</span>\n`;
+  let txt = `<span class="palette" style="color: rgb(${color})" title="RGB: ${color}">■</span>\n`;
   for (const col of palette) txt += `<span class="palette" style="color: rgb(${col})" title="RGB: ${col}">■</span>\n`;
-  txt += '</div></div>\n';
   return txt;
 }
 
@@ -114,33 +120,30 @@ export function clear() {
 // draw boxes for detected objects, faces and face elements
 let last;
 export function drawBoxes(object) {
-  if (object) last = object;
   const img = document.getElementsByClassName('iv-image')[0];
   const canvas = document.getElementById('popup-canvas');
   if (!canvas) return;
+  clear();
   canvas.style.left = `${img.offsetLeft}px`;
   canvas.style.top = `${img.offsetTop}px`;
   canvas.style.width = `${img.width}px`;
   canvas.style.height = `${img.height}px`;
   canvas.width = img.width;
   canvas.height = img.height;
+  const ctx = canvas.getContext('2d');
+
+  if (object && object.image) last = object;
+  else object = last;
+  if (!object) return;
 
   // move details panel to side or bottom depending on screen aspect ratio
   const ratioScreen = $('#popup').width() / $('#popup').height();
-  const ratioImage = last.naturalSize.width / last.naturalSize.height;
-  const vertical = ratioImage < ratioScreen;
+  const ratioImage = object.naturalSize.width / object.naturalSize.height;
+  const imageMargin = ($('#popup').width() - $('#popup-canvas').width()) / $('#popup').width();
+  let vertical = ratioImage < ratioScreen;
+  if (vertical && imageMargin < 0.2) vertical = false; // move details to bottom if margin on the right is too small
   $('#popup').css('display', vertical ? 'flex' : 'block');
-  if (vertical) $('#popup-details').height(`${document.getElementById('popup')?.clientHeight}px`);
-  else $('#popup-details').height(`${document.getElementById('popup').clientHeight - document.getElementById('popup-canvas').clientHeight}px`);
-  // canvas.style.width = `${canvas.width}px`;
-  // canvas.style.height = `${canvas.height}px`;
 
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (!object) object = last;
-  if (!object) return;
-
-  clear();
   const resizeX = img.width / object.processedSize.width;
   const resizeY = img.height / object.processedSize.height;
 
@@ -183,38 +186,40 @@ export function drawBoxes(object) {
 
 export function drawDescription(object) {
   let filtered = [];
-  let classified = 'Classified ';
+  let classified = [];
   filtered = object.classify.filter((a) => a.score > minScore);
-  for (const obj of combine(filtered)) classified += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
+  for (const obj of combine(filtered)) classified.push(`${obj.score}% <b>${obj.name}</b>`);
+  classified = classified.join(' | ');
 
-  let detected = 'Detected ';
+  let detected = [];
   filtered = object.detect.filter((a) => a.score > minScore);
-  for (const obj of combine(filtered)) detected += ` | <font color="${window.theme.link}">${obj.score}% ${obj.name}</font>`;
+  for (const obj of combine(filtered)) detected.push(`${obj.score}% <b>${obj.name}</b>`);
+  detected = detected.join(' | ');
 
   let person = '';
   let nsfw = '';
   filtered = object.person && object.person.length > 0 ? object.person.filter((a) => a.confidence > minScore) : [];
   for (const i in filtered) {
     person += `Person ${1 + parseInt(i)} ${(100 * filtered[i].confidence).toFixed(0)}% | `;
-    if (filtered[i].genderScore > 0 && filtered[i].gender !== '') person += `<font color="${window.theme.link}">gender: ${(100 * filtered[i].genderScore).toFixed(0)}% ${filtered[i].gender}</font> | `;
-    if (filtered[i].age > 0) person += `<font color="${window.theme.link}">age: ${filtered[i].age.toFixed(1)}</font> | `;
-    if (filtered[i].emotionScore > 0 && filtered[i].emotion !== '') person += `<font color="${window.theme.link}">emotion: ${(100 * filtered[i].emotionScore).toFixed(0)}% ${filtered[i].emotion}<br></font>`;
+    if (filtered[i].genderScore > 0 && filtered[i].gender !== '') person += `gender: ${(100 * filtered[i].genderScore).toFixed(0)}% ${filtered[i].gender} | `;
+    if (filtered[i].age > 0) person += `age: ${filtered[i].age.toFixed(1)} | `;
+    if (filtered[i].emotionScore > 0 && filtered[i].emotion !== '') person += `emotion: ${(100 * filtered[i].emotionScore).toFixed(0)}% ${filtered[i].emotion}<br>`;
     if (filtered[i].class) nsfw += `Class: ${(100 * filtered[i].scoreClass).toFixed(0)}% ${filtered[i].class} `;
     if (filtered.length === 1) person = person.replace('Person 1', 'Person');
   }
 
-  let desc = '<h2>Lexicon</h2><ul>';
+  let desc = '<ul>';
   if (object.descriptions) {
     for (const description of object.descriptions) {
       for (const lines of description) {
         desc += `<li><b>${lines.name}</b>: <i>${lines.desc}</i></li>`;
       }
-      desc += '<br>';
+      if (description !== object.descriptions[object.descriptions.length - 1]) desc += '<br>';
     }
   }
   desc += '</ul>';
 
-  let exif = '';
+  let exif = `<b>Resolution</b>: ${object.naturalSize.width} x ${object.naturalSize.height}<br>`;
   if (object.exif) {
     if (object.exif.make) exif += `<b>Camera:</b> ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
     if (object.exif.bytes) exif += `<b>Size:</b> ${(object.pixels / 1000 / 1000).toFixed(1)} MP in ${object.exif.bytes.toLocaleString()} bytes (compression factor ${(object.pixels / object.exif.bytes).toFixed(2)})<br>`;
@@ -224,34 +229,55 @@ export function drawDescription(object) {
     if (object.exif.software) exif += `<b>Software:</b> ${object.exif.software}<br>`;
     if (object.exif.exposure) exif += `<b>Settings:</b> ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
   }
+
   let location = '';
   if (object.location && object.location.city) {
-    location += `
-      <font color="${window.theme.link}">${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})</font><br>`;
+    location = `<b>${object.location.city}, ${object.location.state} ${object.location.country}, ${object.location.continent} (near ${object.location.near})</b><br>`;
   }
-  if (object.exif && object.exif.lat) location += `Coordinates: <a target="_blank" href="https://www.google.com/maps/@${object.exif.lat},${object.exif.lon},15z"> Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)} </a><br>`;
+  if (object.exif && object.exif.lat) {
+    location += `Coordinates: <a target="_blank" href="https://www.google.com/maps/@${object.exif.lat},${object.exif.lon},15z"> Lat ${object.exif.lat.toFixed(3)} Lon ${object.exif.lon.toFixed(3)} </a><br>`;
+  }
 
-  const conditions = object.tags.filter((a) => (a.conditions)).map((a) => a.conditions);
+  let conditions = object.tags.filter((a) => (a.conditions)).map((a) => a.conditions);
+  if (conditions && conditions.length > 0) conditions = `<b>Conditions: ${conditions.join(', ')}</b>`;
 
   $('#details-download').off();
   $('#details-download').on('click', () => window.open(object.image, '_blank'));
   const html = `
-      <h2>Image: <font color="${window.theme.link}">${object.image}</font></h2>
-      <h2>Image Data</h2>
-      <b>Resolution</b>: ${object.naturalSize.width} x ${object.naturalSize.height}<br>
-      ${exif}
-      <h2>Location</h2>
-      ${location}
-      <h2>Conditions: ${conditions?.join(', ')}</h2>
-      <h2>${classified}</h2>
-      <h2>${detected}</h2>
-      <h2>${person} ${nsfw}</h2>
-      <h2>Dominant Palette</h2>
-      ${getPalette()}
-      ${desc}
-      <h2>Tags</h2>
-        <i>${log.str(object.tags)}</i>
-      </div>
+      <table>
+        <tr>
+          <td><i class="descicon fad fa-camera"></i></td>
+          <td><b>Image: ${object.image}</b><br>${exif}</td>
+        </tr>
+        <tr>
+          <td><i class="descicon fad fa-location-circle"></i></td>
+          <td>${location} ${conditions}</td>
+        </tr>
+        <tr>
+          <td><i class="descicon fad fa-image"></i></td>
+          <td>${classified}</td>
+        </tr>
+        <tr>
+          <td><i class="descicon fad fa-images"></i></td>
+          <td>${detected}</td>
+        </tr>
+        <tr>
+          <td><i class="descicon fad fa-user-friends"></i></td>
+          <td>${person} ${nsfw}</td>
+        </tr>
+        <tr>
+          <td><i class="descicon fad fa-palette"></i></td>
+          <td>${getPalette()}</td>
+        </tr>
+        <tr>
+          <td><i class="descicon fad fa-closed-captioning"></i></td>
+          <td>${desc}</td>
+        </tr>
+        <tr>
+          <td><i class="fad fa-tags"></i></td>
+          <td><i>${log.str(object.tags)}</i></td>
+        </tr>
+      </table>
     `;
   if (window.options.viewDetails) $('#popup-details').html(html);
   document.getElementById('popup-details').scrollTop = 0;
@@ -259,22 +285,15 @@ export function drawDescription(object) {
 }
 
 async function resizeDetailsImage(object) {
-  if (object) last = object;
-  if (!last) return;
   // wait for image to be loaded silly way as on load event doesn't trigger consistently
   const img = document.getElementsByClassName('iv-image')[0];
   if (!img || !img.complete) {
     setTimeout(() => resizeDetailsImage(object), 25);
   } else {
-    // resize panels
     $('.iv-image').css('cursor', 'zoom-in');
-    // const details = window.options.viewDetails ? 100.0 - window.options.listDetailsWidth : 100;
-    // const zoomX = document.getElementById('popup').clientWidth * (vertical ? details / 100 : 1) / img.clientWidth;
-    // const zoomY = document.getElementById('popup').clientHeight * (!vertical ? details / 100 : 1) / img.clientHeight;
-    // const zoom = Math.trunc(viewer.state.zoomValue * Math.min(zoomX, zoomY));
     // draw detection boxes and faces
     await viewer.zoom(100);
-    await drawBoxes();
+    await drawBoxes(object);
   }
 }
 
@@ -318,20 +337,20 @@ export async function show(img) {
   $('#details-faces').addClass(window.options.viewFaces ? 'fa-head-side-cough' : 'fa-head-side-cough-slash');
 
   const el = document.getElementById('popup-image');
-  if (!viewer) viewer = new ImageViewer(el, { zoomValue: 100, minZoom: 10, maxZoom: 1000, snapView: true, refreshOnResize: true, zoomOnMouseWheel: true });
+  if (!viewer) viewer = new ImageViewer(el, { zoomValue: 100, minZoom: 50, maxZoom: 500, zoomStep: 3, zoomSensitivity: 100, snapView: true, zoomWheel: true });
   await viewer.load(object.thumbnail, img);
   resizeDetailsImage(object);
   drawDescription(object);
 
   // handle pan&zoom redraws
-  if (el) {
-    el.addEventListener('touchstart', () => clear(), { passive: true });
-    el.addEventListener('mousedown', () => clear(), { passive: true });
-    el.addEventListener('touchend', () => drawBoxes(object), { passive: true });
-    el.addEventListener('mouseup', () => drawBoxes(object), { passive: true });
-    el.addEventListener('dblclick', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
-    el.addEventListener('wheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
-    el.addEventListener('mousewheel', () => setTimeout(() => drawBoxes(object), 200), { passive: true });
+  if (el && !el.bound) {
+    el.addEventListener('touchstart', clear, { passive: true });
+    el.addEventListener('mousedown', clear, { passive: true });
+    el.addEventListener('touchend', drawBoxes, { passive: true });
+    el.addEventListener('mouseup', drawBoxes, { passive: true });
+    el.addEventListener('dblclick', drawBoxes, { passive: true });
+    el.addEventListener('wheel', drawBoxes, { passive: true });
+    el.bound = true;
   }
 }
 

@@ -13,10 +13,11 @@ h3 { font-size: 1.0rem; margin-top: 1.0rem; font-weight: bold; color: var(--text
 a { color: var(--text); }
 a:hover { color: var(--link); text-decoration: none; }
 p { margin: 0; }
+td { vertical-align: top; padding: 10px; }
+ul { margin: 0; padding-left: 20px; }
 .row { width: 100%; margin: 0; align-content: start; }
 .col { text-align: left; margin: 0.5rem; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
 .log { width: 100vw; height: 3.2rem; position: fixed; bottom: 0; overflow-y: scroll; overflow-x: hidden; display: block; z-index: 5; cursor: text; pointer-events: none; line-height: 1.2; white-space: nowrap; }
-.popper { padding: 8px; background: var(--text); color: var(--body); box-shadow: 2px 2px var(--background); border-radius: 4px; z-index: 50; }
 .navbar { background: var(--body); min-height: 5rem; top: 0; position: -webkit-sticky; position: sticky; }
 .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); opacity: 0.1; }
 .navbarbutton:hover { color: var(--title); text-shadow: 0; }
@@ -64,10 +65,11 @@ p { margin: 0; }
 .thumbsize { height: 1.6rem; width: 100px; outline: none; border: none; margin-top: -4px; }
 .thumbsize::-webkit-slider-runnable-track { width: 100%; height: 0.9rem; background: var(--foreground); border-radius: 1rem; }
 .thumbsize::-moz-range-track { width: 100%; height: 0.9rem; background: var(--foreground); border-radius: 1rem; }
-.popup { background: var(--body); color: var(--background); overflow: hidden; position: fixed; top: 5rem; left: 0; width: 100%; height: calc(100vh - 5rem); z-index: 10; display: none; }
+.popup { background: var(--body); color: var(--background); overflow-x: hidden; overflow-y: auto; position: fixed; top: 5rem; left: 0; width: 100%; height: calc(100vh - 5rem); z-index: 10; display: none; }
 .popup-image { width: 100%; height: 100%; }
 .popup-canvas  { pointer-events: none; z-index: 20; position: relative; }
-.popup-details { margin: 0 0 0 10px; overflow-x: hidden; overflow-y: scroll; word-break: break-word; color: var(--text); z-index: 10; position: relative; }
+.popup-details { margin: 0 0 0 10px; overflow: hidden; word-break: break-word; color: var(--text); z-index: 10; position: relative; }
+.descicon { font-size: 1.4rem; }
 .docs { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; border: none; }
 .iframe { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 0; z-index: 10; display: none; border: none; }
 .btn-close { float: right; }
@@ -80,7 +82,7 @@ p { margin: 0; }
   to { background: var(--dominant); }
 }
 .splash { width: 100%; height: 100%; z-index: 100; position: absolute; top: 0; left: 0; background: black; text-align: center; display: block; }
-.palette { font-size: 3.5rem; line-height: 2.7rem; }
+.palette { font-size: 2rem; line-height: 1.7rem; }
 .loading { color: white; position: absolute; top: 220px; left: 50%; transform: translateX(-50%); }
 .processing { position: relative; top: -78px; color: grey; font-size: 0.6rem; }
 .busy { justify-content: center; text-align: center; align-items: center; position: fixed; bottom: 80px; display: none; }
