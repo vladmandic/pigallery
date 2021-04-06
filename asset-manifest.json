@@ -38,7 +38,7 @@
         "imports": []
       },
       "client/pigallery.css": {
-        "bytes": 9483,
+        "bytes": 9450,
         "imports": []
       },
       "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
@@ -26318,16 +26318,11 @@
         "imports": []
       },
       "client/index/iv-viewer.js": {
-        "bytes": 26032,
-        "imports": [
-          {
-            "path": "client/shared/log.js",
-            "kind": "import-statement"
-          }
-        ]
+        "bytes": 25382,
+        "imports": []
       },
       "client/index/details.js": {
-        "bytes": 18695,
+        "bytes": 18557,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26458,7 +26453,7 @@
         ]
       },
       "client/index/index.js": {
-        "bytes": 36377,
+        "bytes": 36016,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27332,16 +27327,16 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 10317
+            "bytesInOutput": 10282
           }
         },
-        "bytes": 416704
+        "bytes": 416669
       },
       "dist/index/index.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1049395
+        "bytes": 1047831
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27352,7 +27347,7 @@
             "bytesInOutput": 218856
           },
           "client/shared/log.js": {
-            "bytesInOutput": 1731
+            "bytesInOutput": 1727
           },
           "client/index/indexdb.js": {
             "bytesInOutput": 5029
@@ -27364,10 +27359,10 @@
             "bytesInOutput": 11533
           },
           "client/index/iv-viewer.js": {
-            "bytesInOutput": 28357
+            "bytesInOutput": 27682
           },
           "client/index/details.js": {
-            "bytesInOutput": 18904
+            "bytesInOutput": 19099
           },
           "client/shared/blockhash.js": {
             "bytesInOutput": 5709
@@ -27379,10 +27374,10 @@
             "bytesInOutput": 3234
           },
           "client/index/map.js": {
-            "bytesInOutput": 3382
+            "bytesInOutput": 3377
           },
           "client/index/pwa-register.js": {
-            "bytesInOutput": 1545
+            "bytesInOutput": 1537
           },
           "assets/bootstrap.css": {
             "bytesInOutput": 0
@@ -27400,7 +27395,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.js": {
-            "bytesInOutput": 37509
+            "bytesInOutput": 37403
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59917
@@ -27418,7 +27413,7 @@
             "bytesInOutput": 8181
           }
         },
-        "bytes": 566132
+        "bytes": 565529
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27436,10 +27431,10 @@
             "bytesInOutput": 3150
           },
           "client/pigallery.css": {
-            "bytesInOutput": 10317
+            "bytesInOutput": 10282
           }
         },
-        "bytes": 557808
+        "bytes": 557773
       },
       "dist/process/process.js.map": {
         "imports": [],
@@ -31380,10 +31375,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 10317
+            "bytesInOutput": 10282
           }
         },
-        "bytes": 416704
+        "bytes": 416669
       },
       "dist/video/video.js.map": {
         "imports": [],
@@ -35339,10 +35334,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 10317
+            "bytesInOutput": 10282
           }
         },
-        "bytes": 416704
+        "bytes": 416669
       },
       "dist/index/worker.js.map": {
         "imports": [],

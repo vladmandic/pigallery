@@ -127,19 +127,11 @@ main();
 /*
 #!/bin/bash
 echo updating javascripts
-mv scripts backup
-mkdir scripts
-cd scripts
-curl -L https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css >bootstrap.css
-curl -L https://cdn.jsdelivr.net/npm/chart.js@latest >chart.js
-curl -L http://hammerjs.github.io/dist/hammer.min.js >hammer.js
-curl -L https://code.jquery.com/jquery-3.5.1.min.js >jquery.js
-curl -L https://moment.github.io/luxon/global/luxon.min.js >luxon.js
-curl -L https://momentjs.com/downloads/moment.min.js >moment.js
-curl -L https://unpkg.com/@popperjs/core@latest >popper.js
-curl -L https://unpkg.com/superagent@latest >superagent.js
-curl -L https://omnipotent.net/jquery.sparkline/2.1.2/jquery.sparkline.min.js >sparkline.js
+cd assets
 curl -L https://raw.githubusercontent.com/markedjs/marked/master/lib/marked.esm.js >marked.esm.js
 curl -L https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js >mapquest.js
 curl -L https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css >mapquest.css
+curl -L https://raw.githubusercontent.com/lokesh/color-thief/master/dist/color-thief.umd.js >color-thief.umd.js
+curl -L https://raw.githubusercontent.com/Leaflet/Leaflet.heat/gh-pages/dist/leaflet-heat.js >leaflet-heat.js
+curl -L https://raw.githubusercontent.com/anvaka/panzoom/master/dist/panzoom.min.js >panzoom.min.js <-- incompatible
 */

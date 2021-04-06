@@ -462,7 +462,7 @@ async function showContextPopup(evt) {
 // resize viewport
 function resizeViewport() {
   const viewportScale = Math.min(1, Math.round(100 * window.outerWidth / 800) / 100);
-  log.debug('Viewport scale:', viewportScale);
+  // log.debug('Viewport scale:', viewportScale);
   document.querySelector('meta[name=viewport]').setAttribute('content', `width=device-width, shrink-to-fit=yes; initial-scale=${viewportScale}`);
   $('#main').height(window.innerHeight - ($('#log').height() || 0) - ($('#navbar').height() || 0) - 16);
   if ($('#popup').css('display') !== 'none') details.show();
@@ -823,14 +823,6 @@ async function animate() {
   });
 }
 
-async function googleAnalytics() {
-  // eslint-disable-next-line prefer-rest-params
-  // function gtag() { window.dataLayer.push(arguments); }
-  // gtag('js', new Date());
-  // gtag('config', 'UA-155273-2', { page_path: `${location.pathname}` });
-  // gtag('set', { user_id: `${window.user}` }); // Set the user ID using signed-in user_id.
-}
-
 async function perfDetails() {
   if (window.PerformanceNavigationTiming) {
     const perf = performance.getEntriesByType('navigation')[0];
@@ -866,7 +858,6 @@ async function main() {
   await animate();
   await user.get();
   await showNavbar();
-  googleAnalytics();
   details.handlers();
   initHotkeys();
   await indexdb.open();
