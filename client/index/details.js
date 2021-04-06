@@ -316,14 +316,14 @@ export async function show(img) {
     window.open(img, '_blank');
     return;
   }
-  log.debug(t0, `Loading image: ${img}`);
+  // log.debug(t0, `Loading image: ${img}`);
   const object = window.filtered.find((a) => a.image === decodeURIComponent(img));
   if (!object) {
     log.debug(t0, `Could not find image: ${decodeURIComponent(img)}`);
     return;
   }
 
-  log.debug('Details for object:', object);
+  log.debug('Displaying:', object);
 
   // const top = $('#navbar').height() + 6;
   $('#popup').toggle(true);

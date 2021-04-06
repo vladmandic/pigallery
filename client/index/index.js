@@ -624,7 +624,7 @@ function initSidebarHandlers() {
 
 // initializes all mouse handlers for main menu in list view
 async function initMenuHandlers() {
-  log.debug('Navigation enabled');
+  // log.debug('Navigation enabled');
 
   window.passive = false;
   // navbar user
