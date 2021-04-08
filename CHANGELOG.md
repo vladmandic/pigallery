@@ -9,6 +9,9 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
+### **HEAD -> master** 2021/04/06 mandic00@live.com
+
+
 ### **3.5.2** 2021/04/06 mandic00@live.com
 
 - cleanup messages
