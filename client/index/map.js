@@ -35,7 +35,7 @@ async function find(lat, lon) {
     return false;
   });
   log.debug(t0, `Map search: ${lat} ${lon} Found: ${coord[0].lat} ${coord[0].lon} Images: ${window.filtered.length} Level: ${count}`);
-  list.redraw();
+  list.redraw(window.filtered);
 }
 
 async function load() {

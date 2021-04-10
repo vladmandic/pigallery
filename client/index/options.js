@@ -72,7 +72,7 @@ function resetOptions() {
   showOptions();
   $('#docs').hide();
   config.setTheme();
-  list.redraw();
+  list.redraw(window.filtered);
 }
 
 function saveOptions() {
@@ -103,7 +103,7 @@ function saveOptions() {
   */
   $('#docs').hide();
   config.setTheme();
-  list.redraw();
+  list.redraw(window.filtered);
 }
 
 function userOptions() {

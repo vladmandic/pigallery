@@ -107,7 +107,7 @@ function clamp(num, min, max) {
 
 function assignEvent(element, events, handler) {
   if (typeof events === 'string') events = [events];
-  events.forEach((event) => element.addEventListener(event, handler));
+  events.forEach((event) => element.addEventListener(event, handler, { passive: true }));
   return () => {
     events.forEach((event) => element.removeEventListener(event, handler));
   };
@@ -133,7 +133,7 @@ class Slider {
   initHandler(eStart) {
     if (!this.isSliderEnabled()) return;
     this.removeListeners();
-    eStart.preventDefault();
+    // eStart.preventDefault(); // not needed for passive listener
     const isTouchEvent = eStart.type === 'touchstart' || eStart.type === 'touchend';
     this.touchStartEvent = isTouchEvent ? 'touchstart' : 'mousedown';
     this.touchMoveEvent = isTouchEvent ? 'touchmove' : 'mousemove';
@@ -186,7 +186,7 @@ class Slider {
   }
 
   init() {
-    ['touchstart', 'mousedown'].forEach((evt) => this.container.addEventListener(evt, (e) => this.initHandler(e)));
+    ['touchstart', 'mousedown'].forEach((evt) => this.container.addEventListener(evt, (e) => this.initHandler(e), { passive: true }));
   }
 
   destroy() {
@@ -422,7 +422,7 @@ class ImageViewer {
   scrollZoom() {
     const onMouseWheel = (e) => {
       if (!this.options.zoomWheel || !this.state.loaded) return;
-      e.preventDefault();
+      // e.preventDefault(); // not needed for passive listeners
       this.clearFrames();
       const delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail || -e.deltaY));
       const newZoomValue = this.state.zoomValue * (100 + delta * this.options.zoomStep) / 100;
