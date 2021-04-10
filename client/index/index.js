@@ -26,12 +26,14 @@ window.filtered = [];
 const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, store: 0, size: 0, speed: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0 };
 
 async function busy(text) {
+  if (text && $('.busy').is(':visible')) return true;
   if (text) {
     $('#busy-text').html(text);
     $('.busy').show();
   } else {
     $('.busy').hide();
   }
+  return false;
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -96,7 +98,7 @@ async function folderHandlers() {
     }
     await enumerate.enumerate();
     folderHandlers();
-    await list.redraw();
+    list.redraw(window.filtered);
     busy();
   });
 }
@@ -113,14 +115,13 @@ function filterWord(word) {
     }
     return false;
   });
-  // log.debug('Debug searching for:', word, 'found:', res);
+  // log.debug('Searching for:', word, 'found:', res.length);
   return res;
 }
 
 // filters images based on search strings
 async function filterResults(input) {
   busy(`Searching for<br>${input}`);
-  list.clearPrevious();
   const t0 = performance.now();
   const words = [];
   let selective = null;
@@ -135,22 +136,40 @@ async function filterResults(input) {
     const val = parseInt(keys[1]) || keys[1].toLowerCase();
     if (key === 'limit') window.filtered = await indexdb.all('date', false, 1, parseInt(keys[1]));
     else window.filtered = await indexdb.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val });
-  } else {
+  } else if (window.filtered.length === 0) {
     window.filtered = await indexdb.refresh();
   }
+  let full = [];
+  const all = [];
+  window.options.listDivider = 'search';
+  list.redraw(full, 'search results', true);
   if (words.length > 0) {
+    // full match
+    const term = words.join(' ').toLowerCase();
+    full = filterWord(term);
+    if (full.length > 0) all.push(...full);
+    list.clearPrevious();
+    await list.redraw(full, `exact match: ${term}`, false);
+    // match for each word
     if (words.length > 1) {
-      const full = filterWord(words.join(' ').toLowerCase());
-      if (full.length > 0) window.filtered.push(...full);
-    }
-    for (const word of words) {
-      if (window.filtered.length > 0) window.filtered = filterWord(word.toLowerCase());
+      for (const word of words) {
+        const partials = filterWord(word.toLowerCase());
+        const res = [];
+        for (const partial of partials) {
+          const found = all.filter((a) => a.image === partial.image);
+          if (!found || found.length === 0) res.push(partial);
+        }
+        all.push(...res);
+        list.clearPrevious();
+        await list.redraw(res, `partial match: ${word}`, false);
+      }
     }
   }
-  $('#search-result').html(`"${input}"<br>found ${window.filtered.length || 0} images`);
-  log.debug(t0, `Searching for "${input}" found ${window.filtered.length || 0} images`);
+  window.filtered = all;
+  $('#search-result').html(`"${input}"<br>exact:${full.length} total:${all.length}`);
+  log.debug(t0, `Searching for "${input}" exact:${full.length} partial:${all.length - full.length} total:${all.length} images`);
   enumerate.enumerate().then(folderHandlers).catch(false);
-  list.redraw();
+  // list.redraw(window.filtered);
   busy();
 }
 
@@ -190,9 +209,9 @@ async function similarImage(image) {
     .filter((a) => a.similarity > 30)
     .sort((a, b) => b.similarity - a.similarity);
   log.debug(t0, `Similar: ${window.filtered.length} images`);
-  list.redraw();
+  list.redraw(window.filtered);
   enumerate.enumerate().then(folderHandlers).catch(false);
-  list.scroll();
+  list.scroll(window.filtered);
   busy();
 }
 
@@ -256,9 +275,9 @@ async function similarPerson(image) {
     .sort((a, b) => b.similarity - a.similarity);
   log.debug(t0, `Source: ${descriptor.length} Target: ${targets} Compares:${count}`);
   log.debug(t0, `Similar: ${window.filtered.length} persons`);
-  list.redraw();
+  list.redraw(window.filtered);
   enumerate.enumerate().then(folderHandlers).catch(false);
-  list.scroll();
+  list.scroll(window.filtered);
   busy();
 }
 
@@ -280,9 +299,9 @@ async function similarClasses(image) {
     .filter((a) => a.similarity > 55)
     .sort((a, b) => b.similarity - a.similarity);
   log.debug(t0, `Similar: ${window.filtered.length} classes`);
-  list.redraw();
+  list.redraw(window.filtered);
   enumerate.enumerate().then(folderHandlers).catch(false);
-  list.scroll();
+  list.scroll(window.filtered);
   busy();
 }
 
@@ -318,7 +337,7 @@ async function sortResults(sort) {
   else if (sort.includes('alpha-down') || sort.includes('alpha-up')) window.options.listDivider = 'folder';
   else if (sort.includes('similarity')) window.options.listDivider = 'similarity';
   else window.options.listDivider = '';
-  list.redraw();
+  list.redraw(window.filtered);
   $('#splash').toggle(false);
   log.debug(t0, `Cached images: ${window.filtered.length} fetched initial`);
   const t1 = performance.now();
@@ -345,7 +364,7 @@ async function sortResults(sort) {
   // folderHandlers();
   enumerate.enumerate().then(folderHandlers).catch(false);
   stats.enumerate = Math.floor(window.performance.now() - t1);
-  list.scroll();
+  list.scroll(window.filtered);
   // log.div('log', true, 'Displaying: ', window.filtered.length, ' images');
   busy();
 }
@@ -720,14 +739,21 @@ async function initMenuHandlers() {
   $('#search-input').on('keyup', () => {
     event.preventDefault();
     if (event.keyCode === 191) $('#search-input')[0].value = ''; // reset on key=/
-    if (event.keyCode === 13) filterResults($('#search-input')[0].value);
+    if (event.keyCode === 13) {
+      $('#searchbar').hide();
+      filterResults($('#search-input')[0].value);
+    }
   });
 
   // navline search ok
-  $('#btn-searchnow').on('click', () => filterResults($('#search-input')[0].value));
+  $('#btn-searchnow').on('click', () => {
+    $('#searchbar').hide();
+    filterResults($('#search-input')[0].value);
+  });
 
   // navline search cancel
   $('#btn-resetsearch').on('click', () => {
+    $('#searchbar').hide();
     $('#search-input')[0].value = '';
     sortResults(window.options.listSortOrder);
   });

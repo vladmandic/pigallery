@@ -7,7 +7,7 @@ import * as details from './details';
 
 // adds dividiers to list view based on sort order
 let previous;
-function addDividers(object) {
+function addDividers(object, title) {
   if (!window.options.listTitle) return '';
   let divider;
   if (window.options.listDivider === 'similarity' && object.similarity) {
@@ -29,6 +29,12 @@ function addDividers(object) {
     const curr = object.image.substr(0, object.image.lastIndexOf('/'));
     const prev = previous ? previous.image.substr(0, previous.image.lastIndexOf('/')) : 'none';
     if (curr !== prev) divider = curr;
+  }
+  if (window.options.listDivider === 'search') {
+    if (!previous) {
+      if (title) divider = title;
+      else divider = 'search';
+    }
   }
   let div;
   if (divider) {
@@ -133,47 +139,49 @@ async function thumbButtons(evt, show) {
 
 // adds items to gallery view on scroll event - infinite scroll
 let current;
-export async function scroll() {
+export async function scroll(images, title) {
   const scrollHeight = $('#results').prop('scrollHeight');
   const bottom = $('#results').scrollTop() + $('#all').height();
-  if (((bottom + 16) >= scrollHeight) && (current < window.filtered.length)) {
+  if (((bottom + 16) >= scrollHeight) && (current < images.length)) {
     const t0 = performance.now();
     const res = document.getElementById('results');
-    const count = Math.min(window.options.listItemCount, window.filtered.length - current);
+    const count = Math.min(window.options.listItemCount, images.length - current);
     let i = current;
     while (i < (current + count)) {
-      const divider = addDividers(window.filtered[i]);
-      const item = printResult(window.filtered[i]);
+      const divider = addDividers(images[i], title);
+      const item = printResult(images[i]);
       if (divider) res.appendChild(divider);
       res.appendChild(item);
       i++;
     }
     current = i;
-    log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${window.filtered.length}`);
+    log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${images.length}`);
   }
-  $('.listitem').mouseover((evt) => thumbButtons(evt, true));
-  $('.listitem').mouseout((evt) => thumbButtons(evt, false));
+  $('.listitem').on('mouseover', (evt) => thumbButtons(evt, true));
+  $('.listitem').on('mouseout', (evt) => thumbButtons(evt, false));
   // $('.listitem').mouseenter((evt) => thumbButtons(evt, true));
   // $('.listitem').mouseleave((evt) => thumbButtons(evt, false));
-  $('.listitem').contextmenu((evt) => $(evt.target).parent().find('.btn-tiny').show());
+  $('.listitem').on('contextmenu', (evt) => $(evt.target).parent().find('.btn-tiny').show());
   $('.description').on('click', (evt) => $(evt.target).parent().find('.btn-tiny').show());
   $('.description').toggle(window.options.listDetails);
 }
 
 // redraws gallery view and rebuilds sidebar menu
-export async function redraw() {
+export async function redraw(images, divider, clear = true) {
   const dt = new Date();
   const base = new Date(dt.getFullYear(), dt.getMonth(), 0).getTime();
   const hash = Math.trunc((dt.getTime() - base) / 1000);
   location.href = `#${hash}`;
   const t0 = performance.now();
-  document.getElementById('results').innerHTML = '';
-  current = 0;
+  if (clear) {
+    document.getElementById('results').innerHTML = '';
+    current = 0;
+  }
 
   $('#results').off('scroll');
-  $('#results').scroll(() => scroll());
-  scroll();
-  log.debug(t0, 'Redraw results complete');
+  $('#results').on('scroll', () => scroll(images, divider));
+  await scroll(images, divider);
+  log.debug(t0, 'Redraw results complete:', images.length, clear);
 }
 
 // resize gallery view depending on user configuration

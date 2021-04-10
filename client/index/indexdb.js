@@ -105,29 +105,37 @@ export async function all(index = 'date', direction = true, start = 1, end = Num
         .objectStore(table)
         .index(index)
         .openCursor(null, direction ? 'next' : 'prev');
+        // .getAll();
       transaction.onerror = (evt) => log.debug('IndexDB All error:', evt);
       transaction.onabort = (evt) => log.debug('IndexDB All abort:', evt);
       transaction.oncomplete = (evt) => log.debug('IndexDB All complete:', evt);
       transaction.onsuccess = (evt) => {
         const e = evt.target.result;
         if (e) {
-          idx++;
-          if ((idx >= start) && (e.value.image.startsWith(window.user.root))) {
-            if (!tag) {
-              res.push(e.value);
-            } else {
-              for (const val of e.value.tags) {
-                if (val[tag.tag] === tag.value) res.push(e.value);
+          if (Array.isArray(e)) {
+            idx = e.length;
+            log.debug(t0, `IndexDB All Get: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} start:${start} end:${end}`);
+            resolve(e);
+          } else {
+            idx++;
+            if ((idx >= start) && (e.value.image.startsWith(window.user.root))) {
+              if (!tag) {
+                res.push(e.value);
+              } else {
+                for (const val of e.value.tags) {
+                  if (val[tag.tag] === tag.value) res.push(e.value);
+                }
               }
             }
-          }
-          if (idx < end) e.continue();
-          else {
-            log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images ${start}-${end}`);
-            resolve(res);
+            if (idx < end) {
+              e.continue();
+            } else {
+              log.debug(t0, `IndexDB Cursor: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} start:${start} end:${end}`);
+              resolve(res);
+            }
           }
         } else {
-          log.debug(t0, `IndexDB All: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} images ${idx}`);
+          log.debug(t0, `IndexDB Cursor: sort by ${index} ${direction ? 'ascending' : 'descending'} ${res.length} completed:${idx}`);
           resolve(res);
         }
       };

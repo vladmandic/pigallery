@@ -173,7 +173,7 @@ export function drawBoxes(object) {
         let height = person.boxRaw[3] * resizeY * object.processedSize.height;
         if (x + width > canvas.width) width = canvas.width - x;
         if (y + height > canvas.height) height = canvas.height - y;
-        rect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${person.gender} ${person.age.toFixed(1)}y`);
+        rect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${person.gender} ${(person.age || 0).toFixed(1)}y`);
       }
       if (person.meshRaw && person.confidence > minScore) {
         for (const pt of person.meshRaw) {

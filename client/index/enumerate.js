@@ -14,10 +14,12 @@ async function enumerateClasses() {
       if (Object.keys(tag).length === 0) continue;
       const key = Object.keys(tag)[0];
       if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
-      const val = Object.values(tag)[0].toString().split(',')[0];
-      const found = classesList.find((a) => a.tag === val);
-      if (found) found.count += 1;
-      else classesList.push({ tag: val, count: 1 });
+      const vals = Object.values(tag)[0].toString().split(',');
+      for (const val of vals) {
+        const found = classesList.find((a) => a.tag === val);
+        if (found) found.count += 1;
+        else classesList.push({ tag: val, count: 1 });
+      }
     }
   }
   classesList.sort((a, b) => b.count - a.count);
@@ -111,6 +113,24 @@ async function enumerateFolders() {
   log.debug(t0, 'Enumerated folders:', folderCount);
 }
 
+async function enumerateNSFW() {
+  const t0 = performance.now();
+  let i = 0;
+  for (const item of window.filtered) {
+    let person = false;
+    let nsfw = false;
+    for (const detect of item.detect) {
+      person = person || (detect.class === 'person');
+      nsfw = nsfw || (detect.class === 'exposed breast' && detect.score > 0.52);
+      if (person && nsfw) {
+        i++;
+        item.tags.push({ nsfw: 'nsfw' });
+      }
+    }
+  }
+  log.debug(t0, 'Enumerated NSFW:', i);
+}
+
 async function enumerateShares() {
   if (!window.user.admin) return;
   const t0 = performance.now();
@@ -132,8 +152,9 @@ async function enumerateResults() {
   const a1 = enumerateFolders();
   const a2 = enumerateLocations();
   const a3 = enumerateClasses();
+  const a4 = enumerateNSFW();
   // const a4 = enumerateShares();
-  await Promise.all([a1, a2, a3]);
+  await Promise.all([a1, a2, a3, a4]);
 }
 
 export {
@@ -141,5 +162,6 @@ export {
   enumerateFolders as folders,
   enumerateLocations as locations,
   enumerateShares as shares,
+  enumerateNSFW as nsfw,
   enumerateResults as enumerate,
 };
