@@ -6,7 +6,7 @@
 
 # PiGallery
 
-## Secure & fast multi-user image gallery with machine learning image processing and analysis
+## PiGallery: AI-powered Self-hosted Secure Multi-user Image Gallery and Detailed Image analysis using Machine Learning, EXIF Parsing and Geo Tagging
 
 <br>
 
