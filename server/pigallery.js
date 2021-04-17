@@ -82,7 +82,7 @@ async function main() {
         const forwarded = (req.headers.forwarded || '').match(/for="\[(.*)\]:/);
         const ip = (Array.isArray(forwarded) ? forwarded[1] : null) || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
         // @ts-ignore
-        log.data(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);
+        log.warn(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);
       }
     });
     if (req.url.startsWith('/api/user/auth')) next();
@@ -90,6 +90,15 @@ async function main() {
     // @ts-ignore
     else if (req.session.user || !config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
+  });
+
+  // expressjs generic request error handler
+  app.use(async (err, req, res, next) => { // callback with error signature for middleware
+    const forwarded = (req.headers.forwarded || '').match(/for="\[(.*)\]:/);
+    const ip = (Array.isArray(forwarded) ? forwarded[1] : null) || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
+    // @ts-ignore
+    log.warn(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);
+    next();
   });
 
   // define routes for static html files
@@ -104,7 +113,7 @@ async function main() {
     }
   }
   // define routes for static files
-  for (const f of ['/favicon.ico', '/pigallery.webmanifest', '/asset-manifest.json', '/README.md', '/LICENSE']) {
+  for (const f of ['/favicon.ico', '/pigallery.webmanifest', '/asset-manifest.json', '/README.md', '/CHANGELOG.md', '/LICENSE']) {
     // @ts-ignore
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }

@@ -99,7 +99,7 @@ window.themes = [
     name: 'Dark',
     map: 'dark',
     // body: colorHex('#555555'),
-    body: 'rgba(100, 100, 100, 1.0)',
+    body: 'rgba(60, 60, 60, 1.0)',
     background: colorHex('black'),
     foreground: colorHex('ivory'),
     text: colorHex('#ebebeb'),
@@ -224,6 +224,7 @@ async function setTheme(theme) {
   document.documentElement.style.setProperty('--shadow', window.theme.shadow);
   document.documentElement.style.setProperty('--link', window.theme.link);
   document.documentElement.style.setProperty('--inactive', window.theme.inactive);
+  document.documentElement.style.setProperty('--thumbSize', window.options.listThumbSize);
 }
 
 async function done() {

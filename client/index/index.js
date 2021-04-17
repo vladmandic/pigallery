@@ -504,11 +504,10 @@ function showNavbar(elem) {
   $('.description').toggle(window.options.listDetails);
   $('#thumbsize')[0].value = window.options.listThumbSize;
 
+  $('#btn-close').hide();
   if (elem) {
     elem.toggle('slow');
-    $('#btn-close').show();
-  } else {
-    $('#btn-close').hide();
+    if ($('#iframe').is(':visible') || $('#docs').is(':visible')) $('#btn-close').show();
   }
   // hide the rest
   elem = elem || $('#main');
@@ -531,10 +530,6 @@ function showNavbar(elem) {
       data.options.transition = 'flip';
     }
   });
-  $('#btn-desc').removeClass('fa-comment fa-comment-slash');
-  $('#btn-desc').addClass(window.options.listDetails ? 'fa-comment' : 'fa-comment-slash');
-  $('#btn-title').removeClass('fa-comment-dots fa-comment-slash');
-  $('#btn-title').addClass(window.options.listTitle ? 'fa-comment-dots' : 'fa-comment-slash');
 }
 
 async function initSharesHandler() {
@@ -714,10 +709,7 @@ async function initMenuHandlers() {
     log.debug('Logout');
     await showNavbar();
     $.post('/api/user/auth');
-    let loc = location.href;
-    if (loc.includes('share=')) loc = '/auth';
-    if ($('#btn-user').hasClass('fa-user-slash')) loc = '/auth';
-    $('#btn-user').toggleClass('fa-user-slash fa-user');
+    const loc = '/auth';
     document.cookie = 'connect.sid=null; expires=Thu, 1 Jan 2000 12:00:00 UTC; path=/';
     location.replace(loc);
   });
@@ -725,13 +717,11 @@ async function initMenuHandlers() {
   // navbar search
   $('#btn-search').on('click', async () => {
     await showNavbar($('#searchbar'));
-    $('#btn-search').toggleClass('fa-search fa-search-location');
     $('#search-input').focus();
   });
 
   // navbar map
   $('#btn-map').on('click', () => {
-    $('#btn-map').toggleClass('fa-map fa-map-marked');
     map.show($('btn-map').hasClass('fa-map-marked'));
   });
 
@@ -766,7 +756,6 @@ async function initMenuHandlers() {
   // navline list sidebar
   $('#btn-folder').on('click', () => {
     $('#folderbar').toggle('slow');
-    $('#btn-folder').toggleClass('fa-folder fa-folder-open');
     window.options.listFolders = !window.options.listFolders;
   });
 
@@ -774,13 +763,11 @@ async function initMenuHandlers() {
   $('#btn-desc').on('click', () => {
     window.options.listDetails = !window.options.listDetails;
     $('.description').toggle('slow');
-    $('#btn-desc').toggleClass('fa-comment fa-comment-slash');
   });
 
   $('#btn-title').on('click', () => {
     window.options.listTitle = !window.options.listTitle;
     $('.divider').toggle('slow');
-    $('#btn-title').toggleClass('fa-comment-dots fa-comment-slash');
   });
 
   // navline list duplicates

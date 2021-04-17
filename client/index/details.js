@@ -329,13 +329,6 @@ export async function show(img) {
   $('#popup').toggle(true);
   $('#optionsview').toggle(true);
 
-  $('#details-desc').removeClass('fa-comment fa-comment-slash');
-  $('#details-desc').addClass(window.options.viewDetails ? 'fa-comment' : 'fa-comment-slash');
-  $('#details-boxes').removeClass('fa-store fa-store-slash');
-  $('#details-boxes').addClass(window.options.viewBoxes ? 'fa-store' : 'fa-store-slash');
-  $('#details-faces').removeClass('fa-head-side-cough fa-head-side-cough-slash');
-  $('#details-faces').addClass(window.options.viewFaces ? 'fa-head-side-cough' : 'fa-head-side-cough-slash');
-
   const el = document.getElementById('popup-image');
   if (!viewer) viewer = new ImageViewer(el, { zoomValue: 100, minZoom: 50, maxZoom: 500, zoomStep: 3, zoomSensitivity: 100, snapView: true, zoomWheel: true });
   await viewer.load(object.thumbnail, img);
@@ -444,7 +437,6 @@ export function handlers() {
 
   // navbar details show/hide details
   $('#details-desc').on('click', () => {
-    $('#details-desc').toggleClass('fa-comment fa-comment-slash');
     window.options.viewDetails = !window.options.viewDetails;
     $('#popup-details').toggle(window.options.viewDetails);
     resizeDetailsImage();
@@ -452,21 +444,18 @@ export function handlers() {
 
   // navbar details show/hide detection boxes
   $('#details-boxes').on('click', () => {
-    $('#details-boxes').toggleClass('fa-store fa-store-slash');
     window.options.viewBoxes = !window.options.viewBoxes;
     drawBoxes();
   });
 
   // navbar details show/hide faces
   $('#details-faces').on('click', () => {
-    $('#details-faces').toggleClass('fa-head-side-cough fa-head-side-cough-slash');
     window.options.viewFaces = !window.options.viewFaces;
     drawBoxes();
   });
 
   // navbar details download image
   $('#details-raw').on('click', () => {
-    $('#details-raw').toggleClass('fa-video fa-video-slash');
     window.options.viewRaw = !window.options.viewRaw;
   });
 

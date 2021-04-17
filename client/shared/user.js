@@ -17,7 +17,6 @@ export async function get() {
     window.user = {};
   }
   if (window.user && window.user.user) {
-    $('#btn-user').toggleClass('fa-user-slash fa-user');
     $('#user').text(window.user.user.split('@')[0]);
     log.div('log', true, `User: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
   } else {
