@@ -3,8 +3,6 @@
 // Perceptual image hash based on https://github.com/commonsmachinery/blockhash-js
 // Which is an implementation of 'Block Mean Value Based Image Perceptual Hashing' by Bian Yang, Fan Gu and Xiamu Niu
 
-const one_bits = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
-
 const median = function (data) {
   const mdarr = data.slice(0);
   mdarr.sort((a, b) => a - b);
@@ -161,6 +159,8 @@ async function calculateHashData(data, bits = 16) {
   });
 }
 
+const one_bits = [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4];
+
 /* Calculate the hamming distance for two hashes in hex format */
 function distance(hash1, hash2) {
   if (!hash1 || !hash2) return 100;
@@ -172,6 +172,8 @@ function distance(hash1, hash2) {
     // eslint-disable-next-line no-bitwise
     diff += one_bits[n1 ^ n2];
   }
+  // diff ends up as number of different bits between two hex strings
+  // since phash is 64 hex chars, max value for diff is 256 different bits
   return Math.trunc(100 * diff / 256);
 }
 

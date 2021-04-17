@@ -3,23 +3,37 @@ import * as hash from '../shared/blockhash';
 onmessage = async (msg) => {
   // console.log('Worker received message', msg.data);
   const all = msg.data;
-  let duplicates = [];
-  let duplicate;
+  const duplicatePairs = [];
+  // generate possible duplicate pairs of images
   for (let i = 0; i < all.length; i++) {
-    duplicate = false;
     for (let j = i + 1; j < all.length; j++) {
       const distance = all[i].hash === all[j].hash ? 0 : hash.distance(all[i].phash, all[j].phash);
-      if (distance < 100) {
-        all[i].similarity = distance;
-        all[j].similarity = distance;
-        duplicate = true;
-        duplicates.push(all[j]);
-      }
+      if (distance < 15) duplicatePairs.push({ source: all[i], target: all[j], distance });
     }
-    if (duplicate) duplicates.push(all[i]);
   }
-  duplicates = [...new Set(duplicates)];
-  duplicates = duplicates.sort((a, b) => (b.similarity - a.similarity));
+  // now place them in a flat array
+  const duplicateItems = [];
+  for (const pair of duplicatePairs) {
+    if (pair.source.image !== pair.target.image) {
+      pair.source.similarity = 100 - pair.distance;
+      pair.target.similarity = 100 - pair.distance;
+      // need a deep copy since similarty gets overwritten
+      duplicateItems.push({ ...pair.source });
+      duplicateItems.push({ ...pair.target });
+    }
+  }
+  const foundItems = [];
+  const deduplicate = (item) => {
+    if (foundItems.includes(`${item.image}:${item.similarity}`)) return false;
+    foundItems.push(`${item.image}:${item.similarity}`);
+    return true;
+  };
+  // deduplicate images flat array and sort by similarity
+  const sorted = duplicateItems
+    .filter((a) => deduplicate(a))
+    .sort((a, b) => (b.similarity - a.similarity));
+
+  // return results to parent process
   // @ts-ignore
-  postMessage(duplicates);
+  postMessage(sorted);
 };

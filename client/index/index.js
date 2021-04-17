@@ -204,9 +204,9 @@ async function similarImage(image) {
   const t0 = performance.now();
   window.options.listDivider = 'similarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
-  for (const img of window.filtered) img.similarity = 100 - Math.trunc(100 * hash.distance(img.phash, object.phash));
+  for (const img of window.filtered) img.similarity = 100 - hash.distance(img.phash, object.phash);
   window.filtered = window.filtered
-    .filter((a) => a.similarity > 30)
+    .filter((a) => a.similarity > 70)
     .sort((a, b) => b.similarity - a.similarity);
   log.debug(t0, `Similar: ${window.filtered.length} images`);
   list.redraw(window.filtered);
@@ -317,10 +317,7 @@ async function sortResults(sort) {
 
   const t0 = performance.now();
   log.debug(t0, `Sorting: ${sort.replace('navlinebutton fad sort fa-', '')}`);
-  if (sort.includes('random')) {
-    window.filtered = await indexdb.all();
-    shuffle(window.filtered);
-  }
+  if (sort.includes('random')) shuffle(window.filtered);
   list.clearPrevious();
   // sort by
   busy('Sorting images');
