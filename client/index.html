@@ -31,47 +31,45 @@
   </div>
 
   <div id="navbar" class="row navbar text-center">
-    <div><i id="btn-user" class="navbarbutton fad fa-user-slash" title="Open application settings"></i><p id="user">User</p></div>
-    <div><i id="btn-search" class="navbarbutton fad fa-search" title="Search images for any classified term"></i><p>Search</p></div>
-    <div><i id="btn-map" class="navbarbutton fad fa-map" title="View images placed on a world map"></i><p>Map</p></div>
-    <div><i id="btn-list" class="navbarbutton fad fa-images" title="Options for gallery list view"></i><p>List Options</p></div>
-    <div><i id="btn-slide" class="navbarbutton fad fa-film" title="Start slideshow of selected images"></i><p>Slideshow</p></div>
-    <div><i id="btn-video" class="navbarbutton fad fa-video" title="Live video classification and object detection"></i><p>Live Video</p></div>
-    <div id="btn-close" style="display: none"><i class="navbarbutton fad fa-window-close" title="Close Document"></i><p>Close</p></div>
-  </div>
-
-  <div id="searchbar" class="row navline text-center">
-    <label for="search-input">Search</label><input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
-    <i class="navlinebutton fad fa-check-circle" style="font-size: 2.3rem; padding: 4px;" id="btn-searchnow"></i>
-    <i class="navlinebutton fad fa-times-circle" style="font-size: 2.3rem; padding: 4px;" id="btn-resetsearch"></i>
-    <span id="search-result" style="align-self: center; padding-left: 16px;"></span>
+    <div class="icon" id="btn-user"><img src="/assets/icons/48/user.png"/><p id="user">user</p></div>
+    <div class="icon" id="btn-search" title="Search images for any classified term"><img src="/assets/icons/48/zoom.png"/><p>search</p></div>
+    <div class="icon" id="btn-map" title="View images placed on a world map"><img src="/assets/icons/48/world.png"/><p>map</p></div>
+    <div class="icon" id="btn-list" title="Options for gallery list view"><img src="/assets/icons/48/gear.png"/><p>list options</p></div>
+    <div class="icon" id="btn-slide" title="Start slideshow of selected images"><img src="/assets/icons/48/video_mark.png"/><p>slideshow</p></div>
+    <div class="icon" id="btn-video" title="Live video classification and object detection"><img src="/assets/icons/48/webcam.png"/><p>live video</p></div>
+    <div class="icon" id="btn-close" style="display: none" title="Close document"><img src="/assets/icons/48/close.png"/><p>close</p></div>
   </div>
 
   <div id="userbar" class="row navline text-center">
-    <div><i id="btn-load" class="navlinebutton fad fa-cloud-download-alt"></i><p class="btntext">Reload Images</p></div>
-    <div><i id="btn-update" class="navlinebutton fad fa-sync"></i><p>Process Images</p></div>
-    <div><i id="btn-changelog" class="navlinebutton fad fa-clipboard-list"></i><p>Change Log</p></div>
-    <div><i id="btn-doc" class="navlinebutton fad fa-book"></i><p>Docs</p></div>
-    <div><i id="btn-options" class="navlinebutton fad fa-cog"></i><p>Settings</p></div>
-    <div><i id="btn-params" class="navlinebutton fad fa-head-side-brain"></i><p>Params</p></div>
-    <div><i id="btn-logout" class="navlinebutton fad fa-sign-out-alt"></i><p class="btntext">Logout</p></div>
+    <div class="icon" id="btn-load"><img src="/assets/icons/48/refresh.png"/><p>reload image db</p></div>
+    <div class="icon" id="btn-update"><img src="/assets/icons/48/database_development.png"/><p>process images</p></div>
+    <div class="icon" id="btn-changelog"><img src="/assets/icons/48/blacklist.png"/><p>change log</p></div>
+    <div class="icon" id="btn-doc"><img src="/assets/icons/48/contract.png"/><p>documentation</p></div>
+    <div class="icon" id="btn-options"><img src="/assets/icons/48/tool.png"/><p>application settings</p></div>
+    <div class="icon" id="btn-params"><img src="/assets/icons/48/games.png"/><p>model parameters</p></div>
+    <div class="icon" id="btn-logout"><img src="/assets/icons/48/flip_horizontal.png"/><p>logout</p></div>
+  </div>
+
+  <div id="searchbar" class="row navline text-center">
+    <label for="search-input">search</label><input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
+    <div class="icon" id="btn-searchnow"><img src="/assets/icons/48/zoom.png"/></div>
+    <div class="icon" id="btn-resetsearch"><img src="/assets/icons/48/close.png"/></div>
+    <span id="search-result" style="align-self: center; padding-left: 16px;"></span>
   </div>
 
   <div id="optionslist" class="row navline text-center">
-    <div><i class="navlinebutton fad fa-folder-open" id="btn-folder"></i><p class="btntext">Sidebar</p></div>
-    <div><i class="navlinebutton fad fa-comment" id="btn-desc"></i><p class="btntext">Descriptions</p></div>
-    <div><i class="navlinebutton fad fa-comment-dots" id="btn-title"></i><p class="btntext">Titles</p></div>
-    <div><i class="navlinebutton fad sort fa-random"></i><p class="btntext">Randomize</p></div>
-    <div><i class="navlinebutton fad fa-eye" id="btn-duplicates"></i><p class="btntext">Sort by Similarity</p></div>
+    <div class="icon" id="btn-desc"><img src="/assets/icons/48/jpg.png"/><p>show description</p></div>
+    <div class="icon" id="btn-duplicates"><img src="/assets/icons/48/storage_3.png"/><p>find duplicates</p></div>
+
     <div><i class="navlinebutton fad sort fa-sort-alpha-down"></i><i class="navlinebutton fad sort fa-sort-alpha-up" style="padding-left: 0;"></i>
-      <p class="btntext">Sort by Name</p></div>
+      <p class="btntext">sort by name</p></div>
     <div><i class="navlinebutton fad sort fa-sort-numeric-down"></i><i class="navlinebutton fad sort fa-sort-numeric-up" style="padding-left: 0;"></i>
-      <p class="btntext">Sort by Date</p></div>
+      <p class="btntext">sort by date</p></div>
     <div><i class="navlinebutton fad sort fa-sort-amount-down"></i><i class="navlinebutton fad sort fa-sort-amount-up" style="padding-left: 0;"></i>
-      <p class="btntext">Sort by Size</p></div>
+      <p class="btntext">sort by zize</p></div>
     <div style="width: 100px; margin-left: 50px;">
       <input type="range" class="thumbsize" name="thumbsize" id="thumbsize" min="50" max="500" step="1" value="130">
-      <label id="thumblabel" class="btntext" for="thumbsize">Thumbnail Size</label>
+      <label id="thumblabel" class="btntext" for="thumbsize">thumbnail size</label>
     </div>
   </div>
 
@@ -91,14 +89,14 @@
 
   <div id="main" class="main">
     <div id="folderbar" class="folderbar">
-      <div id="resettitle" class="folderstitle"><i class="folderbutton fad fa-images"></i>Reset View</div>
-      <div id="folderstitle" class="folderstitle"><i class="folderbutton fad fa-clone"></i>Folders</div>
+      <div id="resettitle" class="folderstitle"><img class="iconsmall" src="/assets/icons/32/refresh.png"/>Reset View</div>
+      <div id="folderstitle" class="folderstitle"><img class="iconsmall" src="/assets/icons/32/folder.png"/>Folders</div>
         <ul id="folders" class="folderlist collapsibleList"></ul>
-      <div id="locationstitle" class="folderstitle"><i class="folderbutton fad fa-globe-americas"></i>Locations</div>
+      <div id="locationstitle" class="folderstitle"><img class="iconsmall" src="/assets/icons/32/world.png"/>Locations</div>
         <ul id="locations" class="folderlist"></ul>
-      <div id="classestitle" class="folderstitle"><i class="folderbutton fad fa-comment-alt"></i>Top Classes</div>
+      <div id="classestitle" class="folderstitle"><img class="iconsmall" src="/assets/icons/32/book.png"/>Top Classes</div>
         <ul id="classes" class="folderlist"></ul>
-      <div id="sharestitle" class="folderstitle"><i class="folderbutton fad fa-share-square"></i>Shares</div>
+      <div id="sharestitle" class="folderstitle"><img class="iconsmall" src="/assets/icons/32/share_video.png"/></i>Shares</div>
         <ul id="shares" class="folderlist"></ul>
       <div class="busy">
         <div id="busy-text">Background Processing</div>

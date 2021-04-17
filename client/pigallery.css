@@ -18,20 +18,20 @@ ul { margin: 0; padding-left: 20px; }
 .row { width: 100%; margin: 0; align-content: start; }
 .col { text-align: left; margin: 0.5rem; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
 .log { width: 100vw; height: 3.2rem; position: fixed; bottom: 0; overflow-y: scroll; overflow-x: hidden; display: block; z-index: 5; cursor: text; pointer-events: none; line-height: 1.2; white-space: nowrap; }
-.navbar { background: var(--body); min-height: 5rem; top: 0; position: -webkit-sticky; position: sticky; }
+.navbar { background: var(--body); top: 0; position: -webkit-sticky; position: sticky; padding: 0; }
 .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); opacity: 0.1; }
 .navbarbutton:hover { color: var(--title); text-shadow: 0; }
 .number { font-size: 1.2rem; color: var(--inactive); }
 .btntext { text-align: center; margin: 0; white-space: nowrap; }
-.navline { background: var(--body); min-height: 4rem; position: fixed; padding-top: 0.5rem; justify-content: center; z-index: 10; }
+.navline { background: var(--body); min-height: 4rem; position: fixed; padding-top: 0.5rem; justify-content: center; z-index: 10; align-items: center; }
 .navlinebutton { font-size: 1.6rem; color: var(--foreground); padding: 0 2.5rem 0 2.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); }
 .navlinebutton:hover { color: var(--title); }
 .blank { min-height: 3rem; max-height: 3rem; position: fixed; top: 5rem; }
-.input { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); width: 50%; height: 2.5rem; border-radius: 1.5rem; }
+.input { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); width: 50%; height: 2.5rem; border-radius: 0; }
 .input:hover { background: var(--foreground); }
 .input:focus { background: var(--foreground); }
-.label { display: flex; margin-left: 30px; }
-.options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); height: 1.5rem; border-radius: 1.5rem; position: -webkit-sticky; position: sticky; left: 220px; }
+.label { display: flex; margin-left: 30px; align-self: center; }
+.options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); height: 1.5rem; border-radius: 0; position: -webkit-sticky; position: sticky; left: 220px; }
 .options:hover { background: var(--foreground); }
 .options:focus { background: var(--foreground); }
 .main { height: 100%; display: flex; }
@@ -63,8 +63,11 @@ ul { margin: 0; padding-left: 20px; }
 .btn-tiny:hover { color: var(--foreground); }
 .listtitle { font-weight: bold; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; line-height: 1.4rem; }
 .thumbsize { height: 1.6rem; width: 100px; outline: none; border: none; margin-top: -4px; }
-.thumbsize::-webkit-slider-runnable-track { width: 100%; height: 0.9rem; background: var(--foreground); border-radius: 1rem; }
-.thumbsize::-moz-range-track { width: 100%; height: 0.9rem; background: var(--foreground); border-radius: 1rem; }
+input[type=range] { -webkit-appearance: none; }
+input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: var(--foreground); border-radius: 0; border: 1px; }
+input[type=range]::-moz-range-track { width: 100%; height: 1rem; cursor: pointer; background: var(--foreground); border-radius: 0; border: 1px; }
+input[type=range]::-webkit-slider-thumb { border: 1px solid #000000; margin-top: 0; height: 1rem; width: 0.6rem; border-radius: 0; background: var(--body); cursor: pointer; -webkit-appearance: none; }
+input[type=range]::-moz-range-thumb { border: 1px solid #000000; margin-top: 0rem; height: 1rem; width: 0.6rem; border-radius: 0; background: var(--body); cursor: pointer; -webkit-appearance: none; }
 .popup { background: var(--body); color: var(--background); overflow-x: hidden; overflow-y: auto; position: fixed; top: 5rem; left: 0; width: 100%; height: calc(100vh - 5rem); z-index: 10; display: none; }
 .popup-image { width: 100%; height: 100%; }
 .popup-canvas  { pointer-events: none; z-index: 20; position: relative; }
@@ -96,6 +99,10 @@ ul { margin: 0; padding-left: 20px; }
 .loader::before, .loader::after { content: ""; position: absolute; top: 6px; bottom: 6px; left: 6px; right: 6px; border-radius: 50%; border: 4px solid transparent; }
 .loader::before { border-top-color: #bad375; animation: 3s spin linear infinite; }
 .loader::after { border-top-color: #26a9e0; animation: spin 1.5s linear infinite; }
+.icon { min-width: 64px; text-align: -webkit-center; text-align: -moz-center; filter: grayscale(1); padding: 0.5rem 1rem 0.5rem 1rem; }
+.icon:hover { background: #505050; filter: grayscale(0); }
+.iconsmall { min-width: 32px; text-align: -webkit-center; text-align: -moz-center; filter: grayscale(1); padding: 0.2rem 0.2rem 0.2rem 0.2rem; }
+.iconsmall:hover { filter: grayscale(0); }
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
