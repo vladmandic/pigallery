@@ -5,7 +5,7 @@
         "column": 12,
         "file": "client/index/index.js",
         "length": 9,
-        "line": 792,
+        "line": 789,
         "lineText": "    details.slideshow(true);",
         "namespace": "",
         "suggestion": ""
@@ -26379,7 +26379,7 @@
         ]
       },
       "client/shared/blockhash.js": {
-        "bytes": 5660,
+        "bytes": 5805,
         "imports": []
       },
       "client/shared/config.js": {
@@ -26638,7 +26638,7 @@
         ]
       },
       "client/index/index.js": {
-        "bytes": 36530,
+        "bytes": 36459,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26901,7 +26901,7 @@
         ]
       },
       "client/index/worker.js": {
-        "bytes": 790,
+        "bytes": 1419,
         "imports": [
           {
             "path": "client/shared/blockhash.js",
@@ -27536,7 +27536,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1049973
+        "bytes": 1049994
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27595,7 +27595,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.js": {
-            "bytesInOutput": 37622
+            "bytesInOutput": 37563
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59917
@@ -27613,7 +27613,7 @@
             "bytesInOutput": 7971
           }
         },
-        "bytes": 565669
+        "bytes": 565610
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27640,7 +27640,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7659530
+        "bytes": 7659677
       },
       "dist/process/process.js": {
         "imports": [],
@@ -35597,7 +35597,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 10943
+        "bytes": 12000
       },
       "dist/index/worker.js": {
         "imports": [],
@@ -35608,10 +35608,10 @@
             "bytesInOutput": 5637
           },
           "client/index/worker.js": {
-            "bytesInOutput": 725
+            "bytesInOutput": 1114
           }
         },
-        "bytes": 7705
+        "bytes": 8094
       },
       "dist/index/pwa-serviceworker.js.map": {
         "imports": [],
