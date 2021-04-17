@@ -18,7 +18,7 @@
         "column": 54,
         "file": "client/video/video.js",
         "length": 6,
-        "line": 149,
+        "line": 150,
         "lineText": "    log.debug('Setting WebGL:  Memory Limit:', config.memory);",
         "namespace": "",
         "suggestion": ""
@@ -26848,7 +26848,7 @@
         "imports": []
       },
       "client/video/video.js": {
-        "bytes": 13080,
+        "bytes": 13125,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -31611,7 +31611,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7773089
+        "bytes": 7773163
       },
       "dist/video/video.js": {
         "imports": [],
@@ -31679,7 +31679,7 @@
             "bytesInOutput": 0
           },
           "client/video/video.js": {
-            "bytesInOutput": 11616
+            "bytesInOutput": 11653
           },
           "client/shared/tf.js": {
             "bytesInOutput": 42
@@ -35576,7 +35576,7 @@
             "bytesInOutput": 9178
           }
         },
-        "bytes": 6594878
+        "bytes": 6594915
       },
       "dist/video/video.css": {
         "imports": [],

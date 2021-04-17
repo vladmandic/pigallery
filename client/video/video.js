@@ -103,6 +103,7 @@ function initHumanConfig() {
   if (!config.default.human) {
     const human = new Human();
     config.default.human = JSON.parse(JSON.stringify(human.config));
+    config.default.human.modelBasePath = '';
     config.default.human.face.enabled = false;
     config.default.human.face.detector.modelPath = '@vladmandic/human/models/blazeface-back.json';
     config.default.human.face.mesh.modelPath = '@vladmandic/human/models/facemesh.json';
