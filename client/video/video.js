@@ -26,8 +26,7 @@ async function cameraStart(play = true) {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     document.getElementById('status').innerHTML = 'no camera access';
     document.getElementById('video-start').style.display = 'block';
-    document.getElementById('video-start').classList.remove('fa-play-circle');
-    document.getElementById('video-start').classList.add('fa-times-circle');
+    $('#btn-startstop').text('camera error');
     return;
   }
   const video = document.getElementById('video');
@@ -43,9 +42,7 @@ async function cameraStart(play = true) {
   document.getElementById('status').innerText = 'ready';
   if (play) {
     panzoom(document.getElementById('video'), { zoomSpeed: 0.025, minZoom: 0.5, maxZoom: 2.0 });
-    document.getElementById('menu-startstop').classList.remove('fa-play-circle');
-    document.getElementById('menu-startstop').classList.add('fa-pause-circle');
-    $('#btn-startstop').text('stop');
+    $('#btn-startstop').text('stop camera');
     // catch block for overlapping events
     video.play().then(true).catch(() => {});
   }
@@ -58,9 +55,7 @@ async function cameraStop() {
   video.pause();
   const tracks = video.srcObject ? video.srcObject.getTracks() : null;
   if (tracks) tracks.forEach((track) => track.stop());
-  document.getElementById('menu-startstop').classList.remove('fa-pause-circle');
-  document.getElementById('menu-startstop').classList.add('fa-play-circle');
-  $('#btn-startstop').text('play');
+  $('#btn-startstop').text('start camera');
 }
 
 let resizeTimer;
@@ -125,7 +120,11 @@ async function menuSetup() {
     if (req && req.ok) config.default.models = await req.json();
   }
   initHumanConfig();
-  objects.menus.model = new Menu(document.body, '', null, { background: 'var(--body)' });
+
+  const top = `${document.getElementById('navbar').offsetHeight - 3}px`;
+  const x = [`${document.getElementById('menu-models').offsetLeft}px`, `${document.getElementById('menu-parameters').offsetLeft}px`, `${document.getElementById('menu-filters').offsetLeft}px`, `${document.getElementById('menu-performance').offsetLeft}px`];
+
+  objects.menus.model = new Menu(document.body, '', { top, left: x[0] });
   objects.menus.model.addLabel('Human Detection');
   // objects.menus.model.addBool('Human Detection', config.default.human, 'enabled');
   objects.menus.model.addBool('Face Detect', config.default.human.face, 'enabled');
@@ -144,7 +143,7 @@ async function menuSetup() {
 
   objects.menus.model.toggle();
 
-  objects.menus.params = new Menu(document.body, '');
+  objects.menus.params = new Menu(document.body, '', { top, left: x[1] });
   objects.menus.params.addLabel('Model parameters');
   objects.menus.params.addBool('WebGL Memory Limit', config, 'memory', (val) => {
     log.debug('Setting WebGL:  Memory Limit:', config.memory);
@@ -190,7 +189,7 @@ async function menuSetup() {
   objects.menus.params.addBool('Fill Polygons', config.default.ui, 'fillPolygons');
   objects.menus.params.toggle();
 
-  objects.menus.filters = new Menu(document.body, '');
+  objects.menus.filters = new Menu(document.body, '', { top, left: x[2] });
   objects.menus.filters.addRange('Brightness', config.default.human.filter, 'brightness', -1.0, 1.0, 0.05, (val) => { config.default.human.filter.brightness = parseFloat(val); });
   objects.menus.filters.addRange('Contrast', config.default.human.filter, 'contrast', -1.0, 1.0, 0.05, (val) => { config.default.human.filter.contrast = parseFloat(val); });
   objects.menus.filters.addRange('Sharpness', config.default.human.filter, 'sharpness', 0, 1.0, 0.05, (val) => { config.default.human.filter.sharpness = parseFloat(val); });
@@ -206,7 +205,7 @@ async function menuSetup() {
   objects.menus.filters.addBool('polaroid', config.default.human.filter, 'polaroid');
   objects.menus.filters.toggle();
 
-  objects.menus.perf = new Menu(document.body, '');
+  objects.menus.perf = new Menu(document.body, '', { top, left: x[3] });
   objects.menus.perf.toggle();
   objects.menus.perf.addChart('FPS', 'FPS', 200, 40, 'lightblue', 'rgb(100, 100, 100)');
 

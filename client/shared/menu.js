@@ -1,11 +1,9 @@
-// @ts-nocheck
-
 let instance = 0;
 let CSScreated = false;
 
-const defaultTheme = {
-  background: 'darkslategray',
-  hover: 'lightgray',
+let menuTheme = {
+  background: '#404040',
+  hover: '#505050',
   itemBackground: 'black',
   itemColor: 'white',
   buttonBackground: 'lightblue',
@@ -17,56 +15,54 @@ const defaultTheme = {
   chartColor: 'lightblue',
 };
 
-let theme;
-
 function createCSS() {
   if (CSScreated) return;
   const css = `
-  :root { --rounded: 0.2rem; }
-  .menu { position: absolute; right: 0; width: max-content; padding: 0 0.2rem 0 0.2rem; line-height: 1.8rem; z-index: 30;
-          box-shadow: 0 0 8px dimgrey; background: ${theme.background}; border-radius: var(--rounded); border-color: black; border-style: solid; border-width: thin; }
+  :root { --rounded: 0.1rem; }
+  .menu { position: absolute; top: 0rem; right: 0; min-width: 180px; width: max-content; padding: 0.2rem 0.2rem 0 0.2rem; line-height: 1.8rem; z-index: 10; background: ${menuTheme.background}; border: none }
+  .button { text-shadow: none; }
 
-  .menu:hover { box-shadow: 0 0 8px ${theme.hover}; }
   .menu-container { display: block; max-height: 100vh; }
   .menu-container-fadeout { max-height: 0; overflow: hidden; transition: max-height, 0.5s ease; }
   .menu-container-fadein { max-height: 100vh; overflow: hidden; transition: max-height, 0.5s ease; }
-  .menu-item { display: flex; white-space: nowrap; padding: 0.2rem; cursor: default; width: 100%; }
+  .menu-item { display: flex; white-space: nowrap; padding: 0.2rem; cursor: default; width: 100%; max-width: 15rem; }
+  .menu-item:hover { background: ${menuTheme.hover} }
   .menu-title { cursor: pointer; }
   .menu-hr { margin: 0.2rem; border: 1px solid rgba(0, 0, 0, 0.5) }
   .menu-label { padding: 0; font-weight: 800; }
 
   .menu-list { margin-right: 0.8rem; }
   select:focus { outline: none; }
-  .menu-list-item { background: ${theme.itemBackground}; color: ${theme.itemColor}; border: none; padding: 0.2rem; font-family: inherit;
+  .menu-list-item { background: ${menuTheme.itemBackground}; color: ${menuTheme.itemColor}; border: none; padding: 0.2rem; font-family: inherit;
     font-variant: inherit; border-radius: var(--rounded); font-weight: 800; }
 
   .menu-chart-title { padding: 0; font-size: 0.8rem; font-weight: 800; align-items: center}
   .menu-chart-canvas { background: transparent; margin: 0.2rem 0 0.2rem 0.6rem; }
   
-  .menu-button { border: 0; background: ${theme.buttonBackground}; width: -webkit-fill-available; padding: 8px; margin: 8px; cursor: pointer; box-shadow: 4px 4px 4px 0 dimgrey;
+  .menu-button { border: 0; background: ${menuTheme.buttonBackground}; width: -webkit-fill-available; padding: 8px; margin: 8px; cursor: pointer;
     border-radius: var(--rounded); justify-content: center; font-family: inherit; font-variant: inherit; font-size: 1rem; font-weight: 800; }
-  .menu-button:hover { background: ${theme.buttonHover}; box-shadow: 4px 4px 4px 0 black; }
+  .menu-button:hover { background: ${menuTheme.buttonHover}; box-shadow: 4px 4px 4px 0 black; }
   .menu-button:focus { outline: none; }
 
-  .menu-checkbox { width: 2.8rem; height: 1rem; background: ${theme.itemBackground}; margin: 0.5rem 0.5rem 0 0; position: relative; border-radius: var(--rounded); }
-  .menu-checkbox:after { content: 'OFF'; color: ${theme.checkboxOff}; position: absolute; right: 0.2rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
-  .menu-checkbox:before { content: 'ON'; color: ${theme.checkboxOn}; position: absolute; left: 0.3rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
-  .menu-checkbox-label { width: 1.3rem; height: 0.8rem; cursor: pointer; position: absolute; top: 0.1rem; left: 0.1rem; z-index: 1; background: ${theme.checkboxOff};
+  .menu-checkbox { width: 2.6rem; height: 1rem; background: ${menuTheme.itemBackground}; margin: 0.5rem 0.5rem 0 0; position: relative; border-radius: var(--rounded); }
+  .menu-checkbox:after { content: 'OFF'; color: ${menuTheme.checkboxOff}; position: absolute; right: 0.2rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
+  .menu-checkbox:before { content: 'ON'; color: ${menuTheme.checkboxOn}; position: absolute; left: 0.3rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
+  .menu-checkbox-label { width: 1.3rem; height: 1rem; cursor: pointer; position: absolute; top: 0; left: 0rem; z-index: 1; background: ${menuTheme.checkboxOff};
     border-radius: var(--rounded); transition: left 0.6s ease; }
 
   input[type=checkbox] { visibility: hidden; }
-  input[type=checkbox]:checked + label { left: 1.4rem; background: ${theme.checkboxOn}; }
+  input[type=checkbox]:checked + label { left: 1.4rem; background: ${menuTheme.checkboxOn}; }
 
-  .menu-range { margin: 0.2rem 0.5rem 0 0; width: 3.5rem; background: transparent; color: ${theme.rangeBackground}; }
-  .menu-range:before { color: ${theme.rangeLabel}; margin: 0 0.4rem 0 0; font-weight: 800; font-size: 0.6rem; position: relative; top: 0.3rem; content: attr(value); }
+  .menu-range { margin: 0.2rem 0.5rem 0 0; width: 3.5rem; background: transparent; color: ${menuTheme.rangeBackground}; }
+  .menu-range:before { color: ${menuTheme.rangeLabel}; margin: 0 0.4rem 0 0; font-weight: 800; font-size: 0.6rem; position: relative; top: 0.3rem; content: attr(value); }
 
   input[type=range] { -webkit-appearance: none; }
-  input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: ${theme.itemBackground}; border-radius: var(--rounded); border: 1px; }
-  input[type=range]::-moz-range-track { width: 100%; height: 1rem; cursor: pointer; background: ${theme.itemBackground}; border-radius: var(--rounded); border: 1px; }
-  input[type=range]::-webkit-slider-thumb { border: 1px solid #000000; margin-top: 0.05rem; height: 0.9rem; width: 1rem; border-radius: var(--rounded); background: ${theme.rangeBackground}; cursor: pointer; -webkit-appearance: none; }
-  input[type=range]::-moz-range-thumb { border: 1px solid #000000; margin-top: 0.05rem; height: 0.9rem; width: 1rem; border-radius: var(--rounded); background: ${theme.rangeBackground}; cursor: pointer; -webkit-appearance: none; }
+  input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1rem; cursor: pointer; background: ${menuTheme.itemBackground}; border-radius: var(--rounded); border: 1px; }
+  input[type=range]::-moz-range-track { width: 100%; height: 1rem; cursor: pointer; background: ${menuTheme.itemBackground}; border-radius: var(--rounded); border: 1px; }
+  input[type=range]::-webkit-slider-thumb { border: 1px solid #000000; margin-top: 0; height: 1rem; width: 0.6rem; border-radius: var(--rounded); background: ${menuTheme.rangeBackground}; cursor: pointer; -webkit-appearance: none; }
+  input[type=range]::-moz-range-thumb { border: 1px solid #000000; margin-top: 0rem; height: 1rem; width: 0.6rem; border-radius: var(--rounded); background: ${menuTheme.rangeBackground}; cursor: pointer; -webkit-appearance: none; }
 
-  .svg-background { fill:darkslategrey; cursor:pointer; opacity: 0.6; }
+  .svg-background { fill:#303030; cursor:pointer; opacity: 0.6; }
   .svg-foreground { fill:white; cursor:pointer; opacity: 0.8; }
   `;
   const el = document.createElement('style');
@@ -77,12 +73,13 @@ function createCSS() {
 
 class Menu {
   constructor(parent, title, position, userTheme) {
-    if (userTheme) theme = { ...defaultTheme, ...userTheme };
+    if (userTheme) menuTheme = { ...menuTheme, ...userTheme };
     createCSS();
     this.createMenu(parent, title, position);
     this.id = 0;
     this.instance = instance;
     instance++;
+    this._maxFPS = 0;
     this.hidden = false;
   }
 
@@ -91,10 +88,10 @@ class Menu {
     this.menu.id = `menu-${instance}`;
     this.menu.className = 'menu';
     if (position) {
-      if (position.top) this.menu.style.top = position.top || '';
-      if (position.bottom) this.menu.style.bottom = position.bottom || '';
-      if (position.left) this.menu.style.left = position.left || '';
-      if (position.right) this.menu.style.right = position.right || '';
+      if (position.top) this.menu.style.top = `${position.top}`;
+      if (position.bottom) this.menu.style.bottom = `${position.bottom}`;
+      if (position.left) this.menu.style.left = `${position.left}`;
+      if (position.right) this.menu.style.right = `${position.right}`;
     }
 
     this.container = document.createElement('div');
@@ -112,10 +109,11 @@ class Menu {
     if (title) elTitle.innerHTML = `${title}${svg}`;
     this.menu.appendChild(elTitle);
     elTitle.addEventListener('click', () => {
-      if (!this.menu || !this.container) return;
-      this.container?.classList.toggle('menu-container-fadeout');
-      this.container?.classList.toggle('menu-container-fadein');
-      this.menu.style.borderStyle = this.container?.classList.contains('menu-container-fadeout') ? 'none' : 'solid';
+      if (this.container && this.menu) {
+        this.container.classList.toggle('menu-container-fadeout');
+        this.container.classList.toggle('menu-container-fadein');
+        // this.menu.style.borderStyle = this.container.classList.contains('menu-container-fadeout') ? 'none' : 'solid';
+      }
     });
 
     this.menu.appendChild(this.container);
@@ -133,41 +131,44 @@ class Menu {
   }
 
   get width() {
-    return this.menu?.offsetWidth;
+    return this.menu?.offsetWidth || 0;
   }
 
   get height() {
-    return this.menu?.offsetHeight;
+    return this.menu?.offsetHeight || 0;
   }
 
   hide() {
-    if (this.container?.classList.contains('menu-container-fadein')) {
+    if (this.container && this.container.classList.contains('menu-container-fadein')) {
       this.container.classList.toggle('menu-container-fadeout');
       this.container.classList.toggle('menu-container-fadein');
     }
   }
 
   visible() {
-    return (this.container?.classList.contains('menu-container-fadein'));
+    return (this.container ? this.container.classList.contains('menu-container-fadein') : false);
   }
 
   toggle(evt) {
-    this.container?.classList.toggle('menu-container-fadeout');
-    this.container?.classList.toggle('menu-container-fadein');
-    if (!this.menu) return;
-    if (this.container?.classList.contains('menu-container-fadein') && evt) {
-      const x = evt.x || (evt.touches && evt.touches[0] ? evt.touches[0].pageX : null);
-      // const y = evt.y || (evt.touches && evt.touches[0] ? evt.touches[0].pageY : null);
-      if (x) this.menu.style.left = `${x - (this.menu.offsetWidth / 2)}px`;
-      // if (y) this.menu.style.top = '5.5rem'; // `${evt.y + 55}px`;
-      if (this.menu.offsetLeft < 0) this.menu.style.left = '0';
-      if ((this.menu.offsetLeft + this.menu.offsetWidth) > window.innerWidth) {
-        this.menu.style.left = '';
-        this.menu.style.right = '0';
+    if (this.container && this.menu) {
+      this.container.classList.toggle('menu-container-fadeout');
+      this.container.classList.toggle('menu-container-fadein');
+      /*
+      if (this.container.classList.contains('menu-container-fadein') && evt) {
+        const x = evt.x || (evt.touches && evt.touches[0] ? evt.touches[0].pageX : null);
+        // const y = evt.y || (evt.touches && evt.touches[0] ? evt.touches[0].pageY : null);
+        if (x) this.menu.style.left = `${x - (this.menu.offsetWidth / 2)}px`;
+        // if (y) this.menu.style.top = '5.5rem'; // `${evt.y + 55}px`;
+        if (this.menu.offsetLeft < 0) this.menu.style.left = '0';
+        if ((this.menu.offsetLeft + this.menu.offsetWidth) > window.innerWidth) {
+          this.menu.style.left = '';
+          this.menu.style.right = '0';
+        }
+        // this.menu.style.borderStyle = 'solid';
+      } else {
+        // this.menu.style.borderStyle = 'none';
       }
-      this.menu.style.borderStyle = 'solid';
-    } else {
-      this.menu.style.borderStyle = 'none';
+      */
     }
   }
 
@@ -176,7 +177,7 @@ class Menu {
     el.className = 'menu-title';
     el.id = this.newID;
     el.innerHTML = title;
-    this.menu?.appendChild(el);
+    if (this.menu) this.menu.appendChild(el);
     el.addEventListener('click', () => {
       this.hidden = !this.hidden;
       const all = document.getElementsByClassName('menu');
@@ -192,15 +193,15 @@ class Menu {
     el.className = 'menu-item menu-label';
     el.id = this.newID;
     el.innerHTML = title;
-    this.container?.appendChild(el);
+    if (this.container) this.container.appendChild(el);
     return el;
   }
 
   addBool(title, object, variable, callback) {
     const el = document.createElement('div');
     el.className = 'menu-item';
-    el.innerHTML = `<div class="menu-checkbox"><input class="menu-checkbox" type="checkbox" id="${this.newID}" ${object[variable] ? 'checked' : ''}/><label class="menu-checkbox-label" for="${this.ID}"></label></div>${title}`;
-    this.container?.appendChild(el);
+    el.innerHTML = `<div class="menu-checkbox"><input class="menu-checkbox" type="checkbox" id="${this.newID}" ${object[variable] ? 'checked' : ''}/><label class="menu-checkbox-label" for="${this.ID}"></label></div><p class="menu-text">${title}</p>`;
+    if (this.container) this.container.appendChild(el);
     el.addEventListener('change', (evt) => {
       object[variable] = evt.target?.checked;
       if (callback) callback(evt.target?.checked);
@@ -211,16 +212,16 @@ class Menu {
   async addList(title, items, selected, callback) {
     const el = document.createElement('div');
     el.className = 'menu-item';
-    let menuOptions = '';
+    let options = '';
     for (const item of items) {
       const def = item === selected ? 'selected' : '';
-      menuOptions += `<option value="${item}" ${def}>${item}</option>`;
+      options += `<option value="${item}" ${def}>${item}</option>`;
     }
-    el.innerHTML = `<div class="menu-list"><select name="${this.ID}" class="menu-list-item">${menuOptions}</select><label for="${this.ID}"></label></div>${title}`;
+    el.innerHTML = `<div class="menu-list"><select name="${this.ID}" class="menu-list-item">${options}</select><label for="${this.ID}"></label></div>${title}`;
     el.style.fontFamily = document.body.style.fontFamily;
     el.style.fontSize = document.body.style.fontSize;
     el.style.fontVariant = document.body.style.fontVariant;
-    this.container?.appendChild(el);
+    if (this.container) this.container.appendChild(el);
     el.addEventListener('change', (evt) => {
       if (callback) callback(items[evt.target?.selectedIndex]);
     });
@@ -231,13 +232,14 @@ class Menu {
     const el = document.createElement('div');
     el.className = 'menu-item';
     el.innerHTML = `<input class="menu-range" type="range" id="${this.newID}" min="${min}" max="${max}" step="${step}" value="${object[variable]}">${title}`;
-    this.container?.appendChild(el);
+    if (this.container) this.container.appendChild(el);
     el.addEventListener('change', (evt) => {
-      object[variable] = parseInt(evt.target?.value) === parseFloat(evt.target?.value) ? parseInt(evt.target?.value) : parseFloat(evt.target?.value);
-      evt.target?.setAttribute('value', evt.target?.value);
-      if (callback) callback(evt.target?.value);
+      if (evt.target) {
+        object[variable] = parseInt(evt.target?.value) === parseFloat(evt.target?.value) ? parseInt(evt.target?.value) : parseFloat(evt.target?.value);
+        evt.target.setAttribute('value', evt.target.value);
+        if (callback) callback(evt.target?.value);
+      }
     });
-    // eslint-disable-next-line prefer-destructuring
     el.input = el.children[0];
     return el;
   }
@@ -247,7 +249,7 @@ class Menu {
     el.className = 'menu-item';
     el.id = this.newID;
     if (html) el.innerHTML = html;
-    this.container?.appendChild(el);
+    if (this.container) this.container.appendChild(el);
     return el;
   }
 
@@ -260,7 +262,7 @@ class Menu {
     el.type = 'button';
     el.id = this.newID;
     el.innerText = titleOn;
-    this.container?.appendChild(el);
+    if (this.container) this.container.appendChild(el);
     el.addEventListener('click', () => {
       if (el.innerText === titleOn) el.innerText = titleOff;
       else el.innerText = titleOn;
@@ -274,7 +276,7 @@ class Menu {
     el.className = 'menu-item';
     el.id = `menu-val-${title}`;
     el.innerText = `${title}: ${val}${suffix}`;
-    this.container?.appendChild(el);
+    if (this.container) this.container.appendChild(el);
     return el;
   }
 
@@ -286,12 +288,12 @@ class Menu {
   }
 
   addChart(title, id, width = 150, height = 40, color) {
-    if (color) theme.chartColor = color;
+    if (color) menuTheme.chartColor = color;
     const el = document.createElement('div');
     el.className = 'menu-item menu-chart-title';
     el.id = this.newID;
-    el.innerHTML = `<font color=${theme.chartColor}>${title}</font><canvas id="menu-canvas-${id}" class="menu-chart-canvas" width="${width}px" height="${height}px"></canvas>`;
-    this.container?.appendChild(el);
+    el.innerHTML = `<font color=${menuTheme.chartColor}>${title}</font><canvas id="menu-canvas-${id}" class="menu-chart-canvas" width="${width}px" height="${height}px"></canvas>`;
+    if (this.container) this.container.appendChild(el);
     return el;
   }
 
@@ -301,18 +303,18 @@ class Menu {
     const canvas = document.getElementById(`menu-canvas-${id}`);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = theme.background;
+    ctx.fillStyle = menuTheme.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     const width = canvas.width / values.length;
     const max = 1 + Math.max(...values);
     const height = canvas.height / max;
     for (let i = 0; i < values.length; i++) {
       const gradient = ctx.createLinearGradient(0, (max - values[i]) * height, 0, 0);
-      gradient.addColorStop(0.1, theme.chartColor);
-      gradient.addColorStop(0.4, 'rgba(100,100,100,1)'); // theme.background is unresolved here
+      gradient.addColorStop(0.1, menuTheme.chartColor);
+      gradient.addColorStop(0.4, menuTheme.background);
       ctx.fillStyle = gradient;
       ctx.fillRect(i * width, 0, width - 4, canvas.height);
-      ctx.fillStyle = theme.background;
+      ctx.fillStyle = menuTheme.background;
       ctx.font = `${width / 1.5}px "Segoe UI"`;
       ctx.fillText(Math.round(values[i]), i * width + 1, canvas.height - 1, width - 1);
     }
