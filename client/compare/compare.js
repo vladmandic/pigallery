@@ -225,7 +225,27 @@ async function detect() {
   }
 }
 
+async function resize() {
+  document.documentElement.style.setProperty('--thumbSize', `${window.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbHeight', `${window.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbImgHeight', `${window.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbWidth', `${window.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbImgWidth', `${window.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--listItemHeight', `${16 + window.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--listItemWidth', '');
+  document.documentElement.style.setProperty('--descWidth', '80vw');
+  $('#main').height(window.innerHeight - ($('#log').height() || 0) - ($('#navbar').height() || 0));
+  $('body').css('background', `radial-gradient(at 50% 100%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+  $(document).on('mousemove', (event) => {
+    const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
+    const mouseYpercentage = Math.round(event.pageY / $(window).height() * 100);
+    $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+  });
+}
+
 async function main() {
+  await config.setTheme();
+  await resize();
   await init();
   $('#btn-classify').on('click', () => classify());
   $('#btn-detect').on('click', () => detect());
@@ -237,3 +257,4 @@ async function main() {
 }
 
 window.onload = main;
+window.onresize = resize;
