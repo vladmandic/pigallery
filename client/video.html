@@ -17,53 +17,32 @@
   <link rel="apple-touch-icon" href="/assets/dash-256.png">
   <link rel="apple-touch-startup-image" href="/assets/dash-256.png">
   <link rel="stylesheet" href="/dist/video/video.css">
-  <!-- Style Overrides -->
-  <style>
-    canvas { pointer-events: none; }
-    a { color: white; }
-    p { line-height: 0.8rem; }
-    hr { margin: 0.2rem; border: 1px solid rgba(0, 0, 0, 0.5) }
-    .icon { font-size: 2.5rem; margin: 0.75rem 0.5rem 0.75rem 0.5rem; --fa-primary-color: var(--color); --fa-secondary-color: white; --fa-secondary-opacity: 0.8; }
-    .icon:hover { --fa-secondary-opacity: 0.5; }
-    .menu { display: flex; white-space: nowrap; background: var(--color); padding: 0.2rem; width: max-content; }
-    .slide { width: 2.8rem; height: 1rem; background: black; margin: 0.6rem 0.8rem 0 0; position: relative; border-radius: 1rem; }
-    .slide:after { content: 'OFF'; color: lightcoral; position: absolute; right: 0.2rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
-    .slide:before { content: 'ON'; color: lightgreen; position: absolute; left: 0.3rem; top: -0.4rem; font-weight: 800; font-size: 0.5rem; }
-    .pulldown { display: none; background: var(--body); position: fixed; right: 0; width: -moz-fit-content; width: fit-content; padding: 0 0.8rem 0 0.8rem; line-height: 1.8rem; z-index: 10; top: 5rem; max-height: calc(100% - 4rem); }
-    label { width: 1.3rem; height: 0.8rem; cursor: pointer; position: absolute; top: 0.1rem; left: 0.1rem; z-index: 1; background: lightcoral; border-radius: 1rem; transition: left 0.6s ease; }
-    input[type=checkbox] { visibility: hidden; }
-    input[type=checkbox]:checked + label { left: 1.4rem; background: lightgreen; }
-    .range { margin: 0 0.8rem 0 0; width: 5rem; background: var(--color); color: lightblue; }
-    .range:before { content: attr(data-value); color: var(--text); margin: 0 0.4rem 0 0; font-weight: 800; font-size: 0.6rem; }
-    input[type=range] { -webkit-appearance: none; }
-    input[type=range]::-webkit-slider-runnable-track, input[type=range]::-moz-range-track { width: 100%; height: 1rem; cursor: pointer; background: black; border-radius: 1rem; border: 1px; }
-    input[type=range]::-webkit-slider-thumb, input[type=range]::-moz-range-thumb { border: 1px solid #000000; margin-top: 0.05rem; height: 0.9rem; width: 1.5rem; border-radius: 1rem; background: lightblue; cursor: pointer; -webkit-appearance: none; }
-    .canvases { position: absolute; top: 0; width: 100vw; }
-    .detected { font-size: 1.5rem; padding: 0.5rem; position: fixed; z-index:20; width: 100vw; overflow: auto; overflow-wrap: break-word; white-space: normal; color: white; }
-    .detected:hover { background: rgba(0, 0, 0, 0.5); }
-  </style>
   <!-- Script Module -->
   <script src="/dist/video/video.js"></script>
+  <style>
+    img { pointer-events: none; }
+    .navbar { padding: 3px; }
+  </style>
 </head>
 <body style="overflow: hidden">
   <noscript><h1>You really need JS enabled...</h1></noscript>
   <!-- Menu Bar -->
   <div id="navbar" class="row navbar text-center">
-    <span onclick="location.replace('/auth')"><i id="btn-user" class="navbarbutton fad fa-user-slash"></i><br><span id="user">User</span></span>
-    <span><i id="menu-startstop" class="navbarbutton fad fa-play-circle" title="Start & Stop Video Camera"></i><br><span id="btn-startstop">play</span></span>
-    <span><i id="menu-facing" class="navbarbutton fad fa-sort-circle" title="Switch Camera View"></i><br><span id="btn-facing">front</span></span>
-    <span><i id="menu-models" class="navbarbutton fad fa-question-circle" title="Models"></i><br><span id="btn-models">Models</span></span>
-    <span><i id="menu-parameters" class="navbarbutton fad fa-info-circle" title="Parameters"></i><br><span id="btn-params">Parameters</span></span>
-    <span><i id="menu-filters" class="navbarbutton fad fa-draw-circle" title="Filters"></i><br><span id="btn-filters">Filters</span></span>
-    <span><i id="menu-performance" class="navbarbutton fad fa-spinner" title="Performance"></i><br><span id="btn-perf">Performance</span></span>
+    <span onclick="location.replace('/auth')"><div class="icon" id="btn-user"><img src="/assets/icons/48/user.png"/><p id="user">user</p></div></span>
+    <div class="icon" id="menu-startstop" title="Start & stop video camera"><img src="/assets/icons/48/webcam.png"/><p id="btn-startstop">start camera</p></div>
+    <div class="icon" id="menu-facing" title="Switch camera view"><img src="/assets/icons/48/rotate.png"/><p id="btn-facing">camera view</p></div>
+    <div class="icon" id="menu-models" title="Models"><img src="/assets/icons/48/architecture_info.png"/><p id="btn-models">models</p></div>
+    <div class="icon" id="menu-parameters" title="Parameters"><img src="/assets/icons/48/gear.png"/><p id="btn-params">parameters</p></div>
+    <div class="icon" id="menu-filters" title="Filters"><img src="/assets/icons/48/palette.png"/><p id="btn-filters">filters</p></div>
+    <div class="icon" id="menu-performance" title="Performance" style="margin-right: 8rem; "><img src="/assets/icons/48/stats.png"/><p id="btn-perf">performance</p></div>
   </div>
   <!-- Body -->
-  <div id="detected" class="detected"></div>
-  <div id="main" style="display: block; position: fixed; top: 5rem; ">
-    <div id="status" style="font-size: 6rem; width: 100vw; text-align: center; position: fixed; z-index: 50; margin-top: 2rem; ">Ready</div>
+  <div id="main">
     <div id="video-start" class="fad fa-play-circle" style="font-size: 15rem; width: 100vw; text-align: center; position: fixed; top: 14rem; margin-top: 10rem; z-index: 50; cursor: pointer"></div>
     <video id="video" style="width: 100vw; position: fixed"></video>
     <div id="canvases" style="position: relative"></div>
+    <div id="status" style="font-size: 6rem; width: 100vw; text-align: center; position: fixed; z-index: 50; margin-top: 2rem; ">Ready</div>
+    <div id="detected" class="detected"></div>
   </div>
   <div id="log" style="display: none; font-size: 0.9rem; overflow-y: scroll; padding: 4px; height: 12rem; position: fixed; bottom: 0; width: 99%"></div>
 </body>
