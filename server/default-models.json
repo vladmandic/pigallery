@@ -20,7 +20,9 @@
     }
   ],
   "person": { "name": "Human",
-    "videoOptimized": false, "debug": false,
+    "videoOptimized": false,
+    "debug": false,
+    "modelBasePath": "",
     "filter": { "enabled": false },
     "gesture": { "enabled": false },
     "body": { "enabled": false },

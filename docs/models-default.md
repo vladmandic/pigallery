@@ -33,6 +33,7 @@ Human library with embedded models
   ],
   "person": { "name": "Human",
     "videoOptimized": false, "debug": false, "filter": { "enabled": false }, "gesture": { "enabled": false }, "body": { "enabled": false }, "hand": { "enabled": false },
+    "modelBasePath": "",
     "face": {
       "detector": { "modelPath": "@vladmandic/human/models/blazeface-back.json", "rotation": true },
       "mesh": { "modelPath": "@vladmandic/human/models/facemesh.json" },
