@@ -136,6 +136,9 @@ export function drawBoxes(object) {
   else object = last;
   if (!object) return;
 
+  document.getElementById('detected-label').innerHTML = window.options.viewBoxes ? 'hide detected' : 'show detected';
+  document.getElementById('faces-label').innerHTML = window.options.viewFaces ? 'hide faces' : 'show faces';
+
   // move details panel to side or bottom depending on screen aspect ratio
   const ratioScreen = $('#popup').width() / $('#popup').height();
   const ratioImage = object.naturalSize.width / object.naturalSize.height;
@@ -279,9 +282,11 @@ export function drawDescription(object) {
         </tr>
       </table>
     `;
-  if (window.options.viewDetails) $('#popup-details').html(html);
+  // if (window.options.viewDetails) $('#popup-details').html(html);
+  // $('#popup-details').toggle(window.options.viewDetails);
+  $('#popup-details').html(html);
+  $('#popup-details').show();
   document.getElementById('popup-details').scrollTop = 0;
-  $('#popup-details').toggle(window.options.viewDetails);
 }
 
 async function resizeDetailsImage(object) {

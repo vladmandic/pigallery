@@ -162,19 +162,17 @@ async function calculateHashData(data, bits = 16) {
 }
 
 /* Calculate the hamming distance for two hashes in hex format */
-const differences = [];
 function distance(hash1, hash2) {
-  let d = 0;
   if (!hash1 || !hash2) return 100;
   if (hash1.length !== hash2.length) return 100;
+  let diff = 0;
   for (let i = 0; i < hash1.length; i++) {
     const n1 = parseInt(hash1[i], 16);
     const n2 = parseInt(hash2[i], 16);
     // eslint-disable-next-line no-bitwise
-    d += one_bits[n1 ^ n2];
+    diff += one_bits[n1 ^ n2];
   }
-  differences.push(d);
-  return 1.0 * d / Math.max(...differences);
+  return Math.trunc(100 * diff / 256);
 }
 
 module.exports = {

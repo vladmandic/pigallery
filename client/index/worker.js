@@ -5,23 +5,21 @@ onmessage = async (msg) => {
   const all = msg.data;
   let duplicates = [];
   let duplicate;
-  const length = all.length - 1;
-  for (let i = 0; i < length + 1; i++) {
-    const a = all[i];
+  for (let i = 0; i < all.length; i++) {
     duplicate = false;
-    for (let j = i + 1; j < length; j++) {
-      const b = all[j];
-      const distance = (a.hash === b.hash) ? 0 : (hash.distance(a.phash, b.phash) + 1);
-      if (distance < 35) {
-        a.similarity = distance;
-        b.similarity = distance;
+    for (let j = i + 1; j < all.length; j++) {
+      const distance = all[i].hash === all[j].hash ? 0 : hash.distance(all[i].phash, all[j].phash);
+      if (distance < 100) {
+        all[i].similarity = distance;
+        all[j].similarity = distance;
         duplicate = true;
-        duplicates.push(b);
+        duplicates.push(all[j]);
       }
     }
-    if (duplicate) duplicates.push(a);
+    if (duplicate) duplicates.push(all[i]);
   }
   duplicates = [...new Set(duplicates)];
-  duplicates = duplicates.sort((a, b) => (a.similarity - b.similarity));
-  postMessage(duplicates, 'pigallery');
+  duplicates = duplicates.sort((a, b) => (b.similarity - a.similarity));
+  // @ts-ignore
+  postMessage(duplicates);
 };
