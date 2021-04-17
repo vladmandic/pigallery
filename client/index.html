@@ -58,7 +58,7 @@
   </div>
 
   <div id="optionslist" class="row navline text-center">
-    <div class="icon" id="btn-desc"><img src="/assets/icons/48/jpg.png"/><p>show description</p></div>
+    <div class="icon" id="btn-desc"><img src="/assets/icons/48/jpg.png"/><p id="description-label">description</p></div>
     <div class="icon" id="btn-duplicates"><img src="/assets/icons/48/storage_3.png"/><p>find duplicates</p></div>
 
     <div><i class="navlinebutton fad sort fa-sort-alpha-down"></i><i class="navlinebutton fad sort fa-sort-alpha-up" style="padding-left: 0;"></i>
@@ -74,16 +74,16 @@
   </div>
 
   <div id="optionsview" class="row navbar text-center" style="position: fixed;">
-    <div><i class="navbarbutton fad fa-arrow-circle-left" id="details-previous"></i><p class="btntext">Previous</p></div>
-    <div><i class="navbarbutton fad fa-times-circle" id="details-close"></i><p class="btntext">Close</p></div>
-    <div><i class="navbarbutton fad fa-arrow-circle-right" id="details-next"></i><p class="btntext">Next</p></div>
-    <div><i class="navbarbutton fad fa-comment" id="details-desc"></i><p class="btntext">Details</p></div>
-    <div><i class="navbarbutton fad fa-store" id="details-boxes"></i><p class="btntext">Detect Boxes</p></div>
-    <div><i class="navbarbutton fad fa-head-side-cough" id="details-faces"></i><p class="btntext">Faces</p></div>
-    <div><i class="navbarbutton fad fa-download" id="details-download"></i><p class="btntext">Download</p></div>
+    <div class="icon" id="details-previous"><img src="/assets/icons/48/rewind.png"/><p>previous</p></div>
+    <div class="icon" id="details-close"><img src="/assets/icons/48/stop.png"/><p>close</p></div>
+    <div class="icon" id="details-next"><img src="/assets/icons/48/fast_forward.png"/><p>next</p></div>
+    <div class="icon" id="details-boxes"><img src="/assets/icons/48/architecture_info.png"/><p id="detected-label">detected</p></div>
+    <div class="icon" id="details-faces"><img src="/assets/icons/48/architecture_info.png"/><p id="faces-label">faces</p></div>
+    <div class="icon" id="details-download"><img src="/assets/icons/48/storage_3.png"/><p id="detected-label">download</p></div>
+
     <div style="width: 100px; margin-left: 50px;">
       <input type="range" class="thumbsize" style="width: 80px" name="minscore" id="minscore" min="0" max="1" step="0.05" value="0">
-      <label class="btntext" for="minscore">Score Filter</label>
+      <label class="btntext" for="minscore">score filter</label>
     </div>
   </div>
 

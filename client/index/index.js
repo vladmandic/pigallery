@@ -373,7 +373,7 @@ async function sortResults(sort) {
 async function findDuplicates() {
   busy('Searching for<br>duplicate images');
 
-  log.div('log', true, 'Analyzing images for similarity ...');
+  log.div('log', true, `Analyzing ${window.filtered.length} images for similarity ...`);
   const t0 = performance.now();
   list.clearPrevious();
 
@@ -386,8 +386,8 @@ async function findDuplicates() {
     sortResults('similarity');
     busy(false);
   });
-  const all = await indexdb.all();
-  worker.postMessage(all);
+  // const all = await indexdb.all();
+  worker.postMessage(window.filtered);
 }
 
 // loads images, displays gallery and enumerates sidebar
@@ -751,6 +751,7 @@ async function initMenuHandlers() {
   // navbar list
   $('#btn-list').on('click', async () => {
     await showNavbar($('#optionslist'));
+    document.getElementById('description-label').innerHTML = window.options.listDetails ? 'hide description' : 'show description';
   });
 
   // navline list sidebar
@@ -762,6 +763,7 @@ async function initMenuHandlers() {
   // navline list descriptions
   $('#btn-desc').on('click', () => {
     window.options.listDetails = !window.options.listDetails;
+    document.getElementById('description-label').innerHTML = window.options.listDetails ? 'hide description' : 'show description';
     $('.description').toggle('slow');
   });
 
@@ -812,7 +814,7 @@ async function hashChange(evt) {
   const target = parseInt(evt.newURL.substr(evt.newURL.indexOf('#') + 1));
   const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1));
   if (source > target) {
-    const top = parseInt($('#all').scrollTop()) === 0;
+    const top = parseInt($('#results').scrollTop()) === 0;
     const all = await indexdb.count() - window.filtered.length;
     if (top && all === 0) {
       log.debug(t0, 'Exiting ...');

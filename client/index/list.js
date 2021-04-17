@@ -86,11 +86,10 @@ function printResult(object) {
   const thumb = document.createElement('div');
   thumb.className = 'col thumbnail';
   thumb.id = object.id;
-  const fixWidth = window.options.fixWidth ? `width=${window.options.listThumbSize}px` : '';
-  const fixHeight = window.options.fixHeight ? `height=${window.options.listThumbSize}px` : '';
   const title = `${object.image}\nDate: ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}\n${classified}\n${detected}\n${person}\n${location}\n${camera}`;
+  const imgStyle = `width: ${window.options.fixWidth ? '-webkit-fill-available' : 'fit-content'}; width: ${window.options.fixWidth ? '-moz-fill-available' : 'fit-content'}`;
   thumb.innerHTML = `
-    <img loading="lazy" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" align="middle" ${fixWidth} ${fixHeight} title="${title}">
+    <img loading="lazy" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" align="middle" style="${imgStyle}" title="${title}">
     <div class="thumb-top">
       <p class="btn-tiny fa fa-file-archive" onclick="deleteImage('${escape(object.image)}');" title="Delete image"></p>
       <p class="btn-tiny fa fa-file-image" onclick="details.show('${escape(object.image)}');" title="View image details"></p>
@@ -120,7 +119,8 @@ function printResult(object) {
 
   const div = document.createElement('div');
   div.className = 'listitem';
-  div.style = `min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px; contain-intrinsic-size: ${16 + window.options.listThumbSize}px`;
+  const width = window.options.fixWidth ? `width: ${16 + window.options.listThumbSize}px;` : '';
+  div.style = `height: ${16 + window.options.listThumbSize}px; ${width}`;
   div.appendChild(thumb);
   div.appendChild(desc);
   return div;
@@ -140,9 +140,9 @@ async function thumbButtons(evt, show) {
 // adds items to gallery view on scroll event - infinite scroll
 let current;
 export async function scroll(images, title) {
-  const scrollHeight = $('#results').prop('scrollHeight');
-  const bottom = $('#results').scrollTop() + $('#all').height();
-  if (((bottom + 16) >= scrollHeight) && (current < images.length)) {
+  const visibleHeight = Math.trunc(document.getElementById('results').offsetHeight + document.getElementById('results').scrollTop);
+  const totalHeight = Math.trunc(document.getElementById('results').scrollHeight);
+  if (visibleHeight >= totalHeight && current < images.length) {
     const t0 = performance.now();
     const res = document.getElementById('results');
     const count = Math.min(window.options.listItemCount, images.length - current);
@@ -164,6 +164,8 @@ export async function scroll(images, title) {
   $('.listitem').on('contextmenu', (evt) => $(evt.target).parent().find('.btn-tiny').show());
   $('.description').on('click', (evt) => $(evt.target).parent().find('.btn-tiny').show());
   $('.description').toggle(window.options.listDetails);
+  $('#results').off('scroll');
+  $('#results').on('scroll', () => scroll(images, title));
 }
 
 // redraws gallery view and rebuilds sidebar menu
@@ -178,9 +180,8 @@ export async function redraw(images, divider, clear = true) {
     current = 0;
   }
 
-  $('#results').off('scroll');
-  $('#results').on('scroll', () => scroll(images, divider));
   await scroll(images, divider);
+  document.getElementById('results').scrollTop = 0;
   log.debug(t0, 'Redraw results complete:', images.length, clear);
 }
 
@@ -189,12 +190,13 @@ export async function resize() {
   const thumbSize = parseInt($('#thumbsize')[0].value);
   if (thumbSize !== window.options.listThumbSize) {
     window.options.listThumbSize = thumbSize;
+    document.documentElement.style.setProperty('--thumbSize', window.options.listThumbSize);
     $('#thumblabel').text(`Size: ${window.options.listThumbSize}px`);
     $('#thumbsize')[0].value = window.options.listThumbSize;
-    $('.thumbnail').width(window.options.listThumbSize);
-    $('.thumbnail').height(window.options.listThumbSize);
-    $('.listitem').css('min-height', `${16 + window.options.listThumbSize}px`);
-    $('.listitem').css('max-height', `${16 + window.options.listThumbSize}px`);
+    // $('.thumbnail').width(window.options.listThumbSize);
+    // $('.thumbnail').height(window.options.listThumbSize);
+    $('.listitem').css('height', `${16 + window.options.listThumbSize}px`);
+    $('.listitem').css('width', `${16 + window.options.listThumbSize}px`);
   }
   $('body').get(0).style.setProperty('--btntiny', `${Math.round(window.options.listThumbSize / 5)}px`);
 }
