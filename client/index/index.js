@@ -480,7 +480,7 @@ function resizeViewport() {
   const viewportScale = Math.min(1, Math.round(100 * window.outerWidth / 800) / 100);
   // log.debug('Viewport scale:', viewportScale);
   document.querySelector('meta[name=viewport]').setAttribute('content', `width=device-width, shrink-to-fit=yes; initial-scale=${viewportScale}`);
-  $('#main').height(window.innerHeight - ($('#log').height() || 0) - ($('#navbar').height() || 0) - 16);
+  $('#main').height(window.innerHeight - ($('#log').height() || 0) - ($('#navbar').height() || 0));
   if ($('#popup').css('display') !== 'none') details.show();
   const top = $('#optionsview').clientHeight;
   const height = $('body').clientHeight - top;

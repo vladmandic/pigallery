@@ -1,6 +1,6 @@
 @font-face { font-family: 'Lato'; font-display: swap; font-style: normal; font-weight: 400; src: local('Lato'), url('/assets/lato.ttf') format('truetype'); }
-html { font-size: 18px; }
-body { font-size: 1rem; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; width: 100vw; height: 100vh; background: var(--background); color: var(--text); scrollbar-color: var(--body); }
+html { font-size: 16px; }
+body { font-size: 1rem; font-family: "Lato", "Segoe UI", "Roboto", sans-serif; font-variant: small-caps; width: 100%; height: 100%; background: var(--background); color: var(--text); scrollbar-color: var(--body); }
 ::-webkit-scrollbar { width: 20px; border: 0; border-radius: 0; }
 ::-webkit-scrollbar-thumb { background: var(--body); }
 ::-webkit-scrollbar-track { margin: 8px; }
@@ -15,10 +15,9 @@ a:hover { color: var(--link); text-decoration: none; }
 p { margin: 0; }
 td { vertical-align: top; padding: 10px; }
 ul { margin: 0; padding-left: 20px; }
-img { height: -webkit-fill-available; height: -moz-fill-available; }
 .row { width: 100%; margin: 0; align-content: start; }
 .col { text-align: left; margin: 0.5rem; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
-.log { width: 100vw; height: 3.2rem; position: fixed; bottom: 0; overflow-y: scroll; overflow-x: hidden; display: block; z-index: 5; cursor: text; pointer-events: none; line-height: 1.2; white-space: nowrap; }
+.log { width: 100vw; height: 3.6rem; position: fixed; bottom: 0; overflow-y: scroll; overflow-x: hidden; display: block; z-index: 5; cursor: text; pointer-events: none; line-height: 1.2; white-space: nowrap; }
 .navbar { background: var(--body); top: 0; position: -webkit-sticky; position: sticky; padding: 0; }
 .navbarbutton { font-size: 2.5rem; color: var(--foreground); padding: 0 1.5rem 0 1.5rem; cursor: pointer; text-shadow: 2px 2px var(--title); opacity: 0.1; }
 .navbarbutton:hover { color: var(--title); text-shadow: 0; }
@@ -51,15 +50,16 @@ img { height: -webkit-fill-available; height: -moz-fill-available; }
 .share { overflow: hidden; width: 100%; padding-bottom: 8px; background: var(--body); display: none; z-index: 5; }
 .results { overflow-x: hidden; overflow-y: visible; width: 100%; height: 100%; display: flex; padding: 4px; scroll-snap-type: y mandatory; }
 .timestamp { background: var(--body); margin-right: 4px; padding-left: 4px; padding-right: 4px; color: var(--text); }
-.listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; }
+.listitem { display: flex; scroll-snap-align: start; scroll-margin-top: 0; width: var(--listItemWidth); height: var(--listItemHeight); }
 .divider { padding: 0.4rem 0 0.4rem 0.6rem; font-size: 1.2rem; margin: 0.4rem; font-weight: bold; height: 2.6rem; display: block; scroll-snap-align: start; scroll-margin-top: 8px; }
-.thumbnail { padding: 0; cursor: zoom-in; width: var(--thumbSize); height: var(--thumbSize); }
+.thumbnail { padding: 0; cursor: zoom-in; width: var(--thumbWidth); height: var(--thumbHeight); background: var(--body); }
+.thumbnail-img { padding: 0; cursor: zoom-in; width: var(--thumbImgWidth); height: var(--thumbImgHeight); }
 .thumbnail:hover { box-shadow: 0 0 8px 8px var(--gradient); filter: grayscale(1); }
 .thumb-top { display: flex; position: absolute; top: 0; width: 100%; justify-content: flex-end; }
 .thumb-top:hover { background: rgba(0, 0, 0, 0.4); }
 .thumb-bottom { display: flex; position: absolute; bottom: 0; width: 100%; justify-content: flex-end; }
 .thumb-bottom:hover { background: rgba(0, 0, 0, 0.4); }
-.description { min-width: 360px; max-width: 360px; padding: 2px 0 0 4px; overflow: hidden; cursor: text; }
+.description { min-width: var(--descWidth); max-width: var(--descWidth); padding: 2px 0 0 4px; overflow: hidden; cursor: text; max-height: var(--thumbSize); }
 .btn-tiny { font-size: var(--btntiny); color: var(--inactive); padding: 6px; cursor: pointer; z-index: 8; display: none; text-shadow: 1px 1px var(--title); }
 .btn-tiny:hover { color: var(--foreground); }
 .listtitle { font-weight: bold; margin: -4px 0 4px -4px; padding-left: 4px; padding-right: 24px; word-wrap: break-word; white-space: normal; line-height: 1.4rem; }

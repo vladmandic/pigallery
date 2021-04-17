@@ -38,7 +38,7 @@
         "imports": []
       },
       "client/pigallery.css": {
-        "bytes": 10406,
+        "bytes": 10583,
         "imports": []
       },
       "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
@@ -26429,7 +26429,7 @@
         ]
       },
       "client/compare/compare.js": {
-        "bytes": 9442,
+        "bytes": 10949,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26545,7 +26545,7 @@
         ]
       },
       "client/index/list.js": {
-        "bytes": 9408,
+        "bytes": 9542,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26638,7 +26638,7 @@
         ]
       },
       "client/index/index.js": {
-        "bytes": 36459,
+        "bytes": 36454,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26919,7 +26919,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5778131
+        "bytes": 5781140
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -26963,7 +26963,7 @@
             "bytesInOutput": 0
           },
           "client/compare/compare.js": {
-            "bytesInOutput": 8640
+            "bytesInOutput": 10347
           },
           "client/shared/tf.js": {
             "bytesInOutput": 42
@@ -27509,13 +27509,13 @@
             "bytesInOutput": 6942
           },
           "client/shared/config.js": {
-            "bytesInOutput": 7833
+            "bytesInOutput": 9033
           },
           "client/process/processImage.js": {
             "bytesInOutput": 2505
           }
         },
-        "bytes": 3589859
+        "bytes": 3592766
       },
       "dist/compare/compare.css": {
         "imports": [],
@@ -27527,16 +27527,16 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11310
+            "bytesInOutput": 11499
           }
         },
-        "bytes": 417697
+        "bytes": 417886
       },
       "dist/index/index.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1049994
+        "bytes": 1050237
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27568,7 +27568,7 @@
             "bytesInOutput": 5662
           },
           "client/index/list.js": {
-            "bytesInOutput": 9616
+            "bytesInOutput": 9791
           },
           "client/index/nearest.js": {
             "bytesInOutput": 3234
@@ -27595,7 +27595,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.js": {
-            "bytesInOutput": 37563
+            "bytesInOutput": 37558
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59917
@@ -27613,7 +27613,7 @@
             "bytesInOutput": 7971
           }
         },
-        "bytes": 565610
+        "bytes": 565780
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27631,10 +27631,10 @@
             "bytesInOutput": 3150
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11310
+            "bytesInOutput": 11499
           }
         },
-        "bytes": 558801
+        "bytes": 558990
       },
       "dist/process/process.js.map": {
         "imports": [],
@@ -31602,10 +31602,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11310
+            "bytesInOutput": 11499
           }
         },
-        "bytes": 417697
+        "bytes": 417886
       },
       "dist/video/video.js.map": {
         "imports": [],
@@ -35588,10 +35588,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11310
+            "bytesInOutput": 11499
           }
         },
-        "bytes": 417697
+        "bytes": 417886
       },
       "dist/index/worker.js.map": {
         "imports": [],
