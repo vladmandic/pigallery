@@ -11,9 +11,8 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **HEAD -> master** 2021/04/17 mandic00@live.com
 
-
-### **origin/master** 2021/04/10 mandic00@live.com
-
+- optimize list handling
+- new ui
 
 ### **3.5.3** 2021/04/10 mandic00@live.com
 
