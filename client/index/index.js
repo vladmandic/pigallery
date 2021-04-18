@@ -478,10 +478,10 @@ async function showContextPopup(evt) {
 // resize viewport
 function resizeViewport() {
   const viewportScale = Math.min(1, Math.round(100 * window.outerWidth / 800) / 100);
-  // log.debug('Viewport scale:', viewportScale);
   document.querySelector('meta[name=viewport]').setAttribute('content', `width=device-width, shrink-to-fit=yes; initial-scale=${viewportScale}`);
-  $('#main').height(window.innerHeight - ($('#log').height() || 0) - ($('#navbar').height() || 0));
+
   if ($('#popup').css('display') !== 'none') details.show();
+
   const top = $('#optionsview').clientHeight;
   const height = $('body').clientHeight - top;
   $('#popup').css('top', top);
@@ -492,14 +492,19 @@ function resizeViewport() {
   $('#video').height(height);
   $('#process').css('top', top);
   $('#process').height(height);
+
+  const fontSize = Math.trunc(10 * (1 - viewportScale)) + parseInt(window.options.fontSize);
+  $(':root').css('fontSize', `${fontSize}px`);
+
+  $('#thumbsize')[0].value = window.options.listThumbSize;
+
+  document.getElementById('main').style.height = `${window.innerHeight - document.getElementById('log').offsetHeight - document.getElementById('navbar').offsetHeight}px`;
 }
 
 // show/hide navigation bar elements
 function showNavbar(elem) {
-  $('body').css('fontSize', window.options.fontSize);
   $('#folderbar').toggle(window.options.listFolders);
   $('.description').toggle(window.options.listDetails);
-  $('#thumbsize')[0].value = window.options.listThumbSize;
 
   $('#btn-close').hide();
   if (elem) {

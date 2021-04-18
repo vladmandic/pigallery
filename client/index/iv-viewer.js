@@ -485,9 +485,7 @@ class ImageViewer {
     const onImageLoad = () => {
       css(ivLoader, { display: 'none' });
       css(image, { visibility: 'visible' });
-      if (this.images.hiResImageSrc) {
-        this.loadHighResImage(this.images.hiResImageSrc);
-      }
+      if (this.images.hiResImageSrc) this.loadHighResImage(this.images.hiResImageSrc);
       this.state.loaded = true;
       this.calculateDimensions();
       this.resetZoom();
@@ -496,7 +494,7 @@ class ImageViewer {
     else this.events.imageLoad = assignEvent(image, 'load', onImageLoad);
   }
 
-  loadHighResImage(hiResImageSrc) {
+  async loadHighResImage(hiResImageSrc) {
     const lowResImg = this.elements.image;
     const hiResImage = createElement({
       tagName: 'img',
