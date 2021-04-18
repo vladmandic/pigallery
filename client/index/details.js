@@ -312,6 +312,7 @@ async function hideNavbar() {
 
 // show details popup
 export async function show(img) {
+  $('#popup-details').html('');
   hideNavbar();
   const t0 = performance.now();
   if (!img && last) img = last.image;
@@ -336,8 +337,8 @@ export async function show(img) {
 
   const el = document.getElementById('popup-image');
   if (!viewer) viewer = new ImageViewer(el, { zoomValue: 100, minZoom: 50, maxZoom: 500, zoomStep: 3, zoomSensitivity: 100, snapView: true, zoomWheel: true });
-  await viewer.load(object.thumbnail, img);
-  resizeDetailsImage(object);
+  viewer.load(object.thumbnail, img);
+  await resizeDetailsImage(object);
   drawDescription(object);
 
   // handle pan&zoom redraws
@@ -468,8 +469,8 @@ export function handlers() {
   $('#minscore').on('input', () => {
     if (last) {
       minScore = parseFloat($('#minscore')[0].value);
-      drawDescription(last);
       drawBoxes(last);
+      drawDescription(last);
     }
   });
 }

@@ -225,6 +225,7 @@ async function setTheme(theme) {
   document.documentElement.style.setProperty('--link', window.theme.link);
   document.documentElement.style.setProperty('--inactive', window.theme.inactive);
   document.documentElement.style.setProperty('--thumbSize', window.options.listThumbSize);
+  document.documentElement.style.setProperty('--fontSize', window.options.fontSize);
 }
 
 async function done() {

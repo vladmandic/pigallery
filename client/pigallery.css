@@ -30,12 +30,12 @@ ul { margin: 0; padding-left: 20px; }
 .input { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); width: 50%; height: 2.5rem; border-radius: 0; }
 .input:hover { background: var(--foreground); }
 .input:focus { background: var(--foreground); }
-.label { display: flex; margin-left: 30px; align-self: center; }
+.label { display: flex; margin-left: 30px; align-self: center; float: left; clear: left; min-width: 5rem; text-align: right; }
 .options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); height: 1.5rem; border-radius: 0; position: -webkit-sticky; position: sticky; left: 220px; }
 .options:hover { background: var(--foreground); }
 .options:focus { background: var(--foreground); }
 .main { height: 100%; display: flex; }
-.folderbar { overflow-x: hidden; overflow-y: auto; cursor: pointer; margin-top: 4rem; }
+.folderbar { overflow-x: hidden; overflow-y: auto; cursor: pointer; margin-top: 4rem; min-width: 10rem; }
 .folderbar::-webkit-scrollbar { display: none; }
 .folderlist { margin: 0; min-width: 10rem; max-width: 15rem; line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0; }
 .folders { margin: 0; min-width: 5rem; max-width: 13rem; background: var(--body); line-height: 2.2rem; white-space: nowrap; text-overflow: ellipsis; padding: 0 0 0 0; }
@@ -102,7 +102,7 @@ input[type=range]::-moz-range-thumb { border: 1px solid #000000; margin-top: 0.1
 .loader::after { border-top-color: #26a9e0; animation: spin 1.5s linear infinite; }
 .icon { min-width: 64px; text-align: -webkit-center; text-align: -moz-center; filter: grayscale(1); padding: 0.5rem 1rem 0.5rem 1rem; }
 .icon:hover { background: #505050; filter: grayscale(0); }
-.iconsmall { min-width: 32px; text-align: -webkit-center; text-align: -moz-center; filter: grayscale(1); padding: 0.2rem 0.2rem 0.2rem 0.2rem; }
+.iconsmall { min-width: 32px; text-align: -webkit-center; text-align: -moz-center; filter: grayscale(1); padding: 0.2rem 0.2rem 0.2rem 0.2rem; margin-right: 8px; }
 .iconsmall:hover { filter: grayscale(0); }
 @keyframes spin {
   from { transform: rotate(0deg); }

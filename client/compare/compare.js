@@ -234,7 +234,9 @@ async function resize() {
   document.documentElement.style.setProperty('--listItemHeight', `${16 + window.options.listThumbSize}px`);
   document.documentElement.style.setProperty('--listItemWidth', '');
   document.documentElement.style.setProperty('--descWidth', '80vw');
-  $('#main').height(window.innerHeight - ($('#log').height() || 0) - ($('#navbar').height() || 0));
+
+  document.getElementById('main').style.height = `${window.innerHeight - document.getElementById('log').offsetHeight - document.getElementById('navbar').offsetHeight}px`;
+
   $('body').css('background', `radial-gradient(at 50% 100%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
   $(document).on('mousemove', (event) => {
     const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
