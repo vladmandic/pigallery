@@ -26499,7 +26499,7 @@
         "imports": []
       },
       "assets/color-thief.umd.js": {
-        "bytes": 6926,
+        "bytes": 6758,
         "imports": []
       },
       "client/index/iv-viewer.js": {
@@ -27536,7 +27536,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1050579
+        "bytes": 1050394
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27544,7 +27544,7 @@
         "entryPoint": "client/index/index.js",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
-            "bytesInOutput": 218856
+            "bytesInOutput": 218878
           },
           "client/shared/log.js": {
             "bytesInOutput": 1727
@@ -27556,7 +27556,7 @@
             "bytesInOutput": 134440
           },
           "assets/color-thief.umd.js": {
-            "bytesInOutput": 11533
+            "bytesInOutput": 11347
           },
           "client/index/iv-viewer.js": {
             "bytesInOutput": 27651
@@ -27613,7 +27613,7 @@
             "bytesInOutput": 7971
           }
         },
-        "bytes": 565996
+        "bytes": 565832
       },
       "dist/index/index.css": {
         "imports": [],
