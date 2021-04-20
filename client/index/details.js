@@ -92,20 +92,12 @@ export function combine(object) {
 function getPalette() {
   if (!thief) thief = new ColorThief();
   const img = document.getElementsByClassName('iv-image')[0];
-  // const color = thief.getColor(img);
-  const palette = thief.getPalette(img, 15);
-  let color = palette[0];
-  for (const c of palette) { // find first dark color in palette to have some contrast
-    const isDark = ((c[0] + c[1] + c[2]) / 3 / 255) < 0.5;
-    if (isDark) {
-      color = c;
-      break;
-    }
-  }
-  window.dominant = [`rgb(${color})`, `rgb(${palette[0]})`];
-  $('#popup').css('background', `radial-gradient(at 50% 50%, ${window.dominant[1] || window.theme.gradient} 0, ${window.dominant[0] || window.theme.background} 100%, ${window.dominant[0] || window.theme.background} 100%)`);
-  $('#optionsview').css('background', window.dominant[0]);
-  let txt = `<span class="palette" style="color: rgb(${color})" title="RGB: ${color}">■</span>\n`;
+  let palette = thief.getPalette(img, 16);
+  palette = palette.sort((i, j) => (i[0] + i[1] + i[2]) - (j[0] + j[1] + j[2]));
+  window.dominant = [`rgb(${palette[1]})`, `rgb(${palette[2]})`];
+  $('#optionsview').css('background', window.dominant[1]);
+  $('#popup').css('background', window.dominant[1]);
+  let txt = '';
   for (const col of palette) txt += `<span class="palette" style="color: rgb(${col})" title="RGB: ${col}">■</span>\n`;
   return txt;
 }
