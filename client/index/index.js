@@ -169,7 +169,6 @@ async function filterResults(input) {
   $('#search-result').html(`"${input}"<br>exact:${full.length} total:${all.length}`);
   log.debug(t0, `Searching for "${input}" exact:${full.length} partial:${all.length - full.length} total:${all.length} images`);
   enumerate.enumerate().then(folderHandlers).catch(false);
-  // list.redraw(window.filtered);
   busy();
 }
 
@@ -211,7 +210,6 @@ async function similarImage(image) {
   log.debug(t0, `Similar: ${window.filtered.length} images`);
   list.redraw(window.filtered);
   enumerate.enumerate().then(folderHandlers).catch(false);
-  list.scroll(window.filtered);
   busy();
 }
 
@@ -277,7 +275,6 @@ async function similarPerson(image) {
   log.debug(t0, `Similar: ${window.filtered.length} persons`);
   list.redraw(window.filtered);
   enumerate.enumerate().then(folderHandlers).catch(false);
-  list.scroll(window.filtered);
   busy();
 }
 
@@ -301,7 +298,6 @@ async function similarClasses(image) {
   log.debug(t0, `Similar: ${window.filtered.length} classes`);
   list.redraw(window.filtered);
   enumerate.enumerate().then(folderHandlers).catch(false);
-  list.scroll(window.filtered);
   busy();
 }
 
@@ -357,12 +353,10 @@ async function sortResults(sort) {
     await loadGallery(false);
   }
   busy('Enumerating images');
-  // await enumerate.enumerate();
-  // folderHandlers();
   enumerate.enumerate().then(folderHandlers).catch(false);
   stats.enumerate = Math.floor(window.performance.now() - t1);
-  list.scroll(window.filtered);
   // log.div('log', true, 'Displaying: ', window.filtered.length, ' images');
+  list.scroll(window.filtered); // just updates images list for future scroll events
   busy();
 }
 
@@ -418,6 +412,7 @@ async function loadGallery(refresh = false) {
   let dlSize = JSON.stringify(json0).length;
   if (json0 && json0.length > 0) indexdb.store(json0);
   let perf = 0;
+  if (totalImages > 0) enumerate.refresh();
   if (pages > 0) {
     const promisesReq = [];
     const promisesData = [];
@@ -467,7 +462,7 @@ async function loadGallery(refresh = false) {
   stats.store = Math.round(stats.store);
   stats.speed = Math.round(dlSize / (t1 - t0 - stats.store));
   $('#progress').text('Almost done');
-  if (!refresh) sortResults(window.options.listSortOrder);
+  // if (!refresh) sortResults(window.options.listSortOrder);
 }
 
 // popup on right-click

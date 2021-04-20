@@ -4,6 +4,7 @@ import $ from 'jquery';
 import moment from 'moment';
 import * as log from '../shared/log';
 import * as details from './details';
+import * as indexdb from './indexdb';
 
 // adds dividiers to list view based on sort order
 let previous;
@@ -88,7 +89,7 @@ function printResult(object) {
   thumb.id = object.id;
   const title = `${object.image}\nDate: ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}\n${classified}\n${detected}\n${person}\n${location}\n${camera}`;
   thumb.innerHTML = `
-    <img loading="lazy" id="thumb-${object.id}" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" class="thumbnail-img" title="${title}">
+    <img loading="lazy" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" class="thumbnail-img" title="${title}">
     <div class="thumb-top">
       <p class="btn-tiny fa fa-file-archive" onclick="deleteImage('${escape(object.image)}');" title="Delete image"></p>
       <p class="btn-tiny fa fa-file-image" onclick="details.show('${escape(object.image)}');" title="View image details"></p>
@@ -103,8 +104,7 @@ function printResult(object) {
 
   const desc = document.createElement('div');
   desc.className = 'col description';
-  desc.id = object.id;
-  desc.style = `display: ${window.options.listDetails ? 'block' : 'hidden'}`;
+  desc.style.display = window.options.listDetails ? 'block' : 'none';
   desc.innerHTML = `
     <p class="listtitle">${decodeURIComponent(object.image).replace(root, '')}</p>
     ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
@@ -148,10 +148,10 @@ export async function resize() {
   document.documentElement.style.setProperty('--thumbWidth', widthImg);
   document.documentElement.style.setProperty('--thumbImgWidth', widthImg);
 
-  const fixedSize = 16 + window.options.listThumbSize;
-  const width = window.options.fixWidth ? `${fixedSize}px` : '';
-  document.documentElement.style.setProperty('--listItemHeight', `${fixedSize}px`);
-  document.documentElement.style.setProperty('--listItemWidth', width);
+  // const fixedSize = 16 + window.options.listThumbSize;
+  // const width = window.options.fixWidth ? `${fixedSize}px` : '';
+  // document.documentElement.style.setProperty('--listItemHeight', `${fixedSize}px`);
+  // document.documentElement.style.setProperty('--listItemWidth', width);
 
   document.documentElement.style.setProperty('--descWidth', `${2 * window.options.listThumbSize}px`);
 
@@ -159,33 +159,34 @@ export async function resize() {
 }
 
 // adds items to gallery view on scroll event - infinite scroll
-let current;
+let current = 0;
 export async function scroll(images, title) {
+  $('#results').off('scroll');
   const visibleHeight = Math.trunc(document.getElementById('results').offsetHeight + document.getElementById('results').scrollTop);
   const totalHeight = Math.trunc(document.getElementById('results').scrollHeight);
-  if (visibleHeight >= totalHeight && current < images.length) {
+  if (visibleHeight >= 0.95 * totalHeight && current < images.length) {
     const t0 = performance.now();
     const res = document.getElementById('results');
     const count = Math.min(window.options.listItemCount, images.length - current);
-    let i = current;
-    while (i < (current + count)) {
-      const divider = addDividers(images[i], title);
+    for (let i = current; i < current + count; i++) {
+      if (!images[i].thumbnail) images[i].thumbnail = indexdb.thumbnail(images[i].image);
+      if (!images[i].person) images[i].person = indexdb.person(images[i].image);
+      [images[i].thumbnail, images[i].person] = await Promise.all([images[i].thumbnail, images[i].person]); // to run both thumbnail and person indexdb get concurrently
       const item = printResult(images[i]);
+      const divider = addDividers(images[i], title);
       if (divider) res.appendChild(divider);
       res.appendChild(item);
-      i++;
     }
-    current = i;
+    current += count;
     log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${images.length}`);
+    $('.listitem').on('mouseover', (evt) => thumbButtons(evt, true));
+    $('.listitem').on('mouseout', (evt) => thumbButtons(evt, false));
+    // $('.listitem').mouseenter((evt) => thumbButtons(evt, true));
+    // $('.listitem').mouseleave((evt) => thumbButtons(evt, false));
+    $('.listitem').on('contextmenu', (evt) => $(evt.target).parent().find('.btn-tiny').show());
+    $('.description').on('click', (evt) => $(evt.target).parent().find('.btn-tiny').show());
+    $('.description').toggle(window.options.listDetails);
   }
-  $('.listitem').on('mouseover', (evt) => thumbButtons(evt, true));
-  $('.listitem').on('mouseout', (evt) => thumbButtons(evt, false));
-  // $('.listitem').mouseenter((evt) => thumbButtons(evt, true));
-  // $('.listitem').mouseleave((evt) => thumbButtons(evt, false));
-  $('.listitem').on('contextmenu', (evt) => $(evt.target).parent().find('.btn-tiny').show());
-  $('.description').on('click', (evt) => $(evt.target).parent().find('.btn-tiny').show());
-  $('.description').toggle(window.options.listDetails);
-  $('#results').off('scroll');
   $('#results').on('scroll', () => scroll(images, title));
 }
 
@@ -207,4 +208,7 @@ export async function redraw(images, divider, clear = true) {
   log.debug(t0, 'Redraw results complete:', images.length, clear);
 }
 
-export function clearPrevious() { previous = null; }
+export function clearPrevious() {
+  previous = null;
+  current = 0;
+}
