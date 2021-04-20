@@ -3,10 +3,8 @@
 import * as log from '../shared/log';
 
 let db;
-let id = 0;
 
 const database = 'pigallery';
-const table = 'images';
 let last = { index: 'date', direction: true, start: 1, end: Number.MAX_SAFE_INTEGER };
 
 export async function open() {
@@ -21,10 +19,17 @@ export async function open() {
     request.onupgradeneeded = (evt) => {
       log.debug(t0, 'IndexDB request create');
       db = evt.target?.result;
-      const tbl = db.createObjectStore(table, { keyPath: 'image' });
-      tbl.createIndex('name', 'image', { unique: true });
-      tbl.createIndex('date', 'timestamp', { unique: false });
-      tbl.createIndex('size', 'pixels', { unique: false });
+
+      const storesImage = db.createObjectStore('images', { keyPath: 'image' });
+      storesImage.createIndex('name', 'image', { unique: true });
+      storesImage.createIndex('date', 'timestamp', { unique: false });
+      storesImage.createIndex('size', 'pixels', { unique: false });
+
+      const storesThumbnail = db.createObjectStore('thumbnails', { keyPath: 'name' });
+      storesThumbnail.createIndex('name', 'name', { unique: true });
+
+      const storesPerson = db.createObjectStore('persons', { keyPath: 'name' });
+      storesPerson.createIndex('name', 'name', { unique: true });
     };
     request.onsuccess = (evt) => {
       log.debug(t0, 'IndexDB request open');
@@ -63,17 +68,36 @@ export async function reset() {
 }
 
 export async function put(obj) {
-  obj.id = id++;
-  db.transaction([table], 'readwrite')
-    .objectStore(table)
-    .put(obj);
+  const thumbDetails = { name: obj.image, thumbnail: obj.thumbnail };
+  const personDetails = { name: obj.image, person: obj.person };
+  delete obj.thumbnail;
+  delete obj.person;
+
+  db.transaction(['images'], 'readwrite').objectStore('images').put(obj);
+  db.transaction(['thumbnails'], 'readwrite').objectStore('thumbnails').put(thumbDetails);
+  db.transaction(['persons'], 'readwrite').objectStore('persons').put(personDetails);
 }
 
-export async function get(name) {
-  db.transaction([table], 'readonly')
-    .objectStore(table)
-    .get(name)
-    .onsuccess = (evt) => evt.target.result;
+export async function thumbnail(name) {
+  return new Promise((resolve) => {
+    const request = db
+      .transaction(['thumbnails'], 'readonly')
+      .objectStore('thumbnails')
+      .index('name')
+      .get(name);
+    request.onsuccess = (evt) => resolve(evt.target.result?.thumbnail);
+  });
+}
+
+export async function person(name) {
+  return new Promise((resolve) => {
+    const request = db
+      .transaction(['persons'], 'readonly')
+      .objectStore('persons')
+      .index('name')
+      .get(name);
+    request.onsuccess = (evt) => resolve(evt.target.result?.person);
+  });
 }
 
 export async function getShare() {
@@ -101,15 +125,15 @@ export async function all(index = 'date', direction = true, start = 1, end = Num
       const res = [];
       if (!window.user || !window.user.user) resolve(res);
       let idx = 0;
-      const transaction = db.transaction([table], 'readonly')
-        .objectStore(table)
+      const cursor = db
+        .transaction(['images'], 'readwrite')
+        .objectStore('images')
         .index(index)
         .openCursor(null, direction ? 'next' : 'prev');
-        // .getAll();
-      transaction.onerror = (evt) => log.debug('IndexDB All error:', evt);
-      transaction.onabort = (evt) => log.debug('IndexDB All abort:', evt);
-      transaction.oncomplete = (evt) => log.debug('IndexDB All complete:', evt);
-      transaction.onsuccess = (evt) => {
+      cursor.onerror = (evt) => log.debug('IndexDB All error:', evt);
+      cursor.onabort = (evt) => log.debug('IndexDB All abort:', evt);
+      cursor.oncomplete = (evt) => log.debug('IndexDB All complete:', evt);
+      cursor.onsuccess = (evt) => {
         const e = evt.target.result;
         if (e) {
           if (Array.isArray(e)) {
@@ -150,10 +174,8 @@ export async function refresh() {
 export async function count() {
   if (window.share) return Number.MAX_SAFE_INTEGER;
   return new Promise((resolve) => {
-    db.transaction([table], 'readonly')
-      .objectStore(table)
-      .count()
-      .onsuccess = (evt) => resolve(evt.target.result);
+    const request = db.transaction(['images'], 'readwrite').objectStore('images').count();
+    request.onsuccess = (evt) => resolve(evt.target.result);
   });
 }
 

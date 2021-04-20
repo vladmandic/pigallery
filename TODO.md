@@ -1,3 +1,4 @@
 # To-do List
 
-- Split IndexDB to records plus data
+- Store enumerations in IndexDB
+- Implement PWA full offline mode

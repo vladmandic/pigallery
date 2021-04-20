@@ -3,26 +3,34 @@
 import $ from 'jquery';
 import * as log from '../shared/log';
 
+let refreshNeeded = true;
+
+async function setRefresh() {
+  refreshNeeded = true;
+}
+
 // exctract top classe from classification & detection and builds sidebar menu
 async function enumerateClasses() {
   const t0 = performance.now();
   $('#classes').html('');
   if (!Array.isArray(window.filtered)) window.filtered = [];
   const classesList = [];
-  for (const item of window.filtered) {
-    for (const tag of item.tags) {
-      if (Object.keys(tag).length === 0) continue;
-      const key = Object.keys(tag)[0];
-      if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
-      const vals = Object.values(tag)[0].toString().split(',');
-      for (const val of vals) {
-        const found = classesList.find((a) => a.tag === val);
-        if (found) found.count += 1;
-        else classesList.push({ tag: val, count: 1 });
+  if (refreshNeeded) {
+    for (const item of window.filtered) {
+      for (const tag of item.tags) {
+        if (Object.keys(tag).length === 0) continue;
+        const key = Object.keys(tag)[0];
+        if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
+        const vals = Object.values(tag)[0].toString().split(',');
+        for (const val of vals) {
+          const found = classesList.find((a) => a.tag === val);
+          if (found) found.count += 1;
+          else classesList.push({ tag: val, count: 1 });
+        }
       }
     }
+    classesList.sort((a, b) => b.count - a.count);
   }
-  classesList.sort((a, b) => b.count - a.count);
   const classesCount = classesList.length;
   classesList.length = Math.min(window.options.topClasses, classesList.length);
   let html = '';
@@ -40,11 +48,13 @@ async function enumerateLocations() {
   $('#locations').html('');
   if (!Array.isArray(window.filtered)) window.filtered = [];
   let countries = [];
-  for (const item of window.filtered) {
-    if (item && item.location.country && !countries.includes(item.location.country)) countries.push(item.location.country);
+  if (refreshNeeded) {
+    for (const item of window.filtered) {
+      if (item && item.location.country && !countries.includes(item.location.country)) countries.push(item.location.country);
+    }
+    countries = countries.sort((a, b) => (a > b ? 1 : -1));
+    countries.push('Unknown');
   }
-  countries = countries.sort((a, b) => (a > b ? 1 : -1));
-  countries.push('Unknown');
   let i = 1;
   let locCount = 0;
   for (const country of countries) {
@@ -78,15 +88,17 @@ async function enumerateFolders() {
   if (!Array.isArray(window.filtered)) window.filtered = [];
 
   let list = [];
-  for (const item of window.filtered) {
-    if (!item) continue;
-    const path = item.image.substr(0, item.image.lastIndexOf('/'));
-    const folders = path.split('/').filter((a) => a !== '');
-    const existing = list.find((a) => a.path === path);
-    if (!existing) list.push({ path, folders, count: 1 });
-    else existing.count += 1;
+  if (refreshNeeded) {
+    for (const item of window.filtered) {
+      if (!item) continue;
+      const path = item.image.substr(0, item.image.lastIndexOf('/'));
+      const folders = path.split('/').filter((a) => a !== '');
+      const existing = list.find((a) => a.path === path);
+      if (!existing) list.push({ path, folders, count: 1 });
+      else existing.count += 1;
+    }
+    list = list.sort((a, b) => (a.path > b.path ? 1 : -1));
   }
-  list = list.sort((a, b) => (a.path > b.path ? 1 : -1));
   let folderCount = 0;
   for (let i = depth; i < 10; i++) {
     for (const item of list) {
@@ -153,8 +165,9 @@ async function enumerateResults() {
   const a2 = enumerateLocations();
   const a3 = enumerateClasses();
   const a4 = enumerateNSFW();
-  // const a4 = enumerateShares();
+  // const a5 = enumerateShares(); // enumerateShares is called explicitly so not part of general enumeration
   await Promise.all([a1, a2, a3, a4]);
+  refreshNeeded = true;
 }
 
 export {
@@ -164,4 +177,5 @@ export {
   enumerateShares as shares,
   enumerateNSFW as nsfw,
   enumerateResults as enumerate,
+  setRefresh as refresh,
 };
