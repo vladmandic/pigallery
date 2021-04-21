@@ -29,12 +29,6 @@ function forceSSL(req, res, next) {
   return next();
 }
 
-// @ts-ignore
-function allowFrames(req, res, next) {
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN'); // allow | deny
-  next();
-}
-
 async function main() {
   try {
     config = JSON.parse(fs.readFileSync('./config.json').toString());
@@ -73,7 +67,6 @@ async function main() {
   app.use(session(config.cookie));
   if (config.server.allowPWA) app.use(allowPWA);
   if (config.server.forceHTTPS) app.use(forceSSL);
-  app.use(allowFrames);
 
   // expressjs passthrough for all requests
   app.use((req, res, next) => {
@@ -85,10 +78,14 @@ async function main() {
         log.warn(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);
       }
     });
+
+    if (req.url === '/') res.set('cache-control', 'public, max-age=180');
+    else if (req.url.startsWith('/api/')) res.set('cache-control', 'no-cache');
+    else res.set('cache-control', 'public, max-age=31557600, immutable');
+
     if (req.url.startsWith('/api/user/auth')) next();
     else if (!req.url.startsWith('/api/')) next();
-    // @ts-ignore
-    else if (req.session.user || !config.server.authForce) next();
+    else if (req.session['user'] || !config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
   });
 

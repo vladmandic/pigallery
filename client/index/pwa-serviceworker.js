@@ -4,7 +4,7 @@
 const cacheName = 'pigallery';
 const cacheFiles = ['/favicon.ico', '/pigallery.webmanifest', '/client/offline.html']; // assets and models are cached on first access
 let cacheModels = false;
-let cacheAssets = false;
+let cacheAssets = true;
 
 let listening = false;
 const stats = { hit: 0, miss: 0 };

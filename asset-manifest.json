@@ -38,7 +38,7 @@
         "imports": []
       },
       "client/pigallery.css": {
-        "bytes": 10622,
+        "bytes": 10660,
         "imports": []
       },
       "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
@@ -26474,7 +26474,7 @@
         ]
       },
       "assets/mapquest.css": {
-        "bytes": 129706,
+        "bytes": 138156,
         "imports": []
       },
       "client/index/iv-viewer.css": {
@@ -26545,7 +26545,7 @@
         ]
       },
       "client/index/list.js": {
-        "bytes": 10084,
+        "bytes": 10060,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26914,7 +26914,7 @@
         ]
       },
       "client/index/pwa-serviceworker.js": {
-        "bytes": 3277,
+        "bytes": 3276,
         "imports": []
       }
     },
@@ -27540,7 +27540,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1052737
+        "bytes": 1052691
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27572,7 +27572,7 @@
             "bytesInOutput": 5662
           },
           "client/index/list.js": {
-            "bytesInOutput": 9912
+            "bytesInOutput": 9888
           },
           "client/index/nearest.js": {
             "bytesInOutput": 3234
@@ -27617,7 +27617,7 @@
             "bytesInOutput": 7971
           }
         },
-        "bytes": 567102
+        "bytes": 567078
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27629,7 +27629,7 @@
             "bytesInOutput": 207942
           },
           "assets/mapquest.css": {
-            "bytesInOutput": 137893
+            "bytesInOutput": 138056
           },
           "client/index/iv-viewer.css": {
             "bytesInOutput": 3150
@@ -27638,7 +27638,7 @@
             "bytesInOutput": 11546
           }
         },
-        "bytes": 559037
+        "bytes": 559200
       },
       "dist/process/process.js.map": {
         "imports": [],
@@ -35621,7 +35621,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5284
+        "bytes": 5283
       },
       "dist/index/pwa-serviceworker.js": {
         "imports": [],
@@ -35629,10 +35629,10 @@
         "entryPoint": "client/index/pwa-serviceworker.js",
         "inputs": {
           "client/index/pwa-serviceworker.js": {
-            "bytesInOutput": 2725
+            "bytesInOutput": 2724
           }
         },
-        "bytes": 2929
+        "bytes": 2928
       }
     }
   }

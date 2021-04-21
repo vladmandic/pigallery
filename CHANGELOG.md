@@ -9,8 +9,12 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/04/20 mandic00@live.com
+### **HEAD -> master** 2021/04/21 mandic00@live.com
 
+
+### **origin/master** 2021/04/20 mandic00@live.com
+
+- improve dominant colors
 - mobile layout optimizations
 - modernized video
 - modernize compare
