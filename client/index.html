@@ -12,6 +12,7 @@
   <meta name="msapplication-task" content="name=Gallery;action-uri=/">
   <meta name="msapplication-task" content="name=Process Images;action-uri=/process">
   <meta name="msapplication-task" content="name=Logoff;action-uri=/auth">
+  <meta name="theme-color" content="#555555">
   <link rel="author" href="/humans.txt">
   <link rel="pingback" href="/api/pingback">
   <link rel="manifest" href="/pigallery.webmanifest">
@@ -25,111 +26,121 @@
 <body>
   <noscript><h1>You really need JS enabled...</h1></noscript>
 
-  <div id="splash" class="splash">
-    <div class="loading" style="top: 120px;"><div class="loader"></div></div>
-    <div id="progress" class="loading"></div>
-  </div>
-
-  <div id="navbar" class="row navbar text-center">
-    <div class="icon" id="btn-user"><img alt="user" src="/assets/icons/48/user.png"/><p id="user">user</p></div>
-    <div class="icon" id="btn-search" title="Search images for any classified term"><img alt="search" src="/assets/icons/48/zoom.png"/><p>search</p></div>
-    <div class="icon" id="btn-map" title="View images placed on a world map"><img alt="map" src="/assets/icons/48/world.png"/><p>map</p></div>
-    <div class="icon" id="btn-list" title="Options for gallery list view"><img alt="list options" src="/assets/icons/48/gear.png"/><p>list options</p></div>
-    <div class="icon" id="btn-slide" title="Start slideshow of selected images"><img alt="slideshow" src="/assets/icons/48/video_mark.png"/><p>slideshow</p></div>
-    <div class="icon" id="btn-video" title="Live video classification and object detection"><img alt="live video" src="/assets/icons/48/webcam.png"/><p>live video</p></div>
-    <div class="icon" id="btn-close" style="display: none" title="Close document"><img alt="close" src="/assets/icons/48/close.png"/><p>close</p></div>
-  </div>
-
-  <div id="userbar" class="row navline text-center">
-    <div class="icon" id="btn-load"><img alt="reload image db" src="/assets/icons/48/refresh.png"/><p>reload image db</p></div>
-    <div class="icon" id="btn-update"><img alt="process images" src="/assets/icons/48/database_development.png"/><p>process images</p></div>
-    <div class="icon" id="btn-changelog"><img alt="change log" src="/assets/icons/48/blacklist.png"/><p>change log</p></div>
-    <div class="icon" id="btn-doc"><img alt="documentation" src="/assets/icons/48/contract.png"/><p>documentation</p></div>
-    <div class="icon" id="btn-options"><img alt="application settings" src="/assets/icons/48/tool.png"/><p>application settings</p></div>
-    <div class="icon" id="btn-params"><img alt="model parameters" src="/assets/icons/48/games.png"/><p>model parameters</p></div>
-    <div class="icon" id="btn-logout"><img alt="logout" src="/assets/icons/48/flip_horizontal.png"/><p>logout</p></div>
-  </div>
-
-  <div id="searchbar" class="row navline text-center">
-    <label for="search-input">search</label><input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
-    <div class="icon" id="btn-searchnow"><img  alt="search" src="/assets/icons/48/zoom.png"/></div>
-    <div class="icon" id="btn-resetsearch"><img  alt="reset search" src="/assets/icons/48/close.png"/></div>
-    <span id="search-result" style="align-self: center; padding-left: 16px;"></span>
-  </div>
-
-  <div id="optionslist" class="row navline text-center">
-    <div class="icon" id="btn-desc"><img  alt="description" src="/assets/icons/48/jpg.png"/><p id="description-label">description</p></div>
-    <div class="icon" id="btn-duplicates"><img  alt="find duplicates" src="/assets/icons/48/storage_3.png"/><p>find duplicates</p></div>
-
-    <div><i class="navlinebutton fad sort fa-sort-alpha-down"></i><i class="navlinebutton fad sort fa-sort-alpha-up" style="padding-left: 0;"></i>
-      <p class="btntext">sort by name</p></div>
-    <div><i class="navlinebutton fad sort fa-sort-numeric-down"></i><i class="navlinebutton fad sort fa-sort-numeric-up" style="padding-left: 0;"></i>
-      <p class="btntext">sort by date</p></div>
-    <div><i class="navlinebutton fad sort fa-sort-amount-down"></i><i class="navlinebutton fad sort fa-sort-amount-up" style="padding-left: 0;"></i>
-      <p class="btntext">sort by zize</p></div>
-    <div style="width: 100px; margin-left: 50px;">
-      <input type="range" class="thumbsize" name="thumbsize" id="thumbsize" min="50" max="500" step="1" value="130">
-      <label id="thumblabel" class="btntext" for="thumbsize">thumbnail size</label>
+  <header>
+    <div id="splash" class="splash">
+      <div class="loading" style="top: 120px;"><div class="loader"></div></div>
+      <div id="progress" class="loading"></div>
     </div>
-  </div>
+  </header>
 
-  <div id="optionsview" class="row navbar text-center" style="position: fixed;">
-    <div class="icon" id="details-previous"><img  alt="previous" src="/assets/icons/48/rewind.png"/><p>previous</p></div>
-    <div class="icon" id="details-close"><img  alt="close" src="/assets/icons/48/stop.png"/><p>close</p></div>
-    <div class="icon" id="details-next"><img  alt="next" src="/assets/icons/48/fast_forward.png"/><p>next</p></div>
-    <div class="icon" id="details-boxes"><img alt="detected" src="/assets/icons/48/architecture_info.png"/><p id="detected-label">detected</p></div>
-    <div class="icon" id="details-faces"><img alt="faces" src="/assets/icons/48/group.png"/><p id="faces-label">faces</p></div>
-    <div class="icon" id="details-download"><img alt="download" src="/assets/icons/48/storage_3.png"/><p >download</p></div>
-
-    <div style="width: 100px; margin-left: 50px;">
-      <input type="range" class="thumbsize" style="width: 80px" name="minscore" id="minscore" min="0" max="1" step="0.05" value="0">
-      <label class="btntext" for="minscore">score filter</label>
+  <nav>
+    <div id="navbar" class="row navbar text-center">
+      <div class="icon" id="btn-user"><img width=48 height=48 alt="user" src="/assets/icons/48/user.png"/><p id="user">user</p></div>
+      <div class="icon" id="btn-search" title="Search images for any classified term"><img width=48 height=48 alt="search" src="/assets/icons/48/zoom.png"/><p>search</p></div>
+      <div class="icon" id="btn-map" title="View images placed on a world map"><img width=48 height=48 alt="map" src="/assets/icons/48/world.png"/><p>map</p></div>
+      <div class="icon" id="btn-list" title="Options for gallery list view"><img width=48 height=48 alt="list options" src="/assets/icons/48/gear.png"/><p>list options</p></div>
+      <div class="icon" id="btn-slide" title="Start slideshow of selected images"><img width=48 height=48 alt="slideshow" src="/assets/icons/48/video_mark.png"/><p>slideshow</p></div>
+      <div class="icon" id="btn-video" title="Live video classification and object detection"><img width=48 height=48 alt="live video" src="/assets/icons/48/webcam.png"/><p>live video</p></div>
+      <div class="icon" id="btn-close" style="display: none" title="Close document"><img width=48 height=48 alt="close" src="/assets/icons/48/close.png"/><p>close</p></div>
     </div>
-  </div>
 
-  <div id="main" class="main">
-    <div id="folderbar" class="folderbar">
-      <div id="resettitle" class="folderstitle"><img class="iconsmall" alt="reset view" src="/assets/icons/32/refresh.png"/>reset view</div>
-      <div id="folderstitle" class="folderstitle"><img class="iconsmall"  alt="folders" src="/assets/icons/32/folder.png"/>folders</div>
-        <ul id="folders" class="folderlist collapsibleList"></ul>
-      <div id="locationstitle" class="folderstitle"><img class="iconsmall" alt="locations" src="/assets/icons/32/world.png"/>locations</div>
-        <ul id="locations" class="folderlist"></ul>
-      <div id="classestitle" class="folderstitle"><img class="iconsmall" alt="top classes" src="/assets/icons/32/book.png"/>top classes</div>
-        <ul id="classes" class="folderlist"></ul>
-      <div id="sharestitle" class="folderstitle"><img class="iconsmall" alt="shares" src="/assets/icons/32/share_video.png"/></i>shares</div>
-        <ul id="shares" class="folderlist"></ul>
-      <div class="busy">
-        <div id="busy-text">Background Processing</div>
-        <div style="display: flex">
-          <span class="busy-dots" style="background-color: #f15e41; animation-delay: 0.1s;"></span>
-          <span class="busy-dots" style="background-color: #bad375; animation-delay: 0.2s;"></span>
-          <span class="busy-dots" style="background-color: #26a9e0; animation-delay: 0.3s;"></span>
-      </div>
+    <div id="userbar" class="row navline text-center">
+      <div class="icon" id="btn-load"><img width=48 height=48 alt="reload image db" src="/assets/icons/48/refresh.png"/><p>reload image db</p></div>
+      <div class="icon" id="btn-update"><img width=48 height=48 alt="process images" src="/assets/icons/48/database_development.png"/><p>process images</p></div>
+      <div class="icon" id="btn-changelog"><img width=48 height=48 alt="change log" src="/assets/icons/48/blacklist.png"/><p>change log</p></div>
+      <div class="icon" id="btn-doc"><img width=48 height=48 alt="documentation" src="/assets/icons/48/contract.png"/><p>documentation</p></div>
+      <div class="icon" id="btn-options"><img width=48 height=48 alt="application settings" src="/assets/icons/48/tool.png"/><p>application settings</p></div>
+      <div class="icon" id="btn-params"><img width=48 height=48 alt="model parameters" src="/assets/icons/48/games.png"/><p>model parameters</p></div>
+      <div class="icon" id="btn-logout"><img width=48 height=48 alt="logout" src="/assets/icons/48/flip_horizontal.png"/><p>logout</p></div>
+    </div>
+
+    <div id="searchbar" class="row navline text-center">
+      <label for="search-input">search</label><input class="input" type="search" id="search-input" placeholder="what do you want to search for?" />
+      <div class="icon" id="btn-searchnow"><img width=48 height=48 alt="search" src="/assets/icons/48/zoom.png"/></div>
+      <div class="icon" id="btn-resetsearch"><img width=48 height=48 alt="reset search" src="/assets/icons/48/close.png"/></div>
+      <span id="search-result" style="align-self: center; padding-left: 16px;"></span>
+    </div>
+
+    <div id="optionslist" class="row navline text-center">
+      <div class="icon" id="btn-desc"><img width=48 height=48 alt="description" src="/assets/icons/48/jpg.png"/><p id="description-label">description</p></div>
+      <div class="icon" id="btn-duplicates"><img width=48 height=48 alt="find duplicates" src="/assets/icons/48/storage_3.png"/><p>find duplicates</p></div>
+
+      <div><i class="navlinebutton fad sort fa-sort-alpha-down"></i><i class="navlinebutton fad sort fa-sort-alpha-up" style="padding-left: 0;"></i>
+        <p class="btntext">sort by name</p></div>
+      <div><i class="navlinebutton fad sort fa-sort-numeric-down"></i><i class="navlinebutton fad sort fa-sort-numeric-up" style="padding-left: 0;"></i>
+        <p class="btntext">sort by date</p></div>
+      <div><i class="navlinebutton fad sort fa-sort-amount-down"></i><i class="navlinebutton fad sort fa-sort-amount-up" style="padding-left: 0;"></i>
+        <p class="btntext">sort by zize</p></div>
+      <div style="width: 100px; margin-left: 50px;">
+        <input type="range" class="thumbsize" name="thumbsize" id="thumbsize" min="50" max="500" step="1" value="130">
+        <label id="thumblabel" class="btntext" for="thumbsize">thumbnail size</label>
       </div>
     </div>
-    <div id="all" class="all">
-      <div id="map" class="row map"></div>
-      <div id="share" class="row share">
-        <label for="share-name" class="label">share name</label><input class="input" type="text" id="share-name" placeholder="what is the share name ?"/>
-        <i class="navlinebutton fad fa-plus-square" id="btn-shareadd" style="padding: 0;"></i><br>
-        <label for="share-url" class="label">share url</label><input class="input" type="text" id="share-url" placeholder="URL" readonly/>
-        <i class="navlinebutton fad fa-copy" id="btn-sharecopy" style="padding: 0;"></i>
+
+    <div id="optionsview" class="row navbar text-center" style="position: fixed;">
+      <div class="icon" id="details-previous"><img width=48 height=48 alt="previous" src="/assets/icons/48/rewind.png"/><p>previous</p></div>
+      <div class="icon" id="details-close"><img width=48 height=48 alt="close" src="/assets/icons/48/stop.png"/><p>close</p></div>
+      <div class="icon" id="details-next"><img width=48 height=48 alt="next" src="/assets/icons/48/fast_forward.png"/><p>next</p></div>
+      <div class="icon" id="details-boxes"><img width=48 height=48 alt="detected" src="/assets/icons/48/architecture_info.png"/><p id="detected-label">detected</p></div>
+      <div class="icon" id="details-faces"><img width=48 height=48 alt="faces" src="/assets/icons/48/group.png"/><p id="faces-label">faces</p></div>
+      <div class="icon" id="details-download"><img width=48 height=48 alt="download" src="/assets/icons/48/storage_3.png"/><p >download</p></div>
+
+      <div style="width: 100px; margin-left: 50px;">
+        <input type="range" class="thumbsize" style="width: 80px" name="minscore" id="minscore" min="0" max="1" step="0.05" value="0">
+        <label class="btntext" for="minscore">score filter</label>
       </div>
-      <div id="results" class="row results"></div>
     </div>
-  </div>
+  </nav>
 
-  <div id="log" class="log"></div>
+  <main>
+    <div id="main" class="main">
+      <div id="folderbar" class="folderbar">
+        <div id="resettitle" class="folderstitle"><img width=32 height=32 alt="reset view" class="iconsmall" src="/assets/icons/32/refresh.png"/>reset view</div>
+        <div id="folderstitle" class="folderstitle"><img width=32 height=32 alt="folders" class="iconsmall" src="/assets/icons/32/folder.png"/>folders</div>
+          <ul id="folders" class="folderlist collapsibleList"></ul>
+        <div id="locationstitle" class="folderstitle"><img width=32 height=32 alt="locations" class="iconsmall" src="/assets/icons/32/world.png"/>locations</div>
+          <ul id="locations" class="folderlist"></ul>
+        <div id="classestitle" class="folderstitle"><img width=32 height=32 alt="top classes" class="iconsmall" src="/assets/icons/32/book.png"/>top classes</div>
+          <ul id="classes" class="folderlist"></ul>
+        <div id="sharestitle" class="folderstitle"><img width=32 height=32 alt="shares" class="iconsmall" src="/assets/icons/32/share_video.png"/></i>shares</div>
+          <ul id="shares" class="folderlist"></ul>
+        <div class="busy">
+          <div id="busy-text">Background Processing</div>
+          <div style="display: flex">
+            <span class="busy-dots" style="background-color: #f15e41; animation-delay: 0.1s;"></span>
+            <span class="busy-dots" style="background-color: #bad375; animation-delay: 0.2s;"></span>
+            <span class="busy-dots" style="background-color: #26a9e0; animation-delay: 0.3s;"></span>
+        </div>
+        </div>
+      </div>
+      <div id="all" class="all">
+        <div id="map" class="row map"></div>
+        <div id="share" class="row share">
+          <label for="share-name" class="label">share name</label><input class="input" type="text" id="share-name" placeholder="what is the share name ?"/>
+          <i class="navlinebutton fad fa-plus-square" id="btn-shareadd" style="padding: 0;"></i><br>
+          <label for="share-url" class="label">share url</label><input class="input" type="text" id="share-url" placeholder="URL" readonly/>
+          <i class="navlinebutton fad fa-copy" id="btn-sharecopy" style="padding: 0;"></i>
+        </div>
+        <div id="results" class="row results"></div>
+      </div>
+    </div>
+  </main>
 
-  <div id="popup" class="popup">
-    <div class="popup-image" id="popup-image"></div>
-    <canvas class="popup-canvas" id="popup-canvas"></canvas>
-    <div class="popup-details" id="popup-details"></div>
-  </div>
-  
-  <div id="docs" class="docs"></div>
+  <footer>
+    <div id="log" class="log"></div>
+  </footer>
 
-  <iframe id="iframe" class="iframe" title="embedded"></iframe>
+  <aside>
+    <div id="popup" class="popup">
+      <div class="popup-image" id="popup-image"></div>
+      <canvas class="popup-canvas" id="popup-canvas"></canvas>
+      <div class="popup-details" id="popup-details"></div>
+    </div>
+    
+    <div id="docs" class="docs"></div>
+
+    <iframe id="iframe" class="iframe" title="embedded"></iframe>
+  </aside>
 
   <div id="install" class="install">
     Install web app<br>PiGallery
