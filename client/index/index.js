@@ -23,11 +23,13 @@ import * as pwa from './pwa-register';
 
 // global variables
 window.filtered = [];
+window.$ = $;
 const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, store: 0, size: 0, speed: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0 };
 
 async function busy(text) {
-  if (text && $('.busy').is(':visible')) return true;
+  // if (text && $('.busy').is(':visible')) return true;
   if (text) {
+    $('.busy').width($('.folderbar').width());
     $('#busy-text').html(text);
     $('.busy').show();
   } else {
@@ -49,6 +51,7 @@ async function time(fn, arg) {
 
 // handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
+  busy();
   $('.collapsible').off();
   $('.collapsible').children('li').hide();
   $('.collapsible').on('click', async (evt) => {

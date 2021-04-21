@@ -11,9 +11,9 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **HEAD -> master** 2021/04/21 mandic00@live.com
 
-
-### **origin/master** 2021/04/20 mandic00@live.com
-
+- webhint optimizations
+- speed up enumerations
+- split indexdb for massive performance gains
 - improve dominant colors
 - mobile layout optimizations
 - modernized video

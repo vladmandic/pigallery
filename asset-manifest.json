@@ -5,7 +5,7 @@
         "column": 12,
         "file": "client/index/index.js",
         "length": 9,
-        "line": 789,
+        "line": 792,
         "lineText": "    details.slideshow(true);",
         "namespace": "",
         "suggestion": ""
@@ -38,7 +38,7 @@
         "imports": []
       },
       "client/pigallery.css": {
-        "bytes": 10660,
+        "bytes": 10710,
         "imports": []
       },
       "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
@@ -26642,7 +26642,7 @@
         ]
       },
       "client/index/index.js": {
-        "bytes": 36478,
+        "bytes": 36552,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26914,7 +26914,7 @@
         ]
       },
       "client/index/pwa-serviceworker.js": {
-        "bytes": 3276,
+        "bytes": 3195,
         "imports": []
       }
     },
@@ -27531,16 +27531,16 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11546
+            "bytesInOutput": 11601
           }
         },
-        "bytes": 417933
+        "bytes": 417988
       },
       "dist/index/index.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1052691
+        "bytes": 1052779
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27599,7 +27599,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.js": {
-            "bytesInOutput": 37533
+            "bytesInOutput": 37593
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59917
@@ -27617,7 +27617,7 @@
             "bytesInOutput": 7971
           }
         },
-        "bytes": 567078
+        "bytes": 567138
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27635,10 +27635,10 @@
             "bytesInOutput": 3150
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11546
+            "bytesInOutput": 11601
           }
         },
-        "bytes": 559200
+        "bytes": 559255
       },
       "dist/process/process.js.map": {
         "imports": [],
@@ -31606,10 +31606,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11546
+            "bytesInOutput": 11601
           }
         },
-        "bytes": 417933
+        "bytes": 417988
       },
       "dist/video/video.js.map": {
         "imports": [],
@@ -35592,10 +35592,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11546
+            "bytesInOutput": 11601
           }
         },
-        "bytes": 417933
+        "bytes": 417988
       },
       "dist/index/worker.js.map": {
         "imports": [],
@@ -35621,7 +35621,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5283
+        "bytes": 5201
       },
       "dist/index/pwa-serviceworker.js": {
         "imports": [],
