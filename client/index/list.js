@@ -160,23 +160,27 @@ export async function resize() {
 
 // adds items to gallery view on scroll event - infinite scroll
 let current = 0;
-export async function scroll(images, title) {
+export async function scroll(images, divider) {
   $('#results').off('scroll');
   const visibleHeight = Math.trunc(document.getElementById('results').offsetHeight + document.getElementById('results').scrollTop);
   const totalHeight = Math.trunc(document.getElementById('results').scrollHeight);
   if (visibleHeight >= 0.95 * totalHeight && current < images.length) {
     const t0 = performance.now();
-    const res = document.getElementById('results');
     const count = Math.min(window.options.listItemCount, images.length - current);
+    const items = [];
     for (let i = current; i < current + count; i++) {
       if (!images[i].thumbnail) images[i].thumbnail = indexdb.thumbnail(images[i].image);
       if (!images[i].person) images[i].person = indexdb.person(images[i].image);
       [images[i].thumbnail, images[i].person] = await Promise.all([images[i].thumbnail, images[i].person]); // to run both thumbnail and person indexdb get concurrently
+      const title = addDividers(images[i], divider);
       const item = printResult(images[i]);
-      const divider = addDividers(images[i], title);
-      if (divider) res.appendChild(divider);
-      res.appendChild(item);
+      if (title) items.push(title);
+      items.push(item);
+      // if (divider) res.appendChild(divider);
+      // res.appendChild(item);
     }
+    const res = document.getElementById('results');
+    for (const item of items) res.appendChild(item);
     current += count;
     log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${images.length}`);
     $('.listitem').on('mouseover', (evt) => thumbButtons(evt, true));
@@ -187,11 +191,11 @@ export async function scroll(images, title) {
     $('.description').on('click', (evt) => $(evt.target).parent().find('.btn-tiny').show());
     $('.description').toggle(window.options.listDetails);
   }
-  $('#results').on('scroll', () => scroll(images, title));
+  $('#results').on('scroll', () => scroll(images, divider));
 }
 
 // redraws gallery view and rebuilds sidebar menu
-export async function redraw(images, divider, clear = true) {
+export async function redraw(images, divider = window.options.listDivider, clear = true) {
   resize();
   const dt = new Date();
   const base = new Date(dt.getFullYear(), dt.getMonth(), 0).getTime();
