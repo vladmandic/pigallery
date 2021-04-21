@@ -86,7 +86,6 @@ function printResult(object) {
 
   const thumb = document.createElement('div');
   thumb.className = 'col thumbnail';
-  thumb.id = object.id;
   const title = `${object.image}\nDate: ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}\n${classified}\n${detected}\n${person}\n${location}\n${camera}`;
   thumb.innerHTML = `
     <img loading="lazy" img="${object.image}" src="${object.thumbnail}" onclick="details.show('${escape(object.image)}');" class="thumbnail-img" title="${title}">

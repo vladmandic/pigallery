@@ -108,3 +108,5 @@ input[type=range]::-moz-range-thumb { border: 1px solid #000000; margin-top: 0.1
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* fixes for other bundled styles */

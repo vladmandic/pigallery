@@ -1,4 +1,4 @@
 # To-do List
 
-- Store enumerations in IndexDB
+- Implement MongoDB backend
 - Implement PWA full offline mode

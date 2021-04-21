@@ -473,7 +473,7 @@ async function showContextPopup(evt) {
 // resize viewport
 function resizeViewport() {
   const viewportScale = Math.min(1, Math.round(100 * window.outerWidth / 800) / 100);
-  document.querySelector('meta[name=viewport]').setAttribute('content', `width=device-width, shrink-to-fit=yes; initial-scale=${viewportScale}`);
+  document.querySelector('meta[name=viewport]').setAttribute('content', `width=device-width, shrink-to-fit=yes, initial-scale=${viewportScale}`);
 
   if ($('#popup').css('display') !== 'none') details.show();
 
