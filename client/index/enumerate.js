@@ -5,33 +5,34 @@ import * as log from '../shared/log';
 
 let refreshNeeded = true;
 
-async function setRefresh() {
-  refreshNeeded = true;
+async function setRefresh(refresh = true) {
+  if (refresh) refreshNeeded = true;
 }
 
 // exctract top classe from classification & detection and builds sidebar menu
 async function enumerateClasses() {
   const t0 = performance.now();
+  const ignoreTags = ['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'];
   $('#classes').html('');
   if (!Array.isArray(window.filtered)) window.filtered = [];
   const classesList = [];
+  let ops = 0;
   if (refreshNeeded) {
     for (const item of window.filtered) {
       for (const tag of item.tags) {
-        if (Object.keys(tag).length === 0) continue;
-        const key = Object.keys(tag)[0];
-        if (['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'].includes(key)) continue;
-        const vals = Object.values(tag)[0].toString().split(',');
-        for (const val of vals) {
-          const found = classesList.find((a) => a.tag === val);
-          if (found) found.count += 1;
+        const tags = Object.entries(tag)[0];
+        if (!tags || tags.length !== 2 || ignoreTags.includes(tags[0])) continue;
+        for (const val of tags[1].split(',')) {
+          ops++;
+          const classFound = classesList.find((a) => a.tag === val);
+          if (classFound) classFound.count++;
           else classesList.push({ tag: val, count: 1 });
         }
       }
     }
-    classesList.sort((a, b) => b.count - a.count);
+    classesList.sort((a, b) => b.count - a.count); // sort by occrences
   }
-  const classesCount = classesList.length;
+  const classesCount = classesList.length; // crop the list to top entries
   classesList.length = Math.min(window.options.topClasses, classesList.length);
   let html = '';
   for (const item of classesList) {
@@ -39,7 +40,7 @@ async function enumerateClasses() {
     html += `<li><span tag="${escape(tag)}" type="class" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${tag} (${item.count})</span></li>`;
   }
   $('#classes').append(html);
-  log.debug(t0, 'Enumerated classees:', classesCount);
+  log.debug(t0, 'Enumerated classees: unique:', classesCount, 'total:', ops);
 }
 
 // extracts all locations from loaded images and builds sidebar menu
