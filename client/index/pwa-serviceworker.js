@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-const skipCaching = true;
+const skipCaching = false;
 
 const cacheName = 'pigallery';
 const cacheFiles = ['/favicon.ico', '/pigallery.webmanifest', '/client/offline.html']; // assets and models are cached on first access

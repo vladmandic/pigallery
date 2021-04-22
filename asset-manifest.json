@@ -38,7 +38,7 @@
         "imports": []
       },
       "client/pigallery.css": {
-        "bytes": 10739,
+        "bytes": 10774,
         "imports": []
       },
       "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
@@ -26918,7 +26918,7 @@
         ]
       },
       "client/index/pwa-serviceworker.js": {
-        "bytes": 4099,
+        "bytes": 4100,
         "imports": []
       }
     },
@@ -27535,10 +27535,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11632
+            "bytesInOutput": 11669
           }
         },
-        "bytes": 418019
+        "bytes": 418056
       },
       "dist/index/index.js.map": {
         "imports": [],
@@ -27639,10 +27639,10 @@
             "bytesInOutput": 3150
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11632
+            "bytesInOutput": 11669
           }
         },
-        "bytes": 559286
+        "bytes": 559323
       },
       "dist/process/process.js.map": {
         "imports": [],
@@ -31610,10 +31610,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11632
+            "bytesInOutput": 11669
           }
         },
-        "bytes": 418019
+        "bytes": 418056
       },
       "dist/video/video.js.map": {
         "imports": [],
@@ -35596,10 +35596,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11632
+            "bytesInOutput": 11669
           }
         },
-        "bytes": 418019
+        "bytes": 418056
       },
       "dist/index/worker.js.map": {
         "imports": [],
@@ -35625,7 +35625,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 6517
+        "bytes": 6518
       },
       "dist/index/pwa-serviceworker.js": {
         "imports": [],
@@ -35633,10 +35633,10 @@
         "entryPoint": "client/index/pwa-serviceworker.js",
         "inputs": {
           "client/index/pwa-serviceworker.js": {
-            "bytesInOutput": 3353
+            "bytesInOutput": 3354
           }
         },
-        "bytes": 3557
+        "bytes": 3558
       }
     }
   }
