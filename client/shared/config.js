@@ -17,6 +17,11 @@ const config = {
   facing: true,            // webcam facing front or back
   memory: true,            // set webgl memory hard limit
   autoreload: true,        // auto reload processing window on error
+  cacheAssets: true,       // pwa setting
+  cacheMedia: false,       // pwa setting
+  cacheModels: false,      // pwa setting
+  mediaRoot: '/media/',    // pwa setting
+  modelsRoot: '/models/',  // pwa setting
   // webgl configuration
   webgl: {
     WEBGL_DELETE_TEXTURE_THRESHOLD: 0, // delete textures upon disposal is used memory is larger than this rather than making them available for reuse // Math.trunc(3.5 * 1024 * 1024 * 1024)
@@ -132,12 +137,6 @@ window.themes = [
 window.options = {
   get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || '100'); },
   set listItemCount(val) { localStorage.setItem('listItemCount', val.toString()); },
-
-  get cacheModels() { return localStorage.getItem('cacheModels') ? localStorage.getItem('cacheModels') === 'true' : true; },
-  set cacheModels(val) { localStorage.setItem('cacheModels', val.toString()); },
-
-  get cacheAssets() { return localStorage.getItem('cacheAssets') ? localStorage.getItem('cacheAssets') === 'true' : true; },
-  set cacheAssets(val) { localStorage.setItem('cacheAssets', val.toString()); },
 
   get listFolders() { return localStorage.getItem('listFolders') ? localStorage.getItem('listFolders') === 'true' : true; },
   set listFolders(val) { localStorage.setItem('listFolders', val.toString()); },

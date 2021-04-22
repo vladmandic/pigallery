@@ -116,8 +116,20 @@ async function enumerateFolders() {
           for (let j = 0; j <= i; j++) path += `${escape(item.folders[j])}/`;
           const count = i === item.folders.length - 1 ? `(${item.count})` : '';
           div.innerHTML = `<span tag="${path}" type="folder" style="padding-left: ${i * 16}px" class="folder"><i class="collapsible fas fa-chevron-circle-right">&nbsp</i>${item.folders[i]} ${count}</span>`;
-          if (i === depth) document.getElementById('folders')?.appendChild(div);
-          else document.getElementById(`dir-${parentId}`)?.appendChild(div);
+          let parent = i === depth ? document.getElementById('folders') : document.getElementById(`dir-${parentId}`);
+          if (parent.nodeName !== 'UL') {
+            let foundParent;
+            for (const childNode of parent.childNodes) {
+              if (childNode.nodeName === 'UL') foundParent = childNode;
+            }
+            if (foundParent) {
+              parent = foundParent;
+            } else {
+              const newParent = parent.appendChild(document.createElement('ul'));
+              parent = newParent;
+            }
+          }
+          parent?.appendChild(div);
           folderCount++;
         }
       }

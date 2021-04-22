@@ -88,8 +88,6 @@ function saveOptions() {
   window.options.fixWidth = $('#fixWidth')[0].checked;
   window.options.viewBoxes = $('#viewBoxes')[0].checked;
   window.options.viewFaces = $('#viewFaces')[0].checked;
-  window.options.cacheModels = $('#cacheModels')[0].checked;
-  window.options.cacheAssets = $('#cacheAssets')[0].checked;
   window.options.theme = parseInt($('#colorTheme').val());
   /*
   window.options.mapColor = $('#mapColor').val();
@@ -118,8 +116,6 @@ function userOptions() {
     <input type="button" id="btnResetConfig" class="options" style="left: 30px" value="Reset to default">
 
     <h1>Application:</h1>
-    <label class="label">Models cache <input class="options" type="checkbox" id="cacheModels" ${window.options.cacheModels ? 'checked' : ''} /></label>
-    <label class="label">Assets cache <input class="options" type="checkbox" id="cacheAssets" ${window.options.cacheAssets ? 'checked' : ''} /></label>
     <label class="label">Short date format <input class="options" type="text" id="dateShort" value="${window.options.dateShort}" /></label>
     <label class="label">Long date format <input class="options" type="text" id="dateLong" value="${window.options.dateLong}" /></label>
     <label class="label">Base font size <input class="options" type="text" id="fontSize" value="${window.options.fontSize}" /></label>

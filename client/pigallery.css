@@ -15,6 +15,7 @@ a:hover { color: var(--link); text-decoration: none; }
 p { margin: 0; }
 td { vertical-align: top; padding: 10px; }
 ul { margin: 0; padding-left: 20px; }
+li::marker { font-size: 0; }
 .row { width: 100%; margin: 0; align-content: start; }
 .col { text-align: left; margin: 0.5rem; width: 100%; box-shadow: var(--shadow); white-space: nowrap; text-overflow: ellipsis; }
 .log { width: 100vw; height: 3.6rem; position: fixed; bottom: 0; overflow-y: scroll; overflow-x: hidden; display: block; z-index: 5; cursor: text; pointer-events: none; line-height: 1.2; white-space: nowrap; }

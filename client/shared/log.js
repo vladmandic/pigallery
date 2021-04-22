@@ -30,7 +30,9 @@ async function debug(...msg) {
 
 async function server(...msg) {
   debug(...msg);
-  fetch(`/api/log/put?msg=${encodeURIComponent(str(...msg))}`);
+  fetch(`/api/log/put?msg=${encodeURIComponent(str(...msg))}`)
+    .then((res) => res)
+    .catch((err) => debug('api log:', err));
 }
 
 async function div(id, append, ...msg) {

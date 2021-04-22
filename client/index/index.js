@@ -405,17 +405,27 @@ async function loadGallery(refresh = false) {
   busy('Loading images<br>in background');
   const updated = new Date().getTime();
   const since = refresh ? window.options.lastUpdated : 0;
-  const first = await fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=0`);
-  if (!first || !first.ok) return;
-  let totalSize = parseFloat(first.headers.get('content-TotalSize') || '');
-  let totalImages = parseFloat(first.headers.get('content-TotalImages') || '');
-  let images = 0;
-  const pages = parseInt(first.headers.get('content-Pages') || '0');
-  const json0 = await first.json();
-  let dlSize = JSON.stringify(json0).length;
-  if (json0 && json0.length > 0) indexdb.store(json0);
+  let first;
+  try {
+    first = await fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=0`);
+  } catch (err) {
+    log.debug('Error /api/record/get:', err);
+  }
+  let totalSize = 0;
+  let totalImages = 0;
+  let pages = 0;
+  let dlSize = 0;
+  if (first && first.ok) {
+    totalSize = parseFloat(first.headers.get('content-TotalSize') || '');
+    totalImages = parseFloat(first.headers.get('content-TotalImages') || '');
+    pages = parseInt(first.headers.get('content-Pages') || '0');
+    const json0 = await first.json();
+    dlSize = JSON.stringify(json0).length;
+    if (json0 && json0.length > 0) indexdb.store(json0);
+    if (totalImages > 0) enumerate.refresh();
+  }
   let perf = 0;
-  if (totalImages > 0) enumerate.refresh();
+  let images = 0;
   if (pages > 0) {
     const promisesReq = [];
     const promisesData = [];
@@ -859,7 +869,9 @@ async function installable(evt) {
   document.getElementById('install').addEventListener('click', () => {
     document.getElementById('install').style.display = 'none';
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then((res) => log.debug('Application Install: ', res.outcome)).catch(false);
+    deferredPrompt.userChoice
+      .then((res) => log.debug('application install: ', res.outcome))
+      .catch((err) => log.debug('application install error: ', err));
   });
 }
 
