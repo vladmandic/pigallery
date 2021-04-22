@@ -1,4 +1,14 @@
 # To-do List
 
+## Server-Side
+
 - Implement MongoDB backend
-- Implement PWA full offline mode
+- Switch to mono build
+- Switch to TypeScript
+
+## Client-Side
+
+- Eliminate global variables
+- Switch to TypeScript
+- Enhance CSS rules
+- Full compatibility testing

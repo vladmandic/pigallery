@@ -9,8 +9,9 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/04/21 mandic00@live.com
+### **HEAD -> master** 2021/04/22 mandic00@live.com
 
+- pwa full offline mode
 - lighthouse optimizations
 - webhint optimizations
 - speed up enumerations
