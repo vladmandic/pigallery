@@ -19,17 +19,24 @@ import * as config from '../shared/config';
 let perfMonitor;
 
 // using window globals for debugging purposes
-const objects = { perf: { }, models: [], canvases: [], detected: [], menus: {} };
+const menus:{ filters: null | Menu, params: null | Menu, model: null | Menu, perf: null | Menu } = { filters: null, params: null, model: null, perf: null };
+const objects = { perf: { }, models: [], canvases: [], detected: [], menus };
+
+async function updateDiv(name, text) {
+  const div = document.getElementById(name);
+  if (div) div.innerText = text;
+}
 
 async function cameraStart(play = true) {
-  document.getElementById('status').innerText = 'starting camera';
+  updateDiv('status', 'starting camera');
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    document.getElementById('status').innerHTML = 'no camera access';
-    document.getElementById('video-start').style.display = 'block';
+    updateDiv('status', 'no camera access');
+    const div = document.getElementById('video-start');
+    if (div) div.style.display = 'block';
     $('#btn-startstop').text('camera error');
     return;
   }
-  const video = document.getElementById('video');
+  const video = document.getElementById('video') as HTMLVideoElement;
   const constraints = {
     audio: false,
     video: { width: { ideal: window.innerWidth, max: 3840 }, height: { ideal: window.innerHeight, max: 3840 }, facingMode: config.default.facing ? 'user' : 'environment' },
@@ -38,54 +45,56 @@ async function cameraStart(play = true) {
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
   const track = stream.getVideoTracks()[0];
   if (track.getCapabilities && track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: '0' });
+  if (!video) return;
   video.srcObject = stream;
-  document.getElementById('status').innerText = 'ready';
+  updateDiv('status', 'ready');
   if (play) {
     panzoom(document.getElementById('video'), { zoomSpeed: 0.025, minZoom: 0.5, maxZoom: 2.0 });
     $('#btn-startstop').text('stop camera');
     // catch block for overlapping events
-    video.play().then(true).catch(() => {});
+    video.play().then((res) => res).catch((err) => err);
   }
 }
 
 async function cameraStop() {
-  document.getElementById('status').innerText = 'paused';
+  updateDiv('status', 'paused');
   if (perfMonitor) clearInterval(perfMonitor);
-  const video = document.getElementById('video');
+  const video = document.getElementById('video') as HTMLVideoElement;
   video.pause();
-  const tracks = video.srcObject ? video.srcObject.getTracks() : null;
+  const tracks = video.srcObject ? (video.srcObject as MediaStream).getTracks() : null;
   if (tracks) tracks.forEach((track) => track.stop());
   $('#btn-startstop').text('start camera');
 }
 
 let resizeTimer;
 async function cameraResize() {
-  document.getElementById('status').innerText = 'resizing';
+  updateDiv('status', 'resizing');
   if (resizeTimer) clearTimeout(resizeTimer);
   resizeTimer = setTimeout(async () => {
-    const video = document.getElementById('video');
-    const live = !video.paused && (video.srcObject ? (video.srcObject.getVideoTracks()[0].readyState === 'live') : false);
+    const video = document.getElementById('video') as HTMLVideoElement;
+    const live = !video.paused && (video.srcObject ? ((video.srcObject as MediaStream).getVideoTracks()[0].readyState === 'live') : false);
     log.div('div', true, `Resize display: ${video.offsetWidth} x ${video.offsetHeight}`);
     await cameraStop();
     run.clear(objects.canvases);
-    document.getElementById('canvases').innerHTML = '';
+    updateDiv('canvases', '');
     cameraStart(live);
   }, 200);
 }
 
 async function cameraRestart() {
-  const video = document.getElementById('video');
-  const live = !video.paused && (video.srcObject ? (video.srcObject.getVideoTracks()[0].readyState === 'live') : false);
-  document.getElementById('video-start').style.display = live ? 'block' : 'none';
+  const video = document.getElementById('video') as HTMLVideoElement;
+  const live = !video.paused && (video.srcObject ? ((video.srcObject as MediaStream).getVideoTracks()[0].readyState === 'live') : false);
+  const div = document.getElementById('video-start');
+  if (div) div.style.display = live ? 'block' : 'none';
   if (!live) await cameraStart();
   else await cameraStop();
 }
 
 async function cameraSetup() {
-  const video = document.getElementById('video');
+  const video = document.getElementById('video') as HTMLVideoElement;
   video.addEventListener('loadeddata', (event) => {
-    const track = video.srcObject.getVideoTracks()[0];
-    const settings = video.srcObject.getVideoTracks()[0].getSettings();
+    const track = (video.srcObject as MediaStream).getVideoTracks()[0];
+    const settings = (video.srcObject as MediaStream).getVideoTracks()[0].getSettings();
     log.div('div', true, `Start video: ${track.label} camera ${settings.width} x ${settings.height} display ${video.offsetWidth} x ${video.offsetHeight} facing ${settings.facingMode}`);
     log.debug('Camera Settings: ', settings);
     event.stopPropagation();
@@ -96,21 +105,31 @@ async function cameraSetup() {
 
 function initHumanConfig() {
   if (!config.default.human) {
-    const human = new Human();
+    const myConfig = {
+      modelBasePath: '',
+      face: {
+        enabled: false,
+        detector: { modelPath: '@vladmandic/human/models/blazeface-back.json' },
+        mesh: { modelPath: '@vladmandic/human/models/facemesh.json' },
+        iris: { modelPath: '@vladmandic/human/models/iris.json' },
+        description: { modelPath: '@vladmandic/human/models/faceres.json' },
+        emotion: { modelPath: '@vladmandic/human/models/emotion.json' },
+      },
+      body: {
+        enabled: false,
+        modelPath: '@vladmandic/human/models/posenet.json',
+      },
+      hand: {
+        enabled: false,
+        detector: { modelPath: '@vladmandic/human/models/handdetect.json' },
+        skeleton: { modelPath: '@vladmandic/human/models/handskeleton.json' },
+      },
+      gesture: {
+        enabled: true,
+      },
+    };
+    const human = new Human(myConfig);
     config.default.human = JSON.parse(JSON.stringify(human.config));
-    config.default.human.modelBasePath = '';
-    config.default.human.face.enabled = false;
-    config.default.human.face.detector.modelPath = '@vladmandic/human/models/blazeface-back.json';
-    config.default.human.face.mesh.modelPath = '@vladmandic/human/models/facemesh.json';
-    config.default.human.face.iris.modelPath = '@vladmandic/human/models/iris.json';
-    config.default.human.face.description.modelPath = '@vladmandic/human/models/faceres.json';
-    config.default.human.face.emotion.modelPath = '@vladmandic/human/models/emotion.json';
-    config.default.human.body.enabled = false;
-    config.default.human.body.modelPath = '@vladmandic/human/models/posenet.json';
-    config.default.human.hand.enabled = false;
-    config.default.human.hand.detector.modelPath = '@vladmandic/human/models/handdetect.json';
-    config.default.human.hand.skeleton.modelPath = '@vladmandic/human/models/handskeleton.json';
-    config.default.human.gesture.enabled = true;
   }
 }
 
@@ -121,8 +140,13 @@ async function menuSetup() {
   }
   initHumanConfig();
 
-  const top = `${document.getElementById('navbar').offsetHeight - 3}px`;
-  const x = [`${document.getElementById('menu-models').offsetLeft}px`, `${document.getElementById('menu-parameters').offsetLeft}px`, `${document.getElementById('menu-filters').offsetLeft}px`, `${document.getElementById('menu-performance').offsetLeft}px`];
+  const top = `${(document.getElementById('navbar')?.offsetHeight || 0) - 3}px`;
+  const x = [
+    `${document.getElementById('menu-models')?.offsetLeft || 0}px`,
+    `${document.getElementById('menu-parameters')?.offsetLeft || 0}px`,
+    `${document.getElementById('menu-filters')?.offsetLeft || 0}px`,
+    `${document.getElementById('menu-performance')?.offsetLeft || 0}px`,
+  ];
 
   objects.menus.model = new Menu(document.body, '', { top, left: x[0] });
   objects.menus.model.addLabel('Human Detection');
@@ -145,8 +169,8 @@ async function menuSetup() {
 
   objects.menus.params = new Menu(document.body, '', { top, left: x[1] });
   objects.menus.params.addLabel('Model parameters');
-  objects.menus.params.addBool('WebGL Memory Limit', config, 'memory', (val) => {
-    log.debug('Setting WebGL:  Memory Limit:', config.memory);
+  objects.menus.params.addBool('WebGL Memory Limit', config.default, 'memory', (val) => {
+    log.debug('Setting WebGL:  Memory Limit:', config.default.memory);
     tf.ENV.set('WEBGL_DELETE_TEXTURE_THRESHOLD', val ? 0 : -1);
   });
   objects.menus.params.addRange('Max Objects', config.default.human.face.detector, 'maxFaces', 0, 50, 1, (val) => {
@@ -207,21 +231,21 @@ async function menuSetup() {
 
   objects.menus.perf = new Menu(document.body, '', { top, left: x[3] });
   objects.menus.perf.toggle();
-  objects.menus.perf.addChart('FPS', 'FPS', 200, 40, 'lightblue', 'rgb(100, 100, 100)');
+  objects.menus.perf.addChart('FPS', 'FPS', 200, 40, 'lightblue');
 
   const click = ('ontouchstart' in window) ? 'touchstart' : 'click';
   document.addEventListener(click, (evt) => {
     // if (evt.target.id !== 'menu-models') objects.menus.model.hide();
     // if (evt.target.id !== 'menu-parameters') objects.menus.params.hide();
     // if (evt.target.id !== 'menu-filters') objects.menus.filters.hide();
-    switch (evt.target.id) {
+    switch ((evt.target as HTMLElement)?.id) {
       case 'video-start': cameraRestart(); break;
       case 'menu-startstop': cameraRestart(); break;
       case 'menu-facing': config.default.facing = !config.default.facing; cameraRestart(); break;
-      case 'menu-models': objects.menus.model.toggle(evt); break;
-      case 'menu-parameters': objects.menus.params.toggle(evt); break;
-      case 'menu-filters': objects.menus.filters.toggle(evt); break;
-      case 'menu-performance': objects.menus.perf.toggle(evt); break;
+      case 'menu-models': objects.menus.model?.toggle(); break;
+      case 'menu-parameters': objects.menus.params?.toggle(); break;
+      case 'menu-filters': objects.menus.filters?.toggle(); break;
+      case 'menu-performance': objects.menus.perf?.toggle(); break;
       default:
     }
   });
@@ -229,7 +253,8 @@ async function menuSetup() {
 
 async function main() {
   log.debug(location.href);
-  await user.get();
+  // @ts-ignore
+  window.user = await user.get();
   await config.setTheme();
   await config.done();
   await menuSetup();

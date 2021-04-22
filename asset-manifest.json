@@ -3,28 +3,15 @@
     {
       "location": {
         "column": 12,
-        "file": "client/index/index.js",
+        "file": "client/index/index.ts",
         "length": 9,
-        "line": 802,
+        "line": 791,
         "lineText": "    details.slideshow(true);",
         "namespace": "",
         "suggestion": ""
       },
       "notes": [],
       "text": "Import \"slideshow\" will always be undefined because there is no matching export"
-    },
-    {
-      "location": {
-        "column": 54,
-        "file": "client/video/video.js",
-        "length": 6,
-        "line": 149,
-        "lineText": "    log.debug('Setting WebGL:  Memory Limit:', config.memory);",
-        "namespace": "",
-        "suggestion": ""
-      },
-      "notes": [],
-      "text": "Import \"memory\" will always be undefined because there is no matching export"
     }
   ],
   "metafile": {
@@ -10855,7 +10842,7 @@
           }
         ]
       },
-      "client/shared/tf.js": {
+      "client/shared/tf.ts": {
         "bytes": 200,
         "imports": [
           {
@@ -10868,32 +10855,32 @@
           }
         ]
       },
-      "client/shared/log.js": {
-        "bytes": 1741,
+      "client/shared/log.ts": {
+        "bytes": 1731,
         "imports": []
       },
-      "client/process/modelClassify.js": {
-        "bytes": 4916,
+      "client/process/modelClassify.ts": {
+        "bytes": 4932,
         "imports": [
           {
-            "path": "client/shared/tf.js",
+            "path": "client/shared/tf.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/process/postProcess.js": {
-        "bytes": 770,
+      "client/process/postProcess.ts": {
+        "bytes": 821,
         "imports": []
       },
-      "client/process/modelDetect.js": {
-        "bytes": 8883,
+      "client/process/modelDetect.ts": {
+        "bytes": 8897,
         "imports": [
           {
-            "path": "client/shared/tf.js",
+            "path": "client/shared/tf.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/process/postProcess.js",
+            "path": "client/process/postProcess.ts",
             "kind": "import-statement"
           }
         ]
@@ -26378,58 +26365,58 @@
           }
         ]
       },
-      "client/shared/blockhash.js": {
-        "bytes": 5805,
+      "client/shared/blockhash.ts": {
+        "bytes": 5772,
         "imports": []
       },
-      "client/shared/config.js": {
-        "bytes": 11037,
+      "client/shared/config.ts": {
+        "bytes": 11056,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/process/processImage.js": {
-        "bytes": 12229,
+      "client/process/processImage.ts": {
+        "bytes": 12245,
         "imports": [
           {
             "path": "node_modules/.pnpm/@vladmandic+human@1.5.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/tf.js",
+            "path": "client/shared/tf.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/process/modelClassify.js",
+            "path": "client/process/modelClassify.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/process/modelDetect.js",
+            "path": "client/process/modelDetect.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/blockhash.js",
+            "path": "client/shared/blockhash.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/config.js",
+            "path": "client/shared/config.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/compare/compare.js": {
-        "bytes": 11022,
+      "client/compare/compare.ts": {
+        "bytes": 11054,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26448,27 +26435,27 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/tf.js",
+            "path": "client/shared/tf.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/process/modelClassify.js",
+            "path": "client/process/modelClassify.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/process/modelDetect.js",
+            "path": "client/process/modelDetect.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/process/processImage.js",
+            "path": "client/process/processImage.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/config.js",
+            "path": "client/shared/config.ts",
             "kind": "import-statement"
           }
         ]
@@ -26485,11 +26472,11 @@
         "bytes": 68105,
         "imports": []
       },
-      "client/index/indexdb.js": {
+      "client/index/indexdb.ts": {
         "bytes": 7074,
         "imports": [
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           }
         ]
@@ -26502,11 +26489,11 @@
         "bytes": 6758,
         "imports": []
       },
-      "client/index/iv-viewer.js": {
-        "bytes": 25485,
+      "client/index/iv-viewer.ts": {
+        "bytes": 25628,
         "imports": []
       },
-      "client/index/details.js": {
+      "client/index/details.ts": {
         "bytes": 17665,
         "imports": [
           {
@@ -26518,7 +26505,7 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
@@ -26526,25 +26513,25 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/index/iv-viewer.js",
+            "path": "client/index/iv-viewer.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/shared/user.js": {
-        "bytes": 1262,
+      "client/shared/user.ts": {
+        "bytes": 1326,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/index/list.js": {
+      "client/index/list.ts": {
         "bytes": 10060,
         "imports": [
           {
@@ -26556,24 +26543,24 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/details.js",
+            "path": "client/index/details.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/indexdb.js",
+            "path": "client/index/indexdb.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/index/nearest.js": {
-        "bytes": 3089,
+      "client/index/nearest.ts": {
+        "bytes": 3105,
         "imports": []
       },
-      "client/index/map.js": {
+      "client/index/map.ts": {
         "bytes": 3302,
         "imports": [
           {
@@ -26581,24 +26568,24 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/index/indexdb.js",
+            "path": "client/index/indexdb.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/nearest.js",
+            "path": "client/index/nearest.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/list.js",
+            "path": "client/index/list.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/index/enumerate.js": {
+      "client/index/enumerate.ts": {
         "bytes": 7788,
         "imports": [
           {
@@ -26606,12 +26593,12 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/index/options.js": {
+      "client/index/options.ts": {
         "bytes": 7607,
         "imports": [
           {
@@ -26619,34 +26606,34 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/list.js",
+            "path": "client/index/list.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/config.js",
+            "path": "client/shared/config.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/index/pwa-register.js": {
-        "bytes": 1813,
+      "client/index/pwa-register.ts": {
+        "bytes": 1806,
         "imports": [
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/config.js",
+            "path": "client/shared/config.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/index/index.js": {
-        "bytes": 36771,
+      "client/index/index.ts": {
+        "bytes": 36578,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26673,7 +26660,7 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
@@ -26681,49 +26668,49 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/config.js",
+            "path": "client/shared/config.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/indexdb.js",
+            "path": "client/index/indexdb.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/details.js",
+            "path": "client/index/details.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/blockhash.js",
+            "path": "client/shared/blockhash.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/user.js",
+            "path": "client/shared/user.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/list.js",
+            "path": "client/index/list.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/map.js",
+            "path": "client/index/map.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/enumerate.js",
+            "path": "client/index/enumerate.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/options.js",
+            "path": "client/index/options.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/index/pwa-register.js",
+            "path": "client/index/pwa-register.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/process/process.js": {
-        "bytes": 5526,
+      "client/process/process.ts": {
+        "bytes": 5542,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26742,23 +26729,23 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/tf.js",
+            "path": "client/shared/tf.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/user.js",
+            "path": "client/shared/user.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/config.js",
+            "path": "client/shared/config.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/process/processImage.js",
+            "path": "client/process/processImage.ts",
             "kind": "import-statement"
           }
         ]
@@ -26767,96 +26754,96 @@
         "bytes": 43452,
         "imports": []
       },
-      "client/video/draw.js": {
-        "bytes": 7638,
+      "client/video/draw.ts": {
+        "bytes": 7657,
         "imports": []
       },
-      "client/video/runDetect.js": {
+      "client/video/runDetect.ts": {
         "bytes": 1882,
         "imports": [
           {
-            "path": "client/shared/tf.js",
+            "path": "client/shared/tf.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/video/draw.js",
+            "path": "client/video/draw.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/process/modelDetect.js",
+            "path": "client/process/modelDetect.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/video/runClassify.js": {
+      "client/video/runClassify.ts": {
         "bytes": 1421,
         "imports": [
           {
-            "path": "client/shared/tf.js",
+            "path": "client/shared/tf.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/process/modelClassify.js",
+            "path": "client/process/modelClassify.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/video/runHuman.js": {
-        "bytes": 8621,
+      "client/video/runHuman.ts": {
+        "bytes": 8649,
         "imports": [
           {
             "path": "node_modules/.pnpm/@vladmandic+human@1.5.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
-            "path": "client/video/draw.js",
+            "path": "client/video/draw.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/video/run.js": {
-        "bytes": 7252,
+      "client/video/run.ts": {
+        "bytes": 7330,
         "imports": [
           {
-            "path": "client/shared/tf.js",
+            "path": "client/shared/tf.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/video/draw.js",
+            "path": "client/video/draw.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/video/runDetect.js",
+            "path": "client/video/runDetect.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/video/runClassify.js",
+            "path": "client/video/runClassify.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/video/runHuman.js",
+            "path": "client/video/runHuman.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/shared/menu.js": {
-        "bytes": 14333,
+      "client/shared/menu.ts": {
+        "bytes": 14701,
         "imports": []
       },
-      "client/video/video.js": {
-        "bytes": 13088,
+      "client/video/video.ts": {
+        "bytes": 13444,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26875,7 +26862,7 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/tf.js",
+            "path": "client/shared/tf.ts",
             "kind": "import-statement"
           },
           {
@@ -26887,38 +26874,38 @@
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.js",
+            "path": "client/shared/log.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/user.js",
+            "path": "client/shared/user.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/video/run.js",
+            "path": "client/video/run.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/menu.js",
+            "path": "client/shared/menu.ts",
             "kind": "import-statement"
           },
           {
-            "path": "client/shared/config.js",
+            "path": "client/shared/config.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/index/worker.js": {
-        "bytes": 1419,
+      "client/index/worker.ts": {
+        "bytes": 1636,
         "imports": [
           {
-            "path": "client/shared/blockhash.js",
+            "path": "client/shared/blockhash.ts",
             "kind": "import-statement"
           }
         ]
       },
-      "client/index/pwa-serviceworker.js": {
-        "bytes": 4100,
+      "client/index/pwa-serviceworker.ts": {
+        "bytes": 4147,
         "imports": []
       }
     },
@@ -26927,12 +26914,12 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5781103
+        "bytes": 5781215
       },
       "dist/compare/compare.js": {
         "imports": [],
         "exports": [],
-        "entryPoint": "client/compare/compare.js",
+        "entryPoint": "client/compare/compare.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
             "bytesInOutput": 218527
@@ -26958,9 +26945,6 @@
           "node_modules/.pnpm/@tensorflow+tfjs-backend-wasm@3.4.0/node_modules/@tensorflow/tfjs-backend-wasm/wasm-out/tfjs-backend-wasm.js": {
             "bytesInOutput": 42404
           },
-          "client/shared/log.js": {
-            "bytesInOutput": 1784
-          },
           "assets/bootstrap.css": {
             "bytesInOutput": 0
           },
@@ -26970,10 +26954,10 @@
           "client/pigallery.css": {
             "bytesInOutput": 0
           },
-          "client/compare/compare.js": {
-            "bytesInOutput": 10340
+          "client/compare/compare.ts": {
+            "bytesInOutput": 10194
           },
-          "client/shared/tf.js": {
+          "client/shared/tf.ts": {
             "bytesInOutput": 42
           },
           "node_modules/.pnpm/@tensorflow+tfjs-backend-wasm@3.4.0/node_modules/@tensorflow/tfjs-backend-wasm/dist/index.js": {
@@ -27507,23 +27491,26 @@
           "node_modules/.pnpm/@tensorflow+tfjs-backend-wasm@3.4.0/node_modules/@tensorflow/tfjs-backend-wasm/dist/version.js": {
             "bytesInOutput": 61
           },
-          "client/process/modelClassify.js": {
+          "client/shared/log.ts": {
+            "bytesInOutput": 1528
+          },
+          "client/process/modelClassify.ts": {
             "bytesInOutput": 3847
           },
-          "client/process/postProcess.js": {
+          "client/process/postProcess.ts": {
             "bytesInOutput": 739
           },
-          "client/process/modelDetect.js": {
-            "bytesInOutput": 6942
+          "client/process/modelDetect.ts": {
+            "bytesInOutput": 6940
           },
-          "client/shared/config.js": {
-            "bytesInOutput": 8796
+          "client/shared/config.ts": {
+            "bytesInOutput": 8755
           },
-          "client/process/processImage.js": {
+          "client/process/processImage.ts": {
             "bytesInOutput": 2505
           }
         },
-        "bytes": 3592581
+        "bytes": 3592106
       },
       "dist/compare/compare.css": {
         "imports": [],
@@ -27544,24 +27531,24 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1054046
+        "bytes": 1050702
       },
       "dist/index/index.js": {
         "imports": [],
         "exports": [],
-        "entryPoint": "client/index/index.js",
+        "entryPoint": "client/index/index.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
             "bytesInOutput": 218862
           },
-          "client/shared/log.js": {
-            "bytesInOutput": 1784
+          "client/shared/log.ts": {
+            "bytesInOutput": 1561
           },
-          "client/shared/config.js": {
-            "bytesInOutput": 9344
+          "client/shared/config.ts": {
+            "bytesInOutput": 9320
           },
-          "client/index/indexdb.js": {
-            "bytesInOutput": 6634
+          "client/index/indexdb.ts": {
+            "bytesInOutput": 6511
           },
           "node_modules/.pnpm/moment@2.29.1/node_modules/moment/moment.js": {
             "bytesInOutput": 134440
@@ -27569,26 +27556,23 @@
           "assets/color-thief.umd.js": {
             "bytesInOutput": 11347
           },
-          "client/index/iv-viewer.js": {
+          "client/index/iv-viewer.ts": {
             "bytesInOutput": 27644
           },
-          "client/index/details.js": {
-            "bytesInOutput": 17903
+          "client/index/details.ts": {
+            "bytesInOutput": 17855
           },
-          "client/shared/blockhash.js": {
-            "bytesInOutput": 5662
+          "client/index/list.ts": {
+            "bytesInOutput": 9850
           },
-          "client/index/list.js": {
-            "bytesInOutput": 9888
-          },
-          "client/index/nearest.js": {
+          "client/index/nearest.ts": {
             "bytesInOutput": 3234
           },
-          "client/index/map.js": {
-            "bytesInOutput": 3392
+          "client/index/map.ts": {
+            "bytesInOutput": 3346
           },
-          "client/index/pwa-register.js": {
-            "bytesInOutput": 1839
+          "client/index/pwa-register.ts": {
+            "bytesInOutput": 1771
           },
           "assets/bootstrap.css": {
             "bytesInOutput": 0
@@ -27605,23 +27589,26 @@
           "client/pigallery.css": {
             "bytesInOutput": 0
           },
-          "client/index/index.js": {
-            "bytesInOutput": 37815
+          "client/index/index.ts": {
+            "bytesInOutput": 37586
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59917
           },
-          "client/shared/user.js": {
-            "bytesInOutput": 1243
+          "client/shared/blockhash.ts": {
+            "bytesInOutput": 410
           },
-          "client/index/enumerate.js": {
-            "bytesInOutput": 7591
+          "client/shared/user.ts": {
+            "bytesInOutput": 1207
           },
-          "client/index/options.js": {
-            "bytesInOutput": 7508
+          "client/index/enumerate.ts": {
+            "bytesInOutput": 7540
+          },
+          "client/index/options.ts": {
+            "bytesInOutput": 7472
           }
         },
-        "bytes": 568185
+        "bytes": 562011
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27648,12 +27635,12 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7660067
+        "bytes": 7659690
       },
       "dist/process/process.js": {
         "imports": [],
         "exports": [],
-        "entryPoint": "client/process/process.js",
+        "entryPoint": "client/process/process.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
             "bytesInOutput": 219152
@@ -27662,7 +27649,7 @@
             "bytesInOutput": 45
           },
           "node_modules/.pnpm/@tensorflow+tfjs@3.4.0/node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-            "bytesInOutput": 2806690
+            "bytesInOutput": 2806691
           },
           "node_modules/.pnpm/seedrandom@2.4.3/node_modules/seedrandom/lib/alea.js": {
             "bytesInOutput": 2148
@@ -27703,12 +27690,6 @@
           "node_modules/.pnpm/@tensorflow+tfjs-backend-wasm@3.4.0/node_modules/@tensorflow/tfjs-backend-wasm/wasm-out/tfjs-backend-wasm.js": {
             "bytesInOutput": 42457
           },
-          "client/shared/log.js": {
-            "bytesInOutput": 1805
-          },
-          "client/shared/blockhash.js": {
-            "bytesInOutput": 5668
-          },
           "assets/bootstrap.css": {
             "bytesInOutput": 0
           },
@@ -27718,10 +27699,10 @@
           "client/pigallery.css": {
             "bytesInOutput": 0
           },
-          "client/process/process.js": {
-            "bytesInOutput": 4929
+          "client/process/process.ts": {
+            "bytesInOutput": 4779
           },
-          "client/shared/tf.js": {
+          "client/shared/tf.ts": {
             "bytesInOutput": 42
           },
           "node_modules/.pnpm/@tensorflow+tfjs-backend-wasm@3.4.0/node_modules/@tensorflow/tfjs-backend-wasm/dist/index.js": {
@@ -29104,11 +29085,14 @@
           "node_modules/.pnpm/@tensorflow+tfjs-backend-wasm@3.4.0/node_modules/@tensorflow/tfjs-backend-wasm/dist/version.js": {
             "bytesInOutput": 62
           },
-          "client/shared/user.js": {
-            "bytesInOutput": 1238
+          "client/shared/log.ts": {
+            "bytesInOutput": 1548
           },
-          "client/shared/config.js": {
-            "bytesInOutput": 8802
+          "client/shared/user.ts": {
+            "bytesInOutput": 1191
+          },
+          "client/shared/config.ts": {
+            "bytesInOutput": 8761
           },
           "node_modules/.pnpm/@tensorflow+tfjs@3.4.0/node_modules/@tensorflow/tfjs/package.json": {
             "bytesInOutput": 4742
@@ -31585,20 +31569,23 @@
           "node_modules/.pnpm/@vladmandic+human@1.5.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
             "bytesInOutput": 359062
           },
-          "client/process/processImage.js": {
-            "bytesInOutput": 10711
-          },
-          "client/process/modelClassify.js": {
+          "client/process/modelClassify.ts": {
             "bytesInOutput": 3914
           },
-          "client/process/postProcess.js": {
+          "client/process/postProcess.ts": {
             "bytesInOutput": 740
           },
-          "client/process/modelDetect.js": {
-            "bytesInOutput": 7050
+          "client/process/modelDetect.ts": {
+            "bytesInOutput": 7048
+          },
+          "client/shared/blockhash.ts": {
+            "bytesInOutput": 4732
+          },
+          "client/process/processImage.ts": {
+            "bytesInOutput": 10522
           }
         },
-        "bytes": 6526493
+        "bytes": 6524807
       },
       "dist/process/process.css": {
         "imports": [],
@@ -31619,12 +31606,12 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7773342
+        "bytes": 7774328
       },
       "dist/video/video.js": {
         "imports": [],
         "exports": [],
-        "entryPoint": "client/video/video.js",
+        "entryPoint": "client/video/video.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
             "bytesInOutput": 218946
@@ -31674,9 +31661,6 @@
           "node_modules/.pnpm/@tensorflow+tfjs-backend-wasm@3.4.0/node_modules/@tensorflow/tfjs-backend-wasm/wasm-out/tfjs-backend-wasm.js": {
             "bytesInOutput": 42457
           },
-          "client/shared/log.js": {
-            "bytesInOutput": 1793
-          },
           "assets/bootstrap.css": {
             "bytesInOutput": 0
           },
@@ -31686,10 +31670,10 @@
           "client/pigallery.css": {
             "bytesInOutput": 0
           },
-          "client/video/video.js": {
-            "bytesInOutput": 11634
+          "client/video/video.ts": {
+            "bytesInOutput": 12068
           },
-          "client/shared/tf.js": {
+          "client/shared/tf.ts": {
             "bytesInOutput": 42
           },
           "node_modules/.pnpm/@tensorflow+tfjs-backend-wasm@3.4.0/node_modules/@tensorflow/tfjs-backend-wasm/dist/index.js": {
@@ -35550,41 +35534,44 @@
           "assets/panzoom.js": {
             "bytesInOutput": 43618
           },
-          "client/shared/user.js": {
-            "bytesInOutput": 1239
+          "client/shared/log.ts": {
+            "bytesInOutput": 1373
           },
-          "client/video/run.js": {
-            "bytesInOutput": 6795
+          "client/shared/user.ts": {
+            "bytesInOutput": 1192
           },
-          "client/video/draw.js": {
+          "client/video/draw.ts": {
             "bytesInOutput": 2251
           },
-          "client/video/runDetect.js": {
-            "bytesInOutput": 1679
-          },
-          "client/process/postProcess.js": {
+          "client/process/postProcess.ts": {
             "bytesInOutput": 740
           },
-          "client/process/modelDetect.js": {
-            "bytesInOutput": 7017
+          "client/process/modelDetect.ts": {
+            "bytesInOutput": 7015
           },
-          "client/video/runClassify.js": {
-            "bytesInOutput": 1244
+          "client/video/runDetect.ts": {
+            "bytesInOutput": 1633
           },
-          "client/process/modelClassify.js": {
+          "client/process/modelClassify.ts": {
             "bytesInOutput": 3905
           },
-          "client/video/runHuman.js": {
+          "client/video/runClassify.ts": {
+            "bytesInOutput": 1198
+          },
+          "client/video/runHuman.ts": {
             "bytesInOutput": 7869
           },
-          "client/shared/menu.js": {
-            "bytesInOutput": 13908
+          "client/video/run.ts": {
+            "bytesInOutput": 6705
           },
-          "client/shared/config.js": {
-            "bytesInOutput": 8938
+          "client/shared/menu.ts": {
+            "bytesInOutput": 13890
+          },
+          "client/shared/config.ts": {
+            "bytesInOutput": 8765
           }
         },
-        "bytes": 6593905
+        "bytes": 6593385
       },
       "dist/video/video.css": {
         "imports": [],
@@ -35605,38 +35592,38 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12000
+        "bytes": 8946
       },
       "dist/index/worker.js": {
         "imports": [],
         "exports": [],
-        "entryPoint": "client/index/worker.js",
+        "entryPoint": "client/index/worker.ts",
         "inputs": {
-          "client/shared/blockhash.js": {
-            "bytesInOutput": 5637
+          "client/shared/blockhash.ts": {
+            "bytesInOutput": 405
           },
-          "client/index/worker.js": {
-            "bytesInOutput": 1114
+          "client/index/worker.ts": {
+            "bytesInOutput": 1065
           }
         },
-        "bytes": 8094
+        "bytes": 1683
       },
       "dist/index/pwa-serviceworker.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 6518
+        "bytes": 6554
       },
       "dist/index/pwa-serviceworker.js": {
         "imports": [],
         "exports": [],
-        "entryPoint": "client/index/pwa-serviceworker.js",
+        "entryPoint": "client/index/pwa-serviceworker.ts",
         "inputs": {
-          "client/index/pwa-serviceworker.js": {
-            "bytesInOutput": 3354
+          "client/index/pwa-serviceworker.ts": {
+            "bytesInOutput": 3291
           }
         },
-        "bytes": 3558
+        "bytes": 3495
       }
     }
   }

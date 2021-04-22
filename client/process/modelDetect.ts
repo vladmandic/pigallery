@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { tf } from '../shared/tf';
 import * as postProcess from './postProcess';
 
@@ -125,7 +127,7 @@ export async function detect(model, image, userConfig) {
     const memAfter = tf.memory();
     const memProfile = profile(profileData);
     // eslint-disable-next-line no-unused-vars
-    const profiling = { before: memBefore, after: memAfter, profile: memProfile };
+    res.profiling = { before: memBefore, after: memAfter, profile: memProfile };
   }
 
   // find results

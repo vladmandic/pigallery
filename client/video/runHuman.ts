@@ -7,7 +7,7 @@ let ctx;
 
 function drawFace(result, ui) {
   for (const face of result) {
-    const labels = [];
+    const labels:Array<string> = [];
     if (face.agConfidence) labels.push(`${Math.trunc(100 * face.agConfidence)}% ${face.gender || ''}`);
     if (face.age) labels.push(`age: ${face.age || ''}`);
     if (face.iris) labels.push(`iris: ${face.iris}`);
@@ -21,7 +21,7 @@ function drawFace(result, ui) {
         height: face.box[3],
         lineWidth: ui.lineWidth,
         color: ui.lineColor,
-        title: labels,
+        title: labels as any,
       });
     }
     // silly hack since fillText does not suport new line
@@ -146,7 +146,7 @@ function drawHand(result, ui) {
         height: hand.box[3],
         lineWidth: ui.lineWidth,
         color: ui.lineColor,
-        title: 'hand',
+        title: 'hand' as any,
       });
     }
     if (ui.drawPoints) {

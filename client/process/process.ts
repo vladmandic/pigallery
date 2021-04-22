@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // css-imports used by esbuild
 import '../../assets/bootstrap.css';
 import '../../assets/fontawesome.css';

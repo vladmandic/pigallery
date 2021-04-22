@@ -1,9 +1,12 @@
+/// <reference lib="es2020" />
+/// <reference lib="webworker" />
+
 import * as hash from '../shared/blockhash';
 
 onmessage = async (msg) => {
   // console.log('Worker received message', msg.data);
   const all = msg.data;
-  const duplicatePairs = [];
+  const duplicatePairs:Array<{ source: any, target: any, distance: number }> = [];
   // generate possible duplicate pairs of images
   for (let i = 0; i < all.length; i++) {
     for (let j = i + 1; j < all.length; j++) {
@@ -12,7 +15,7 @@ onmessage = async (msg) => {
     }
   }
   // now place them in a flat array
-  const duplicateItems = [];
+  const duplicateItems:Array<{ image: string, similarity: number }> = [];
   for (const pair of duplicatePairs) {
     if (pair.source.image !== pair.target.image) {
       pair.source.similarity = 100 - pair.distance;
@@ -22,8 +25,8 @@ onmessage = async (msg) => {
       duplicateItems.push({ ...pair.target });
     }
   }
-  const foundItems = [];
-  const deduplicate = (item) => {
+  const foundItems:Array<string> = [];
+  const deduplicate = (item:{ image: string, similarity: number }) => {
     if (foundItems.includes(`${item.image}:${item.similarity}`)) return false;
     foundItems.push(`${item.image}:${item.similarity}`);
     return true;

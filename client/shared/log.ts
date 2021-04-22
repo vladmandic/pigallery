@@ -48,7 +48,7 @@ async function div(id, append, ...msg) {
   }
 }
 
-module.exports = {
+export {
   debug,
   div,
   server,

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Human from '@vladmandic/human/dist/human.esm-nobundle';
 import { tf, wasm } from '../shared/tf';
 import * as log from '../shared/log';

@@ -1,4 +1,5 @@
-// @ts-nocheck
+/// <reference lib="es2020" />
+/// <reference lib="webworker" />
 
 const skipCaching = false;
 
@@ -85,7 +86,7 @@ function cacheInit() {
 }
 
 if (!listening) {
-  self.addEventListener('message', (evt) => {
+  self.addEventListener('message', (evt: MessageEvent) => {
     log('event message:', evt.data);
     switch (evt.data.key) {
       case 'cacheModels': cacheModels = evt.data.val; break;
@@ -99,20 +100,20 @@ if (!listening) {
 
   self.addEventListener('install', (evt) => {
     log('install');
-    self.skipWaiting();
-    evt.waitUntil(cacheInit);
+    (self as any).skipWaiting();
+    (evt as any).waitUntil(cacheInit);
   });
 
   self.addEventListener('activate', (evt) => {
     log('activate');
-    evt.waitUntil(self.clients.claim());
+    (evt as any).waitUntil((self as any).clients.claim());
   });
 
   self.addEventListener('fetch', (evt) => {
     const uri = new URL(evt.request.url);
     // if (uri.pathname === '/') { log('cache skip /', evt.request); return; } // skip root access requests
     if (evt.request.cache === 'only-if-cached' && evt.request.mode !== 'same-origin') return; // required due to chrome bug
-    if (uri.origin !== location.origin) { log('cache skip different origin', evt.request); return; } // skip non-local requests
+    if (uri.origin !== location.origin) return; // skip non-local requests
     if (evt.request.method !== 'GET') return; // only cache get requests
     if (evt.request.url.includes('/api/')) return; // don't cache api requests, failures are handled at the time of call
 

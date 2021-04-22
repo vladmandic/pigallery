@@ -10,7 +10,7 @@ export async function nsfw(model, detected) {
     if (labelSexy.includes(item.id)) found.sexy = true;
     if (labelNude.includes(item.id)) found.nude = true;
   }
-  const result = [];
+  const result:Array<{ score: number, id: number, class: string}> = [];
   // if (found.person) result.push({ score: 1, id: 100, class: 'person' });
   if (found.sexy) result.push({ score: 1, id: 100, class: 'sexy' });
   if (found.nude) result.push({ score: 1, id: 101, class: 'nude' });

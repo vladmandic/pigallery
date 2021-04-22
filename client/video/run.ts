@@ -29,7 +29,7 @@ async function clear(canvases) {
   canvases = [];
 }
 
-const fps = [];
+const fps:Array<number> = [];
 async function updatePerf(config, objects) {
   if (objects.perf['Total time']) fps.push(1000 / objects.perf['Total time']);
   if (fps.length > config.ui.maxFrames) fps.shift();
@@ -146,10 +146,10 @@ async function main(config, objects) {
     msg += `camera: ${video?.videoWidth} x ${video?.videoHeight} processing: ${input.width} x ${input.height}<br>`;
     if (objects.human.length > 0) msg += `human: ${log.str([...objects.human])}<br>`;
     for (const [key, val] of Object.entries(objects.detected)) {
-      if (val.length > 0) msg += `detected: ${key}: ${log.str([...val])}<br>`;
+      if ((val as Array<any>).length > 0) msg += `detected: ${key}: ${log.str([...(val as Array<any>)])}<br>`;
     }
     for (const [key, val] of Object.entries(objects.classified)) {
-      if (val.length > 0) msg += `classified: ${key}: ${log.str([...val])}<br>`;
+      if ((val as Array<any>).length > 0) msg += `classified: ${key}: ${log.str([...(val as Array<any>)])}<br>`;
     }
     // if (objects.gestures.length > 0) msg += `gestures: ${log.str([...objects.gestures])}<br>`;
     el.innerHTML = msg;

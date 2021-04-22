@@ -4,7 +4,7 @@ const esbuild = require('esbuild');
 const log = require('@vladmandic/pilogger');
 
 const root = 'client';
-const jsFiles = ['client/index/worker.js', 'client/index/pwa-serviceworker.js'];
+const jsFiles = ['client/index/worker.ts', 'client/index/pwa-serviceworker.ts'];
 const metafile = './asset-manifest.json';
 
 const banner = { js: `
@@ -68,7 +68,7 @@ async function compile() {
   const dirs = fs.readdirSync(root);
   const files = [];
   for (const dir of dirs) {
-    if (fs.lstatSync(`${root}/${dir}`).isDirectory() && fs.existsSync(`${root}/${dir}/${dir}.js`)) files.push(`${root}/${dir}/${dir}.js`);
+    if (fs.lstatSync(`${root}/${dir}`).isDirectory() && fs.existsSync(`${root}/${dir}/${dir}.ts`)) files.push(`${root}/${dir}/${dir}.ts`);
   }
   log.data('Build sources:', files, jsFiles);
   try {
