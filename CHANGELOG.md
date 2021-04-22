@@ -11,6 +11,7 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **HEAD -> master** 2021/04/21 mandic00@live.com
 
+- lighthouse optimizations
 - webhint optimizations
 - speed up enumerations
 - split indexdb for massive performance gains

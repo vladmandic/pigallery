@@ -5,7 +5,7 @@
         "column": 12,
         "file": "client/index/index.js",
         "length": 9,
-        "line": 792,
+        "line": 802,
         "lineText": "    details.slideshow(true);",
         "namespace": "",
         "suggestion": ""
@@ -38,7 +38,7 @@
         "imports": []
       },
       "client/pigallery.css": {
-        "bytes": 10710,
+        "bytes": 10739,
         "imports": []
       },
       "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
@@ -10869,7 +10869,7 @@
         ]
       },
       "client/shared/log.js": {
-        "bytes": 1673,
+        "bytes": 1741,
         "imports": []
       },
       "client/process/modelClassify.js": {
@@ -26383,7 +26383,7 @@
         "imports": []
       },
       "client/shared/config.js": {
-        "bytes": 11241,
+        "bytes": 11037,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26532,7 +26532,7 @@
         ]
       },
       "client/shared/user.js": {
-        "bytes": 963,
+        "bytes": 1262,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26599,7 +26599,7 @@
         ]
       },
       "client/index/enumerate.js": {
-        "bytes": 7348,
+        "bytes": 7788,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26612,7 +26612,7 @@
         ]
       },
       "client/index/options.js": {
-        "bytes": 8033,
+        "bytes": 7607,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26633,16 +26633,20 @@
         ]
       },
       "client/index/pwa-register.js": {
-        "bytes": 1417,
+        "bytes": 1813,
         "imports": [
           {
             "path": "client/shared/log.js",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/shared/config.js",
             "kind": "import-statement"
           }
         ]
       },
       "client/index/index.js": {
-        "bytes": 36552,
+        "bytes": 36771,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26914,7 +26918,7 @@
         ]
       },
       "client/index/pwa-serviceworker.js": {
-        "bytes": 3195,
+        "bytes": 4099,
         "imports": []
       }
     },
@@ -26923,7 +26927,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5781356
+        "bytes": 5781103
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -26955,7 +26959,7 @@
             "bytesInOutput": 42404
           },
           "client/shared/log.js": {
-            "bytesInOutput": 1725
+            "bytesInOutput": 1784
           },
           "assets/bootstrap.css": {
             "bytesInOutput": 0
@@ -27513,13 +27517,13 @@
             "bytesInOutput": 6942
           },
           "client/shared/config.js": {
-            "bytesInOutput": 9118
+            "bytesInOutput": 8796
           },
           "client/process/processImage.js": {
             "bytesInOutput": 2505
           }
         },
-        "bytes": 3592844
+        "bytes": 3592581
       },
       "dist/compare/compare.css": {
         "imports": [],
@@ -27531,16 +27535,16 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11601
+            "bytesInOutput": 11632
           }
         },
-        "bytes": 417988
+        "bytes": 418019
       },
       "dist/index/index.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1052779
+        "bytes": 1054046
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27551,7 +27555,10 @@
             "bytesInOutput": 218862
           },
           "client/shared/log.js": {
-            "bytesInOutput": 1725
+            "bytesInOutput": 1784
+          },
+          "client/shared/config.js": {
+            "bytesInOutput": 9344
           },
           "client/index/indexdb.js": {
             "bytesInOutput": 6634
@@ -27581,7 +27588,7 @@
             "bytesInOutput": 3392
           },
           "client/index/pwa-register.js": {
-            "bytesInOutput": 1537
+            "bytesInOutput": 1839
           },
           "assets/bootstrap.css": {
             "bytesInOutput": 0
@@ -27599,25 +27606,22 @@
             "bytesInOutput": 0
           },
           "client/index/index.js": {
-            "bytesInOutput": 37593
+            "bytesInOutput": 37815
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59917
           },
-          "client/shared/config.js": {
-            "bytesInOutput": 9114
-          },
           "client/shared/user.js": {
-            "bytesInOutput": 940
+            "bytesInOutput": 1243
           },
           "client/index/enumerate.js": {
-            "bytesInOutput": 7197
+            "bytesInOutput": 7591
           },
           "client/index/options.js": {
-            "bytesInOutput": 7971
+            "bytesInOutput": 7508
           }
         },
-        "bytes": 567138
+        "bytes": 568185
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27635,16 +27639,16 @@
             "bytesInOutput": 3150
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11601
+            "bytesInOutput": 11632
           }
         },
-        "bytes": 559255
+        "bytes": 559286
       },
       "dist/process/process.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7659806
+        "bytes": 7660067
       },
       "dist/process/process.js": {
         "imports": [],
@@ -27700,7 +27704,7 @@
             "bytesInOutput": 42457
           },
           "client/shared/log.js": {
-            "bytesInOutput": 1746
+            "bytesInOutput": 1805
           },
           "client/shared/blockhash.js": {
             "bytesInOutput": 5668
@@ -29101,10 +29105,10 @@
             "bytesInOutput": 62
           },
           "client/shared/user.js": {
-            "bytesInOutput": 935
+            "bytesInOutput": 1238
           },
           "client/shared/config.js": {
-            "bytesInOutput": 9124
+            "bytesInOutput": 8802
           },
           "node_modules/.pnpm/@tensorflow+tfjs@3.4.0/node_modules/@tensorflow/tfjs/package.json": {
             "bytesInOutput": 4742
@@ -31594,7 +31598,7 @@
             "bytesInOutput": 7050
           }
         },
-        "bytes": 6526453
+        "bytes": 6526493
       },
       "dist/process/process.css": {
         "imports": [],
@@ -31606,16 +31610,16 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11601
+            "bytesInOutput": 11632
           }
         },
-        "bytes": 417988
+        "bytes": 418019
       },
       "dist/video/video.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 7773081
+        "bytes": 7773342
       },
       "dist/video/video.js": {
         "imports": [],
@@ -31671,7 +31675,7 @@
             "bytesInOutput": 42457
           },
           "client/shared/log.js": {
-            "bytesInOutput": 1734
+            "bytesInOutput": 1793
           },
           "assets/bootstrap.css": {
             "bytesInOutput": 0
@@ -35547,7 +35551,7 @@
             "bytesInOutput": 43618
           },
           "client/shared/user.js": {
-            "bytesInOutput": 936
+            "bytesInOutput": 1239
           },
           "client/video/run.js": {
             "bytesInOutput": 6795
@@ -35577,10 +35581,10 @@
             "bytesInOutput": 13908
           },
           "client/shared/config.js": {
-            "bytesInOutput": 9260
+            "bytesInOutput": 8938
           }
         },
-        "bytes": 6593865
+        "bytes": 6593905
       },
       "dist/video/video.css": {
         "imports": [],
@@ -35592,10 +35596,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11601
+            "bytesInOutput": 11632
           }
         },
-        "bytes": 417988
+        "bytes": 418019
       },
       "dist/index/worker.js.map": {
         "imports": [],
@@ -35621,7 +35625,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 5201
+        "bytes": 6517
       },
       "dist/index/pwa-serviceworker.js": {
         "imports": [],
@@ -35629,10 +35633,10 @@
         "entryPoint": "client/index/pwa-serviceworker.js",
         "inputs": {
           "client/index/pwa-serviceworker.js": {
-            "bytesInOutput": 2724
+            "bytesInOutput": 3353
           }
         },
-        "bytes": 2928
+        "bytes": 3557
       }
     }
   }

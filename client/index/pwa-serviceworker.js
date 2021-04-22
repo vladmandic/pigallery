@@ -1,86 +1,130 @@
 // @ts-nocheck
-/* eslint-disable no-console */
+
+const skipCaching = true;
 
 const cacheName = 'pigallery';
 const cacheFiles = ['/favicon.ico', '/pigallery.webmanifest', '/client/offline.html']; // assets and models are cached on first access
+
 let cacheModels = false;
 let cacheAssets = true;
+let cacheMedia = false;
+
+let mediaRoot = '/media/';
+let modelsRoot = '/models/';
 
 let listening = false;
 const stats = { hit: 0, miss: 0 };
-const skip = false;
 
-function ts() {
+const log = (...msg) => {
   const dt = new Date();
-  return `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
+  const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
+  // eslint-disable-next-line no-console
+  console.log(ts, 'PWA', ...msg);
+};
+
+async function updateCached(req) {
+  // const clone = req.clone();
+  // const update = await fetch(req);
+  fetch(req)
+    .then((update) => {
+      // eslint-disable-next-line promise/no-nesting
+      caches
+        .open(cacheName)
+        .then((cache) => cache.put(req, update))
+        .catch((err) => log('cache error', err));
+      return true;
+    })
+    .catch((err) => {
+      log('fetch error', err);
+      return false;
+    });
 }
 
-async function cached(evt) {
-  if (skip) return fetch(evt.request);
-  let found;
-  if (navigator.onLine) found = await caches.match(evt.request); // || await fetch(evt.request);
-  else found = await caches.match('/client/offline.html');
-  if (found) stats.hit += 1;
-  else stats.miss += 1;
+async function getCached(evt) {
+  // just fetch
+  if (skipCaching) return fetch(evt.request);
 
-  // const uri = new URL(evt.request.url);
-  // console.log(evt.request.method, uri);
-  if (!found) found = await fetch(evt.request);
-
-  if (found && found.type === 'basic' && found.ok) {
-    const clone = found.clone();
-    if (cacheAssets && evt.request.url.includes('/assets/')) evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
-    if (cacheModels && evt.request.url.includes('/models/')) evt.waitUntil(caches.open(cacheName).then((cache) => cache.put(evt.request, clone)));
+  // get from cache or fetch if not in cache
+  let found = await caches.match(evt.request);
+  if (found && found.ok) {
+    stats.hit += 1;
+  } else {
+    stats.miss += 1;
+    found = await fetch(evt.request);
   }
 
-  // console.log('fetch', evt.request.url, stats);
+  // if still don't have it, return offline page
+  if (!found || !found.ok) {
+    found = await caches.match('/client/offline.html');
+  }
+
+  // update cache in the background
+  if (found && found.type === 'basic' && found.ok) {
+    const uri = new URL(evt.request.url);
+    if (uri.pathname.startsWith(modelsRoot)) {
+      if (cacheModels) updateCached(evt.request);
+    } else if (uri.pathname.startsWith(mediaRoot)) {
+      if (cacheMedia) updateCached(evt.request);
+    } else if (cacheAssets) {
+      updateCached(evt.request);
+    }
+  }
+
   return found;
 }
 
-function refresh() {
+function cacheInit() {
   // eslint-disable-next-line promise/catch-or-return
   caches.open(cacheName)
     // eslint-disable-next-line promise/no-nesting
     .then((cache) => cache.addAll(cacheFiles)
       .then(
-        () => console.log(ts(), 'PWA Cache refresh:', cacheFiles.length, 'files'),
-        (err) => console.log(ts(), 'PWA Cache error', err),
+        () => log('cache refresh:', cacheFiles.length, 'files'),
+        (err) => log('cache error', err),
       ));
 }
 
 if (!listening) {
   self.addEventListener('message', (evt) => {
-    if (evt.data.key === 'cacheModels') cacheModels = evt.data.val;
-    if (evt.data.key === 'cacheAssets') cacheAssets = evt.data.val;
-    console.log(ts(), 'PWA event message:', evt.data);
+    log('event message:', evt.data);
+    switch (evt.data.key) {
+      case 'cacheModels': cacheModels = evt.data.val; break;
+      case 'cacheAssets': cacheAssets = evt.data.val; break;
+      case 'cacheMedia': cacheMedia = evt.data.val; break;
+      case 'mediaRoot': mediaRoot = evt.data.val; break;
+      case 'modelsRoot': modelsRoot = evt.data.val; break;
+      default:
+    }
   });
 
   self.addEventListener('install', (evt) => {
-    console.log(ts(), 'PWA Install');
+    log('install');
     self.skipWaiting();
-    evt.waitUntil(refresh);
+    evt.waitUntil(cacheInit);
   });
 
   self.addEventListener('activate', (evt) => {
-    console.log(ts(), 'PWA Activate');
-    refresh();
+    log('activate');
     evt.waitUntil(self.clients.claim());
   });
 
   self.addEventListener('fetch', (evt) => {
     const uri = new URL(evt.request.url);
+    // if (uri.pathname === '/') { log('cache skip /', evt.request); return; } // skip root access requests
     if (evt.request.cache === 'only-if-cached' && evt.request.mode !== 'same-origin') return; // required due to chrome bug
+    if (uri.origin !== location.origin) { log('cache skip different origin', evt.request); return; } // skip non-local requests
     if (evt.request.method !== 'GET') return; // only cache get requests
-    if (uri.origin !== location.origin) return; // skip non-local requests
-    if (uri.pathname === '/') return; // skip root access requests
-    if (evt.request.url.includes('/api/')) return; // skip api calls
-    const response = cached(evt);
+    if (evt.request.url.includes('/api/')) return; // don't cache api requests, failures are handled at the time of call
+
+    const response = getCached(evt);
     if (response) evt.respondWith(response);
+    else log('fetch response missing');
   });
 
+  // only trigger controllerchange once
   let refreshed = false;
   self.addEventListener('controllerchange', (evt) => {
-    console.log(ts(), `PWA: ${evt.type}`);
+    log(`PWA: ${evt.type}`);
     if (refreshed) return;
     refreshed = true;
     location.reload();
