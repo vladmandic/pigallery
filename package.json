@@ -1,6 +1,6 @@
 {
   "name": "@vladmandic/pigallery",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "PiGallery: AI-powered Self-hosted Secure Multi-user Image Gallery and Detailed Image analysis using Machine Learning, EXIF Parsing and Geo Tagging",
   "author": "Vladimir Mandic <mandic00@live.com>",
   "license": "MIT",
@@ -41,7 +41,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "^3.5.0",
     "@tensorflow/tfjs-backend-wasm": "^3.5.0",
-    "@vladmandic/human": "^1.5.1",
+    "@vladmandic/human": "^1.6.1",
     "@vladmandic/pilogger": "^0.2.17",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.1",
