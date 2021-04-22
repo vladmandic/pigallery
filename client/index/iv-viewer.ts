@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable max-classes-per-file */
 
 // Based on iv-viewer - 2.0.1 Author : Sudhanshu Yadav git+https://github.com/s-yadav/iv-viewer.git
@@ -17,6 +18,7 @@ const imageViewHtml = `
   </div>
 `;
 
+/* eslint-disable @typescript-eslint/no-empty-function */
 function noop() {}
 
 function easeOutQuart(t, b, c, d) {
@@ -648,9 +650,9 @@ class ImageViewer {
   }
 
   destroy() {
-    // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     Object.entries(this.sliders).forEach(([key, slider]) => slider.destroy());
-    // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
     Object.entries(this.events).forEach(([key, unbindEvent]) => unbindEvent());
     this.clearFrames();
     remove(this.elements.container.querySelector('.iv-wrap'));

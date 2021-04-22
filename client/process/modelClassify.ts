@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { tf } from '../shared/tf';
 
 const defaults = {

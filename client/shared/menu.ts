@@ -72,7 +72,15 @@ function createCSS() {
 }
 
 class Menu {
-  constructor(parent, title, position, userTheme) {
+  id: number;
+  instance: number;
+  _maxFPS: number;
+  hidden: boolean;
+  menu: HTMLElement;
+  container: HTMLElement;
+  // end definition
+
+  constructor(parent, title, position, userTheme = {}) {
     if (userTheme) menuTheme = { ...menuTheme, ...userTheme };
     createCSS();
     this.createMenu(parent, title, position);
@@ -149,7 +157,7 @@ class Menu {
     return (this.container ? this.container.classList.contains('menu-container-fadein') : false);
   }
 
-  toggle(evt) {
+  toggle() {
     if (this.container && this.menu) {
       this.container.classList.toggle('menu-container-fadeout');
       this.container.classList.toggle('menu-container-fadein');
@@ -173,7 +181,7 @@ class Menu {
   }
 
   addTitle(title) {
-    const el = document.createElement('div');
+    const el: HTMLDivElement = document.createElement('div');
     el.className = 'menu-title';
     el.id = this.newID;
     el.innerHTML = title;
@@ -182,7 +190,7 @@ class Menu {
       this.hidden = !this.hidden;
       const all = document.getElementsByClassName('menu');
       for (const item of all) {
-        item.style.display = this.hidden ? 'none' : 'block';
+        (item as HTMLElement).style.display = this.hidden ? 'none' : 'block';
       }
     });
     return el;
@@ -197,19 +205,19 @@ class Menu {
     return el;
   }
 
-  addBool(title, object, variable, callback) {
+  addBool(title, object, variable, callback:any = null) {
     const el = document.createElement('div');
     el.className = 'menu-item';
     el.innerHTML = `<div class="menu-checkbox"><input class="menu-checkbox" type="checkbox" id="${this.newID}" ${object[variable] ? 'checked' : ''}/><label class="menu-checkbox-label" for="${this.ID}"></label></div><p class="menu-text">${title}</p>`;
     if (this.container) this.container.appendChild(el);
     el.addEventListener('change', (evt) => {
-      object[variable] = evt.target?.checked;
-      if (callback) callback(evt.target?.checked);
+      object[variable] = (evt.target as HTMLInputElement)?.checked;
+      if (callback) callback((evt.target as HTMLInputElement)?.checked);
     });
     return el;
   }
 
-  async addList(title, items, selected, callback) {
+  async addList(title, items, selected, callback:any = null) {
     const el = document.createElement('div');
     el.className = 'menu-item';
     let options = '';
@@ -223,24 +231,25 @@ class Menu {
     el.style.fontVariant = document.body.style.fontVariant;
     if (this.container) this.container.appendChild(el);
     el.addEventListener('change', (evt) => {
-      if (callback) callback(items[evt.target?.selectedIndex]);
+      if (callback) callback(items[(evt.target as HTMLSelectElement)?.selectedIndex]);
     });
     return el;
   }
 
-  addRange(title, object, variable, min, max, step, callback) {
+  addRange(title, object, variable, min, max, step, callback:any = null) {
     const el = document.createElement('div');
     el.className = 'menu-item';
     el.innerHTML = `<input class="menu-range" type="range" id="${this.newID}" min="${min}" max="${max}" step="${step}" value="${object[variable]}">${title}`;
     if (this.container) this.container.appendChild(el);
     el.addEventListener('change', (evt) => {
       if (evt.target) {
-        object[variable] = parseInt(evt.target?.value) === parseFloat(evt.target?.value) ? parseInt(evt.target?.value) : parseFloat(evt.target?.value);
-        evt.target.setAttribute('value', evt.target.value);
-        if (callback) callback(evt.target?.value);
+        const tgt = (evt.target as HTMLInputElement);
+        object[variable] = parseInt(tgt?.value) === parseFloat(tgt?.value) ? parseInt(tgt?.value) : parseFloat(tgt?.value);
+        tgt.setAttribute('value', tgt?.value);
+        if (callback) callback(tgt?.value);
       }
     });
-    el.input = el.children[0];
+    // el.input = el.children[0];
     return el;
   }
 
@@ -253,7 +262,7 @@ class Menu {
     return el;
   }
 
-  addButton(titleOn, titleOff, callback) {
+  addButton(titleOn, titleOff, callback:any = null) {
     const el = document.createElement('button');
     el.className = 'menu-item menu-button';
     el.style.fontFamily = document.body.style.fontFamily;
@@ -300,9 +309,10 @@ class Menu {
   // eslint-disable-next-line class-methods-use-this
   async updateChart(id, values) {
     if (!values || (values.length === 0)) return;
-    const canvas = document.getElementById(`menu-canvas-${id}`);
+    const canvas: HTMLCanvasElement = document.getElementById(`menu-canvas-${id}`) as HTMLCanvasElement;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     ctx.fillStyle = menuTheme.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     const width = canvas.width / values.length;
@@ -316,7 +326,7 @@ class Menu {
       ctx.fillRect(i * width, 0, width - 4, canvas.height);
       ctx.fillStyle = menuTheme.background;
       ctx.font = `${width / 1.5}px "Segoe UI"`;
-      ctx.fillText(Math.round(values[i]), i * width + 1, canvas.height - 1, width - 1);
+      ctx.fillText(Math.round(values[i]).toString(), i * width + 1, canvas.height - 1, width - 1);
     }
   }
 }

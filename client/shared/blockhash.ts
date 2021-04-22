@@ -1,10 +1,10 @@
-/* eslint-disable func-names, camelcase */
+/* eslint-disable camelcase, func-names */
 
 // Perceptual image hash based on https://github.com/commonsmachinery/blockhash-js
 // Which is an implementation of 'Block Mean Value Based Image Perceptual Hashing' by Bian Yang, Fan Gu and Xiamu Niu
 
-const median = function (data) {
-  const mdarr = data.slice(0);
+const median = function (arr) {
+  const mdarr = arr.slice(0);
   mdarr.sort((a, b) => a - b);
   if (mdarr.length % 2 === 0) {
     return (mdarr[mdarr.length / 2 - 1] + mdarr[mdarr.length / 2]) / 2.0;
@@ -25,7 +25,7 @@ const translate_blocks_to_bits = function (blocks, pixels_per_block) {
 };
 
 const bits_to_hexhash = function (bitsArray) {
-  const hex = [];
+  const hex:Array<string> = [];
   for (let i = 0; i < bitsArray.length; i += 4) {
     const nibble = bitsArray.slice(i, i + 4);
     hex.push(parseInt(nibble.join(''), 2).toString(16));
@@ -33,10 +33,10 @@ const bits_to_hexhash = function (bitsArray) {
   return hex.join('');
 };
 
-const bmvbhash_even = function (data, bits) {
-  const blocksize_x = Math.floor(data.width / bits);
-  const blocksize_y = Math.floor(data.height / bits);
-  const result = [];
+const bmvbhash_even = function (img, bits) {
+  const blocksize_x = Math.floor(img.width / bits);
+  const blocksize_y = Math.floor(img.height / bits);
+  const result:Array<number> = [];
   for (let y = 0; y < bits; y++) {
     for (let x = 0; x < bits; x++) {
       let total = 0;
@@ -44,10 +44,10 @@ const bmvbhash_even = function (data, bits) {
         for (let ix = 0; ix < blocksize_x; ix++) {
           const cx = x * blocksize_x + ix;
           const cy = y * blocksize_y + iy;
-          const ii = (cy * data.width + cx) * 4;
-          const alpha = data.data[ii + 3];
+          const ii = (cy * img.width + cx) * 4;
+          const alpha = img.data[ii + 3];
           if (alpha === 0) total += 765;
-          else total += data.data[ii] + data.data[ii + 1] + data.data[ii + 2];
+          else total += img.data[ii] + img.data[ii + 1] + img.data[ii + 2];
         }
       }
       result.push(total);
@@ -57,8 +57,8 @@ const bmvbhash_even = function (data, bits) {
   return bits_to_hexhash(result);
 };
 
-const bmvbhash = function (data, bits) {
-  const result = [];
+const bmvbhash = function (img, bits) {
+  const result:any = [];
   let weight_top;
   let weight_bottom;
   let weight_left;
@@ -73,10 +73,10 @@ const bmvbhash = function (data, bits) {
   let x_mod;
   let x_frac;
   let x_int;
-  const blocks = [];
-  const even_x = data.width % bits === 0;
-  const even_y = data.height % bits === 0;
-  if (even_x && even_y) return bmvbhash_even(data, bits);
+  const blocks:any = [];
+  const even_x = img.width % bits === 0;
+  const even_y = img.height % bits === 0;
+  if (even_x && even_y) return bmvbhash_even(img, bits);
   for (let i = 0; i < bits; i++) {
     blocks.push([]);
     for (let j = 0; j < bits; j++) {
@@ -84,9 +84,9 @@ const bmvbhash = function (data, bits) {
       blocks[i].push(0);
     }
   }
-  const block_width = data.width / bits;
-  const block_height = data.height / bits;
-  for (let y = 0; y < data.height; y++) {
+  const block_width = img.width / bits;
+  const block_height = img.height / bits;
+  for (let y = 0; y < img.height; y++) {
     if (even_y) {
       block_bottom = Math.floor(y / block_height);
       block_top = block_bottom;
@@ -98,7 +98,7 @@ const bmvbhash = function (data, bits) {
       y_int = y_mod - y_frac;
       weight_top = (1 - y_frac);
       weight_bottom = (y_frac);
-      if (y_int > 0 || (y + 1) === data.height) {
+      if (y_int > 0 || (y + 1) === img.height) {
         block_bottom = Math.floor(y / block_height);
         block_top = block_bottom;
       } else {
@@ -106,12 +106,12 @@ const bmvbhash = function (data, bits) {
         block_bottom = Math.ceil(y / block_height);
       }
     }
-    for (let x = 0; x < data.width; x++) {
+    for (let x = 0; x < img.width; x++) {
       let avgvalue;
-      const ii = (y * data.width + x) * 4;
-      const alpha = data.data[ii + 3];
+      const ii = (y * img.width + x) * 4;
+      const alpha = img.data[ii + 3];
       if (alpha === 0) avgvalue = 765;
-      else avgvalue = data.data[ii] + data.data[ii + 1] + data.data[ii + 2];
+      else avgvalue = img.data[ii] + img.data[ii + 1] + img.data[ii + 2];
       if (even_x) {
         block_right = Math.floor(x / block_width);
         block_left = block_right;
@@ -123,7 +123,7 @@ const bmvbhash = function (data, bits) {
         x_int = x_mod - x_frac;
         weight_left = (1 - x_frac);
         weight_right = x_frac;
-        if (x_int > 0 || (x + 1) === data.width) {
+        if (x_int > 0 || (x + 1) === img.width) {
           block_right = Math.floor(x / block_width);
           block_left = block_right;
         } else {
@@ -148,10 +148,10 @@ const bmvbhash = function (data, bits) {
   return bits_to_hexhash(result);
 };
 
-async function calculateHashData(data, bits = 16) {
+async function data(img, bits = 16) {
   return new Promise((resolve, reject) => {
     try {
-      const hash = bmvbhash(data, bits);
+      const hash = bmvbhash(img, bits);
       resolve(hash);
     } catch (err) {
       reject(err);
@@ -177,7 +177,7 @@ function distance(hash1, hash2) {
   return Math.trunc(100 * diff / 256);
 }
 
-module.exports = {
+export {
   distance,
-  data: calculateHashData,
+  data,
 };

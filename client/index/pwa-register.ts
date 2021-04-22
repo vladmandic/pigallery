@@ -5,7 +5,7 @@ async function register(path) {
   const t0 = performance.now();
   if ('serviceWorker' in navigator) {
     try {
-      let found = null;
+      let found;
       const regs = await navigator.serviceWorker.getRegistrations();
       for (const reg of regs) {
         log.debug(t0, 'PWA found:', reg.scope);

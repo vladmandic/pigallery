@@ -38,17 +38,6 @@ async function busy(text) {
   return false;
 }
 
-// eslint-disable-next-line no-unused-vars
-async function time(fn, arg) {
-  if (window.debug) {
-    const t0 = performance.now();
-    await fn(arg);
-    log.debug(t0, `Timed ${fn.name}`);
-  } else {
-    fn(arg);
-  }
-}
-
 // handles all clicks on sidebar menu (folders, locations, classes)
 async function folderHandlers() {
   busy();
@@ -883,7 +872,7 @@ async function main() {
   window.share = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
   await config.setTheme();
   await animate();
-  await user.get();
+  window.user = await user.get(window.share);
   await showNavbar();
   details.handlers();
   initHotkeys();

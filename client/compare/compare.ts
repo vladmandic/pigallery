@@ -153,7 +153,7 @@ async function classify() {
 
   const stats = [];
   // eslint-disable-next-line no-unused-vars
-  for (const m in models) stats.push(0);
+  for (let m = 0; m < models.length; m++) stats.push(0);
   for (const i in files) {
     if ((limit > 0) && (parseInt(i) >= limit)) stop = true;
     if (stop) continue;
@@ -201,7 +201,7 @@ async function detect() {
 
   const stats = [];
   // eslint-disable-next-line no-unused-vars
-  for (const m in models) stats.push(0);
+  for (let m = 0; m < models.length; m++) stats.push(0);
   for (const i in files) {
     if ((limit > 0) && (parseInt(i) >= limit)) stop = true;
     if (stop) continue;

@@ -1,10 +1,9 @@
 // @ts-nocheck
+
 /* eslint-disable no-multi-spaces */
 
 import $ from 'jquery';
 import * as log from './log';
-
-window.debug = false;
 
 // TFJS Configuration
 const config = {
@@ -60,6 +59,8 @@ const config = {
   },
   classify: {},
   detect: {},
+  human: {},
+  models: [],
 };
 
 function colorHex(str) {
@@ -208,7 +209,7 @@ window.options = {
   set theme(val) { localStorage.setItem('theme', val.toString()); },
 };
 
-async function setTheme(theme) {
+async function setTheme(theme = null) {
   window.theme = theme ? window.themes[theme] : window.themes[window.options.theme];
   log.debug('Options:', window.options);
   log.debug(`Theme: ${window.theme?.name} ${window.options.theme}`);
@@ -238,4 +239,8 @@ async function done() {
   }
 }
 
-export { config as default, setTheme, done };
+export {
+  config as default,
+  setTheme,
+  done,
+};

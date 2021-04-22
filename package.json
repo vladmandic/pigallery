@@ -9,8 +9,8 @@
   "sideEffects": false,
   "scripts": {
     "start": "node --unhandled-rejections=strict --pending-deprecation --trace-deprecation server/pigallery.js",
-    "lint": "eslint *.json client/**/*.js server/**.js",
-    "test": "eslint *.json client/**/*.js server/**.js",
+    "lint": "eslint *.json client/**/*.ts server/*.js",
+    "test": "eslint *.json client/**/*.ts server/*.js",
     "setup": "node ./setup.js",
     "reset": "rimraf setup.json models.json config.json pigallery.log pigallery.db sessions/* dist/*"
   },
@@ -39,8 +39,8 @@
     "url": "https://github.com/vladmandic/pigallery/issues"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^3.4.0",
-    "@tensorflow/tfjs-backend-wasm": "^3.4.0",
+    "@tensorflow/tfjs": "^3.5.0",
+    "@tensorflow/tfjs-backend-wasm": "^3.5.0",
     "@vladmandic/human": "^1.5.1",
     "@vladmandic/pilogger": "^0.2.17",
     "buffer": "^6.0.3",
@@ -58,13 +58,18 @@
     "simple-git": "^2.38.0"
   },
   "devDependencies": {
-    "@tensorflow/tfjs-node": "^3.4.0",
+    "@tensorflow/tfjs-node": "^3.5.0",
+    "@types/jquery": "^3.5.5",
+    "@types/node": "^14.14.41",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.24.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-html": "^6.1.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-json": "^2.1.2",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0"
+    "eslint-plugin-promise": "^5.1.0",
+    "typescript": "^4.2.4"
   }
 }

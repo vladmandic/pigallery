@@ -13,7 +13,7 @@ function appendCanvas(name, width, height, objects) {
   (document.getElementById('canvases') || document.createElement('canvas')).appendChild(objects.canvases[name]);
 }
 
-function rect({ canvas = null, x = 0, y = 0, width = 0, height = 0, radius = 8, lineWidth = 2, color = 'white', title = null, font = null }) {
+function rect({ canvas, x = 0, y = 0, width = 0, height = 0, radius = 8, lineWidth = 2, color = 'white', title = null, font = null }) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   ctx.lineWidth = lineWidth;
@@ -35,14 +35,14 @@ function rect({ canvas = null, x = 0, y = 0, width = 0, height = 0, radius = 8, 
   ctx.font = font || defaultFont;
   if (title) {
     if (Array.isArray(title)) {
-      for (const i in title) ctx.fillText(title[i], x + lineWidth, y + (parseInt(i) * lineWidth * 2) + 16);
+      for (const i in (title || [])) ctx.fillText((title || [])[i], x + lineWidth, y + (parseInt(i) * lineWidth * 2) + 16);
     } else {
       ctx.fillText(title, x + lineWidth, y + lineWidth + 16);
     }
   }
 }
 
-function point({ canvas = null, x = 0, y = 0, color = 'white', radius = 2, title = null, font = null }) {
+function point({ canvas, x = 0, y = 0, color = 'white', radius = 2, title = null, font = null }) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = color;
@@ -53,7 +53,7 @@ function point({ canvas = null, x = 0, y = 0, color = 'white', radius = 2, title
   if (title) ctx.fillText(title, x + 10, y + 4);
 }
 
-function connect({ points = [], canvas = null, lineWidth = 2, color = 'white', title = null, font = null }) {
+function connect({ points = [], canvas, lineWidth = 2, color = 'white', title = null, font = null }) {
   if (!canvas) return;
   if (points.length < 2) return;
   const ctx = canvas.getContext('2d');
@@ -69,7 +69,7 @@ function connect({ points = [], canvas = null, lineWidth = 2, color = 'white', t
   if (title) ctx.fillText(title, points[0][0] + 4, points[0][1] + 16);
 }
 
-function curve({ points = [], canvas = null, lineWidth = 2, color = 'white', title = null, font = null }) {
+function curve({ points = [], canvas, lineWidth = 2, color = 'white', title = null, font = null }) {
   if (!canvas) return;
   if (points.length < 2) return;
   const ctx = canvas.getContext('2d');
@@ -101,16 +101,16 @@ function crop(image, x, y, width, height, { color = 'white', title = null, font 
   ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height);
   ctx.fillStyle = color;
   ctx.font = font || defaultFont;
-  if (title) ctx.fillText(title, 2, 16, canvas.width - 4);
+  if (title) ctx.fillText(title || '', 2, 16, canvas.width - 4);
   return canvas;
 }
 
-function spline({ points = [], canvas = null, tension = 0.5, lineWidth = 2, color = 'white', title = null, font = null }) {
+function spline({ points = [], canvas, tension = 0.5, lineWidth = 2, color = 'white', title = null, font = null }) {
   if (!canvas) return;
   if (points.length < 2) return;
   const va = (arr, i, j) => [arr[2 * j] - arr[2 * i], arr[2 * j + 1] - arr[2 * i + 1]];
   const distance = (arr, i, j) => Math.sqrt(((arr[2 * i] - arr[2 * j]) ** 2) + ((arr[2 * i + 1] - arr[2 * j + 1]) ** 2));
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   function ctlpts(x1, y1, x2, y2, x3, y3) {
     // eslint-disable-next-line prefer-rest-params
     const v = va(arguments, 0, 2);
@@ -129,7 +129,7 @@ function spline({ points = [], canvas = null, tension = 0.5, lineWidth = 2, colo
     pts.push(pt[0]);
     pts.push(pt[1]);
   }
-  let cps = [];
+  let cps:any = [];
   for (let i = 0; i < pts.length - 2; i += 1) {
     cps = cps.concat(ctlpts(pts[2 * i + 0], pts[2 * i + 1], pts[2 * i + 2], pts[2 * i + 3], pts[2 * i + 4], pts[2 * i + 5]));
   }
@@ -160,7 +160,7 @@ function spline({ points = [], canvas = null, tension = 0.5, lineWidth = 2, colo
   if (title) ctx.fillText(title, points[0][0] + 4, points[0][1] + 16);
 }
 
-function bezier({ points = [], canvas = null, tension = 0.5, lineWidth = 2, color = 'white', title = null, font = null }) {
+function bezier({ points = [], canvas, tension = 0.5, lineWidth = 2, color = 'white', title = null, font = null }) {
   // tension at 0 will be straight line; factor is normally 1, but changing the value can control the smoothness too
   const factor = 1;
   if (!canvas) return;
