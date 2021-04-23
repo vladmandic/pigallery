@@ -90,16 +90,15 @@ function buildrec(array, depth) {
   return new NodeEntry(axis, array[i].position[axis], buildrec(array.slice(0, i), depth), buildrec(array.slice(i), depth));
 }
 
-function lookup(position, node, n) {
+function lookup(position, node, maxCount, maxDistance) {
   const array = [];
-  if (node === null || n <= 0) return array;
+  if (node === null || maxCount <= 0) return array;
   const stack = [node, 0];
   let dist;
-  let i;
   while (stack.length) {
     dist = stack.pop();
     node = stack.pop();
-    if (array.length === n && array[array.length - 1].dist < dist * dist) continue;
+    if (array.length === maxCount && array[array.length - 1].dist < dist * dist) continue;
     while (node instanceof NodeEntry) {
       if (position[node.axis] < node.split) {
         stack.push(node.right, node.split - position[node.axis]);
@@ -110,17 +109,22 @@ function lookup(position, node, n) {
       }
     }
     dist = distance(position, node.position);
-    insert({ object: node, dist }, array, byDistance);
-    if (array.length > n) array.pop();
+    if (dist < maxDistance) insert({ object: node, dist }, array, byDistance);
+    if (array.length > maxCount) array.pop();
   }
-  i = array.length;
-  while (i--) array[i] = array[i].object;
+  // let i;
+  // i = array.length;
+  // while (i--) array[i] = array[i].object;
   return array;
 }
 
-function find(points, lat, lon, n) {
+function find(points, lat, lon, maxCount, maxDistance) {
   const nodes = buildrec(points.map(Position.create), 0);
-  return lookup(spherical2cartesian(lat, lon), nodes, n).map(Position.extract);
+  // return lookup(spherical2cartesian(lat, lon), nodes, n).map(Position.extract);
+  const coord = spherical2cartesian(lat, lon);
+  const list = lookup(coord, nodes, maxCount, maxDistance);
+  const res = list.map((a) => ({ dist: a.dist, lat: a.object.object.lat, lon: a.object.object.lon }));
+  return res;
 }
 
 export { find };

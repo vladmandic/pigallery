@@ -24,16 +24,17 @@ async function find(images, lat, lon) {
   const points = all
     .filter((a) => (a.exif && a.exif.lat && a.exif.lon))
     .map((a) => ({ lat: a.exif.lat, lon: a.exif.lon }));
-  // eslint-disable-next-line no-underscore-dangle
-  const count = Math.trunc(11 - mapContainer._zoom / 2);
-  const coord = nearest.find(points, lat, lon, count);
+  // list of all nearest coordinates
+  const maxCount = all.length;
+  const maxDist = 1 / (mapContainer._zoom ** 5);
+  const coord = nearest.find(points, lat, lon, maxCount, maxDist);
   images = all.filter((a) => {
-    for (let i = 0; i < count; i++) {
-      if (a.exif && a.exif.lat && a.exif.lon && a.exif.lat === coord[i].lat && a.exif.lon === coord[i].lon) return true;
+    for (let i = 0; i < coord.length; i++) {
+      if (a.exif && a.exif.lat && a.exif.lon && (a.exif.lat === coord[i].lat) && (a.exif.lon === coord[i].lon)) return true;
     }
     return false;
   });
-  log.debug(t0, `Map search: ${lat} ${lon} Found: ${coord[0].lat} ${coord[0].lon} Images: ${images.length} Level: ${count}`);
+  log.debug(t0, `Map search: ${lat} ${lon} Images: ${images.length} Zoom: ${mapContainer._zoom} Max Distance: ${maxDist}`);
   list.redraw(images);
 }
 
