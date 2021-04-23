@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { tf } from '../shared/tf';
 
 const defaults = {
@@ -30,13 +28,13 @@ export async function load(userConfig) {
     // @ts-ignore
     else model = await tf.loadGraphModel(modelPath, loadOpts);
     model.config = saveConfig;
-    model.name = model.config.name;
+    model['name'] = model.config.name;
   } catch (err) {
     throw new Error(`Error loading model: ${modelPath} message:${err.message}`);
   }
   try {
     const res = model.config.classes ? await fetch(model.config.classes) : await fetch(`${model.config.modelPath}/classes.json`); // load classes json file from modelpath/classes.json or user provided url
-    model.labels = await res.json();
+    model['labels'] = await res.json();
   } catch (err) {
     throw new Error(`Error loading classes: $${model.config.classes} message:${err.message}`);
   }
@@ -44,7 +42,7 @@ export async function load(userConfig) {
 }
 
 async function decodeValues(model, values) {
-  const pairs = [];
+  const pairs:Array<{ score: number, index: string }> = [];
   for (const i in values) pairs.push({ score: values[i], index: i });
   // console.log('pairs', pairs.sort((a, b) => b.score - a.score));
   const results = pairs
@@ -58,7 +56,7 @@ async function decodeValues(model, values) {
       return { id, wnid, score, class: label, model: model.config.name };
     });
   if (results.length > (2 * model.config.maxResults)) results.length = 2 * model.config.maxResults; // rought cut to guard against huge result sets
-  const duplicates = [];
+  const duplicates:Array<any> = [];
   const filtered = results.filter((a) => { // filter out duplicate classes
     if (duplicates.includes(a.class)) return false;
     duplicates.push(a.class);

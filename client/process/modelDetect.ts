@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { tf } from '../shared/tf';
 import * as postProcess from './postProcess';
 
@@ -31,13 +29,13 @@ export async function load(userConfig) {
     // @ts-ignore
     model = await tf.loadGraphModel(modelPath, loadOpts);
     model.config = saveConfig;
-    model.name = model.config.name;
+    model['name'] = model.config.name;
   } catch (err) {
     throw new Error(`Error loading model: $${modelPath} message:${err.message}`);
   }
   try {
     const res = model.config.classes ? await fetch(model.config.classes) : await fetch(`${model.config.modelPath}/classes.json`); // load classes json file from modelpath/classes.json or user provided url
-    if (res && res.ok) model.labels = await res.json();
+    if (res && res.ok) model['labels'] = await res.json();
     else throw new Error(`classes file is missing: ${model.config.classes} status: ${res.status}`);
   } catch (err) {
     throw new Error(`Error loading classes: ${model.config.classes} message: ${err.message}`);
@@ -83,8 +81,8 @@ function profile(data) {
 }
 
 function calculateMaxScores(scores, numBoxes, numClasses, config) {
-  const maxes = [];
-  const classes = [];
+  const maxes:Array<number> = [];
+  const classes:Array<number> = [];
   for (let i = 0; i < numBoxes; i++) {
     let max = Number.MIN_VALUE;
     let index = -1;
