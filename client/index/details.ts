@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import $ from 'jquery';
 import moment from 'moment';
 import * as log from '../shared/log';
@@ -12,9 +10,9 @@ let thief;
 
 let minScore = 0.0;
 
-function isTextSelected(input) {
+function isTextSelected(input: HTMLTextAreaElement | null = null) {
   const selectedText = document.getSelection()?.toString();
-  if (selectedText.length !== 0) {
+  if (selectedText && selectedText.length !== 0) {
     if (input) {
       input.focus();
       input.setSelectionRange(input.selectionStart, input.selectionEnd);
@@ -38,7 +36,7 @@ function point(ctx, x, y, z = null) {
   ctx.fill();
 }
 
-function rect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle = null, fillStyle = null, alpha = 1, title = null) {
+function rect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle: string | null = null, fillStyle: string | null = null, alpha = 1, title: string | null = null) {
   ctx.lineWidth = lineWidth;
   ctx.globalAlpha = alpha;
   ctx.beginPath();
@@ -74,9 +72,9 @@ function rect(ctx, x, y, width, height, radius = 5, lineWidth = 2, strokeStyle =
 
 // combine results from multiple model results
 export function combine(object) {
-  const res = [];
+  const res:Array<{ score: number, name: string }> = [];
   if (!object || !(object.length > 0)) return res;
-  const found = [];
+  const found:Array<string> = [];
   const all = object
     .sort((a, b) => b.score - a.score)
     .filter((a) => {
@@ -95,26 +93,34 @@ function getPalette() {
   const img = document.getElementsByClassName('iv-image')[0];
   let palette = thief.getPalette(img, 16);
   palette = palette.sort((i, j) => (i[0] + i[1] + i[2]) - (j[0] + j[1] + j[2]));
-  window.dominant = [`rgb(${palette[1]})`, `rgb(${palette[2]})`];
-  $('#optionsview').css('background', window.dominant[1]);
-  $('#popup').css('background', window.dominant[1]);
+  $('#popup').css('background', `radial-gradient(at 50% 100%, rgb(${palette[1]}) 0, rgb(${palette[2]}) 100%, rgb(${palette[2]}) 100%)`);
+  $('#popup').off('mousemove');
+  $('#popup').on('mousemove', (event) => {
+    const mouseXpercentage = Math.round(event.pageX / ($(window).width() || 0) * 100);
+    const mouseYpercentage = Math.round(event.pageY / ($(window).height() || 0) * 100);
+    if ($('#popup').css('display') !== 'none') {
+      $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, rgb(${palette[1]}) 0, rgb(${palette[2]}) 100%, rgb(${palette[2]}) 100%)`);
+    }
+  });
+
   let txt = '';
   for (const col of palette) txt += `<span class="palette" style="color: rgb(${col})" title="RGB: ${col}">■</span>\n`;
   return txt;
 }
 
 export function clear() {
-  const canvas = document.getElementById('popup-canvas');
+  const canvas = document.getElementById('popup-canvas') as HTMLCanvasElement;
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  if (!ctx) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 // draw boxes for detected objects, faces and face elements
 let last;
-export function drawBoxes(object) {
-  const img = document.getElementsByClassName('iv-image')[0];
-  const canvas = document.getElementById('popup-canvas');
+export function drawBoxes(object: any | null = null) {
+  const img = document.getElementsByClassName('iv-image')[0] as HTMLImageElement;
+  const canvas = document.getElementById('popup-canvas') as HTMLCanvasElement;
   if (!canvas) return;
   clear();
   canvas.style.left = `${img.offsetLeft}px`;
@@ -129,13 +135,13 @@ export function drawBoxes(object) {
   else object = last;
   if (!object) return;
 
-  document.getElementById('detected-label').innerHTML = config.options.viewBoxes ? 'hide detected' : 'show detected';
-  document.getElementById('faces-label').innerHTML = config.options.viewFaces ? 'hide faces' : 'show faces';
+  (document.getElementById('detected-label') as HTMLElement).innerHTML = config.options.viewBoxes ? 'hide detected' : 'show detected';
+  (document.getElementById('faces-label') as HTMLElement).innerHTML = config.options.viewFaces ? 'hide faces' : 'show faces';
 
   // move details panel to side or bottom depending on screen aspect ratio
-  const ratioScreen = $('#popup').width() / $('#popup').height();
+  const ratioScreen = ($('#popup').width() || 0) / ($('#popup').height() || 0);
   const ratioImage = object.naturalSize.width / object.naturalSize.height;
-  const imageMargin = ($('#popup').width() - $('#popup-canvas').width()) / $('#popup').width();
+  const imageMargin = (($('#popup').width() || 0) - ($('#popup-canvas').width() || 0)) / ($('#popup').width() || 0);
   let vertical = ratioImage < ratioScreen;
   if (vertical && imageMargin < 0.2) vertical = false; // move details to bottom if margin on the right is too small
   $('#popup').css('display', vertical ? 'flex' : 'block');
@@ -181,16 +187,16 @@ export function drawBoxes(object) {
 }
 
 export function drawDescription(object) {
-  let filtered = [];
-  let classified = [];
+  let filtered:Array<any> = [];
+  const classifiedArr:Array<string> = [];
   filtered = object.classify.filter((a) => a.score > minScore);
-  for (const obj of combine(filtered)) classified.push(`${obj.score}% <b>${obj.name}</b>`);
-  classified = classified.join(' | ');
+  for (const obj of combine(filtered)) classifiedArr.push(`${obj.score}% <b>${obj.name}</b>`);
+  const classified = classifiedArr.join(' | ');
 
-  let detected = [];
+  const detectedArr:Array<string> = [];
   filtered = object.detect.filter((a) => a.score > minScore);
-  for (const obj of combine(filtered)) detected.push(`${obj.score}% <b>${obj.name}</b>`);
-  detected = detected.join(' | ');
+  for (const obj of combine(filtered)) detectedArr.push(`${obj.score}% <b>${obj.name}</b>`);
+  const detected = detectedArr.join(' | ');
 
   let person = '';
   let nsfw = '';
@@ -291,18 +297,18 @@ export function drawDescription(object) {
   $('#minscore').off('input');
   $('#minscore').on('input', () => {
     if (last) {
-      minScore = parseFloat($('#minscore')[0].value);
+      minScore = parseFloat(($('#minscore')[0] as HTMLDataElement).value);
       log.debug('Filtering display by score:', minScore);
       drawBoxes(last);
       drawDescription(last);
     }
   });
-  document.getElementById('popup-details').scrollTop = 0;
+  (document.getElementById('popup-details') as HTMLElement).scrollTop = 0;
 }
 
-async function resizeDetailsImage(object) {
+async function resizeDetailsImage(object: any | null = null) {
   // wait for image to be loaded silly way as on load event doesn't trigger consistently
-  const img = document.getElementsByClassName('iv-image')[0];
+  const img = document.getElementsByClassName('iv-image')[0] as HTMLImageElement;
   if (!img || !img.complete) {
     setTimeout(() => resizeDetailsImage(object), 25);
   } else {
@@ -353,14 +359,14 @@ export async function show(img) {
   drawDescription(object);
 
   // handle pan&zoom redraws
-  if (el && !el.bound) {
+  if (el && !(el as any).bound) {
     el.addEventListener('touchstart', clear, { passive: true });
     el.addEventListener('mousedown', clear, { passive: true });
     el.addEventListener('touchend', drawBoxes, { passive: true });
     el.addEventListener('mouseup', drawBoxes, { passive: true });
     el.addEventListener('dblclick', drawBoxes, { passive: true });
     el.addEventListener('wheel', drawBoxes, { passive: true });
-    el.bound = true;
+    (el as any).bound = true;
   }
 }
 
@@ -369,7 +375,7 @@ export async function next(left) {
   clear();
   const img = $('.iv-image');
   if (!img || img.length < 1) return;
-  const url = new URL(img[0].src);
+  const url = new URL((img[0] as HTMLImageElement).src);
   let id = window.filtered.findIndex((a) => a.image === decodeURIComponent(url.pathname.substr(1)));
   if (id === -1) return;
   id = left ? id - 1 : id + 1;
@@ -413,7 +419,7 @@ function detectSwipe() {
     // min swipe distance, you could use absolute value rather than square. It just felt better for personnal use
     if (deltaX ** 2 + deltaY ** 2 < deltaMin ** 2) return;
     // direction
-    let direction = null;
+    let direction: null | string = null;
     if (deltaY === 0 || Math.abs(deltaX / deltaY) > 1) direction = deltaX > 0 ? directions.RIGHT : directions.LEFT;
     else direction = deltaY > 0 ? directions.UP : directions.DOWN;
     // if (direction && typeof func === 'function') func(el, direction);

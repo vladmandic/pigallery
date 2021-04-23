@@ -1,8 +1,7 @@
-// @ts-nocheck
-
 import $ from 'jquery';
 import * as log from '../shared/log';
 import * as config from '../shared/config';
+import { user } from '../shared/user';
 
 let refreshNeeded = true;
 
@@ -11,19 +10,19 @@ async function setRefresh(refresh = true) {
 }
 
 // exctract top classe from classification & detection and builds sidebar menu
-async function enumerateClasses() {
+async function enumerateClasses(images) {
   const t0 = performance.now();
   const ignoreTags = ['name', 'ext', 'size', 'property', 'city', 'state', 'country', 'continent', 'near', 'year', 'created', 'edited'];
   $('#classes').html('');
-  if (!Array.isArray(window.filtered)) window.filtered = [];
-  const classesList = [];
+  if (!Array.isArray(images)) images = [];
+  const classesList:Array<{ tag: string, count: number }> = [];
   let ops = 0;
   if (refreshNeeded) {
-    for (const item of window.filtered) {
+    for (const item of images) {
       for (const tag of item.tags) {
         const tags = Object.entries(tag)[0];
         if (!tags || tags.length !== 2 || ignoreTags.includes(tags[0])) continue;
-        for (const val of tags[1].split(',')) {
+        for (const val of (tags[1] as string).split(',')) {
           ops++;
           const classFound = classesList.find((a) => a.tag === val);
           if (classFound) classFound.count++;
@@ -45,13 +44,13 @@ async function enumerateClasses() {
 }
 
 // extracts all locations from loaded images and builds sidebar menu
-async function enumerateLocations() {
+async function enumerateLocations(images) {
   const t0 = performance.now();
   $('#locations').html('');
-  if (!Array.isArray(window.filtered)) window.filtered = [];
-  let countries = [];
+  if (!Array.isArray(images)) images = [];
+  let countries:Array<string> = [];
   if (refreshNeeded) {
-    for (const item of window.filtered) {
+    for (const item of images) {
       if (item && item.location.country && !countries.includes(item.location.country)) countries.push(item.location.country);
     }
     countries = countries.sort((a, b) => (a > b ? 1 : -1));
@@ -60,9 +59,9 @@ async function enumerateLocations() {
   let i = 1;
   let locCount = 0;
   for (const country of countries) {
-    let items = window.filtered.filter((a) => a.location.country === country);
-    if (country === 'Unknown') items = window.filtered.filter((a) => a.location.country === undefined);
-    let places = [];
+    let items = images.filter((a) => a && a.location.country === country);
+    if (country === 'Unknown') items = images.filter((a) => a && a.location.country === undefined);
+    let places:Array<{ name: string, sort: string }> = [];
     for (const item of items) {
       const state = item.location.state ? `, ${item.location.state}` : '';
       if ((country !== 'Unknown') && !places.find((a) => a.name === `${item.location.near}${state}`)) places.push({ name: `${item.location.near}${state}`, sort: `${state}${item.location.near}` });
@@ -82,16 +81,16 @@ async function enumerateLocations() {
 }
 
 // builds folder list from all loaded images and builds sidebar menu, can be used with entire image list or per-object
-async function enumerateFolders() {
+async function enumerateFolders(images) {
   const t0 = performance.now();
   $('#folders').html('');
-  const root = window.user && window.user.root ? window.user.root : 'media/';
+  const root = user && user.root ? user.root : 'media/';
   const depth = root.split('/').length - 1;
-  if (!Array.isArray(window.filtered)) window.filtered = [];
+  if (!Array.isArray(images)) images = [];
 
-  let list = [];
+  let list:Array<{ path: string, folders: string[]; count: number }> = [];
   if (refreshNeeded) {
-    for (const item of window.filtered) {
+    for (const item of images) {
       if (!item) continue;
       const path = item.image.substr(0, item.image.lastIndexOf('/'));
       const folders = path.split('/').filter((a) => a !== '');
@@ -118,15 +117,15 @@ async function enumerateFolders() {
           const count = i === item.folders.length - 1 ? `(${item.count})` : '';
           div.innerHTML = `<span tag="${path}" type="folder" style="padding-left: ${i * 16}px" class="folder"><i class="collapsible fas fa-chevron-circle-right">&nbsp</i>${item.folders[i]} ${count}</span>`;
           let parent = i === depth ? document.getElementById('folders') : document.getElementById(`dir-${parentId}`);
-          if (parent.nodeName !== 'UL') {
+          if (parent?.nodeName !== 'UL') {
             let foundParent;
-            for (const childNode of parent.childNodes) {
+            for (const childNode of (parent?.childNodes || [])) {
               if (childNode.nodeName === 'UL') foundParent = childNode;
             }
             if (foundParent) {
               parent = foundParent;
             } else {
-              const newParent = parent.appendChild(document.createElement('ul'));
+              const newParent = (parent as HTMLElement).appendChild(document.createElement('ul'));
               parent = newParent;
             }
           }
@@ -139,10 +138,10 @@ async function enumerateFolders() {
   log.debug(t0, 'Enumerated folders:', folderCount);
 }
 
-async function enumerateNSFW() {
+async function enumerateNSFW(images) {
   const t0 = performance.now();
   let i = 0;
-  for (const item of window.filtered) {
+  for (const item of images) {
     let person = false;
     let nsfw = false;
     for (const detect of item.detect) {
@@ -158,27 +157,29 @@ async function enumerateNSFW() {
 }
 
 async function enumerateShares() {
-  if (!window.user.admin) return;
+  let shares:Array<{ key: string, name: string }> = [];
+  if (!user.admin) return shares;
   const t0 = performance.now();
   $('#shares').html('');
-  window.shares = [];
-  const shares = await fetch('/api/share/dir');
-  if (shares.ok) window.shares = await shares.json();
-  if (!window.shares || (window.shares.length < 1)) return;
+  const res = await fetch('/api/share/dir');
+  if (res && res.ok) shares = await res.json();
+  if (!shares || (shares.length < 1)) return shares;
   let html = '';
-  for (const share of window.shares) {
+  for (const share of shares) {
     html += `<li><span tag="${share.key}" type="share" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${share.name}</span></li>`;
   }
   $('#shares').append(html);
   $('#shares').find('li').toggle(false);
-  log.debug(t0, 'Enumerated shares:', window.shares.length);
+  log.debug(t0, 'Enumerated shares:', shares.length);
+  return shares;
 }
 
-async function enumerateResults() {
-  const a1 = enumerateFolders();
-  const a2 = enumerateLocations();
-  const a3 = enumerateClasses();
-  const a4 = enumerateNSFW();
+async function enumerateResults(images) {
+  // images = images.filter((a) => a); check for null
+  const a1 = enumerateFolders(images);
+  const a2 = enumerateLocations(images);
+  const a3 = enumerateClasses(images);
+  const a4 = enumerateNSFW(images);
   // const a5 = enumerateShares(); // enumerateShares is called explicitly so not part of general enumeration
   await Promise.all([a1, a2, a3, a4]);
   refreshNeeded = true;

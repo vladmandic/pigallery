@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 // css-imports used by esbuild
 import '../../assets/bootstrap.css';
 import '../../assets/fontawesome.css';
@@ -11,7 +9,7 @@ import $ from 'jquery';
 import * as log from '../shared/log';
 import * as marked from '../../assets/marked.esm';
 import * as config from '../shared/config';
-import * as indexdb from './indexdb';
+import * as db from './indexdb';
 import * as details from './details';
 import * as hash from '../shared/blockhash';
 import * as user from '../shared/user';
@@ -24,13 +22,13 @@ import * as pwa from './pwa-register';
 // global variables
 window.filtered = [];
 window.$ = $;
-const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, store: 0, size: 0, speed: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0 };
+const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, store: 0, size: 0, speed: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0, pageMode: '', appMode: '' };
 
-async function busy(text) {
+async function busy(text: string | null = null) {
   // if (text && $('.busy').is(':visible')) return true;
   if (text) {
-    $('.busy').width($('.folderbar').width());
-    $('#busy-text').html(text);
+    $('.busy').width(($('.folderbar').width() as number).toString());
+    $('#busy-text').html(text || '');
     $('.busy').show();
   } else {
     $('.busy').hide();
@@ -60,19 +58,19 @@ async function folderHandlers() {
       case 'folder':
         log.debug(t0, `Selected path: ${path}`);
         // eslint-disable-next-line no-case-declarations
-        const root = window.user && window.user.root ? window.user.root : 'media/';
-        if (window.filtered.length < await indexdb.count()) window.filtered = await indexdb.refresh();
+        const root = user.user && user.user.root ? user.user.root : 'media/';
+        if (window.filtered.length < await db.count()) window.filtered = await db.refresh();
         if (path !== (root)) window.filtered = window.filtered.filter((a) => escape(a.image).startsWith(path));
         break;
       case 'location':
         log.debug(t0, `Selected location: ${path}`);
-        if (window.filtered.length < await indexdb.count()) window.filtered = await indexdb.refresh();
+        if (window.filtered.length < await db.count()) window.filtered = await db.refresh();
         if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => (path.startsWith(escape(a.location.near)) || path.startsWith(escape(a.location.country))));
         else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
         break;
       case 'class':
         if (!window.filtered) window.filtered = [];
-        window.filtered = window.filtered.filter((a) => a.tags.find((b) => (escape(Object.values(b)[0]).toString().startsWith(path))));
+        window.filtered = window.filtered.filter((a) => a.tags.find((b) => (escape(Object.values(b)[0] as string).startsWith(path))));
         log.debug(t0, `Selected class: ${path}`);
         break;
       case 'share':
@@ -84,11 +82,11 @@ async function folderHandlers() {
         $('#share-url').val(`${location.origin}?share=${share.key}`);
         $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
         window.share = share.key;
-        window.filtered = await indexdb.refresh();
+        window.filtered = await db.refresh();
         break;
       default:
     }
-    await enumerate.enumerate();
+    await enumerate.enumerate(window.filtered);
     folderHandlers();
     list.redraw(window.filtered);
     busy();
@@ -101,7 +99,7 @@ function filterWord(word) {
   if (skip.includes(word)) return window.filtered;
   const res = window.filtered.filter((obj) => {
     for (const tag of obj.tags) {
-      const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0].toString() : '';
+      const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0] as string : '';
       const found = str.startsWith(word);
       if (found) return true;
     }
@@ -115,8 +113,8 @@ function filterWord(word) {
 async function filterResults(input) {
   busy(`Searching for<br>${input}`);
   const t0 = performance.now();
-  const words = [];
-  let selective = null;
+  const words:Array<string> = [];
+  let selective: string | null = null;
   for (const word of input.split(' ')) {
     if (!word.includes(':')) words.push(word);
     else if (!selective) selective = word;
@@ -126,13 +124,13 @@ async function filterResults(input) {
     if (keys.length !== 2) window.filtered = [];
     const key = keys[0].toLowerCase();
     const val = parseInt(keys[1]) || keys[1].toLowerCase();
-    if (key === 'limit') window.filtered = await indexdb.all('date', false, 1, parseInt(keys[1]));
-    else window.filtered = await indexdb.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val });
+    if (key === 'limit') window.filtered = await db.all('date', false, 1, parseInt(keys[1]), null, window.share);
+    else window.filtered = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val }, window.share);
   } else if (window.filtered.length === 0) {
-    window.filtered = await indexdb.refresh();
+    window.filtered = await db.refresh();
   }
   let full = [];
-  const all = [];
+  const all:Array<any> = [];
   config.options.listDivider = 'search';
   list.redraw(full, 'search results', true);
   if (words.length > 0) {
@@ -146,7 +144,7 @@ async function filterResults(input) {
     if (words.length > 1) {
       for (const word of words) {
         const partials = filterWord(word.toLowerCase());
-        const res = [];
+        const res:Array<any> = [];
         for (const partial of partials) {
           const found = all.filter((a) => a.image === partial.image);
           if (!found || found.length === 0) res.push(partial);
@@ -160,12 +158,12 @@ async function filterResults(input) {
   window.filtered = all;
   $('#search-result').html(`"${input}"<br>exact:${full.length} total:${all.length}`);
   log.debug(t0, `Searching for "${input}" exact:${full.length} partial:${all.length - full.length} total:${all.length} images`);
-  enumerate.enumerate().then(folderHandlers).catch(false);
+  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
   busy();
 }
 
 async function deleteImage(image) {
-  if (window.user.admin) {
+  if (user.user.admin) {
     const res = await fetch(`/api/record/del?rm=${image}`);
     const deleted = await res.json();
     log.div('log', true, 'Record delete:', res.status, deleted);
@@ -201,7 +199,7 @@ async function similarImage(image) {
     .sort((a, b) => b.similarity - a.similarity);
   log.debug(t0, `Similar: ${window.filtered.length} images`);
   list.redraw(window.filtered);
-  enumerate.enumerate().then(folderHandlers).catch(false);
+  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
   busy();
 }
 
@@ -224,7 +222,7 @@ async function similarPerson(image) {
   const t0 = performance.now();
   config.options.listDivider = 'similarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
-  const descriptor = [];
+  const descriptor:Float32Array[] = [];
   if (object.person) {
     for (const p of object.person) {
       if (p.descriptor) descriptor.push(new Float32Array(Object.values(p.descriptor)));
@@ -241,7 +239,7 @@ async function similarPerson(image) {
       const found = img.detect.filter((a) => a.class === 'person');
       return found && img.person && img.person.length > 0;
     };
-    const target = [];
+    const target:Float32Array[] = [];
     if (isPerson(window.filtered[i])) {
       for (const p of window.filtered[i].person) {
         if (p.descriptor) target.push(new Float32Array(Object.values(p.descriptor)));
@@ -266,7 +264,7 @@ async function similarPerson(image) {
   log.debug(t0, `Source: ${descriptor.length} Target: ${targets} Compares:${count}`);
   log.debug(t0, `Similar: ${window.filtered.length} persons`);
   list.redraw(window.filtered);
-  enumerate.enumerate().then(folderHandlers).catch(false);
+  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
   busy();
 }
 
@@ -289,7 +287,7 @@ async function similarClasses(image) {
     .sort((a, b) => b.similarity - a.similarity);
   log.debug(t0, `Similar: ${window.filtered.length} classes`);
   list.redraw(window.filtered);
-  enumerate.enumerate().then(folderHandlers).catch(false);
+  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
   busy();
 }
 
@@ -297,7 +295,7 @@ async function similarClasses(image) {
 let loadTried = false;
 async function sortResults(sort) {
   $('#optionslist').toggle(false);
-  if (!window.user.user) return;
+  if (!user.user.user) return;
 
   // refresh records
   // eslint-disable-next-line no-use-before-define
@@ -309,12 +307,12 @@ async function sortResults(sort) {
   list.clearPrevious();
   // sort by
   busy('Sorting images');
-  if (sort.includes('alpha-down')) window.filtered = await indexdb.all('name', true, 1, config.options.listItemCount);
-  if (sort.includes('alpha-up')) window.filtered = await indexdb.all('name', false, 1, config.options.listItemCount);
-  if (sort.includes('numeric-down')) window.filtered = await indexdb.all('date', false, 1, config.options.listItemCount);
-  if (sort.includes('numeric-up')) window.filtered = await indexdb.all('date', true, 1, config.options.listItemCount);
-  if (sort.includes('amount-down')) window.filtered = await indexdb.all('size', false, 1, config.options.listItemCount);
-  if (sort.includes('amount-up')) window.filtered = await indexdb.all('size', true, 1, config.options.listItemCount);
+  if (sort.includes('alpha-down')) window.filtered = await db.all('name', true, 1, config.options.listItemCount, null, window.share);
+  if (sort.includes('alpha-up')) window.filtered = await db.all('name', false, 1, config.options.listItemCount, null, window.share);
+  if (sort.includes('numeric-down')) window.filtered = await db.all('date', false, 1, config.options.listItemCount, null, window.share);
+  if (sort.includes('numeric-up')) window.filtered = await db.all('date', true, 1, config.options.listItemCount, null, window.share);
+  if (sort.includes('amount-down')) window.filtered = await db.all('size', false, 1, config.options.listItemCount, null, window.share);
+  if (sort.includes('amount-up')) window.filtered = await db.all('size', true, 1, config.options.listItemCount, null, window.share);
   // if (sort.includes('similarity')) window.filtered = await db.all('similarity', false); // similarity is calculated, not stored in indexdb
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) config.options.listDivider = 'month';
@@ -329,12 +327,12 @@ async function sortResults(sort) {
   stats.initial = Math.floor(t1 - t0);
   $('#all').focus();
   busy('Loading remaining<br>images in background');
-  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await indexdb.all('name', true, config.options.listItemCount + 1));
-  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await indexdb.all('name', false, config.options.listItemCount + 1));
-  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await indexdb.all('date', false, config.options.listItemCount + 1));
-  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await indexdb.all('date', true, config.options.listItemCount + 1));
-  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await indexdb.all('size', false, config.options.listItemCount + 1));
-  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await indexdb.all('size', true, config.options.listItemCount + 1));
+  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await db.all('name', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
+  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await db.all('name', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
+  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await db.all('date', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
+  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await db.all('date', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
+  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
+  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
   log.debug(t1, `Cached images: ${window.filtered.length} fetched remaining`);
   stats.remaining = Math.floor(window.performance.now() - t1);
   // if (window.filtered.length > 0) log.div('log', true, `Loaded ${window.filtered.length} images from cache`);
@@ -345,10 +343,10 @@ async function sortResults(sort) {
     await loadGallery(false);
   }
   busy('Enumerating images');
-  enumerate.enumerate().then(folderHandlers).catch(false);
+  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
   stats.enumerate = Math.floor(window.performance.now() - t1);
   // log.div('log', true, 'Displaying: ', window.filtered.length, ' images');
-  list.scroll(window.filtered); // just updates images list for future scroll events
+  list.scroll(window.filtered, null); // just updates images list for future scroll events
   busy();
 }
 
@@ -367,20 +365,20 @@ async function findDuplicates() {
     const t1 = performance.now();
     log.div('log', true, `Found ${window.filtered.length} similar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
     sortResults('similarity');
-    busy(false);
+    busy();
   });
-  // const all = await indexdb.all();
+  // const all = await db.all();
   worker.postMessage(window.filtered);
 }
 
 // loads images, displays gallery and enumerates sidebar
 async function loadGallery(refresh = false) {
   const chunkSize = 200;
-  const cached = await indexdb.count();
+  const cached = await db.count();
   if (window.share) return;
-  if (!window.user.user) return;
+  if (!user.user.user) return;
   $('#progress').text('Requesting');
-  if (window.user.user.startsWith('share')) {
+  if (user.user.user.startsWith('share')) {
     log.div('log', true, 'Application access with share credentials and no direct share');
     return;
   }
@@ -388,8 +386,8 @@ async function loadGallery(refresh = false) {
   if (!refresh) {
     busy('Resetting database');
     log.div('log', true, 'Downloading image cache ...');
-    await indexdb.reset();
-    await indexdb.open();
+    await db.reset();
+    if (!window.share) await db.open();
   }
   busy('Loading images<br>in background');
   const updated = new Date().getTime();
@@ -410,14 +408,14 @@ async function loadGallery(refresh = false) {
     pages = parseInt(first.headers.get('content-Pages') || '0');
     const json0 = await first.json();
     dlSize = JSON.stringify(json0).length;
-    if (json0 && json0.length > 0) indexdb.store(json0);
+    if (json0 && json0.length > 0) db.store(json0);
     if (totalImages > 0) enumerate.refresh();
   }
   let perf = 0;
   let images = 0;
   if (pages > 0) {
-    const promisesReq = [];
-    const promisesData = [];
+    const promisesReq:Array<any> = [];
+    const promisesData:Array<any> = [];
     let progress = Math.min(100, Math.round(100 * dlSize / totalSize));
     perf = Math.round(dlSize / (performance.now() - t0));
     $('#progress').html(`Downloading ${progress}%:<br>${images} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
@@ -437,7 +435,7 @@ async function loadGallery(refresh = false) {
           perf = Math.round(dlSize / (performance.now() - t0));
           const t2 = performance.now();
           images += json.length;
-          await indexdb.store(json);
+          await db.store(json);
           const t3 = performance.now();
           stats.store += t3 - t2;
           log.debug('Donwloading', `page:${page} progress:${progress}% images:${images} / ${totalImages} bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
@@ -454,9 +452,9 @@ async function loadGallery(refresh = false) {
   const t1 = performance.now();
 
   const dt = config.options.lastUpdated === 0 ? 'start' : new Date(config.options.lastUpdated).toLocaleDateString();
-  const current = await indexdb.count();
-  perf = (current - cached) > 0 ? `performance: ${Math.round(dlSize / (t1 - t0)).toLocaleString()} KB/sec ` : '';
-  log.div('log', true, `Download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${perf}updated since ${dt}`);
+  const current = await db.count();
+  const dl = (current - cached) > 0 ? `performance: ${Math.round(dlSize / (t1 - t0)).toLocaleString()} KB/sec ` : '';
+  log.div('log', true, `Download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${dl}updated since ${dt}`);
   // window.filtered = await db.all();
   config.options.lastUpdated = updated;
   stats.size = dlSize;
@@ -475,12 +473,12 @@ async function showContextPopup(evt) {
 // resize viewport
 function resizeViewport() {
   const viewportScale = Math.min(1, Math.round(100 * window.outerWidth / 800) / 100);
-  document.querySelector('meta[name=viewport]').setAttribute('content', `width=device-width, shrink-to-fit=yes, initial-scale=${viewportScale}`);
+  (document.querySelector('meta[name=viewport]') as HTMLElement).setAttribute('content', `width=device-width, shrink-to-fit=yes, initial-scale=${viewportScale}`);
 
-  if ($('#popup').css('display') !== 'none') details.show();
+  if ($('#popup').css('display') !== 'none') details.show(window.filtered);
 
-  const top = $('#optionsview').clientHeight;
-  const height = $('body').clientHeight - top;
+  const top = $('#navbar').height() || 0;
+  const height = window.innerHeight - top;
   $('#popup').css('top', top);
   $('#popup').height(height);
   $('#docs').css('top', top);
@@ -493,13 +491,13 @@ function resizeViewport() {
   const fontSize = Math.trunc(10 * (1 - viewportScale)) + parseInt(config.options.fontSize);
   $(':root').css('fontSize', `${fontSize}px`);
 
-  $('#thumbsize')[0].value = config.options.listThumbSize;
+  ($('#thumbsize')[0] as HTMLDataElement).value = `${config.options.listThumbSize}`;
 
-  document.getElementById('main').style.height = `${window.innerHeight - document.getElementById('log').offsetHeight - document.getElementById('navbar').offsetHeight}px`;
+  (document.getElementById('main') as HTMLElement).style.height = `${window.innerHeight - (document.getElementById('log') as HTMLElement).offsetHeight - (document.getElementById('navbar') as HTMLElement).offsetHeight}px`;
 }
 
 // show/hide navigation bar elements
-function showNavbar(elem) {
+function showNavbar(elem: any | null = null) {
   $('#folderbar').toggle(config.options.listFolders);
   $('.description').toggle(config.options.listDetails);
 
@@ -532,7 +530,7 @@ function showNavbar(elem) {
 }
 
 async function initSharesHandler() {
-  if (!window.user.admin) {
+  if (!user.user.admin) {
     $('#sharestitle').toggle(false);
     return;
   }
@@ -540,7 +538,7 @@ async function initSharesHandler() {
   $('#sharestitle').on('click', async () => {
     const show = $('#share').is(':visible');
     if (!show) {
-      await enumerate.shares();
+      enumerate.shares().then((res) => window.shares = res);
       await folderHandlers();
     }
     $('#btn-shareadd').removeClass('fa-minus-square').addClass('fa-plus-square');
@@ -555,8 +553,8 @@ async function initSharesHandler() {
   $('#btn-shareadd').on('click', () => {
     const t0 = performance.now();
     if ($('#btn-shareadd').hasClass('fa-plus-square')) {
-      const share = {};
-      share.creator = window.user.user;
+      const share:any = {};
+      share.creator = user.user.user;
       share.name = $('#share-name').val();
       share.images = window.filtered.map((a) => a.image);
       log.debug(t0, `Share create: creator: ${share.creator} name: ${share.name} images: ${share.images.length.toLocaleString()} size: ${JSON.stringify(share).length.toLocaleString()} bytes`);
@@ -567,12 +565,16 @@ async function initSharesHandler() {
       $.post('/api/share/put', share)
         .done((res) => $('#share-url').val(`${location.origin}?share=${res.key}`))
         .fail(() => $('#share-url').val('error creating share'));
-      enumerate.shares();
+      enumerate.shares().then((res) => window.shares = res);
     } else {
       const name = $('#share-name').val();
-      const key = $('#share-url').val().split('=')[1];
+      const key = ($('#share-url')?.val() as string).split('=')[1];
       log.debug(t0, `Share remove: ${name} ${key}`);
-      fetch(`/api/share/del?rm=${key}`).then(enumerate.shares).catch(false);
+      fetch(`/api/share/del?rm=${key}`)
+        .then(() => {
+          enumerate.shares().then((res) => window.shares = res);
+        })
+        .catch((err) => err);
     }
   });
 
@@ -592,7 +594,7 @@ async function initHotkeys() {
     const page = ($('#results').height() || 0) - config.options.listThumbSize;
     const bottom = $('#results').prop('scrollHeight');
     $('#results').stop();
-    switch (event.keyCode) {
+    switch ((event as any).keyCode) {
       // case 38: $('#results').animate({ scrollTop: top - line }, 4000); break; // key=up: scroll line up
       // case 40: $('#results').animate({ scrollTop: top + line }, 4000); break; // key=down; scroll line down
       case 38: $('#results').scrollTop(top - line); break; // key=down; scroll line down
@@ -639,7 +641,6 @@ function initSidebarHandlers() {
 async function initMenuHandlers() {
   // log.debug('Navigation enabled');
 
-  window.passive = false;
   // navbar user
   $('#btn-user').on('click', () => {
     showNavbar($('#userbar'));
@@ -652,7 +653,7 @@ async function initMenuHandlers() {
 
   // navline user input
   $('#imagenum').on('keyup', () => {
-    if (event.keyCode === 13) {
+    if ((event as any).keyCode === 13) {
       $('#btn-load').click();
       showNavbar();
     }
@@ -726,31 +727,32 @@ async function initMenuHandlers() {
 
   // navline search input
   $('#search-input').on('keyup', () => {
-    event.preventDefault();
-    if (event.keyCode === 191) $('#search-input')[0].value = ''; // reset on key=/
-    if (event.keyCode === 13) {
+    (event as any).preventDefault();
+    if ((event as any).keyCode === 191) ($('#search-input')[0] as HTMLDataElement).value = ''; // reset on key=/
+    if ((event as any).keyCode === 13) {
       $('#searchbar').hide();
-      filterResults($('#search-input')[0].value);
+      filterResults(($('#search-input')[0] as HTMLDataElement).value);
     }
   });
 
   // navline search ok
   $('#btn-searchnow').on('click', () => {
     $('#searchbar').hide();
-    filterResults($('#search-input')[0].value);
+    filterResults(($('#search-input')[0] as HTMLDataElement).value);
   });
 
   // navline search cancel
   $('#btn-resetsearch').on('click', () => {
     $('#searchbar').hide();
-    $('#search-input')[0].value = '';
+    ($('#search-input')[0] as HTMLDataElement).value = '';
     sortResults(config.options.listSortOrder);
   });
 
   // navbar list
   $('#btn-list').on('click', async () => {
     await showNavbar($('#optionslist'));
-    document.getElementById('description-label').innerHTML = config.options.listDetails ? 'hide description' : 'show description';
+    const div = document.getElementById('description-label');
+    if (div) div.innerHTML = config.options.listDetails ? 'hide description' : 'show description';
   });
 
   // navline list sidebar
@@ -762,7 +764,8 @@ async function initMenuHandlers() {
   // navline list descriptions
   $('#btn-desc').on('click', () => {
     config.options.listDetails = !config.options.listDetails;
-    document.getElementById('description-label').innerHTML = config.options.listDetails ? 'hide description' : 'show description';
+    const div = document.getElementById('description-label');
+    if (div) div.innerHTML = config.options.listDetails ? 'hide description' : 'show description';
     $('.description').toggle('slow');
   });
 
@@ -788,7 +791,7 @@ async function initMenuHandlers() {
   // navbar slideshow
   $('#btn-slide').on('click', () => {
     details.show(window.filtered[0].image);
-    details.slideshow(true);
+    details.slideShow(true);
   });
 
   // navbar livevideo
@@ -813,8 +816,8 @@ async function hashChange(evt) {
   const target = parseInt(evt.newURL.substr(evt.newURL.indexOf('#') + 1));
   const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1));
   if (source > target) {
-    const top = parseInt($('#results').scrollTop()) === 0;
-    const all = await indexdb.count() - window.filtered.length;
+    const top = $('#results').scrollTop() === 0;
+    const all = await db.count() - window.filtered.length;
     if (top && all === 0) {
       log.debug(t0, 'Exiting ...');
     } else {
@@ -827,22 +830,18 @@ async function hashChange(evt) {
 async function animate() {
   $('body').css('background', `radial-gradient(at 50% 100%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
   $(document).on('mousemove', (event) => {
-    const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
-    const mouseYpercentage = Math.round(event.pageY / $(window).height() * 100);
+    const mouseXpercentage = Math.round(event.pageX / ($(window).width() || 0) * 100);
+    const mouseYpercentage = Math.round(event.pageY / ($(window).height() || 0) * 100);
     $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
-    if ($('#popup').css('display') !== 'none') {
-      if (window.dominant) $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.dominant[1]} 0, ${window.dominant[0]} 100%, ${window.dominant[0]} 100%)`);
-      else $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
-    }
   });
 }
 
 async function perfDetails() {
   if (window.PerformanceNavigationTiming) {
     const perf = performance.getEntriesByType('navigation')[0];
-    stats.latency = Math.round(perf.fetchStart);
-    stats.fetch = Math.round(perf.responseEnd);
-    stats.interactive = Math.round(perf.domInteractive);
+    stats.latency = Math.round(perf['fetchStart']);
+    stats.fetch = Math.round(perf['responseEnd']);
+    stats.interactive = Math.round(perf['domInteractive']);
     stats.complete = Math.round(perf.duration);
     // log.debug('Performance:', perf);
   } else if (window.performance) {
@@ -854,9 +853,11 @@ async function installable(evt) {
   evt.preventDefault();
   const deferredPrompt = evt;
   // show only if not yet installed
-  if (!matchMedia('(display-mode: standalone)').matches) document.getElementById('install').style.display = 'block';
-  document.getElementById('install').addEventListener('click', () => {
-    document.getElementById('install').style.display = 'none';
+  const div = document.getElementById('install');
+  if (!div) return;
+  if (!matchMedia('(display-mode: standalone)').matches) div.style.display = 'block';
+  div.addEventListener('click', () => {
+    div.style.display = 'none';
     deferredPrompt.prompt();
     deferredPrompt.userChoice
       .then((res) => log.debug('application install: ', res.outcome))
@@ -872,16 +873,19 @@ async function main() {
   window.share = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
   await config.setTheme();
   await animate();
-  window.user = await user.get(window.share);
+  await user.get(window.share);
   await showNavbar();
   details.handlers();
   initHotkeys();
-  await indexdb.open();
-  window.details = details;
-  window.similarImage = similarImage;
-  window.similarPerson = similarPerson;
-  window.similarClasses = similarClasses;
-  window.deleteImage = deleteImage;
+  if (!window.share) await db.open();
+
+  // define global functions called from html
+  window['details'] = details;
+  window['similarImage'] = similarImage;
+  window['similarPerson'] = similarPerson;
+  window['similarClasses'] = similarClasses;
+  window['deleteImage'] = deleteImage;
+
   if (window.share) log.debug(`Direct link to share: ${window.share}`);
   $('body').on('contextmenu', (evt) => showContextPopup(evt));
   $('body').css('display', 'block');

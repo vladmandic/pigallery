@@ -1,14 +1,12 @@
-// @ts-nocheck
-
 import * as log from '../shared/log';
+import { user } from '../shared/user';
 
 let db;
 
 const database = 'pigallery';
-let last = { index: 'date', direction: true, start: 1, end: Number.MAX_SAFE_INTEGER };
+let last:{ index: string, direction: boolean, start: number, end: number, tag: object | null, share: string | null } = { index: 'date', direction: true, start: 1, end: Number.MAX_SAFE_INTEGER, tag: null, share: null };
 
 export async function open() {
-  if (window.share) return null;
   const t0 = performance.now();
   return new Promise((resolve) => {
     const request = indexedDB.open(database, 1);
@@ -16,7 +14,7 @@ export async function open() {
       log.div('log', true, `IndexDB request error: ${evt}`);
       resolve(false);
     };
-    request.onupgradeneeded = (evt) => {
+    request.onupgradeneeded = (evt: any) => {
       log.debug(t0, 'IndexDB request create');
       db = evt.target?.result;
 
@@ -31,10 +29,9 @@ export async function open() {
       const storesPerson = db.createObjectStore('persons', { keyPath: 'name' });
       storesPerson.createIndex('name', 'name', { unique: true });
     };
-    request.onsuccess = (evt) => {
+    request.onsuccess = (evt: any) => {
       log.debug(t0, 'IndexDB request open');
       db = evt.target?.result;
-      window.db = db;
       db.onerror = (event) => log.div('log', true, 'IndexDB DB error:', event.target.error || event);
       db.onsuccess = (event) => log.div('log', true, `IndexDB DB open: ${event}`);
       db.onblocked = (event) => log.div('log', true, `IndexDB DB blocked: ${event}`);
@@ -100,30 +97,30 @@ export async function person(name) {
   });
 }
 
-export async function getShare() {
+export async function getShare(share) {
   const t0 = performance.now();
-  const res = await fetch(`/api/share/get?id=${window.share}`);
+  const res = await fetch(`/api/share/get?id=${share}`);
   let json = [];
   if (res.ok) json = await res.json();
   const filtered = [];
   for (const img of json) {
     if (img) filtered.push(img);
   }
-  log.debug(t0, `Selected share: ${window.share} received:${json.length} valid:${filtered.length} invalid:${json.length - filtered.length}`);
-  log.div('log', true, `Loaded ${filtered.length} images from server for share ${window.share}`);
+  log.debug(t0, `Selected share: ${share} received:${json.length} valid:${filtered.length} invalid:${json.length - filtered.length}`);
+  log.div('log', true, `Loaded ${filtered.length} images from server for share ${share}`);
   return filtered;
 }
 
-export async function all(index = 'date', direction = true, start = 1, end = Number.MAX_SAFE_INTEGER, tag = null) {
+export async function all(index: string, direction: boolean, start: number, end: number, tag: object | null, share: string | null) {
   const t0 = performance.now();
-  last = { index, direction, start: 1, end: Number.MAX_SAFE_INTEGER };
+  last = { index, direction, start: 1, end: Number.MAX_SAFE_INTEGER, tag, share };
   return new Promise((resolve) => {
-    if (window.share) {
+    if (share) {
       // eslint-disable-next-line promise/catch-or-return
-      getShare().then((res) => resolve(res));
+      getShare(share).then((res) => resolve(res));
     } else {
-      const res = [];
-      if (!window.user || !window.user.user) resolve(res);
+      const res:Array<any> = [];
+      if (!user || !user.user) resolve(res);
       let idx = 0;
       const cursor = db
         .transaction(['images'], 'readwrite')
@@ -142,12 +139,13 @@ export async function all(index = 'date', direction = true, start = 1, end = Num
             resolve(e);
           } else {
             idx++;
-            if ((idx >= start) && (e.value.image.startsWith(window.user.root))) {
+            if ((idx >= start) && (e.value.image.startsWith(user.root))) {
               if (!tag) {
                 res.push(e.value);
               } else {
                 for (const val of e.value.tags) {
-                  if (val[tag.tag] === tag.value) res.push(e.value);
+                  // @ts-ignore
+                  if (val[tag?.tag] === tag?.value) res.push(e.value);
                 }
               }
             }
@@ -168,11 +166,10 @@ export async function all(index = 'date', direction = true, start = 1, end = Num
 }
 
 export async function refresh() {
-  return all(last.index, last.direction, last.start, last.end);
+  return all(last.index, last.direction, last.start, last.end, last.tag, last.share);
 }
 
-export async function count() {
-  if (window.share) return Number.MAX_SAFE_INTEGER;
+export async function count():Promise<number> {
   return new Promise((resolve) => {
     const request = db.transaction(['images'], 'readwrite').objectStore('images').count();
     request.onsuccess = (evt) => resolve(evt.target.result);
@@ -184,18 +181,4 @@ export async function store(objects) {
     object.timestamp = object.exif?.created || object.exif?.modified || 0;
     put(object);
   }
-}
-
-export async function test() {
-  await open();
-  log.div('log', true, `IndexDB count on open ${await count()} records`);
-  await reset();
-  log.div('log', true, `IndexDB count on reset ${await count()} records`);
-  for (const result of window.results) put(result);
-  const t0 = performance.now();
-  log.div('log', true, `IndexDB count on put ${await count()} records`);
-  const t1 = performance.now();
-  log.debug(t0, `IndexDB insert ${window.results.length} records`);
-  window.results = await all();
-  log.debug(t1, `IndexDB retrieve ${window.results.length} records`);
 }
