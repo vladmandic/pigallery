@@ -1,19 +1,5 @@
 {
-  "warnings": [
-    {
-      "location": {
-        "column": 12,
-        "file": "client/index/index.ts",
-        "length": 9,
-        "line": 791,
-        "lineText": "    details.slideshow(true);",
-        "namespace": "",
-        "suggestion": ""
-      },
-      "notes": [],
-      "text": "Import \"slideshow\" will always be undefined because there is no matching export"
-    }
-  ],
+  "warnings": [],
   "metafile": {
     "inputs": {
       "assets/bootstrap.css": {
@@ -26604,10 +26590,14 @@
         "imports": []
       },
       "client/index/indexdb.ts": {
-        "bytes": 7074,
+        "bytes": 6630,
         "imports": [
           {
             "path": "client/shared/log.ts",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/shared/user.ts",
             "kind": "import-statement"
           }
         ]
@@ -26625,7 +26615,7 @@
         "imports": []
       },
       "client/index/details.ts": {
-        "bytes": 18464,
+        "bytes": 19417,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26687,7 +26677,7 @@
         "imports": []
       },
       "client/index/map.ts": {
-        "bytes": 3378,
+        "bytes": 3661,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26716,7 +26706,7 @@
         ]
       },
       "client/index/enumerate.ts": {
-        "bytes": 7832,
+        "bytes": 8052,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26728,6 +26718,10 @@
           },
           {
             "path": "client/shared/config.ts",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/shared/user.ts",
             "kind": "import-statement"
           }
         ]
@@ -26754,7 +26748,7 @@
         ]
       },
       "client/index/pwa-register.ts": {
-        "bytes": 1806,
+        "bytes": 1783,
         "imports": [
           {
             "path": "client/shared/log.ts",
@@ -26767,7 +26761,7 @@
         ]
       },
       "client/index/index.ts": {
-        "bytes": 36595,
+        "bytes": 37214,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27671,7 +27665,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1051847
+        "bytes": 1053952
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27681,41 +27675,11 @@
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
             "bytesInOutput": 218949
           },
-          "client/shared/log.ts": {
-            "bytesInOutput": 1561
-          },
-          "client/shared/user.ts": {
-            "bytesInOutput": 1242
-          },
-          "client/shared/config.ts": {
-            "bytesInOutput": 9275
-          },
-          "client/index/indexdb.ts": {
-            "bytesInOutput": 6511
-          },
           "node_modules/.pnpm/moment@2.29.1/node_modules/moment/moment.js": {
             "bytesInOutput": 134440
           },
           "assets/color-thief.umd.js": {
             "bytesInOutput": 11347
-          },
-          "client/index/iv-viewer.ts": {
-            "bytesInOutput": 27662
-          },
-          "client/index/details.ts": {
-            "bytesInOutput": 18718
-          },
-          "client/index/list.ts": {
-            "bytesInOutput": 9706
-          },
-          "client/index/nearest.ts": {
-            "bytesInOutput": 3081
-          },
-          "client/index/map.ts": {
-            "bytesInOutput": 3375
-          },
-          "client/index/pwa-register.ts": {
-            "bytesInOutput": 1771
           },
           "assets/bootstrap.css": {
             "bytesInOutput": 0
@@ -27733,22 +27697,52 @@
             "bytesInOutput": 0
           },
           "client/index/index.ts": {
-            "bytesInOutput": 37231
+            "bytesInOutput": 37311
+          },
+          "client/shared/log.ts": {
+            "bytesInOutput": 1528
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59935
           },
+          "client/shared/config.ts": {
+            "bytesInOutput": 8687
+          },
+          "client/shared/user.ts": {
+            "bytesInOutput": 1173
+          },
+          "client/index/indexdb.ts": {
+            "bytesInOutput": 6354
+          },
+          "client/index/details.ts": {
+            "bytesInOutput": 19296
+          },
+          "client/index/iv-viewer.ts": {
+            "bytesInOutput": 26493
+          },
           "client/shared/blockhash.ts": {
             "bytesInOutput": 410
           },
+          "client/index/list.ts": {
+            "bytesInOutput": 9570
+          },
+          "client/index/map.ts": {
+            "bytesInOutput": 3361
+          },
+          "client/index/nearest.ts": {
+            "bytesInOutput": 2948
+          },
           "client/index/enumerate.ts": {
-            "bytesInOutput": 7548
+            "bytesInOutput": 7504
           },
           "client/index/options.ts": {
-            "bytesInOutput": 6629
+            "bytesInOutput": 6589
+          },
+          "client/index/pwa-register.ts": {
+            "bytesInOutput": 1572
           }
         },
-        "bytes": 561529
+        "bytes": 559569
       },
       "dist/index/index.css": {
         "imports": [],

@@ -13,13 +13,13 @@ async function find(images, lat, lon) {
   // get data
   let all;
   const sort = config.options.listSortOrder;
-  if (sort.includes('alpha-down')) all = await db.all('name', true);
-  else if (sort.includes('alpha-up')) all = await db.all('name', false);
-  else if (sort.includes('numeric-down')) all = await db.all('date', false);
-  else if (sort.includes('numeric-up')) all = await db.all('date', true);
-  else if (sort.includes('amount-down')) all = await db.all('size', false);
-  else if (sort.includes('amount-up')) all = await db.all('size', true);
-  else all = db.all();
+  if (sort.includes('alpha-down')) all = await db.all('name', true, 1, Number.MAX_SAFE_INTEGER, null, null);
+  else if (sort.includes('alpha-up')) all = await db.all('name', false, 1, Number.MAX_SAFE_INTEGER, null, null);
+  else if (sort.includes('numeric-down')) all = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, null, null);
+  else if (sort.includes('numeric-up')) all = await db.all('date', true, 1, Number.MAX_SAFE_INTEGER, null, null);
+  else if (sort.includes('amount-down')) all = await db.all('size', false, 1, Number.MAX_SAFE_INTEGER, null, null);
+  else if (sort.includes('amount-up')) all = await db.all('size', true, 1, Number.MAX_SAFE_INTEGER, null, null);
+  else all = await db.all('date', true, 1, Number.MAX_SAFE_INTEGER, null, null);
   // const all = await db.all();
   const points = all
     .filter((a) => (a.exif && a.exif.lat && a.exif.lon))
@@ -58,7 +58,7 @@ async function load() {
   });
 }
 
-async function show(images, visible) {
+export async function show(images, visible) {
   if (typeof L === 'undefined') await load();
 
   const t0 = performance.now();
@@ -93,7 +93,5 @@ async function show(images, visible) {
   L.heatLayer(points, heat).addTo(mapContainer);
   log.debug(t0, `Map added ${points.length} points`);
 }
-
-exports.show = show;
 
 // https://developer.mapquest.com/documentation/mapquest-js/v1.3/

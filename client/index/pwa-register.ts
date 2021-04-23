@@ -1,7 +1,7 @@
 import * as log from '../shared/log';
 import * as config from '../shared/config';
 
-async function register(path) {
+export async function register(path) {
   const t0 = performance.now();
   if ('serviceWorker' in navigator) {
     try {
@@ -39,5 +39,3 @@ async function register(path) {
     log.debug(t0, 'PWA inactive');
   }
 }
-
-exports.register = register;
