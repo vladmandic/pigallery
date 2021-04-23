@@ -9,11 +9,15 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **3.6.1** 2021/04/22 mandic00@live.com
+### **HEAD -> master** 2021/04/23 mandic00@live.com
 
 
 ### **origin/master** 2021/04/22 mandic00@live.com
 
+
+### **3.6.1** 2021/04/22 mandic00@live.com
+
+- initial client typescript conversion
 - enable caching by default
 - pwa full offline mode
 - lighthouse optimizations
