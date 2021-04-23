@@ -24,15 +24,15 @@ const log = (...msg) => {
 };
 
 async function updateCached(req) {
-  // const clone = req.clone();
-  // const update = await fetch(req);
   fetch(req)
     .then((update) => {
-      // eslint-disable-next-line promise/no-nesting
-      caches
-        .open(cacheName)
-        .then((cache) => cache.put(req, update))
-        .catch((err) => log('cache error', err));
+      // update cache if request is ok
+      if (update.ok) {
+        caches
+          .open(cacheName)
+          .then((cache) => cache.put(req, update))
+          .catch((err) => log('cache update error', err));
+      }
       return true;
     })
     .catch((err) => {
@@ -86,6 +86,7 @@ function cacheInit() {
 }
 
 if (!listening) {
+  // get messages from main app to update configuration
   self.addEventListener('message', (evt: MessageEvent) => {
     log('event message:', evt.data);
     switch (evt.data.key) {
