@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import Human from '@vladmandic/human/dist/human.esm-nobundle';
 import { tf, wasm } from '../shared/tf';
 import * as log from '../shared/log';
@@ -8,7 +6,7 @@ import * as modelDetect from './modelDetect';
 import * as hash from '../shared/blockhash';
 import * as config from '../shared/config';
 
-const models = {};
+const models:{ classify: Array<any>, detect: Array<any>, human: any } = { classify: [], detect: [], human: {} };
 let error;
 
 export function JSONtoStr(json) {
@@ -43,15 +41,15 @@ export async function load() {
   }
 
   log.div('process-log', true, 'Image Classification models:');
-  for (const model of config.default.models.classify.filter((a) => a.enabled)) {
-    log.div('process-log', true, `  ${model.name}`);
+  for (const model of config.default.models.classify.filter((a) => a['enabled'])) {
+    log.div('process-log', true, `  ${model['name']}`);
   }
   log.div('process-log', true, 'Object Detection models:');
-  for (const model of config.default.models.detect.filter((a) => a.enabled)) {
-    log.div('process-log', true, `  ${model.name}`);
+  for (const model of config.default.models.detect.filter((a) => a['enabled'])) {
+    log.div('process-log', true, `  ${model['name']}`);
   }
   log.div('process-log', true, 'Face Detection model:');
-  log.div('process-log', true, `  ${config.default.models.person.name}`);
+  log.div('process-log', true, `  ${config.default.models.person['name']}`);
   const t0 = performance.now();
 
   log.div('process-log', true, 'TensorFlow models loading ...');
@@ -64,7 +62,7 @@ export async function load() {
 
   models.classify = [];
   if (config.default.models.classify && config.default.models.classify.length > 0) {
-    for (const cfg of config.default.models.classify.filter((a) => a.enabled)) {
+    for (const cfg of config.default.models.classify.filter((a) => a['enabled'])) {
       const res = await modelClassify.load(cfg);
       models.classify.push(res);
     }
@@ -72,7 +70,7 @@ export async function load() {
 
   models.detect = [];
   if (config.default.models.detect && config.default.models.detect.length > 0) {
-    for (const cfg of config.default.models.detect.filter((a) => a.enabled)) {
+    for (const cfg of config.default.models.detect.filter((a) => a['enabled'])) {
       const res = await modelDetect.load(cfg);
       models.detect.push(res);
     }
@@ -167,7 +165,7 @@ export async function process(name) {
   // if (config.default.batchProcessing === 1) tf.engine().startScope();
   const mem = tf.memory();
   log.div('process-state', false, `Engine state: ${mem.numBytes.toLocaleString()} bytes ${mem.numTensors.toLocaleString()} tensors ${mem.numDataBuffers.toLocaleString()} buffers ${mem.numBytesInGPU ? mem.numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
-  const obj = {};
+  const obj:any = {};
   obj.image = name;
   let model;
 
@@ -175,7 +173,7 @@ export async function process(name) {
 
   // load & preprocess image
   const ti0 = performance.now();
-  const image = await getImage(name, config.default.maxSize);
+  const image = await getImage(name, config.default.maxSize) as any;
   obj.processedSize = { width: image.canvas.width, height: image.canvas.height };
   obj.naturalSize = { width: image.naturalWidth, height: image.naturalHeight };
   obj.pixels = image.naturalHeight * image.naturalWidth;
@@ -190,7 +188,7 @@ export async function process(name) {
   // start image classification
   obj.classify = [];
   const tc0 = performance.now();
-  const promisesClassify = [];
+  const promisesClassify:Array<any> = [];
   try {
     if (!error && models.classify) {
       for (const m of models.classify) {
@@ -203,7 +201,7 @@ export async function process(name) {
     error = err;
     error.where = 'classify';
   }
-  let resClassify = [];
+  let resClassify:Array<any> = [];
   try {
     resClassify = await Promise.all(promisesClassify);
   } catch (err) {
@@ -217,7 +215,7 @@ export async function process(name) {
   // start object detection
   obj.detect = [];
   const td0 = performance.now();
-  const promisesDetect = [];
+  const promisesDetect:Array<any> = [];
   try {
     if (!error && models.detect) {
       for (const m of models.detect) {
@@ -231,7 +229,7 @@ export async function process(name) {
     error.where = 'detect';
   }
   const td1 = performance.now();
-  let resDetect = [];
+  let resDetect:Array<any> = [];
   try {
     resDetect = await Promise.all(promisesDetect);
   } catch (err) {

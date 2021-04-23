@@ -10902,7 +10902,7 @@
         "imports": []
       },
       "client/process/modelClassify.ts": {
-        "bytes": 4937,
+        "bytes": 4978,
         "imports": [
           {
             "path": "client/shared/tf.ts",
@@ -10915,7 +10915,7 @@
         "imports": []
       },
       "client/process/modelDetect.ts": {
-        "bytes": 9031,
+        "bytes": 9049,
         "imports": [
           {
             "path": "client/shared/tf.ts",
@@ -26493,7 +26493,7 @@
         ]
       },
       "client/shared/config.ts": {
-        "bytes": 11082,
+        "bytes": 11120,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26510,7 +26510,7 @@
         ]
       },
       "client/process/processImage.ts": {
-        "bytes": 12245,
+        "bytes": 12399,
         "imports": [
           {
             "path": "node_modules/.pnpm/@vladmandic+human@1.6.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
@@ -26840,7 +26840,7 @@
         ]
       },
       "client/process/process.ts": {
-        "bytes": 5542,
+        "bytes": 5589,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27044,7 +27044,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 6500371
+        "bytes": 6500653
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -27628,16 +27628,16 @@
             "bytesInOutput": 1528
           },
           "client/process/modelClassify.ts": {
-            "bytesInOutput": 3852
+            "bytesInOutput": 3858
           },
           "client/process/postProcess.ts": {
             "bytesInOutput": 739
           },
           "client/process/modelDetect.ts": {
-            "bytesInOutput": 6945
+            "bytesInOutput": 6951
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8636
+            "bytesInOutput": 8672
           },
           "client/shared/user.ts": {
             "bytesInOutput": 101
@@ -27646,7 +27646,7 @@
             "bytesInOutput": 2505
           }
         },
-        "bytes": 3606432
+        "bytes": 3606480
       },
       "dist/compare/compare.css": {
         "imports": [],
@@ -27667,7 +27667,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1051167
+        "bytes": 1051236
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27684,7 +27684,7 @@
             "bytesInOutput": 1242
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 9224
+            "bytesInOutput": 9260
           },
           "client/index/indexdb.ts": {
             "bytesInOutput": 6511
@@ -27744,7 +27744,7 @@
             "bytesInOutput": 6571
           }
         },
-        "bytes": 561524
+        "bytes": 561560
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27771,7 +27771,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12162301
+        "bytes": 12162668
       },
       "dist/process/process.js": {
         "imports": [],
@@ -27836,7 +27836,7 @@
             "bytesInOutput": 0
           },
           "client/process/process.ts": {
-            "bytesInOutput": 4779
+            "bytesInOutput": 4806
           },
           "client/shared/tf.ts": {
             "bytesInOutput": 42
@@ -29234,7 +29234,7 @@
             "bytesInOutput": 1174
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8639
+            "bytesInOutput": 8675
           },
           "node_modules/.pnpm/@tensorflow+tfjs@3.5.0/node_modules/@tensorflow/tfjs/package.json": {
             "bytesInOutput": 4742
@@ -31724,22 +31724,22 @@
             "bytesInOutput": 361206
           },
           "client/process/modelClassify.ts": {
-            "bytesInOutput": 3919
+            "bytesInOutput": 3925
           },
           "client/process/postProcess.ts": {
             "bytesInOutput": 740
           },
           "client/process/modelDetect.ts": {
-            "bytesInOutput": 7053
+            "bytesInOutput": 7059
           },
           "client/shared/blockhash.ts": {
             "bytesInOutput": 4735
           },
           "client/process/processImage.ts": {
-            "bytesInOutput": 10522
+            "bytesInOutput": 10578
           }
         },
-        "bytes": 6555958
+        "bytes": 6556089
       },
       "dist/process/process.css": {
         "imports": [],
@@ -31760,7 +31760,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12276927
+        "bytes": 12277057
       },
       "dist/video/video.js": {
         "imports": [],
@@ -35719,13 +35719,13 @@
             "bytesInOutput": 740
           },
           "client/process/modelDetect.ts": {
-            "bytesInOutput": 7020
+            "bytesInOutput": 7026
           },
           "client/video/runDetect.ts": {
             "bytesInOutput": 1633
           },
           "client/process/modelClassify.ts": {
-            "bytesInOutput": 3910
+            "bytesInOutput": 3916
           },
           "client/video/runClassify.ts": {
             "bytesInOutput": 1198
@@ -35740,10 +35740,10 @@
             "bytesInOutput": 13893
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8643
+            "bytesInOutput": 8679
           }
         },
-        "bytes": 6624572
+        "bytes": 6624620
       },
       "dist/video/video.css": {
         "imports": [],
