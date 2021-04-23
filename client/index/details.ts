@@ -249,6 +249,14 @@ export function drawDescription(object) {
           <td>${location} ${conditions}</td>
         </tr>
         <tr>
+          <td></td>
+          <td>
+            <label class="btntext" for="minscore">score filter &nbsp</label>
+            <input type="range" style="height: 0.6rem;" class="thumbsize" name="minscore" id="minscore" min="0" max="1" step="0.05" value="${minScore}">
+            &nbsp ${100 * minScore}%
+          </td>
+        </tr>
+        <tr>
           <td><i class="descicon fad fa-image"></i></td>
           <td>${classified}</td>
         </tr>
@@ -278,6 +286,16 @@ export function drawDescription(object) {
   // $('#popup-details').toggle(window.options.viewDetails);
   $('#popup-details').html(html);
   $('#popup-details').show();
+  // score filter handler
+  $('#minscore').off('input');
+  $('#minscore').on('input', () => {
+    if (last) {
+      minScore = parseFloat($('#minscore')[0].value);
+      log.debug('Filtering display by score:', minScore);
+      drawBoxes(last);
+      drawDescription(last);
+    }
+  });
   document.getElementById('popup-details').scrollTop = 0;
 }
 
@@ -409,10 +427,11 @@ export function handlers() {
 
   detectSwipe();
 
+  $('#popup').off('click');
   $('#popup').on('click', (e) => {
     // if (event.screenX < 20) showNextDetails(true);
     // else if (event.clientX > $('#popup').width() - 20) showNextDetails(false);
-    if (!isTextSelected() && !e.target.className.startsWith('iv-')) {
+    if (!isTextSelected() && !e.target.className.startsWith('iv-') && !e.target.className.startsWith('thumb')) {
       clear();
       $('#popup').toggle('fast');
       $('#optionsview').toggle(false);
@@ -420,9 +439,11 @@ export function handlers() {
   });
 
   // navbar details previous
+  $('#details-previous').off('click');
   $('#details-previous').on('click', () => next(true));
 
   // navbar details close
+  $('#details-close').off('click');
   $('#details-close').on('click', () => {
     clear();
     slideShow(false);
@@ -431,9 +452,11 @@ export function handlers() {
   });
 
   // navbar details next
+  $('#details-next').off('click');
   $('#details-next').on('click', () => next(false));
 
   // navbar details show/hide details
+  $('#details-desc').off('click');
   $('#details-desc').on('click', () => {
     window.options.viewDetails = !window.options.viewDetails;
     $('#popup-details').toggle(window.options.viewDetails);
@@ -441,28 +464,22 @@ export function handlers() {
   });
 
   // navbar details show/hide detection boxes
+  $('#details-boxes').off('click');
   $('#details-boxes').on('click', () => {
     window.options.viewBoxes = !window.options.viewBoxes;
     drawBoxes();
   });
 
   // navbar details show/hide faces
+  $('#details-faces').off('click');
   $('#details-faces').on('click', () => {
     window.options.viewFaces = !window.options.viewFaces;
     drawBoxes();
   });
 
   // navbar details download image
+  $('#details-raw').off('click');
   $('#details-raw').on('click', () => {
     window.options.viewRaw = !window.options.viewRaw;
-  });
-
-  // score filter handler
-  $('#minscore').on('input', () => {
-    if (last) {
-      minScore = parseFloat($('#minscore')[0].value);
-      drawBoxes(last);
-      drawDescription(last);
-    }
   });
 }

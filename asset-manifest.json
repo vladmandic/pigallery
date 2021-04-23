@@ -26604,7 +26604,7 @@
         "imports": []
       },
       "client/index/details.ts": {
-        "bytes": 17665,
+        "bytes": 18420,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -27644,7 +27644,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1050702
+        "bytes": 1051820
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27673,7 +27673,7 @@
             "bytesInOutput": 27644
           },
           "client/index/details.ts": {
-            "bytesInOutput": 17855
+            "bytesInOutput": 18841
           },
           "client/index/list.ts": {
             "bytesInOutput": 9850
@@ -27721,7 +27721,7 @@
             "bytesInOutput": 7472
           }
         },
-        "bytes": 562011
+        "bytes": 562997
       },
       "dist/index/index.css": {
         "imports": [],
