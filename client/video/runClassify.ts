@@ -6,14 +6,12 @@ import * as modelClassify from '../process/modelClassify';
 export async function run(name, input, config, objects) {
   const t0 = performance.now();
   if (!objects.models[name]) {
-    // @ts-ignore
-    document.getElementById('status').innerText = `loading model: ${name} ...`;
+    (document.getElementById('status') as HTMLElement).innerText = `loading model: ${name} ...`;
     const memory0 = await tf.memory();
     const modelOptions = config.models.classify.find((a) => a.name === name) || config.models.various.find((a) => a.name === name);
     objects.models[name] = await modelClassify.load(modelOptions);
     const memory1 = await tf.memory();
-    // @ts-ignore
-    document.getElementById('status').innerText = '';
+    (document.getElementById('status') as HTMLElement).innerText = '';
     log.div('log', true, `Loaded model ${name}: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
   }
   if (!objects.models[name]) {

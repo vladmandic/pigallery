@@ -193,8 +193,7 @@ export async function run(input, config, objects) {
   // recreate canvas if resolution changed
   if (objects.canvases.human.width !== input.width) {
     draw.clear(objects.canvases.human);
-    // @ts-ignore
-    document.getElementById('canvases').removeChild(objects.canvases.human);
+    (document.getElementById('canvases') as HTMLElement).removeChild(objects.canvases.human);
     objects.canvases.human = null;
     draw.appendCanvas('human', input.width, input.height, objects);
   }

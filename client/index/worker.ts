@@ -37,6 +37,5 @@ onmessage = async (msg) => {
     .sort((a, b) => (b.similarity - a.similarity));
 
   // return results to parent process
-  // @ts-ignore
   postMessage(sorted);
 };

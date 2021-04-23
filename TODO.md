@@ -6,5 +6,5 @@
 
 ## Client-Side
 
-- Eliminate global variables: `window.filtered`
+- Strong typing
 - Full compatibility testing

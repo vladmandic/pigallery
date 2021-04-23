@@ -10,6 +10,12 @@ let thief;
 
 let minScore = 0.0;
 
+let images:Array<any> = [];
+
+export function update(list) {
+  images = list;
+}
+
 function isTextSelected(input: HTMLTextAreaElement | null = null) {
   const selectedText = document.getSelection()?.toString();
   if (selectedText && selectedText.length !== 0) {
@@ -244,7 +250,7 @@ export function drawDescription(object) {
   if (conditions && conditions.length > 0) conditions = `<b>Conditions: ${conditions.join(', ')}</b>`;
 
   $('#details-download').off();
-  $('#details-download').on('click', () => window.open(object.image, '_blank'));
+  $('#details-download').on('click', () => open(object.image, '_blank'));
   const html = `
       <table>
         <tr>
@@ -336,11 +342,11 @@ export async function show(img) {
   if (!img) return;
   if (config.options.viewRaw) {
     log.debug(t0, `Loading Raw image: ${img}`);
-    window.open(img, '_blank');
+    open(img, '_blank');
     return;
   }
   // log.debug(t0, `Loading image: ${img}`);
-  const object = window.filtered.find((a) => a.image === decodeURIComponent(img));
+  const object = images.find((a) => a.image === decodeURIComponent(img));
   if (!object) {
     log.debug(t0, `Could not find image: ${decodeURIComponent(img)}`);
     return;
@@ -376,12 +382,12 @@ export async function next(left) {
   const img = $('.iv-image');
   if (!img || img.length < 1) return;
   const url = new URL((img[0] as HTMLImageElement).src);
-  let id = window.filtered.findIndex((a) => a.image === decodeURIComponent(url.pathname.substr(1)));
+  let id = images.findIndex((a) => a.image === decodeURIComponent(url.pathname.substr(1)));
   if (id === -1) return;
   id = left ? id - 1 : id + 1;
-  if (id < 0) id = window.filtered.length - 1;
-  if (id > window.filtered.length - 1) id = 0;
-  const target = window.filtered[id];
+  if (id < 0) id = images.length - 1;
+  if (id > images.length - 1) id = 0;
+  const target = images[id];
   show(target.image);
 }
 

@@ -60,9 +60,11 @@ async function main() {
   }
 
   // load expressjs middleware
+  // @ts-ignore not typescript compatible
   config.cookie.store = new FileStore({ path: config.cookie.path, retries: 1, logFn: log.warn, ttl: 24 * 3600, reapSyncFallback: true });
   app.use(express.json({ limit: 10485760 }));
   app.use(express.urlencoded({ extended: true, parameterLimit: 10485760, limit: 10485760 }));
+  // @ts-ignore not typescript compatible
   app.use(session(config.cookie));
   if (config.server.allowPWA) app.use(allowPWA);
   if (config.server.forceHTTPS) app.use(forceSSL);
@@ -73,7 +75,7 @@ async function main() {
       if (res.statusCode !== 200 && res.statusCode !== 302 && res.statusCode !== 304 && !req.url.endsWith('.map') && (req.url !== '/true')) {
         const forwarded = (req.headers.forwarded || '').match(/for="\[(.*)\]:/);
         const ip = (Array.isArray(forwarded) ? forwarded[1] : null) || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
-        // @ts-ignore
+        // @ts-ignore session does not register request property
         log.warn(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);
       }
     });
@@ -84,6 +86,7 @@ async function main() {
 
     if (req.url.startsWith('/api/user/auth')) next();
     else if (!req.url.startsWith('/api/')) next();
+    // @ts-ignore session does not register request property
     else if (req.session['user'] || !config.server.authForce) next();
     else res.status(401).sendFile('client/auth.html', { root });
   });
@@ -92,7 +95,7 @@ async function main() {
   app.use(async (err, req, res, next) => { // callback with error signature for middleware
     const forwarded = (req.headers.forwarded || '').match(/for="\[(.*)\]:/);
     const ip = (Array.isArray(forwarded) ? forwarded[1] : null) || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
-    // @ts-ignore
+    // @ts-ignore session does not register request property
     log.warn(`${req.method}/${req.httpVersion} code:${res.statusCode} user:${req.session.user} src:${req.client.remoteFamily}/${ip} dst:${req.protocol}://${req.headers.host}${req.baseUrl || ''}${req.url || ''}`, req.sesion);
     next();
   });
@@ -104,19 +107,15 @@ async function main() {
       const mount = f.substr(0, f.indexOf('.html'));
       const name = path.join('./client', f);
       log.state(`Mounted: ${mount} from ${name}`);
-      // @ts-ignore
       app.get(`/${mount}`, (req, res) => res.sendFile(name, { root }));
     }
   }
   // define routes for static files
   for (const f of ['/favicon.ico', '/pigallery.webmanifest', '/asset-manifest.json', '/README.md', '/CHANGELOG.md', '/LICENSE']) {
-    // @ts-ignore
     app.get(f, (req, res) => res.sendFile(`.${f}`, { root }));
   }
   // define route for root
-  // @ts-ignore
   app.get('/', (req, res) => res.sendFile('index.html', { root: './client' }));
-  // @ts-ignore
   app.get('/true', (req, res) => res.status(200).send(true)); // used for is-alive checks
   // define routes for folders
   const optionsStatic = { maxAge: '365d', cacheControl: true, etag: true, lastModified: true };

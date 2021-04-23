@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import * as log from '../shared/log';
-import * as list from './list';
 import * as config from '../shared/config';
 
 function JSONtoStr(json) {
@@ -77,7 +76,6 @@ function resetOptions() {
   showOptions();
   $('#docs').hide();
   config.setTheme();
-  list.redraw(window.filtered);
 }
 
 function saveOptions() {
@@ -105,7 +103,6 @@ function saveOptions() {
   */
   $('#docs').hide();
   config.setTheme();
-  list.redraw(window.filtered);
 }
 
 function userOptions() {
