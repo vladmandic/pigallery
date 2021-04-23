@@ -13,7 +13,7 @@ function appendCanvas(name, width, height, objects) {
   (document.getElementById('canvases') || document.createElement('canvas')).appendChild(objects.canvases[name]);
 }
 
-function rect({ canvas, x = 0, y = 0, width = 0, height = 0, radius = 8, lineWidth = 2, color = 'white', title = null, font = null }) {
+function rect({ canvas, x = 0, y = 0, width = 0, height = 0, radius = 8, lineWidth = 2, color = 'white', title, font = null }) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   ctx.lineWidth = lineWidth;

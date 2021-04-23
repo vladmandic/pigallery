@@ -2,6 +2,7 @@
 
 import $ from 'jquery';
 import * as log from '../shared/log';
+import * as config from '../shared/config';
 
 let refreshNeeded = true;
 
@@ -33,7 +34,7 @@ async function enumerateClasses() {
     classesList.sort((a, b) => b.count - a.count); // sort by occrences
   }
   const classesCount = classesList.length; // crop the list to top entries
-  classesList.length = Math.min(window.options.topClasses, classesList.length);
+  classesList.length = Math.min(config.options.topClasses, classesList.length);
   let html = '';
   for (const item of classesList) {
     const tag = item.tag.split(/ |-|,/)[0];

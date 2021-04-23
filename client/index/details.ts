@@ -5,6 +5,7 @@ import moment from 'moment';
 import * as log from '../shared/log';
 import ColorThief from '../../assets/color-thief.umd';
 import ImageViewer from './iv-viewer';
+import * as config from '../shared/config';
 
 let viewer;
 let thief;
@@ -128,8 +129,8 @@ export function drawBoxes(object) {
   else object = last;
   if (!object) return;
 
-  document.getElementById('detected-label').innerHTML = window.options.viewBoxes ? 'hide detected' : 'show detected';
-  document.getElementById('faces-label').innerHTML = window.options.viewFaces ? 'hide faces' : 'show faces';
+  document.getElementById('detected-label').innerHTML = config.options.viewBoxes ? 'hide detected' : 'show detected';
+  document.getElementById('faces-label').innerHTML = config.options.viewFaces ? 'hide faces' : 'show faces';
 
   // move details panel to side or bottom depending on screen aspect ratio
   const ratioScreen = $('#popup').width() / $('#popup').height();
@@ -143,7 +144,7 @@ export function drawBoxes(object) {
   const resizeY = img.height / object.processedSize.height;
 
   // draw detected objects
-  if (window.options.viewBoxes && object.detect) {
+  if (config.options.viewBoxes && object.detect) {
     for (const obj of object.detect) {
       if (obj.box && obj.score > minScore) {
         const x = (obj.box?.x || obj.box[0]) * resizeX;
@@ -158,7 +159,7 @@ export function drawBoxes(object) {
   }
 
   // draw faces
-  if (window.options.viewFaces && object.person) {
+  if (config.options.viewFaces && object.person) {
     for (const person of object.person) {
       if (person.boxRaw && person.confidence > minScore) {
         // draw box around face
@@ -218,9 +219,9 @@ export function drawDescription(object) {
   if (object.exif) {
     if (object.exif.make) exif += `<b>Camera:</b> ${object.exif.make} ${object.exif.model || ''} ${object.exif.lens || ''}<br>`;
     if (object.exif.bytes) exif += `<b>Size:</b> ${(object.pixels / 1000 / 1000).toFixed(1)} MP in ${object.exif.bytes.toLocaleString()} bytes (compression factor ${(object.pixels / object.exif.bytes).toFixed(2)})<br>`;
-    if (object.exif.ctime) exif += `<b>CTime:</b> ${moment(object.exif.ctime).format(window.options.dateLong)} <b>MTime:</b> ${moment(object.exif.mtime).format(window.options.dateLong)}<br>`;
-    if (object.exif.created) exif += `<b>Created:</b> ${moment(object.exif.created).format(window.options.dateLong)} <b>Modified:</b> ${moment(object.exif.modified).format(window.options.dateLong)}<br>`;
-    if (object.processed) exif += `<b>Processed:</b> ${moment(object.processed).format(window.options.dateLong)}<br>`;
+    if (object.exif.ctime) exif += `<b>CTime:</b> ${moment(object.exif.ctime).format(config.options.dateLong)} <b>MTime:</b> ${moment(object.exif.mtime).format(config.options.dateLong)}<br>`;
+    if (object.exif.created) exif += `<b>Created:</b> ${moment(object.exif.created).format(config.options.dateLong)} <b>Modified:</b> ${moment(object.exif.modified).format(config.options.dateLong)}<br>`;
+    if (object.processed) exif += `<b>Processed:</b> ${moment(object.processed).format(config.options.dateLong)}<br>`;
     if (object.exif.software) exif += `<b>Software:</b> ${object.exif.software}<br>`;
     if (object.exif.exposure) exif += `<b>Settings:</b> ${object.exif.fov || 0}mm ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec<br>`;
   }
@@ -282,8 +283,8 @@ export function drawDescription(object) {
         </tr>
       </table>
     `;
-  // if (window.options.viewDetails) $('#popup-details').html(html);
-  // $('#popup-details').toggle(window.options.viewDetails);
+  // if (config.options.viewDetails) $('#popup-details').html(html);
+  // $('#popup-details').toggle(config.options.viewDetails);
   $('#popup-details').html(html);
   $('#popup-details').show();
   // score filter handler
@@ -327,7 +328,7 @@ export async function show(img) {
   const t0 = performance.now();
   if (!img && last) img = last.image;
   if (!img) return;
-  if (window.options.viewRaw) {
+  if (config.options.viewRaw) {
     log.debug(t0, `Loading Raw image: ${img}`);
     window.open(img, '_blank');
     return;
@@ -383,7 +384,7 @@ let slideshowRunning;
 export async function slideShow(start) {
   if (start) {
     next(false);
-    slideshowRunning = setTimeout(() => slideShow(true), window.options.slideDelay);
+    slideshowRunning = setTimeout(() => slideShow(true), config.options.slideDelay);
   } else if (slideshowRunning) {
     clearTimeout(slideshowRunning);
     slideshowRunning = null;
@@ -458,28 +459,28 @@ export function handlers() {
   // navbar details show/hide details
   $('#details-desc').off('click');
   $('#details-desc').on('click', () => {
-    window.options.viewDetails = !window.options.viewDetails;
-    $('#popup-details').toggle(window.options.viewDetails);
+    config.options.viewDetails = !config.options.viewDetails;
+    $('#popup-details').toggle(config.options.viewDetails);
     resizeDetailsImage();
   });
 
   // navbar details show/hide detection boxes
   $('#details-boxes').off('click');
   $('#details-boxes').on('click', () => {
-    window.options.viewBoxes = !window.options.viewBoxes;
+    config.options.viewBoxes = !config.options.viewBoxes;
     drawBoxes();
   });
 
   // navbar details show/hide faces
   $('#details-faces').off('click');
   $('#details-faces').on('click', () => {
-    window.options.viewFaces = !window.options.viewFaces;
+    config.options.viewFaces = !config.options.viewFaces;
     drawBoxes();
   });
 
   // navbar details download image
   $('#details-raw').off('click');
   $('#details-raw').on('click', () => {
-    window.options.viewRaw = !window.options.viewRaw;
+    config.options.viewRaw = !config.options.viewRaw;
   });
 }

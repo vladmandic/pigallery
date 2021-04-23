@@ -8,7 +8,7 @@ import * as config from '../shared/config';
 function JSONtoStr(json) {
   let text = '';
   if (json) {
-    text += `<font color="${window.theme.link}">`;
+    text += `<font color="${config.theme.link}">`;
     text += JSON.stringify(json).replace(/{|}|"|\[|\]/g, '').replace(/,/g, ', ').replace('name:', '');
     text += '</font>';
   }
@@ -41,24 +41,31 @@ async function globalOptions() {
     out.face = '<b>&nbsp Face Analysis:</b><br>';
     out.face += `&nbsp &nbsp ${JSONtoStr(models.person)}<br>`;
   }
-  const html = `<div style="line-height: 1.4rem">
-    <h1>Global configuration</h1>
-    Browser register PWA handler: ${config.default.registerPWA}<br>
-    Image Processing:<br>
-    &nbsp Image thumbnail size: ${config.default.renderThumbnail}px<br>
-    Server added metadata:<br>
-    &nbsp Image EXIF processing: true<br>
-    &nbsp Image location processing: true, DB: assets/cities.json<br>
-    &nbsp Image tag processing: true, DB: assets/wordnet-synset.json<br>
-    <h1>TensorFlow Configuration:</h1>
-    &nbsp Float Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}<br>
-    &nbsp Image resize: ${config.default.maxSize}px &nbsp Image square: ${config.default.squareImage}<br>
-    <h1>TensorFlow Active Models:</h1>
-    ${out.classify || ''}<br>
-    ${out.detect || ''}<br>
-    ${out.video || ''}<br>
-    ${out.face || ''}<br>
-    ${out.various || ''}<br>
+  const html = `
+    <div style="line-height: 1.4rem">
+      <div class="col">
+        <h1>Global configuration</h1>
+        Browser register PWA handler: ${config.default.registerPWA}<br>
+        Image Processing:<br>
+        &nbsp Image thumbnail size: ${config.default.renderThumbnail}px<br>
+        Server added metadata:<br>
+        &nbsp Image EXIF processing: true<br>
+        &nbsp Image location processing: true, DB: assets/cities.json<br>
+        &nbsp Image tag processing: true, DB: assets/wordnet-synset.json<br>
+      </div>
+      <div class="col">
+        <h1>TensorFlow Configuration:</h1>
+        &nbsp Float Precision: ${config.default.floatPrecision ? '32bit' : '16bit'}<br>
+        &nbsp Image resize: ${config.default.maxSize}px &nbsp Image square: ${config.default.squareImage}<br>
+      </div>
+      <div class="col" style="white-space: normal;">
+        <h1>TensorFlow Active Models:</h1>
+        ${out.classify || ''}<br>
+        ${out.detect || ''}<br>
+        ${out.video || ''}<br>
+        ${out.face || ''}<br>
+        ${out.various || ''}<br>
+      </div>
     </div>
   `;
   return html;
@@ -77,26 +84,26 @@ function resetOptions() {
 
 function saveOptions() {
   log.debug('Options save');
-  window.options.dateShort = $('#dateShort').val();
-  window.options.dateLong = $('#dateLong').val();
-  window.options.fontSize = $('#fontSize').val();
-  window.options.listLimit = $('#listLimit').val();
-  window.options.listItemCount = $('#listItemCount').val();
-  window.options.listDetails = $('#listDetails')[0].checked;
-  window.options.listTitle = $('#listTitle')[0].checked;
-  window.options.listThumbSize = $('#listThumbSize').val();
-  window.options.fixWidth = $('#fixWidth')[0].checked;
-  window.options.viewBoxes = $('#viewBoxes')[0].checked;
-  window.options.viewFaces = $('#viewFaces')[0].checked;
-  window.options.theme = parseInt($('#colorTheme').val());
+  config.options.dateShort = $('#dateShort').val();
+  config.options.dateLong = $('#dateLong').val();
+  config.options.fontSize = $('#fontSize').val();
+  config.options.listLimit = $('#listLimit').val();
+  config.options.listItemCount = $('#listItemCount').val();
+  config.options.listDetails = $('#listDetails')[0].checked;
+  config.options.listTitle = $('#listTitle')[0].checked;
+  config.options.listThumbSize = $('#listThumbSize').val();
+  config.options.fixWidth = $('#fixWidth')[0].checked;
+  config.options.viewBoxes = $('#viewBoxes')[0].checked;
+  config.options.viewFaces = $('#viewFaces')[0].checked;
+  config.options.theme = parseInt($('#colorTheme').val());
   /*
-  window.options.mapColor = $('#mapColor').val();
-  window.options.colorText = $('#colorText').val();
-  window.options.colorHigh = $('#colorHigh').val();
-  window.options.colorHover = $('#colorHover').val();
-  window.options.colorBack = $('#colorBack').val();
-  window.options.colorBody = $('#colorBody').val();
-  window.options.listShadow = $('#listShadow')[0].checked;
+  config.options.mapColor = $('#mapColor').val();
+  config.options.colorText = $('#colorText').val();
+  config.options.colorHigh = $('#colorHigh').val();
+  config.options.colorHover = $('#colorHover').val();
+  config.options.colorBack = $('#colorBack').val();
+  config.options.colorBody = $('#colorBody').val();
+  config.options.listShadow = $('#listShadow')[0].checked;
   */
   $('#docs').hide();
   config.setTheme();
@@ -104,50 +111,40 @@ function saveOptions() {
 }
 
 function userOptions() {
-  let html = '<h1>User Configuration</h1>';
+  let html = '<h1>user configuration</h1>';
   let themes = '';
-  for (const i in window.themes) {
-    themes += `<option value="${i}" ${window.theme.name === window.themes[i].name ? 'selected' : ''}>${window.themes[i].name}</option>`;
+  for (const i in config.themes) {
+    themes += `<option value="${i}" ${config.theme.name === config.themes[i].name ? 'selected' : ''}>${config.themes[i].name}</option>`;
   }
   html += `
-    <form>
+    <input type="button" id="btnSaveConfig" class="options" style="left: 30px" value="save configuration">
+    <input type="button" id="btnResetConfig" class="options" style="left: 30px" value="reset to default">
 
-    <input type="button" id="btnSaveConfig" class="options" style="left: 30px" value="Save configuration">
-    <input type="button" id="btnResetConfig" class="options" style="left: 30px" value="Reset to default">
+    <div class="col">
+    <h1>application:</h1>
+      <label class="label">short date format <input class="options" type="text" id="dateShort" value="${config.options.dateShort}" /></label>
+      <label class="label">long date format <input class="options" type="text" id="dateLong" value="${config.options.dateLong}" /></label>
+      <label class="label">base font size <input class="options" type="text" id="fontSize" value="${config.options.fontSize}" /></label>
+      <label class="label">color theme: 
+        <select class="options" id="colorTheme" value="${config.theme.name}">${themes}</select>
+      </label>
+    </div>
 
-    <h1>Application:</h1>
-    <label class="label">Short date format <input class="options" type="text" id="dateShort" value="${window.options.dateShort}" /></label>
-    <label class="label">Long date format <input class="options" type="text" id="dateLong" value="${window.options.dateLong}" /></label>
-    <label class="label">Base font size <input class="options" type="text" id="fontSize" value="${window.options.fontSize}" /></label>
-
-    <label class="label">Color Theme: 
-      <select class="options" id="colorTheme" value="${window.theme.name}">${themes}</select>
-    </label>
-
-    <!--
-    <label class="label">Color: Text <input class="options" type="color" id="colorText" value="${window.options.colorText}" /></label>
-    <label class="label">Color: Highlight <input class="options" type="color" id="colorHigh" value="${window.options.colorHigh}" /></label>
-    <label class="label">Color: Hover <input class="options" type="color" id="colorHover" value="${window.options.colorHover}" /></label>
-    <label class="label">Color: Background <input class="options" type="color" id="colorBack" value="${window.options.colorBack}" /></label>
-    <label class="label">Color: Body <input class="options" type="color" id="colorBody" value="${window.options.colorBody}" /></label>
-    <label class="label">List items have shadows <input class="options" type="checkbox" id="listShadow" ${window.options.listShadow ? 'checked' : ''} /></label>
-    <h1>Map view:</h1>
-    <label class="label">Theme <input class="options" type="text" id="mapColor" value="${window.options.mapColor}" /></label>
-    -->
-
-    <h1>Gallery view:</h1>
-    <label class="label">Maximum images to load <input class="options" type="number" id="listLimit" value="${window.options.listLimit}" /></label>
-    <label class="label">Initial image display count <input class="options" type="number" id="listItemCount" value="${window.options.listItemCount}" /></label>
-    <label class="label">Show details <input class="options" type="checkbox" id="listDetails" ${window.options.listDetails ? 'checked' : ''} /></label>
-    <label class="label">Show group headers <input class="options" type="checkbox" id="listTitle" ${window.options.listTitle ? 'checked' : ''} /></label>
-    <label class="label">Thumbnail size <input class="options" type="number" id="listThumbSize" value="${window.options.listThumbSize}" /></label>
-    <label class="label">Fix width thumbnails <input class="options" type="checkbox" id="fixWidth" ${window.options.fixWidth ? 'checked' : ''} /></label>
-
-    <h1>Details view:</h1>
-    <label class="label">Draw bounding box around detected objects <input class="options" type="checkbox" id="viewBoxes" ${window.options.viewBoxes ? 'checked' : ''} /></label>
-    <label class="label">Draw bounding box around detected faces <input class="options" type="checkbox" id="viewFaces" ${window.options.viewFaces ? 'checked' : ''} /></label>
-
-    </form>
+    <div class="col">
+    <h1>gallery view:</h1>
+      <label class="label">maximum images to load <input class="options" type="number" id="listLimit" value="${config.options.listLimit}" /></label>
+      <label class="label">initial image display count <input class="options" type="number" id="listItemCount" value="${config.options.listItemCount}" /></label>
+      <label class="label">show details <input class="options" type="checkbox" id="listDetails" ${config.options.listDetails ? 'checked' : ''} /></label>
+      <label class="label">show group headers <input class="options" type="checkbox" id="listTitle" ${config.options.listTitle ? 'checked' : ''} /></label>
+      <label class="label">thumbnail size <input class="options" type="number" id="listThumbSize" value="${config.options.listThumbSize}" /></label>
+      <label class="label">fix width thumbnails <input class="options" type="checkbox" id="fixWidth" ${config.options.fixWidth ? 'checked' : ''} /></label>
+    </div>
+  
+    <div class="col">
+    <h1>details view:</h1>
+      <label class="label">draw bounding box around detected objects <input class="options" type="checkbox" id="viewBoxes" ${config.options.viewBoxes ? 'checked' : ''} /></label>
+      <label class="label">draw bounding box around detected faces <input class="options" type="checkbox" id="viewFaces" ${config.options.viewFaces ? 'checked' : ''} /></label>
+    </div>
   `;
   return html;
 }

@@ -6,6 +6,7 @@ import * as db from './indexdb';
 import * as log from '../shared/log';
 import * as nearest from './nearest';
 import * as list from './list';
+import * as config from '../shared/config';
 
 let mapContainer;
 
@@ -13,7 +14,7 @@ async function find(lat, lon) {
   const t0 = performance.now();
   // get data
   let all;
-  const sort = window.options.listSortOrder;
+  const sort = config.options.listSortOrder;
   if (sort.includes('alpha-down')) all = await db.all('name', true);
   else if (sort.includes('alpha-up')) all = await db.all('name', false);
   else if (sort.includes('numeric-down')) all = await db.all('date', false);
@@ -74,7 +75,7 @@ async function show(visible) {
   L.mapquest.key = 'lYrP4vF3Uk5zgTiGGuEzQGwGIVDGuy24';
   mapContainer = L.mapquest.map('map', {
     center: [25.7632076, -80.1927073],
-    layers: L.mapquest.tileLayer(window.theme.map),
+    layers: L.mapquest.tileLayer(config.theme.map),
     zoom: 3,
   });
   mapContainer.on('click', (evt) => {

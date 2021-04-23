@@ -1,11 +1,12 @@
 import $ from 'jquery';
 import * as log from './log';
 
+type User = { user: undefined | String, root: String, admin: boolean };
+// eslint-disable-next-line import/no-mutable-exports
+export let user:User = { user: undefined, root: '', admin: false };
+
 // eslint-disable-next-line import/prefer-default-export
 export async function get(isShare = null) {
-  type User = { user: undefined | String, root: String, admin: boolean };
-  let user:User = { user: undefined, root: '', admin: false };
-
   $('#progress').html('Authenticating');
   if (isShare) {
     await $.post('/api/user/auth', { authShare: isShare }); // autologin for direct shares
