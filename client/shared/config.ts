@@ -60,7 +60,7 @@ const config = {
   classify: {},
   detect: {},
   human: {},
-  models: { classify: [], detect: [], person: {} },
+  models: { classify: [], detect: [], person: {}, initial: true },
 };
 
 function colorHex(str) {

@@ -35,7 +35,7 @@ async function resetBackend(backendName) {
 export async function load() {
   log.div('process-log', true, 'Starting Image Analsys');
 
-  if (!config.default.models) {
+  if (config.default.models.initial) {
     const req = await fetch('/api/models/get');
     if (req && req.ok) config.default.models = await req.json();
   }
@@ -102,12 +102,12 @@ export async function load() {
   log.div('process-log', true, `TensorFlow engine state: Bytes: ${engine.state.numBytes.toLocaleString()} Buffers: ${engine.state.numDataBuffers.toLocaleString()} Tensors: ${engine.state.numTensors.toLocaleString()}`);
 }
 
-export async function getImage(url, maxSize) {
+export async function getImage(url, maxSize = 0):Promise<any> {
   return new Promise((resolve) => {
     const image = new Image();
     image.addEventListener('load', () => {
       const ratio = 1.0 * image.height / image.width;
-
+      if (maxSize === 0) maxSize = Math.max(image.width, image.height);
       if (Math.max(image.width, image.height) > (3 * maxSize)) {
         if (config.default.squareImage) {
           image.height = 3 * maxSize;

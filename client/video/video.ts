@@ -134,7 +134,7 @@ function initHumanConfig() {
 }
 
 async function menuSetup() {
-  if (!config.default.models) {
+  if (config.default.models.initial) {
     const req = await fetch('/api/models/get');
     if (req && req.ok) config.default.models = await req.json();
   }

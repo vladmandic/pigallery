@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 // css-imports used by esbuild
 import '../../assets/bootstrap.css';
 import '../../assets/fontawesome.css';
@@ -12,9 +10,9 @@ import * as modelClassify from '../process/modelClassify';
 import * as modelDetect from '../process/modelDetect';
 import * as processImage from '../process/processImage';
 import * as config from '../shared/config';
+import * as user from '../shared/user';
 
-const models = [];
-window.cache = [];
+const models:Array<{ name: string, stats: any, model: any }> = [];
 let stop = false;
 const limit = 0;
 
@@ -30,15 +28,7 @@ async function resetBackend(backendName) {
 }
 
 async function init() {
-  const res = await fetch('/api/user/get');
-  if (res.ok) window.user = await res.json();
-  if (window.user && window.user.user) {
-    $('#user').text(window.user.user.split('@')[0]);
-    log.div('log', true, `Logged in: ${window.user.user} root:${window.user.root} admin:${window.user.admin}`);
-    if (!window.user.admin) $('#btn-update').css('color', 'gray');
-  } else {
-    location.replace('/auth');
-  }
+  await user.get();
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
   await wasm.setWasmPaths('/assets/');
   await resetBackend(config.default.backEnd);
@@ -51,7 +41,7 @@ async function init() {
     }
   }
   log.div('log', true, `Configuration: backend: ${tf.getBackend().toUpperCase()} parallel processing: ${config.default.batchProcessing} image resize: ${config.default.maxSize}px shape: ${config.default.squareImage ? 'square' : 'native'}`);
-  if (!config.default.models) {
+  if (config.default.models.initial) {
     const req = await fetch('/api/models/get');
     if (req && req.ok) config.default.models = await req.json();
   }
@@ -59,7 +49,7 @@ async function init() {
 
 async function loadClassify(options) {
   let engine;
-  const stats = {};
+  const stats:any = {};
   engine = await tf.engine();
   stats.time0 = performance.now();
   stats.bytes0 = engine.state.numBytes;
@@ -80,7 +70,7 @@ async function loadClassify(options) {
 
 async function loadDetect(options) {
   let engine;
-  const stats = {};
+  const stats:any = {};
   stats.time0 = performance.now();
   engine = await tf.engine();
   stats.bytes0 = engine.state.numBytes;
@@ -100,7 +90,6 @@ async function loadDetect(options) {
 }
 
 async function print(file, image, results) {
-  window.cache.push({ file, results });
   let text = '';
   for (const model of results) {
     let classified = model.model.name || model.model;
@@ -109,7 +98,7 @@ async function print(file, image, results) {
         if (res.score && res.class) classified += ` | ${Math.round(res.score * 100)}% ${res.class} [id:${res.id}]`;
         if (res.age && res.gender) classified += ` | gender: ${Math.round(100 * res.genderProbability)}% ${res.gender} age: ${res.age.toFixed(1)}`;
         if (res.expression) {
-          const emotion = Object.entries(res.expressions).reduce(([keyPrev, valPrev], [keyCur, valCur]) => (valPrev > valCur ? [keyPrev, valPrev] : [keyCur, valCur]));
+          const emotion = Object.entries(res.expressions).reduce(([keyPrev, valPrev], [keyCur, valCur]) => ((valPrev as number) > (valCur as number) ? [keyPrev, valPrev] : [keyCur, valCur]));
           classified += ` emotion: ${emotion[1]}% ${emotion[0]}`;
         }
       }
@@ -136,7 +125,7 @@ async function classify() {
   stop = false;
   log.server('Compare: Classify');
   log.div('log', true, 'Loading models ...');
-  const enabled = config.default.models.classify.filter((a) => a.enabled);
+  const enabled = config.default.models.classify.filter((a) => a['enabled']);
   for (const def of enabled) await loadClassify(def);
   log.div('log', true, 'Warming up ...');
   const warmup = await processImage.getImage('assets/warmup.jpg');
@@ -151,13 +140,13 @@ async function classify() {
 
   if (tf.memory().numBytesInGPUAllocated > (tf.engine().backendInstance.numMBBeforeWarning * 1024 * 1024)) log.debug('High memory threshold:', tf.memory());
 
-  const stats = [];
+  const stats:Array<number> = [];
   // eslint-disable-next-line no-unused-vars
   for (let m = 0; m < models.length; m++) stats.push(0);
   for (const i in files) {
     if ((limit > 0) && (parseInt(i) >= limit)) stop = true;
     if (stop) continue;
-    const results = [];
+    const results:Array<{ model: any, data: any}> = [];
     const image = await processImage.getImage(files[i]);
     for (const m in models) {
       if (stop) continue;
@@ -181,7 +170,7 @@ async function detect() {
   stop = false;
   log.server('Compare: Detect');
   log.div('log', true, 'Loading models ...');
-  const enabled = config.default.models.detect.filter((a) => a.enabled);
+  const enabled = config.default.models.detect.filter((a) => a['enabled']);
   for (const def of enabled) await loadDetect(def);
   if (!models[0].model) return;
 
@@ -199,13 +188,13 @@ async function detect() {
   const files = await api.json();
   log.div('log', true, `Received list from server: ${files.length} images`);
 
-  const stats = [];
+  const stats:Array<number> = [];
   // eslint-disable-next-line no-unused-vars
   for (let m = 0; m < models.length; m++) stats.push(0);
   for (const i in files) {
     if ((limit > 0) && (parseInt(i) >= limit)) stop = true;
     if (stop) continue;
-    const results = [];
+    const results:Array<{ model: any, data: any }> = [];
     const image = await processImage.getImage(files[i]);
     for (const m in models) {
       if (stop || !m) continue;
@@ -235,12 +224,13 @@ async function resize() {
   document.documentElement.style.setProperty('--listItemWidth', '');
   document.documentElement.style.setProperty('--descWidth', '80vw');
 
-  document.getElementById('main').style.height = `${window.innerHeight - document.getElementById('log').offsetHeight - document.getElementById('navbar').offsetHeight}px`;
+  const div = document.getElementById('main');
+  if (div) div.style.height = `${window.innerHeight - (document.getElementById('log')?.offsetHeight || 0) - (document.getElementById('navbar')?.offsetHeight || 0)}px`;
 
   $('body').css('background', `radial-gradient(at 50% 100%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
   $(document).on('mousemove', (event) => {
-    const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
-    const mouseYpercentage = Math.round(event.pageY / $(window).height() * 100);
+    const mouseXpercentage = Math.round(event.pageX / ($(window).width() || 0) * 100);
+    const mouseYpercentage = Math.round(event.pageY / ($(window).height() || 0) * 100);
     $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
   });
 }

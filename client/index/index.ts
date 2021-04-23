@@ -721,7 +721,7 @@ async function initMenuHandlers() {
 
   // navbar map
   $('#btn-map').on('click', () => {
-    map.show($('btn-map').hasClass('fa-map-marked'));
+    map.show(window.filtered, $('btn-map').hasClass('fa-map-marked'));
   });
 
   // navline search input
