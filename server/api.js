@@ -41,9 +41,10 @@ function api(app, inConfig, inDB) {
     req.session.user = undefined;
     let email;
     let passwd;
-    let found = {};
+    let found = { email: null, passwd: '', admin: false, mediaRoot: '' };
     if (req.body.authShare) {
-      found = { email: config.share.email, passwd: config.share.passwd };
+      found.email = config.share.email;
+      found.passwd = config.share.passwd;
     } else {
       email = req.body.authEmail;
       passwd = req.body.authPassword;
@@ -105,12 +106,13 @@ function api(app, inConfig, inDB) {
   app.post('/api/share/put', (req, res) => {
     if (req.session.admin) {
       const data = req.body;
-      const obj = {};
-      obj.creator = data.creator;
-      obj.name = data.name;
-      obj.processed = new Date();
-      obj.images = data['images'];
-      obj.share = (obj.processed.getTime() / 1000).toString(36);
+      const obj = {
+        creator: data.creator,
+        name: data.name,
+        processed: new Date(),
+        images: data.images,
+        share: ((new Date()).getTime() / 1000).toString(36),
+      };
       if (obj.images?.length > 0) {
         db.update({ share: obj.share }, obj, { upsert: true });
         log.info(`API/Share/Put ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images?.length);

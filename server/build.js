@@ -1,5 +1,4 @@
 const fs = require('fs');
-const process = require('process');
 const esbuild = require('esbuild');
 const log = require('@vladmandic/pilogger');
 

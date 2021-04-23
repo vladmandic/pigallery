@@ -3,9 +3,6 @@
 ## Server-Side
 
 - Implement MongoDB backend
-- Switch to mono build
-- Switch to TypeScript
-- Strong typing
 
 ## Client-Side
 

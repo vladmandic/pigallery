@@ -54,7 +54,7 @@ const insert = (item, array, comparator) => {
   array.splice(i, 0, item);
 };
 
-function Node(axis, split, left, right) {
+function NodeEntry(axis, split, left, right) {
   this.axis = axis;
   this.split = split;
   this.left = left;
@@ -83,7 +83,7 @@ function buildrec(array, depth) {
   array.sort((a, b) => a.position[axis] - b.position[axis]);
   const i = Math.floor(array.length * 0.5);
   ++depth;
-  return new Node(axis, array[i].position[axis], buildrec(array.slice(0, i), depth), buildrec(array.slice(i), depth));
+  return new NodeEntry(axis, array[i].position[axis], buildrec(array.slice(0, i), depth), buildrec(array.slice(i), depth));
 }
 
 function lookup(position, node, n) {
@@ -96,7 +96,7 @@ function lookup(position, node, n) {
     dist = stack.pop();
     node = stack.pop();
     if (array.length === n && array[array.length - 1].dist < dist * dist) continue;
-    while (node instanceof Node) {
+    while (node instanceof NodeEntry) {
       if (position[node.axis] < node.split) {
         stack.push(node.right, node.split - position[node.axis]);
         node = node.left;

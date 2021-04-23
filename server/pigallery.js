@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-// @ts-ignore
 const log = require('@vladmandic/pilogger');
 const http = require('http');
 const https = require('https');
