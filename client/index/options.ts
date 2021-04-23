@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import $ from 'jquery';
 import * as log from '../shared/log';
 import * as list from './list';
@@ -20,7 +18,7 @@ async function globalOptions() {
   if (!req || !req.ok) return '';
   const models = await req.json();
 
-  const out = {};
+  const out:{ classify: string, detect: string, video: string, various: string, face: string } = { classify: '', detect: '', video: '', various: '', face: '' };
   if (models.classify) {
     out.classify = '<b>&nbsp Image Classification:</b><br>';
     for (const obj of models.classify) out.classify += `&nbsp &nbsp ${JSONtoStr(obj)}<br>`;
@@ -84,18 +82,18 @@ function resetOptions() {
 
 function saveOptions() {
   log.debug('Options save');
-  config.options.dateShort = $('#dateShort').val();
-  config.options.dateLong = $('#dateLong').val();
-  config.options.fontSize = $('#fontSize').val();
-  config.options.listLimit = $('#listLimit').val();
-  config.options.listItemCount = $('#listItemCount').val();
-  config.options.listDetails = $('#listDetails')[0].checked;
-  config.options.listTitle = $('#listTitle')[0].checked;
-  config.options.listThumbSize = $('#listThumbSize').val();
-  config.options.fixWidth = $('#fixWidth')[0].checked;
-  config.options.viewBoxes = $('#viewBoxes')[0].checked;
-  config.options.viewFaces = $('#viewFaces')[0].checked;
-  config.options.theme = parseInt($('#colorTheme').val());
+  config.options.dateShort = $('#dateShort').val() as string;
+  config.options.dateLong = $('#dateLong').val() as string;
+  config.options.fontSize = $('#fontSize').val() as string;
+  config.options.listLimit = $('#listLimit').val() as number;
+  config.options.listItemCount = $('#listItemCount').val() as number;
+  config.options.listDetails = ($('#listDetails')[0] as HTMLInputElement).checked as boolean;
+  config.options.listTitle = ($('#listTitle')[0] as HTMLInputElement).checked as boolean;
+  config.options.listThumbSize = $('#listThumbSize').val() as number;
+  config.options.fixWidth = ($('#fixWidth')[0] as HTMLInputElement).checked as boolean;
+  config.options.viewBoxes = ($('#viewBoxes')[0] as HTMLInputElement).checked as boolean;
+  config.options.viewFaces = ($('#viewFaces')[0] as HTMLInputElement).checked as boolean;
+  config.options.theme = parseInt($('#colorTheme').val() as string);
   /*
   config.options.mapColor = $('#mapColor').val();
   config.options.colorText = $('#colorText').val();
