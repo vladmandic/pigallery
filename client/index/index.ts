@@ -133,7 +133,7 @@ async function filterResults(input) {
   }
   let full = [];
   const all = [];
-  window.options.listDivider = 'search';
+  config.options.listDivider = 'search';
   list.redraw(full, 'search results', true);
   if (words.length > 0) {
     // full match
@@ -193,7 +193,7 @@ function shuffle(array) {
 async function similarImage(image) {
   busy('Searching for<br>similar images');
   const t0 = performance.now();
-  window.options.listDivider = 'similarity';
+  config.options.listDivider = 'similarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
   for (const img of window.filtered) img.similarity = 100 - hash.distance(img.phash, object.phash);
   window.filtered = window.filtered
@@ -222,7 +222,7 @@ async function similarPerson(image) {
   let count = 0;
   busy('Searching for<br>similar people');
   const t0 = performance.now();
-  window.options.listDivider = 'similarity';
+  config.options.listDivider = 'similarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
   const descriptor = [];
   if (object.person) {
@@ -273,7 +273,7 @@ async function similarPerson(image) {
 async function similarClasses(image) {
   busy('Searching for<br>similar classes');
   const t0 = performance.now();
-  window.options.listDivider = 'similarity';
+  config.options.listDivider = 'similarity';
   const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
 
   const valid = ['classified', 'detected', 'camera', 'conditions', 'zoom', 'near'];
@@ -309,19 +309,19 @@ async function sortResults(sort) {
   list.clearPrevious();
   // sort by
   busy('Sorting images');
-  if (sort.includes('alpha-down')) window.filtered = await indexdb.all('name', true, 1, window.options.listItemCount);
-  if (sort.includes('alpha-up')) window.filtered = await indexdb.all('name', false, 1, window.options.listItemCount);
-  if (sort.includes('numeric-down')) window.filtered = await indexdb.all('date', false, 1, window.options.listItemCount);
-  if (sort.includes('numeric-up')) window.filtered = await indexdb.all('date', true, 1, window.options.listItemCount);
-  if (sort.includes('amount-down')) window.filtered = await indexdb.all('size', false, 1, window.options.listItemCount);
-  if (sort.includes('amount-up')) window.filtered = await indexdb.all('size', true, 1, window.options.listItemCount);
+  if (sort.includes('alpha-down')) window.filtered = await indexdb.all('name', true, 1, config.options.listItemCount);
+  if (sort.includes('alpha-up')) window.filtered = await indexdb.all('name', false, 1, config.options.listItemCount);
+  if (sort.includes('numeric-down')) window.filtered = await indexdb.all('date', false, 1, config.options.listItemCount);
+  if (sort.includes('numeric-up')) window.filtered = await indexdb.all('date', true, 1, config.options.listItemCount);
+  if (sort.includes('amount-down')) window.filtered = await indexdb.all('size', false, 1, config.options.listItemCount);
+  if (sort.includes('amount-up')) window.filtered = await indexdb.all('size', true, 1, config.options.listItemCount);
   // if (sort.includes('similarity')) window.filtered = await db.all('similarity', false); // similarity is calculated, not stored in indexdb
   // group by
-  if (sort.includes('numeric-down') || sort.includes('numeric-up')) window.options.listDivider = 'month';
-  else if (sort.includes('amount-down') || sort.includes('amount-up')) window.options.listDivider = 'size';
-  else if (sort.includes('alpha-down') || sort.includes('alpha-up')) window.options.listDivider = 'folder';
-  else if (sort.includes('similarity')) window.options.listDivider = 'similarity';
-  else window.options.listDivider = '';
+  if (sort.includes('numeric-down') || sort.includes('numeric-up')) config.options.listDivider = 'month';
+  else if (sort.includes('amount-down') || sort.includes('amount-up')) config.options.listDivider = 'size';
+  else if (sort.includes('alpha-down') || sort.includes('alpha-up')) config.options.listDivider = 'folder';
+  else if (sort.includes('similarity')) config.options.listDivider = 'similarity';
+  else config.options.listDivider = '';
   list.redraw(window.filtered);
   $('#splash').toggle(false);
   log.debug(t0, `Cached images: ${window.filtered.length} fetched initial`);
@@ -329,12 +329,12 @@ async function sortResults(sort) {
   stats.initial = Math.floor(t1 - t0);
   $('#all').focus();
   busy('Loading remaining<br>images in background');
-  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await indexdb.all('name', true, window.options.listItemCount + 1));
-  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await indexdb.all('name', false, window.options.listItemCount + 1));
-  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await indexdb.all('date', false, window.options.listItemCount + 1));
-  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await indexdb.all('date', true, window.options.listItemCount + 1));
-  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await indexdb.all('size', false, window.options.listItemCount + 1));
-  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await indexdb.all('size', true, window.options.listItemCount + 1));
+  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await indexdb.all('name', true, config.options.listItemCount + 1));
+  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await indexdb.all('name', false, config.options.listItemCount + 1));
+  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await indexdb.all('date', false, config.options.listItemCount + 1));
+  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await indexdb.all('date', true, config.options.listItemCount + 1));
+  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await indexdb.all('size', false, config.options.listItemCount + 1));
+  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await indexdb.all('size', true, config.options.listItemCount + 1));
   log.debug(t1, `Cached images: ${window.filtered.length} fetched remaining`);
   stats.remaining = Math.floor(window.performance.now() - t1);
   // if (window.filtered.length > 0) log.div('log', true, `Loaded ${window.filtered.length} images from cache`);
@@ -393,7 +393,7 @@ async function loadGallery(refresh = false) {
   }
   busy('Loading images<br>in background');
   const updated = new Date().getTime();
-  const since = refresh ? window.options.lastUpdated : 0;
+  const since = refresh ? config.options.lastUpdated : 0;
   let first;
   try {
     first = await fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=0`);
@@ -453,18 +453,18 @@ async function loadGallery(refresh = false) {
   }
   const t1 = performance.now();
 
-  const dt = window.options.lastUpdated === 0 ? 'start' : new Date(window.options.lastUpdated).toLocaleDateString();
+  const dt = config.options.lastUpdated === 0 ? 'start' : new Date(config.options.lastUpdated).toLocaleDateString();
   const current = await indexdb.count();
   perf = (current - cached) > 0 ? `performance: ${Math.round(dlSize / (t1 - t0)).toLocaleString()} KB/sec ` : '';
   log.div('log', true, `Download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${perf}updated since ${dt}`);
   // window.filtered = await db.all();
-  window.options.lastUpdated = updated;
+  config.options.lastUpdated = updated;
   stats.size = dlSize;
   stats.load = Math.round(t1 - t0);
   stats.store = Math.round(stats.store);
   stats.speed = Math.round(dlSize / (t1 - t0 - stats.store));
   $('#progress').text('Almost done');
-  // if (!refresh) sortResults(window.options.listSortOrder);
+  // if (!refresh) sortResults(config.options.listSortOrder);
 }
 
 // popup on right-click
@@ -490,18 +490,18 @@ function resizeViewport() {
   $('#process').css('top', top);
   $('#process').height(height);
 
-  const fontSize = Math.trunc(10 * (1 - viewportScale)) + parseInt(window.options.fontSize);
+  const fontSize = Math.trunc(10 * (1 - viewportScale)) + parseInt(config.options.fontSize);
   $(':root').css('fontSize', `${fontSize}px`);
 
-  $('#thumbsize')[0].value = window.options.listThumbSize;
+  $('#thumbsize')[0].value = config.options.listThumbSize;
 
   document.getElementById('main').style.height = `${window.innerHeight - document.getElementById('log').offsetHeight - document.getElementById('navbar').offsetHeight}px`;
 }
 
 // show/hide navigation bar elements
 function showNavbar(elem) {
-  $('#folderbar').toggle(window.options.listFolders);
-  $('.description').toggle(window.options.listDetails);
+  $('#folderbar').toggle(config.options.listFolders);
+  $('.description').toggle(config.options.listDetails);
 
   $('#btn-close').hide();
   if (elem) {
@@ -588,8 +588,8 @@ async function initSharesHandler() {
 async function initHotkeys() {
   $('html').on('keydown', () => {
     const top = $('#results').scrollTop() || 0;
-    const line = window.options.listThumbSize / 2 + 16;
-    const page = ($('#results').height() || 0) - window.options.listThumbSize;
+    const line = config.options.listThumbSize / 2 + 16;
+    const page = ($('#results').height() || 0) - config.options.listThumbSize;
     const bottom = $('#results').prop('scrollHeight');
     $('#results').stop();
     switch (event.keyCode) {
@@ -607,7 +607,7 @@ async function initHotkeys() {
       case 190: $('#btn-sort').click(); break; // key=.; open sort options
       case 188: $('#btn-desc').click(); break; // key=,; show/hide list descriptions
       case 220: loadGallery(true); break; // key=\; refresh all
-      case 222: sortResults(window.options.listSortOrder); break; // key='; remove filters
+      case 222: sortResults(config.options.listSortOrder); break; // key='; remove filters
       case 27: // key=esc; close all
         $('#popup').toggle(false);
         $('#searchbar').toggle(false);
@@ -624,7 +624,7 @@ async function initHotkeys() {
 function initSidebarHandlers() {
   $('#resettitle').on('click', () => {
     window.share = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
-    sortResults(window.options.listSortOrder);
+    sortResults(config.options.listSortOrder);
   });
   $('#folderstitle').on('click', () => $('#folders').toggle('slow'));
   $('#locationstitle').on('click', () => $('#locations').toggle('slow'));
@@ -744,30 +744,30 @@ async function initMenuHandlers() {
   $('#btn-resetsearch').on('click', () => {
     $('#searchbar').hide();
     $('#search-input')[0].value = '';
-    sortResults(window.options.listSortOrder);
+    sortResults(config.options.listSortOrder);
   });
 
   // navbar list
   $('#btn-list').on('click', async () => {
     await showNavbar($('#optionslist'));
-    document.getElementById('description-label').innerHTML = window.options.listDetails ? 'hide description' : 'show description';
+    document.getElementById('description-label').innerHTML = config.options.listDetails ? 'hide description' : 'show description';
   });
 
   // navline list sidebar
   $('#btn-folder').on('click', () => {
     $('#folderbar').toggle('slow');
-    window.options.listFolders = !window.options.listFolders;
+    config.options.listFolders = !config.options.listFolders;
   });
 
   // navline list descriptions
   $('#btn-desc').on('click', () => {
-    window.options.listDetails = !window.options.listDetails;
-    document.getElementById('description-label').innerHTML = window.options.listDetails ? 'hide description' : 'show description';
+    config.options.listDetails = !config.options.listDetails;
+    document.getElementById('description-label').innerHTML = config.options.listDetails ? 'hide description' : 'show description';
     $('.description').toggle('slow');
   });
 
   $('#btn-title').on('click', () => {
-    window.options.listTitle = !window.options.listTitle;
+    config.options.listTitle = !config.options.listTitle;
     $('.divider').toggle('slow');
   });
 
@@ -778,7 +778,7 @@ async function initMenuHandlers() {
 
   // navline list sort
   $('.sort').on('click', (evt) => {
-    window.options.listSortOrder = evt.target.className;
+    config.options.listSortOrder = evt.target.className;
     sortResults(evt.target.className);
   });
 
@@ -800,7 +800,7 @@ async function initMenuHandlers() {
   // navbar images number
   $('#btn-number').on('click', async () => {
     const t0 = performance.now();
-    sortResults(window.options.listSortOrder);
+    sortResults(config.options.listSortOrder);
     log.debug(t0, 'Reset filtered results');
   });
 
@@ -818,21 +818,21 @@ async function hashChange(evt) {
     if (top && all === 0) {
       log.debug(t0, 'Exiting ...');
     } else {
-      sortResults(window.options.listSortOrder);
+      sortResults(config.options.listSortOrder);
       log.debug(t0, 'Reset image selection');
     }
   }
 }
 
 async function animate() {
-  $('body').css('background', `radial-gradient(at 50% 100%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+  $('body').css('background', `radial-gradient(at 50% 100%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
   $(document).on('mousemove', (event) => {
     const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
     const mouseYpercentage = Math.round(event.pageY / $(window).height() * 100);
-    $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+    $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
     if ($('#popup').css('display') !== 'none') {
       if (window.dominant) $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.dominant[1]} 0, ${window.dominant[0]} 100%, ${window.dominant[0]} 100%)`);
-      else $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+      else $('#popup').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
     }
   });
 }
@@ -894,7 +894,7 @@ async function main() {
   // init main menu
   await initMenuHandlers();
   // load images
-  await sortResults(window.options.listSortOrder);
+  await sortResults(config.options.listSortOrder);
   // init sidebar only after images are loaded
   await initSharesHandler();
   await initSidebarHandlers();

@@ -89,7 +89,7 @@ async function getImage(model, image) {
   return imageT;
 }
 
-export async function classify(model, image, userConfig) {
+export async function classify(model, image, userConfig = {}) {
   // allow changes of configurations on the fly to play with nms settings
   if (userConfig) model.config = { ...model.config, ...userConfig };
 

@@ -25,7 +25,7 @@
         "imports": []
       },
       "client/pigallery.css": {
-        "bytes": 10774,
+        "bytes": 10729,
         "imports": []
       },
       "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
@@ -10902,7 +10902,7 @@
         "imports": []
       },
       "client/process/modelClassify.ts": {
-        "bytes": 4932,
+        "bytes": 4937,
         "imports": [
           {
             "path": "client/shared/tf.ts",
@@ -10915,7 +10915,7 @@
         "imports": []
       },
       "client/process/modelDetect.ts": {
-        "bytes": 8897,
+        "bytes": 9031,
         "imports": [
           {
             "path": "client/shared/tf.ts",
@@ -26479,8 +26479,8 @@
         "bytes": 5772,
         "imports": []
       },
-      "client/shared/config.ts": {
-        "bytes": 11056,
+      "client/shared/user.ts": {
+        "bytes": 1383,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26488,6 +26488,23 @@
           },
           {
             "path": "client/shared/log.ts",
+            "kind": "import-statement"
+          }
+        ]
+      },
+      "client/shared/config.ts": {
+        "bytes": 11082,
+        "imports": [
+          {
+            "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/shared/log.ts",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/shared/user.ts",
             "kind": "import-statement"
           }
         ]
@@ -26604,7 +26621,7 @@
         "imports": []
       },
       "client/index/details.ts": {
-        "bytes": 18420,
+        "bytes": 18464,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26625,24 +26642,15 @@
           {
             "path": "client/index/iv-viewer.ts",
             "kind": "import-statement"
-          }
-        ]
-      },
-      "client/shared/user.ts": {
-        "bytes": 1326,
-        "imports": [
-          {
-            "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
-            "kind": "import-statement"
           },
           {
-            "path": "client/shared/log.ts",
+            "path": "client/shared/config.ts",
             "kind": "import-statement"
           }
         ]
       },
       "client/index/list.ts": {
-        "bytes": 10060,
+        "bytes": 10104,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26663,6 +26671,10 @@
           {
             "path": "client/index/indexdb.ts",
             "kind": "import-statement"
+          },
+          {
+            "path": "client/shared/config.ts",
+            "kind": "import-statement"
           }
         ]
       },
@@ -26671,7 +26683,7 @@
         "imports": []
       },
       "client/index/map.ts": {
-        "bytes": 3302,
+        "bytes": 3346,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26692,11 +26704,15 @@
           {
             "path": "client/index/list.ts",
             "kind": "import-statement"
+          },
+          {
+            "path": "client/shared/config.ts",
+            "kind": "import-statement"
           }
         ]
       },
       "client/index/enumerate.ts": {
-        "bytes": 7788,
+        "bytes": 7832,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26705,11 +26721,15 @@
           {
             "path": "client/shared/log.ts",
             "kind": "import-statement"
+          },
+          {
+            "path": "client/shared/config.ts",
+            "kind": "import-statement"
           }
         ]
       },
       "client/index/options.ts": {
-        "bytes": 7607,
+        "bytes": 6906,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26865,7 +26885,7 @@
         "imports": []
       },
       "client/video/draw.ts": {
-        "bytes": 7657,
+        "bytes": 7650,
         "imports": []
       },
       "client/video/runDetect.ts": {
@@ -27024,7 +27044,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 6498752
+        "bytes": 6500371
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -27032,13 +27052,13 @@
         "entryPoint": "client/compare/compare.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
-            "bytesInOutput": 218527
+            "bytesInOutput": 218608
           },
           "(disabled):node_modules/.pnpm/node-fetch@2.6.1/node_modules/node-fetch/browser.js": {
             "bytesInOutput": 45
           },
           "node_modules/.pnpm/@tensorflow+tfjs@3.5.0/node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-            "bytesInOutput": 2805199
+            "bytesInOutput": 2805236
           },
           "(disabled):path": {
             "bytesInOutput": 42
@@ -27065,7 +27085,7 @@
             "bytesInOutput": 0
           },
           "client/compare/compare.ts": {
-            "bytesInOutput": 10194
+            "bytesInOutput": 10090
           },
           "client/shared/tf.ts": {
             "bytesInOutput": 42
@@ -27608,22 +27628,25 @@
             "bytesInOutput": 1528
           },
           "client/process/modelClassify.ts": {
-            "bytesInOutput": 3847
+            "bytesInOutput": 3852
           },
           "client/process/postProcess.ts": {
             "bytesInOutput": 739
           },
           "client/process/modelDetect.ts": {
-            "bytesInOutput": 6940
+            "bytesInOutput": 6945
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8755
+            "bytesInOutput": 8636
+          },
+          "client/shared/user.ts": {
+            "bytesInOutput": 101
           },
           "client/process/processImage.ts": {
             "bytesInOutput": 2505
           }
         },
-        "bytes": 3606372
+        "bytes": 3606432
       },
       "dist/compare/compare.css": {
         "imports": [],
@@ -27635,16 +27658,16 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11669
+            "bytesInOutput": 11618
           }
         },
-        "bytes": 418056
+        "bytes": 418005
       },
       "dist/index/index.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1051820
+        "bytes": 1051167
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27652,13 +27675,16 @@
         "entryPoint": "client/index/index.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
-            "bytesInOutput": 218862
+            "bytesInOutput": 218943
           },
           "client/shared/log.ts": {
             "bytesInOutput": 1561
           },
+          "client/shared/user.ts": {
+            "bytesInOutput": 1242
+          },
           "client/shared/config.ts": {
-            "bytesInOutput": 9320
+            "bytesInOutput": 9224
           },
           "client/index/indexdb.ts": {
             "bytesInOutput": 6511
@@ -27670,19 +27696,19 @@
             "bytesInOutput": 11347
           },
           "client/index/iv-viewer.ts": {
-            "bytesInOutput": 27644
+            "bytesInOutput": 27662
           },
           "client/index/details.ts": {
-            "bytesInOutput": 18841
+            "bytesInOutput": 18718
           },
           "client/index/list.ts": {
-            "bytesInOutput": 9850
+            "bytesInOutput": 9706
           },
           "client/index/nearest.ts": {
             "bytesInOutput": 3234
           },
           "client/index/map.ts": {
-            "bytesInOutput": 3346
+            "bytesInOutput": 3349
           },
           "client/index/pwa-register.ts": {
             "bytesInOutput": 1771
@@ -27703,25 +27729,22 @@
             "bytesInOutput": 0
           },
           "client/index/index.ts": {
-            "bytesInOutput": 37586
+            "bytesInOutput": 37214
           },
           "assets/marked.esm.js": {
-            "bytesInOutput": 59917
+            "bytesInOutput": 59935
           },
           "client/shared/blockhash.ts": {
             "bytesInOutput": 410
           },
-          "client/shared/user.ts": {
-            "bytesInOutput": 1207
-          },
           "client/index/enumerate.ts": {
-            "bytesInOutput": 7540
+            "bytesInOutput": 7548
           },
           "client/index/options.ts": {
-            "bytesInOutput": 7472
+            "bytesInOutput": 6571
           }
         },
-        "bytes": 562997
+        "bytes": 561524
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27739,16 +27762,16 @@
             "bytesInOutput": 3150
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11669
+            "bytesInOutput": 11618
           }
         },
-        "bytes": 559323
+        "bytes": 559272
       },
       "dist/process/process.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12162141
+        "bytes": 12162301
       },
       "dist/process/process.js": {
         "imports": [],
@@ -27756,13 +27779,13 @@
         "entryPoint": "client/process/process.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
-            "bytesInOutput": 219154
+            "bytesInOutput": 219235
           },
           "(disabled):node_modules/.pnpm/node-fetch@2.6.1/node_modules/node-fetch/browser.js": {
             "bytesInOutput": 45
           },
           "node_modules/.pnpm/@tensorflow+tfjs@3.5.0/node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-            "bytesInOutput": 2819128
+            "bytesInOutput": 2819165
           },
           "node_modules/.pnpm/seedrandom@2.4.3/node_modules/seedrandom/lib/alea.js": {
             "bytesInOutput": 2148
@@ -27783,7 +27806,7 @@
             "bytesInOutput": 1966
           },
           "node_modules/.pnpm/seedrandom@2.4.3/node_modules/seedrandom/seedrandom.js": {
-            "bytesInOutput": 4064
+            "bytesInOutput": 4073
           },
           "node_modules/.pnpm/seedrandom@2.4.3/node_modules/seedrandom/index.js": {
             "bytesInOutput": 462
@@ -29208,10 +29231,10 @@
             "bytesInOutput": 1548
           },
           "client/shared/user.ts": {
-            "bytesInOutput": 1191
+            "bytesInOutput": 1174
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8761
+            "bytesInOutput": 8639
           },
           "node_modules/.pnpm/@tensorflow+tfjs@3.5.0/node_modules/@tensorflow/tfjs/package.json": {
             "bytesInOutput": 4742
@@ -31413,10 +31436,10 @@
             "bytesInOutput": 34674
           },
           "node_modules/.pnpm/@tensorflow+tfjs-layers@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-layers/dist/models.js": {
-            "bytesInOutput": 13163
+            "bytesInOutput": 13174
           },
           "node_modules/.pnpm/@tensorflow+tfjs-layers@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-layers/dist/exports.js": {
-            "bytesInOutput": 796
+            "bytesInOutput": 800
           },
           "node_modules/.pnpm/@tensorflow+tfjs-layers@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-layers/dist/activations.js": {
             "bytesInOutput": 3543
@@ -31629,7 +31652,7 @@
             "bytesInOutput": 804
           },
           "node_modules/.pnpm/@tensorflow+tfjs-converter@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-converter/dist/executor/graph_model.js": {
-            "bytesInOutput": 6550
+            "bytesInOutput": 6555
           },
           "node_modules/.pnpm/@tensorflow+tfjs-converter@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-converter/dist/version.js": {
             "bytesInOutput": 63
@@ -31677,16 +31700,16 @@
             "bytesInOutput": 1921
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/iterators/file_chunk_iterator.js": {
-            "bytesInOutput": 2427
+            "bytesInOutput": 2431
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/iterators/url_chunk_iterator.js": {
-            "bytesInOutput": 1568
+            "bytesInOutput": 1570
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/util/source_util.js": {
             "bytesInOutput": 813
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/sources/file_data_source.js": {
-            "bytesInOutput": 1105
+            "bytesInOutput": 1107
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/sources/url_data_source.js": {
             "bytesInOutput": 1076
@@ -31701,13 +31724,13 @@
             "bytesInOutput": 361206
           },
           "client/process/modelClassify.ts": {
-            "bytesInOutput": 3914
+            "bytesInOutput": 3919
           },
           "client/process/postProcess.ts": {
             "bytesInOutput": 740
           },
           "client/process/modelDetect.ts": {
-            "bytesInOutput": 7048
+            "bytesInOutput": 7053
           },
           "client/shared/blockhash.ts": {
             "bytesInOutput": 4735
@@ -31716,7 +31739,7 @@
             "bytesInOutput": 10522
           }
         },
-        "bytes": 6555932
+        "bytes": 6555958
       },
       "dist/process/process.css": {
         "imports": [],
@@ -31728,16 +31751,16 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11669
+            "bytesInOutput": 11618
           }
         },
-        "bytes": 418056
+        "bytes": 418005
       },
       "dist/video/video.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12276779
+        "bytes": 12276927
       },
       "dist/video/video.js": {
         "imports": [],
@@ -31745,13 +31768,13 @@
         "entryPoint": "client/video/video.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
-            "bytesInOutput": 218948
+            "bytesInOutput": 219029
           },
           "(disabled):node_modules/.pnpm/node-fetch@2.6.1/node_modules/node-fetch/browser.js": {
             "bytesInOutput": 45
           },
           "node_modules/.pnpm/@tensorflow+tfjs@3.5.0/node_modules/@tensorflow/tfjs/dist/tf.es2017.js": {
-            "bytesInOutput": 2818973
+            "bytesInOutput": 2819010
           },
           "node_modules/.pnpm/seedrandom@2.4.3/node_modules/seedrandom/lib/alea.js": {
             "bytesInOutput": 2143
@@ -31772,7 +31795,7 @@
             "bytesInOutput": 1966
           },
           "node_modules/.pnpm/seedrandom@2.4.3/node_modules/seedrandom/seedrandom.js": {
-            "bytesInOutput": 4064
+            "bytesInOutput": 4073
           },
           "node_modules/.pnpm/seedrandom@2.4.3/node_modules/seedrandom/index.js": {
             "bytesInOutput": 462
@@ -35393,10 +35416,10 @@
             "bytesInOutput": 34633
           },
           "node_modules/.pnpm/@tensorflow+tfjs-layers@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-layers/dist/models.js": {
-            "bytesInOutput": 13163
+            "bytesInOutput": 13174
           },
           "node_modules/.pnpm/@tensorflow+tfjs-layers@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-layers/dist/exports.js": {
-            "bytesInOutput": 796
+            "bytesInOutput": 800
           },
           "node_modules/.pnpm/@tensorflow+tfjs-layers@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-layers/dist/activations.js": {
             "bytesInOutput": 3543
@@ -35609,7 +35632,7 @@
             "bytesInOutput": 802
           },
           "node_modules/.pnpm/@tensorflow+tfjs-converter@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-converter/dist/executor/graph_model.js": {
-            "bytesInOutput": 6550
+            "bytesInOutput": 6555
           },
           "node_modules/.pnpm/@tensorflow+tfjs-converter@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-converter/dist/version.js": {
             "bytesInOutput": 63
@@ -35657,16 +35680,16 @@
             "bytesInOutput": 1921
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/iterators/file_chunk_iterator.js": {
-            "bytesInOutput": 2421
+            "bytesInOutput": 2425
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/iterators/url_chunk_iterator.js": {
-            "bytesInOutput": 1568
+            "bytesInOutput": 1570
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/util/source_util.js": {
             "bytesInOutput": 813
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/sources/file_data_source.js": {
-            "bytesInOutput": 1105
+            "bytesInOutput": 1107
           },
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.5.0_@tensorflow+tfjs-core@3.5.0/node_modules/@tensorflow/tfjs-data/dist/sources/url_data_source.js": {
             "bytesInOutput": 1076
@@ -35681,28 +35704,28 @@
             "bytesInOutput": 361196
           },
           "assets/panzoom.js": {
-            "bytesInOutput": 43621
+            "bytesInOutput": 43673
           },
           "client/shared/log.ts": {
             "bytesInOutput": 1373
           },
           "client/shared/user.ts": {
-            "bytesInOutput": 1192
+            "bytesInOutput": 1175
           },
           "client/video/draw.ts": {
-            "bytesInOutput": 2251
+            "bytesInOutput": 2244
           },
           "client/process/postProcess.ts": {
             "bytesInOutput": 740
           },
           "client/process/modelDetect.ts": {
-            "bytesInOutput": 7015
+            "bytesInOutput": 7020
           },
           "client/video/runDetect.ts": {
             "bytesInOutput": 1633
           },
           "client/process/modelClassify.ts": {
-            "bytesInOutput": 3905
+            "bytesInOutput": 3910
           },
           "client/video/runClassify.ts": {
             "bytesInOutput": 1198
@@ -35714,13 +35737,13 @@
             "bytesInOutput": 6705
           },
           "client/shared/menu.ts": {
-            "bytesInOutput": 13890
+            "bytesInOutput": 13893
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8765
+            "bytesInOutput": 8643
           }
         },
-        "bytes": 6624498
+        "bytes": 6624572
       },
       "dist/video/video.css": {
         "imports": [],
@@ -35732,10 +35755,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11669
+            "bytesInOutput": 11618
           }
         },
-        "bytes": 418056
+        "bytes": 418005
       },
       "dist/index/worker.js.map": {
         "imports": [],

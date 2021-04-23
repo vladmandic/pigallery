@@ -5,33 +5,34 @@ import moment from 'moment';
 import * as log from '../shared/log';
 import * as details from './details';
 import * as indexdb from './indexdb';
+import * as config from '../shared/config';
 
 // adds dividiers to list view based on sort order
 let previous;
 function addDividers(object, title) {
-  if (!window.options.listTitle) return '';
+  if (!config.options.listTitle) return '';
   let divider;
-  if (window.options.listDivider === 'similarity' && object.similarity) {
+  if (config.options.listDivider === 'similarity' && object.similarity) {
     const curr = `${Math.round(object.similarity)}%`;
     const prev = previous ? `${Math.round(previous.similarity)}%` : 'none';
     if (curr !== prev) divider = curr;
   }
-  if (window.options.listDivider === 'month') {
-    const curr = (object && object.exif.created && (object.exif.created !== 0)) ? moment(object.exif.created).format(window.options.dateDivider) : 'Date unknown';
-    const prev = (previous && previous.exif.created && (previous.exif.created !== 0)) ? moment(previous.exif.created).format(window.options.dateDivider) : 'Date unknown';
+  if (config.options.listDivider === 'month') {
+    const curr = (object && object.exif.created && (object.exif.created !== 0)) ? moment(object.exif.created).format(config.options.dateDivider) : 'Date unknown';
+    const prev = (previous && previous.exif.created && (previous.exif.created !== 0)) ? moment(previous.exif.created).format(config.options.dateDivider) : 'Date unknown';
     if (curr !== prev) divider = curr;
   }
-  if (window.options.listDivider === 'size') {
+  if (config.options.listDivider === 'size') {
     const curr = Math.round(object.pixels / 1000 / 1000);
     const prev = Math.round((previous ? previous.pixels : 1) / 1000 / 1000);
     if (curr !== prev) divider = curr;
   }
-  if (window.options.listDivider === 'folder') {
+  if (config.options.listDivider === 'folder') {
     const curr = object.image.substr(0, object.image.lastIndexOf('/'));
     const prev = previous ? previous.image.substr(0, previous.image.lastIndexOf('/')) : 'none';
     if (curr !== prev) divider = curr;
   }
-  if (window.options.listDivider === 'search') {
+  if (config.options.listDivider === 'search') {
     if (!previous) {
       if (title) divider = title;
       else divider = 'search';
@@ -81,7 +82,7 @@ function printResult(object) {
 
   const camera = (object.exif && object.exif.make) ? `Camera | ${object.exif.make || ''} ${object.exif.model || ''} ${object.exif.lens || ''}` : '';
   const settings = (object.exif && object.exif.iso) ? `Settings | ${object.exif.fov ? `${object.exif.fov}mm` : ''} ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec` : '';
-  const timestamp = object.exif.created ? moment(object.exif.created).format(window.options.dateShort) : 'Date unknown';
+  const timestamp = object.exif.created ? moment(object.exif.created).format(config.options.dateShort) : 'Date unknown';
   const root = window.user && window.user.root ? window.user.root : 'media/';
 
   const thumb = document.createElement('div');
@@ -103,7 +104,7 @@ function printResult(object) {
 
   const desc = document.createElement('div');
   desc.className = 'col description';
-  desc.style.display = window.options.listDetails ? 'block' : 'none';
+  desc.style.display = config.options.listDetails ? 'block' : 'none';
   desc.innerHTML = `
     <p class="listtitle">${decodeURIComponent(object.image).replace(root, '')}</p>
     ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
@@ -136,25 +137,25 @@ async function thumbButtons(evt, show) {
 // resize gallery view depending on user configuration
 export async function resize() {
   const thumbSize = parseInt($('#thumbsize')[0].value);
-  if (window.options.listThumbSize !== thumbSize) window.options.listThumbSize = thumbSize;
+  if (config.options.listThumbSize !== thumbSize) config.options.listThumbSize = thumbSize;
 
-  document.documentElement.style.setProperty('--thumbSize', `${window.options.listThumbSize}px`);
-  $('#thumblabel').text(`Size: ${window.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbSize', `${config.options.listThumbSize}px`);
+  $('#thumblabel').text(`Size: ${config.options.listThumbSize}px`);
 
-  const widthImg = window.options.fixWidth ? `${window.options.listThumbSize}px` : '';
-  document.documentElement.style.setProperty('--thumbHeight', `${window.options.listThumbSize}px`);
-  document.documentElement.style.setProperty('--thumbImgHeight', `${window.options.listThumbSize}px`);
+  const widthImg = config.options.fixWidth ? `${config.options.listThumbSize}px` : '';
+  document.documentElement.style.setProperty('--thumbHeight', `${config.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbImgHeight', `${config.options.listThumbSize}px`);
   document.documentElement.style.setProperty('--thumbWidth', widthImg);
   document.documentElement.style.setProperty('--thumbImgWidth', widthImg);
 
-  // const fixedSize = 16 + window.options.listThumbSize;
-  // const width = window.options.fixWidth ? `${fixedSize}px` : '';
+  // const fixedSize = 16 + config.options.listThumbSize;
+  // const width = config.options.fixWidth ? `${fixedSize}px` : '';
   // document.documentElement.style.setProperty('--listItemHeight', `${fixedSize}px`);
   // document.documentElement.style.setProperty('--listItemWidth', width);
 
-  document.documentElement.style.setProperty('--descWidth', `${2 * window.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--descWidth', `${2 * config.options.listThumbSize}px`);
 
-  $('body').get(0).style.setProperty('--btntiny', `${Math.round(window.options.listThumbSize / 5)}px`);
+  $('body').get(0).style.setProperty('--btntiny', `${Math.round(config.options.listThumbSize / 5)}px`);
 }
 
 // adds items to gallery view on scroll event - infinite scroll
@@ -165,7 +166,7 @@ export async function scroll(images, divider) {
   const totalHeight = Math.trunc(document.getElementById('results').scrollHeight);
   if (visibleHeight >= 0.95 * totalHeight && current < images.length) {
     const t0 = performance.now();
-    const count = Math.min(window.options.listItemCount, images.length - current);
+    const count = Math.min(config.options.listItemCount, images.length - current);
     const items = [];
     for (let i = current; i < current + count; i++) {
       if (!images[i].thumbnail) images[i].thumbnail = indexdb.thumbnail(images[i].image);
@@ -188,13 +189,13 @@ export async function scroll(images, divider) {
     // $('.listitem').mouseleave((evt) => thumbButtons(evt, false));
     $('.listitem').on('contextmenu', (evt) => $(evt.target).parent().find('.btn-tiny').show());
     $('.description').on('click', (evt) => $(evt.target).parent().find('.btn-tiny').show());
-    $('.description').toggle(window.options.listDetails);
+    $('.description').toggle(config.options.listDetails);
   }
   $('#results').on('scroll', () => scroll(images, divider));
 }
 
 // redraws gallery view and rebuilds sidebar menu
-export async function redraw(images, divider = window.options.listDivider, clear = true) {
+export async function redraw(images, divider = config.options.listDivider, clear = true) {
   resize();
   const dt = new Date();
   const base = new Date(dt.getFullYear(), dt.getMonth(), 0).getTime();

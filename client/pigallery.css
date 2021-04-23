@@ -31,7 +31,7 @@ li::marker { font-size: 0; }
 .input { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); width: 50%; height: 2.5rem; border-radius: 0; }
 .input:hover { background: var(--foreground); }
 .input:focus { background: var(--foreground); }
-.label { display: flex; margin-left: 30px; align-self: center; float: left; clear: left; min-width: 5rem; text-align: right; }
+.label { display: flex; margin-left: 30px; align-self: center; min-width: 5rem; }
 .options { margin: 0 1rem 0.2rem 1rem; padding: 0 1rem 0 1rem; outline: none; border: none; background: var(--inactive); height: 1.5rem; border-radius: 0; position: -webkit-sticky; position: sticky; left: 220px; }
 .options:hover { background: var(--foreground); }
 .options:focus { background: var(--foreground); }

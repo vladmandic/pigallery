@@ -100,7 +100,7 @@ function calculateMaxScores(scores, numBoxes, numClasses, config) {
   return [maxes, classes];
 }
 
-export async function detect(model, image, userConfig) {
+export async function detect(model, image, userConfig = {}) {
   // allow changes of configurations on the fly to play with nms settings
   if (userConfig) model.config = { ...model.config, ...userConfig };
 
@@ -164,7 +164,7 @@ export async function detect(model, image, userConfig) {
   // console.log(`allocated: ${Math.trunc(tf.memory().numBytesInGPUAllocated / 1024 / 1024)} MB free: ${Math.trunc(tf.memory().numBytesInGPUFree / 1024 / 1024)} MB limit: ${Math.trunc(tf.engine().backendInstance.numMBBeforeWarning)} MB`);
 
   // create result object
-  const detected = [];
+  const detected:Array<{ model: string, score: number, id: number, class: string, box: { x: number, y: number, width: number, height: number } }> = [];
   for (const i in nms) {
     const id = parseInt(nms[i]);
     const scaleOutput = ((boxes[id][0] > 0 && boxes[id][0] < 1) || (boxes[id][1] > 0 && boxes[id][1] < 1));

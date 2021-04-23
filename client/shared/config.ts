@@ -1,9 +1,8 @@
-// @ts-nocheck
-
 /* eslint-disable no-multi-spaces */
 
 import $ from 'jquery';
 import * as log from './log';
+import { user } from './user';
 
 // TFJS Configuration
 const config = {
@@ -16,6 +15,7 @@ const config = {
   facing: true,            // webcam facing front or back
   memory: true,            // set webgl memory hard limit
   autoreload: true,        // auto reload processing window on error
+  floatPrecision: true,    // use 32-bit float precision
   cacheAssets: true,       // pwa setting
   cacheMedia: false,       // pwa setting
   cacheModels: false,      // pwa setting
@@ -70,7 +70,10 @@ function colorHex(str) {
   return ctx.fillStyle;
 }
 
-window.themes = [
+// eslint-disable-next-line import/no-mutable-exports
+let theme;
+
+const themes = [
   {
     name: 'Light',
     map: 'light',
@@ -135,7 +138,7 @@ window.themes = [
 ];
 
 // user configurable options & defalt values, stored in browsers local storage
-window.options = {
+const options = {
   get listItemCount() { return parseInt(localStorage.getItem('listItemCount') || '100'); },
   set listItemCount(val) { localStorage.setItem('listItemCount', val.toString()); },
 
@@ -209,23 +212,23 @@ window.options = {
   set theme(val) { localStorage.setItem('theme', val.toString()); },
 };
 
-async function setTheme(theme = null) {
-  window.theme = theme ? window.themes[theme] : window.themes[window.options.theme];
-  log.debug('Options:', window.options);
-  log.debug(`Theme: ${window.theme?.name} ${window.options.theme}`);
-  if (!window.theme) return;
-  document.documentElement.style.setProperty('--body', window.theme.body);
-  document.documentElement.style.setProperty('--background', window.theme.background);
-  document.documentElement.style.setProperty('--gradient', window.theme.gradient);
-  document.documentElement.style.setProperty('--foreground', window.theme.foreground);
-  document.documentElement.style.setProperty('--text', window.theme.text);
-  document.documentElement.style.setProperty('--title', window.theme.title);
-  document.documentElement.style.setProperty('--highlight', window.theme.highlight);
-  document.documentElement.style.setProperty('--shadow', window.theme.shadow);
-  document.documentElement.style.setProperty('--link', window.theme.link);
-  document.documentElement.style.setProperty('--inactive', window.theme.inactive);
-  document.documentElement.style.setProperty('--thumbSize', window.options.listThumbSize);
-  document.documentElement.style.setProperty('--fontSize', window.options.fontSize);
+async function setTheme(name = null) {
+  theme = name ? themes[name || 0] : themes[options.theme];
+  log.debug('Options:', options);
+  log.debug(`Theme: ${theme?.name} ${options.theme}`);
+  if (!theme) return;
+  document.documentElement.style.setProperty('--body', theme.body);
+  document.documentElement.style.setProperty('--background', theme.background);
+  document.documentElement.style.setProperty('--gradient', theme.gradient);
+  document.documentElement.style.setProperty('--foreground', theme.foreground);
+  document.documentElement.style.setProperty('--text', theme.text);
+  document.documentElement.style.setProperty('--title', theme.title);
+  document.documentElement.style.setProperty('--highlight', theme.highlight);
+  document.documentElement.style.setProperty('--shadow', theme.shadow);
+  document.documentElement.style.setProperty('--link', theme.link);
+  document.documentElement.style.setProperty('--inactive', theme.inactive);
+  document.documentElement.style.setProperty('--thumbSize', `${options.listThumbSize}`);
+  document.documentElement.style.setProperty('--fontSize', options.fontSize);
 }
 
 async function done() {
@@ -235,12 +238,15 @@ async function done() {
     $('#user').text('');
     $('#btn-user').hide();
   } else {
-    $('#btn-user').prop('title', log.str(window.user));
+    $('#btn-user').prop('title', log.str(user));
   }
 }
 
 export {
   config as default,
   setTheme,
+  themes,
+  theme,
+  options,
   done,
 };

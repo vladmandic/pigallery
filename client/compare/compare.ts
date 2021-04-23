@@ -118,11 +118,11 @@ async function print(file, image, results) {
   }
   const item = document.createElement('div');
   item.className = 'listitem';
-  // item.style = `min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px; contain-intrinsic-size: ${16 + window.options.listThumbSize}px`;
-  item.setAttribute('style', `min-height: ${16 + window.options.listThumbSize}px; max-height: ${16 + window.options.listThumbSize}px; contain-intrinsic-size: ${16 + window.options.listThumbSize}px`);
+  // item.style = `min-height: ${16 + config.options.listThumbSize}px; max-height: ${16 + config.options.listThumbSize}px; contain-intrinsic-size: ${16 + config.options.listThumbSize}px`;
+  item.setAttribute('style', `min-height: ${16 + config.options.listThumbSize}px; max-height: ${16 + config.options.listThumbSize}px; contain-intrinsic-size: ${16 + config.options.listThumbSize}px`);
   item.innerHTML = `
     <div class="col thumbnail">
-      <img class="thumbnail" src="${image.thumbnail}" align="middle" height=${window.options.listThumbSize} tag="${file}">
+      <img class="thumbnail" src="${image.thumbnail}" align="middle" height=${config.options.listThumbSize} tag="${file}">
     </div>
     <div class="col description">
       <p class="listtitle">${file}</p>
@@ -226,22 +226,22 @@ async function detect() {
 }
 
 async function resize() {
-  document.documentElement.style.setProperty('--thumbSize', `${window.options.listThumbSize}px`);
-  document.documentElement.style.setProperty('--thumbHeight', `${window.options.listThumbSize}px`);
-  document.documentElement.style.setProperty('--thumbImgHeight', `${window.options.listThumbSize}px`);
-  document.documentElement.style.setProperty('--thumbWidth', `${window.options.listThumbSize}px`);
-  document.documentElement.style.setProperty('--thumbImgWidth', `${window.options.listThumbSize}px`);
-  document.documentElement.style.setProperty('--listItemHeight', `${16 + window.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbSize', `${config.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbHeight', `${config.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbImgHeight', `${config.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbWidth', `${config.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--thumbImgWidth', `${config.options.listThumbSize}px`);
+  document.documentElement.style.setProperty('--listItemHeight', `${16 + config.options.listThumbSize}px`);
   document.documentElement.style.setProperty('--listItemWidth', '');
   document.documentElement.style.setProperty('--descWidth', '80vw');
 
   document.getElementById('main').style.height = `${window.innerHeight - document.getElementById('log').offsetHeight - document.getElementById('navbar').offsetHeight}px`;
 
-  $('body').css('background', `radial-gradient(at 50% 100%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+  $('body').css('background', `radial-gradient(at 50% 100%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
   $(document).on('mousemove', (event) => {
     const mouseXpercentage = Math.round(event.pageX / $(window).width() * 100);
     const mouseYpercentage = Math.round(event.pageY / $(window).height() * 100);
-    $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${window.theme.gradient} 0, ${window.theme.background} 100%, ${window.theme.background} 100%)`);
+    $('body').css('background', `radial-gradient(at ${mouseXpercentage}% ${mouseYpercentage}%, ${config.theme.gradient} 0, ${config.theme.background} 100%, ${config.theme.background} 100%)`);
   });
 }
 
