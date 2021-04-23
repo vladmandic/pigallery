@@ -23,8 +23,8 @@ function addDividers(object, title) {
     if (curr !== prev) divider = curr;
   }
   if (config.options.listDivider === 'size') {
-    const curr = Math.round(object.pixels / 1000 / 1000);
-    const prev = Math.round((previous ? previous.pixels : 1) / 1000 / 1000);
+    const curr = `${Math.round(object.pixels / 1000 / 1000)} MP`;
+    const prev = `${Math.round((previous ? previous.pixels : 1) / 1000 / 1000)} MP`;
     if (curr !== prev) divider = curr;
   }
   if (config.options.listDivider === 'folder') {

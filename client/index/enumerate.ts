@@ -5,6 +5,8 @@ import { user } from '../shared/user';
 
 let refreshNeeded = true;
 
+let shares:Array<{ key: string, name: string }> = [];
+
 async function setRefresh(refresh = true) {
   if (refresh) refreshNeeded = true;
 }
@@ -157,7 +159,6 @@ async function enumerateNSFW(images) {
 }
 
 async function enumerateShares() {
-  let shares:Array<{ key: string, name: string }> = [];
   if (!user.admin) return shares;
   const t0 = performance.now();
   $('#shares').html('');
@@ -171,6 +172,15 @@ async function enumerateShares() {
   $('#shares').append(html);
   $('#shares').find('li').toggle(false);
   log.debug(t0, 'Enumerated shares:', shares.length);
+  return shares;
+}
+
+let checkedShares = false;
+async function getShares() {
+  if (!checkedShares) {
+    shares = await enumerateShares();
+    checkedShares = true;
+  }
   return shares;
 }
 
@@ -193,4 +203,5 @@ export {
   enumerateNSFW as nsfw,
   enumerateResults as enumerate,
   setRefresh as refresh,
+  getShares,
 };

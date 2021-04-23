@@ -20,9 +20,10 @@ import * as optionsConfig from './options';
 import * as pwa from './pwa-register';
 
 // global variables
-window.filtered = [];
-window.$ = $;
+(window as any).filtered = [];
+(window as any).$ = $;
 const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, store: 0, size: 0, speed: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0, pageMode: '', appMode: '' };
+let directShare;
 
 async function busy(text: string | null = null) {
   // if (text && $('.busy').is(':visible')) return true;
@@ -76,12 +77,12 @@ async function folderHandlers() {
       case 'share':
         $('#share').toggle(true);
         // eslint-disable-next-line no-case-declarations
-        const share = window.shares.find((a) => a.key === path);
-        if (!share.name || !share.key) return;
-        $('#share-name').val(share.name);
-        $('#share-url').val(`${location.origin}?share=${share.key}`);
+        const currentShare = (await enumerate.getShares()).find((a) => a.key === path);
+        if (!currentShare || !currentShare.name || !currentShare.key) return;
+        $('#share-name').val(currentShare.name);
+        $('#share-url').val(`${location.origin}?share=${currentShare.key}`);
         $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
-        window.share = share.key;
+        directShare = currentShare.key;
         window.filtered = await db.refresh();
         break;
       default:
@@ -124,8 +125,8 @@ async function filterResults(input) {
     if (keys.length !== 2) window.filtered = [];
     const key = keys[0].toLowerCase();
     const val = parseInt(keys[1]) || keys[1].toLowerCase();
-    if (key === 'limit') window.filtered = await db.all('date', false, 1, parseInt(keys[1]), null, window.share);
-    else window.filtered = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val }, window.share);
+    if (key === 'limit') window.filtered = await db.all('date', false, 1, parseInt(keys[1]), null, directShare);
+    else window.filtered = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val }, directShare);
   } else if (window.filtered.length === 0) {
     window.filtered = await db.refresh();
   }
@@ -307,12 +308,12 @@ async function sortResults(sort) {
   list.clearPrevious();
   // sort by
   busy('Sorting images');
-  if (sort.includes('alpha-down')) window.filtered = await db.all('name', true, 1, config.options.listItemCount, null, window.share);
-  if (sort.includes('alpha-up')) window.filtered = await db.all('name', false, 1, config.options.listItemCount, null, window.share);
-  if (sort.includes('numeric-down')) window.filtered = await db.all('date', false, 1, config.options.listItemCount, null, window.share);
-  if (sort.includes('numeric-up')) window.filtered = await db.all('date', true, 1, config.options.listItemCount, null, window.share);
-  if (sort.includes('amount-down')) window.filtered = await db.all('size', false, 1, config.options.listItemCount, null, window.share);
-  if (sort.includes('amount-up')) window.filtered = await db.all('size', true, 1, config.options.listItemCount, null, window.share);
+  if (sort.includes('alpha-down')) window.filtered = await db.all('name', true, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('alpha-up')) window.filtered = await db.all('name', false, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('numeric-down')) window.filtered = await db.all('date', false, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('numeric-up')) window.filtered = await db.all('date', true, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('amount-down')) window.filtered = await db.all('size', false, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('amount-up')) window.filtered = await db.all('size', true, 1, config.options.listItemCount, null, directShare);
   // if (sort.includes('similarity')) window.filtered = await db.all('similarity', false); // similarity is calculated, not stored in indexdb
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) config.options.listDivider = 'month';
@@ -327,12 +328,12 @@ async function sortResults(sort) {
   stats.initial = Math.floor(t1 - t0);
   $('#all').focus();
   busy('Loading remaining<br>images in background');
-  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await db.all('name', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
-  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await db.all('name', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
-  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await db.all('date', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
-  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await db.all('date', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
-  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
-  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, window.share));
+  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await db.all('name', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await db.all('name', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await db.all('date', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await db.all('date', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
   log.debug(t1, `Cached images: ${window.filtered.length} fetched remaining`);
   stats.remaining = Math.floor(window.performance.now() - t1);
   // if (window.filtered.length > 0) log.div('log', true, `Loaded ${window.filtered.length} images from cache`);
@@ -375,7 +376,7 @@ async function findDuplicates() {
 async function loadGallery(refresh = false) {
   const chunkSize = 200;
   const cached = await db.count();
-  if (window.share) return;
+  if (directShare) return;
   if (!user.user.user) return;
   $('#progress').text('Requesting');
   if (user.user.user.startsWith('share')) {
@@ -387,7 +388,7 @@ async function loadGallery(refresh = false) {
     busy('Resetting database');
     log.div('log', true, 'Downloading image cache ...');
     await db.reset();
-    if (!window.share) await db.open();
+    if (!directShare) await db.open();
   }
   busy('Loading images<br>in background');
   const updated = new Date().getTime();
@@ -538,7 +539,7 @@ async function initSharesHandler() {
   $('#sharestitle').on('click', async () => {
     const show = $('#share').is(':visible');
     if (!show) {
-      enumerate.shares().then((res) => window.shares = res);
+      enumerate.shares();
       await folderHandlers();
     }
     $('#btn-shareadd').removeClass('fa-minus-square').addClass('fa-plus-square');
@@ -565,14 +566,14 @@ async function initSharesHandler() {
       $.post('/api/share/put', share)
         .done((res) => $('#share-url').val(`${location.origin}?share=${res.key}`))
         .fail(() => $('#share-url').val('error creating share'));
-      enumerate.shares().then((res) => window.shares = res);
+      enumerate.shares();
     } else {
       const name = $('#share-name').val();
       const key = ($('#share-url')?.val() as string).split('=')[1];
       log.debug(t0, `Share remove: ${name} ${key}`);
       fetch(`/api/share/del?rm=${key}`)
         .then(() => {
-          enumerate.shares().then((res) => window.shares = res);
+          enumerate.shares();
         })
         .catch((err) => err);
     }
@@ -625,7 +626,7 @@ async function initHotkeys() {
 
 function initSidebarHandlers() {
   $('#resettitle').on('click', () => {
-    window.share = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
+    directShare = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
     sortResults(config.options.listSortOrder);
   });
   $('#folderstitle').on('click', () => $('#folders').toggle('slow'));
@@ -870,14 +871,14 @@ async function main() {
   log.debug('Starting PiGallery');
   window.addEventListener('beforeinstallprompt', (evt) => installable(evt));
   if (config.default.registerPWA) await pwa.register('/dist/index/pwa-serviceworker.js');
-  window.share = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
+  directShare = (location.search && location.search.startsWith('?share=')) ? location.search.split('=')[1] : null;
   await config.setTheme();
   await animate();
-  await user.get(window.share);
+  await user.get(directShare);
   await showNavbar();
   details.handlers();
   initHotkeys();
-  if (!window.share) await db.open();
+  if (!directShare) await db.open();
 
   // define global functions called from html
   window['details'] = details;
@@ -886,7 +887,7 @@ async function main() {
   window['similarClasses'] = similarClasses;
   window['deleteImage'] = deleteImage;
 
-  if (window.share) log.debug(`Direct link to share: ${window.share}`);
+  if (directShare) log.debug(`Direct link to share: ${directShare}`);
   $('body').on('contextmenu', (evt) => showContextPopup(evt));
   $('body').css('display', 'block');
   $('.collapsible').parent().parent().find('li')

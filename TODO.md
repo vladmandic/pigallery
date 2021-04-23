@@ -6,8 +6,5 @@
 
 ## Client-Side
 
-- Eliminate global variables
-- Switch to TypeScript
-- Enhance CSS rules
+- Eliminate global variables: `window.filtered`
 - Full compatibility testing
-- Strong typing
