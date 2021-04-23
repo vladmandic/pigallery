@@ -26644,7 +26644,7 @@
         ]
       },
       "client/index/list.ts": {
-        "bytes": 10276,
+        "bytes": 10302,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26677,11 +26677,11 @@
         ]
       },
       "client/index/nearest.ts": {
-        "bytes": 3169,
+        "bytes": 3490,
         "imports": []
       },
       "client/index/map.ts": {
-        "bytes": 3661,
+        "bytes": 3691,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -27665,7 +27665,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1053014
+        "bytes": 1053502
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27724,13 +27724,13 @@
             "bytesInOutput": 410
           },
           "client/index/list.ts": {
-            "bytesInOutput": 9585
+            "bytesInOutput": 9604
           },
           "client/index/map.ts": {
-            "bytesInOutput": 3368
+            "bytesInOutput": 3403
           },
           "client/index/nearest.ts": {
-            "bytesInOutput": 2948
+            "bytesInOutput": 3103
           },
           "client/index/enumerate.ts": {
             "bytesInOutput": 7690
@@ -27742,7 +27742,7 @@
             "bytesInOutput": 1572
           }
         },
-        "bytes": 559032
+        "bytes": 559241
       },
       "dist/index/index.css": {
         "imports": [],

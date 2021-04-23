@@ -191,6 +191,7 @@ export async function scroll(images, divider) {
     $('.description').toggle(config.options.listDetails);
   }
   $('#results').on('scroll', () => scroll(images, divider));
+  details.update(images);
 }
 
 // redraws gallery view and rebuilds sidebar menu
