@@ -1,6 +1,6 @@
 # @vladmandic/pigallery  
 
-Version: **3.6.1**  
+Version: **3.6.2**  
 Description: **PiGallery: AI-powered Self-hosted Secure Multi-user Image Gallery and Detailed Image analysis using Machine Learning, EXIF Parsing and Geo Tagging**  
 
 Author: **Vladimir Mandic <mandic00@live.com>**  
@@ -9,16 +9,16 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/04/23 mandic00@live.com
+### **3.6.2** 2021/04/23 mandic00@live.com
 
+- improve map search sensitivity
+- remove all global variables
+- typescript conversion complete
 - refactoring index and details for typescript
 - additional typescript refactoring
 - typescript conversion for process
 - refactor shared modules
 - add score filter on image display
-
-### **origin/master** 2021/04/22 mandic00@live.com
-
 
 ### **3.6.1** 2021/04/22 mandic00@live.com
 

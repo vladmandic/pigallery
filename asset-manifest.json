@@ -27033,7 +27033,7 @@
         ]
       },
       "client/index/pwa-serviceworker.ts": {
-        "bytes": 4147,
+        "bytes": 4165,
         "imports": []
       }
     },
@@ -35782,7 +35782,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 6554
+        "bytes": 6600
       },
       "dist/index/pwa-serviceworker.js": {
         "imports": [],
@@ -35790,10 +35790,10 @@
         "entryPoint": "client/index/pwa-serviceworker.ts",
         "inputs": {
           "client/index/pwa-serviceworker.ts": {
-            "bytesInOutput": 3291
+            "bytesInOutput": 3327
           }
         },
-        "bytes": 3495
+        "bytes": 3531
       }
     }
   }
