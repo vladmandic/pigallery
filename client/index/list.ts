@@ -1,11 +1,10 @@
-// @ts-nocheck
-
 import $ from 'jquery';
 import moment from 'moment';
 import * as log from '../shared/log';
 import * as details from './details';
 import * as indexdb from './indexdb';
 import * as config from '../shared/config';
+import { user } from '../shared/user';
 
 // adds dividiers to list view based on sort order
 let previous;
@@ -83,7 +82,7 @@ function printResult(object) {
   const camera = (object.exif && object.exif.make) ? `Camera | ${object.exif.make || ''} ${object.exif.model || ''} ${object.exif.lens || ''}` : '';
   const settings = (object.exif && object.exif.iso) ? `Settings | ${object.exif.fov ? `${object.exif.fov}mm` : ''} ISO${object.exif.iso || 0} f/${object.exif.apperture || 0} 1/${(1 / (object.exif.exposure || 1)).toFixed(0)}sec` : '';
   const timestamp = object.exif.created ? moment(object.exif.created).format(config.options.dateShort) : 'Date unknown';
-  const root = window.user && window.user.root ? window.user.root : 'media/';
+  const root = user && user.root ? user.root : 'media/';
 
   const thumb = document.createElement('div');
   thumb.className = 'col thumbnail';
@@ -106,7 +105,7 @@ function printResult(object) {
   desc.className = 'col description';
   desc.style.display = config.options.listDetails ? 'block' : 'none';
   desc.innerHTML = `
-    <p class="listtitle">${decodeURIComponent(object.image).replace(root, '')}</p>
+    <p class="listtitle">${decodeURIComponent(object.image).replace(root as string, '')}</p>
     ${timestamp} | Size ${object.naturalSize.width} x ${object.naturalSize.height}<br>
     ${location}<br>
     ${classified}<br>
@@ -124,7 +123,7 @@ function printResult(object) {
 }
 
 async function thumbButtons(evt, show) {
-  let items = [];
+  let items:any = [];
   if (items.length === 0) items = $(evt.target).find('.btn-tiny');
   if (items.length === 0) items = $(evt.target).parent().find('.btn-tiny');
   if (items.length === 0) items = $(evt.relatedTarget).find('.btn-tiny');
@@ -136,7 +135,7 @@ async function thumbButtons(evt, show) {
 
 // resize gallery view depending on user configuration
 export async function resize() {
-  const thumbSize = parseInt($('#thumbsize')[0].value);
+  const thumbSize = parseInt(($('#thumbsize')[0] as HTMLDataElement).value);
   if (config.options.listThumbSize !== thumbSize) config.options.listThumbSize = thumbSize;
 
   document.documentElement.style.setProperty('--thumbSize', `${config.options.listThumbSize}px`);
@@ -162,12 +161,12 @@ export async function resize() {
 let current = 0;
 export async function scroll(images, divider) {
   $('#results').off('scroll');
-  const visibleHeight = Math.trunc(document.getElementById('results').offsetHeight + document.getElementById('results').scrollTop);
-  const totalHeight = Math.trunc(document.getElementById('results').scrollHeight);
+  const visibleHeight = Math.trunc((document.getElementById('results') as HTMLElement).offsetHeight + (document.getElementById('results') as HTMLElement).scrollTop);
+  const totalHeight = Math.trunc((document.getElementById('results') as HTMLElement).scrollHeight);
   if (visibleHeight >= 0.95 * totalHeight && current < images.length) {
     const t0 = performance.now();
     const count = Math.min(config.options.listItemCount, images.length - current);
-    const items = [];
+    const items:Array<HTMLElement> = [];
     for (let i = current; i < current + count; i++) {
       if (!images[i].thumbnail) images[i].thumbnail = indexdb.thumbnail(images[i].image);
       if (!images[i].person) images[i].person = indexdb.person(images[i].image);
@@ -179,7 +178,7 @@ export async function scroll(images, divider) {
       // if (divider) res.appendChild(divider);
       // res.appendChild(item);
     }
-    const res = document.getElementById('results');
+    const res = document.getElementById('results') as HTMLElement;
     for (const item of items) res.appendChild(item);
     current += count;
     log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${images.length}`);
@@ -203,12 +202,12 @@ export async function redraw(images, divider = config.options.listDivider, clear
   location.href = `#${hash}`;
   const t0 = performance.now();
   if (clear) {
-    document.getElementById('results').innerHTML = '';
+    (document.getElementById('results') as HTMLElement).innerHTML = '';
     current = 0;
   }
 
   await scroll(images, divider);
-  document.getElementById('results').scrollTop = 0;
+  (document.getElementById('results') as HTMLElement).scrollTop = 0;
   log.debug(t0, 'Redraw results complete:', images.length, clear);
 }
 

@@ -21,7 +21,7 @@ Repository: **<${app.repository.url}>**
 
 async function update(f) {
   const gitLog = await git.log();
-  // @ts-ignore
+  // @ts-ignore sort not registered
   const log = gitLog.all.sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
 
   let previous = '';

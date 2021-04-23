@@ -111,7 +111,7 @@ export async function getShare(share) {
   return filtered;
 }
 
-export async function all(index: string, direction: boolean, start: number, end: number, tag: object | null, share: string | null) {
+export async function all(index: string, direction: boolean, start: number, end: number, tag: object | null, share: string | null): Promise<any[]> {
   const t0 = performance.now();
   last = { index, direction, start: 1, end: Number.MAX_SAFE_INTEGER, tag, share };
   return new Promise((resolve) => {
@@ -144,7 +144,7 @@ export async function all(index: string, direction: boolean, start: number, end:
                 res.push(e.value);
               } else {
                 for (const val of e.value.tags) {
-                  // @ts-ignore
+                  // @ts-ignore tag & value are unknown here
                   if (val[tag?.tag] === tag?.value) res.push(e.value);
                 }
               }

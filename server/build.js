@@ -54,7 +54,7 @@ async function buildStats(meta) {
     for (const [key, val] of Object.entries(json.metafile.outputs)) {
       if (!key.endsWith('.map')) {
         stats.outputs += 1;
-        // @ts-ignore
+        // @ts-ignore string not assignable to never
         stats.outputFiles.push(key);
         stats.outputBytes += val.bytes;
       }
@@ -73,7 +73,7 @@ async function compile() {
   try {
     const t0 = process.hrtime.bigint();
     buildOptions.entryPoints = [...files, ...jsFiles];
-    // @ts-ignore
+    // @ts-ignore js cannot handle ts defined string enumerators
     const meta = esbuild.buildSync({ ...buildOptions });
     const t1 = process.hrtime.bigint();
     const s = await buildStats(meta);

@@ -24,6 +24,7 @@ import * as pwa from './pwa-register';
 (window as any).$ = $;
 const stats = { images: 0, latency: 0, fetch: 0, interactive: 0, complete: 0, load: 0, store: 0, size: 0, speed: 0, initial: 0, remaining: 0, enumerate: 0, ready: 0, cache: 0, pageMode: '', appMode: '' };
 let directShare;
+let images:Array<any> = [];
 
 async function busy(text: string | null = null) {
   // if (text && $('.busy').is(':visible')) return true;
@@ -60,18 +61,18 @@ async function folderHandlers() {
         log.debug(t0, `Selected path: ${path}`);
         // eslint-disable-next-line no-case-declarations
         const root = user.user && user.user.root ? user.user.root : 'media/';
-        if (window.filtered.length < await db.count()) window.filtered = await db.refresh();
-        if (path !== (root)) window.filtered = window.filtered.filter((a) => escape(a.image).startsWith(path));
+        if (images.length < await db.count()) images = await db.refresh();
+        if (path !== (root)) images = images.filter((a) => escape(a.image).startsWith(path));
         break;
       case 'location':
         log.debug(t0, `Selected location: ${path}`);
-        if (window.filtered.length < await db.count()) window.filtered = await db.refresh();
-        if (path !== 'Unknown') window.filtered = window.filtered.filter((a) => (path.startsWith(escape(a.location.near)) || path.startsWith(escape(a.location.country))));
-        else window.filtered = window.filtered.filter((a) => (!a.location || !a.location.near));
+        if (images.length < await db.count()) images = await db.refresh();
+        if (path !== 'Unknown') images = images.filter((a) => (path.startsWith(escape(a.location.near)) || path.startsWith(escape(a.location.country))));
+        else images = images.filter((a) => (!a.location || !a.location.near));
         break;
       case 'class':
-        if (!window.filtered) window.filtered = [];
-        window.filtered = window.filtered.filter((a) => a.tags.find((b) => (escape(Object.values(b)[0] as string).startsWith(path))));
+        if (!images) images = [];
+        images = images.filter((a) => a.tags.find((b) => (escape(Object.values(b)[0] as string).startsWith(path))));
         log.debug(t0, `Selected class: ${path}`);
         break;
       case 'share':
@@ -83,13 +84,13 @@ async function folderHandlers() {
         $('#share-url').val(`${location.origin}?share=${currentShare.key}`);
         $('#btn-shareadd').removeClass('fa-plus-square').addClass('fa-minus-square');
         directShare = currentShare.key;
-        window.filtered = await db.refresh();
+        images = await db.refresh();
         break;
       default:
     }
-    await enumerate.enumerate(window.filtered);
+    await enumerate.enumerate(images);
     folderHandlers();
-    list.redraw(window.filtered);
+    list.redraw(images);
     busy();
   });
 }
@@ -97,8 +98,8 @@ async function folderHandlers() {
 // used by filterresults
 function filterWord(word) {
   const skip = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during', 'on', 'having'];
-  if (skip.includes(word)) return window.filtered;
-  const res = window.filtered.filter((obj) => {
+  if (skip.includes(word)) return images;
+  const res = images.filter((obj) => {
     for (const tag of obj.tags) {
       const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0] as string : '';
       const found = str.startsWith(word);
@@ -122,15 +123,15 @@ async function filterResults(input) {
   }
   if (selective) {
     const keys = selective.split(':');
-    if (keys.length !== 2) window.filtered = [];
+    if (keys.length !== 2) images = [];
     const key = keys[0].toLowerCase();
     const val = parseInt(keys[1]) || keys[1].toLowerCase();
-    if (key === 'limit') window.filtered = await db.all('date', false, 1, parseInt(keys[1]), null, directShare);
-    else window.filtered = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val }, directShare);
-  } else if (window.filtered.length === 0) {
-    window.filtered = await db.refresh();
+    if (key === 'limit') images = await db.all('date', false, 1, parseInt(keys[1]), null, directShare);
+    else images = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, { tag: key, value: val }, directShare);
+  } else if (images.length === 0) {
+    images = await db.refresh();
   }
-  let full = [];
+  let full:Array<any> = [];
   const all:Array<any> = [];
   config.options.listDivider = 'search';
   list.redraw(full, 'search results', true);
@@ -156,10 +157,10 @@ async function filterResults(input) {
       }
     }
   }
-  window.filtered = all;
+  images = all;
   $('#search-result').html(`"${input}"<br>exact:${full.length} total:${all.length}`);
   log.debug(t0, `Searching for "${input}" exact:${full.length} partial:${all.length - full.length} total:${all.length} images`);
-  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
+  enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   busy();
 }
 
@@ -193,14 +194,14 @@ async function similarImage(image) {
   busy('Searching for<br>similar images');
   const t0 = performance.now();
   config.options.listDivider = 'similarity';
-  const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
-  for (const img of window.filtered) img.similarity = 100 - hash.distance(img.phash, object.phash);
-  window.filtered = window.filtered
+  const object = images.find((a) => a.image === decodeURIComponent(image));
+  for (const img of images) img.similarity = 100 - hash.distance(img.phash, object.phash);
+  images = images
     .filter((a) => a.similarity > 70)
     .sort((a, b) => b.similarity - a.similarity);
-  log.debug(t0, `Similar: ${window.filtered.length} images`);
-  list.redraw(window.filtered);
-  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
+  log.debug(t0, `Similar: ${images.length} images`);
+  list.redraw(images);
+  enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   busy();
 }
 
@@ -222,7 +223,7 @@ async function similarPerson(image) {
   busy('Searching for<br>similar people');
   const t0 = performance.now();
   config.options.listDivider = 'similarity';
-  const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
+  const object = images.find((a) => a.image === decodeURIComponent(image));
   const descriptor:Float32Array[] = [];
   if (object.person) {
     for (const p of object.person) {
@@ -235,14 +236,14 @@ async function similarPerson(image) {
     return;
   }
   let targets = 0;
-  for (const i in window.filtered) {
+  for (const i in images) {
     const isPerson = (img) => {
       const found = img.detect.filter((a) => a.class === 'person');
       return found && img.person && img.person.length > 0;
     };
     const target:Float32Array[] = [];
-    if (isPerson(window.filtered[i])) {
-      for (const p of window.filtered[i].person) {
+    if (isPerson(images[i])) {
+      for (const p of images[i].person) {
         if (p.descriptor) target.push(new Float32Array(Object.values(p.descriptor)));
       }
       let best = 1;
@@ -254,18 +255,18 @@ async function similarPerson(image) {
           if (distance < best) best = distance;
         }
       }
-      window.filtered[i].similarity = 100 * best;
+      images[i].similarity = 100 * best;
     } else {
-      window.filtered[i].similarity = 100;
+      images[i].similarity = 100;
     }
   }
-  window.filtered = window.filtered
+  images = images
     .filter((a) => (a.person && a.person[0]) && (a.similarity > 50))
     .sort((a, b) => b.similarity - a.similarity);
   log.debug(t0, `Source: ${descriptor.length} Target: ${targets} Compares:${count}`);
-  log.debug(t0, `Similar: ${window.filtered.length} persons`);
-  list.redraw(window.filtered);
-  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
+  log.debug(t0, `Similar: ${images.length} persons`);
+  list.redraw(images);
+  enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   busy();
 }
 
@@ -273,22 +274,22 @@ async function similarClasses(image) {
   busy('Searching for<br>similar classes');
   const t0 = performance.now();
   config.options.listDivider = 'similarity';
-  const object = window.filtered.find((a) => a.image === decodeURIComponent(image));
+  const object = images.find((a) => a.image === decodeURIComponent(image));
 
   const valid = ['classified', 'detected', 'camera', 'conditions', 'zoom', 'near'];
   const tags = object.tags.filter((obj) => valid.includes(Object.keys(obj)[0])).map((a) => Object.values(a)[0]);
   const count = tags.length;
-  for (const i in window.filtered) {
-    const t = window.filtered[i].tags.filter((obj) => valid.includes(Object.keys(obj)[0])).map((a) => Object.values(a)[0]);
+  for (const i in images) {
+    const t = images[i].tags.filter((obj) => valid.includes(Object.keys(obj)[0])).map((a) => Object.values(a)[0]);
     const found = tags.filter((a) => t.includes(a));
-    window.filtered[i].similarity = Math.round(100.0 * found.length / count);
+    images[i].similarity = Math.round(100.0 * found.length / count);
   }
-  window.filtered = window.filtered
+  images = images
     .filter((a) => a.similarity > 55)
     .sort((a, b) => b.similarity - a.similarity);
-  log.debug(t0, `Similar: ${window.filtered.length} classes`);
-  list.redraw(window.filtered);
-  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
+  log.debug(t0, `Similar: ${images.length} classes`);
+  list.redraw(images);
+  enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   busy();
 }
 
@@ -304,50 +305,50 @@ async function sortResults(sort) {
 
   const t0 = performance.now();
   log.debug(t0, `Sorting: ${sort.replace('navlinebutton fad sort fa-', '')}`);
-  if (sort.includes('random')) shuffle(window.filtered);
+  if (sort.includes('random')) shuffle(images);
   list.clearPrevious();
   // sort by
   busy('Sorting images');
-  if (sort.includes('alpha-down')) window.filtered = await db.all('name', true, 1, config.options.listItemCount, null, directShare);
-  if (sort.includes('alpha-up')) window.filtered = await db.all('name', false, 1, config.options.listItemCount, null, directShare);
-  if (sort.includes('numeric-down')) window.filtered = await db.all('date', false, 1, config.options.listItemCount, null, directShare);
-  if (sort.includes('numeric-up')) window.filtered = await db.all('date', true, 1, config.options.listItemCount, null, directShare);
-  if (sort.includes('amount-down')) window.filtered = await db.all('size', false, 1, config.options.listItemCount, null, directShare);
-  if (sort.includes('amount-up')) window.filtered = await db.all('size', true, 1, config.options.listItemCount, null, directShare);
-  // if (sort.includes('similarity')) window.filtered = await db.all('similarity', false); // similarity is calculated, not stored in indexdb
+  if (sort.includes('alpha-down')) images = await db.all('name', true, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('alpha-up')) images = await db.all('name', false, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('numeric-down')) images = await db.all('date', false, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('numeric-up')) images = await db.all('date', true, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('amount-down')) images = await db.all('size', false, 1, config.options.listItemCount, null, directShare);
+  if (sort.includes('amount-up')) images = await db.all('size', true, 1, config.options.listItemCount, null, directShare);
+  // if (sort.includes('similarity')) images = await db.all('similarity', false); // similarity is calculated, not stored in indexdb
   // group by
   if (sort.includes('numeric-down') || sort.includes('numeric-up')) config.options.listDivider = 'month';
   else if (sort.includes('amount-down') || sort.includes('amount-up')) config.options.listDivider = 'size';
   else if (sort.includes('alpha-down') || sort.includes('alpha-up')) config.options.listDivider = 'folder';
   else if (sort.includes('similarity')) config.options.listDivider = 'similarity';
   else config.options.listDivider = '';
-  list.redraw(window.filtered);
+  list.redraw(images);
   $('#splash').toggle(false);
-  log.debug(t0, `Cached images: ${window.filtered.length} fetched initial`);
+  log.debug(t0, `Cached images: ${images.length} fetched initial`);
   const t1 = performance.now();
   stats.initial = Math.floor(t1 - t0);
   $('#all').focus();
   busy('Loading remaining<br>images in background');
-  if (sort.includes('alpha-down')) window.filtered = window.filtered.concat(await db.all('name', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
-  if (sort.includes('alpha-up')) window.filtered = window.filtered.concat(await db.all('name', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
-  if (sort.includes('numeric-down')) window.filtered = window.filtered.concat(await db.all('date', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
-  if (sort.includes('numeric-up')) window.filtered = window.filtered.concat(await db.all('date', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
-  if (sort.includes('amount-down')) window.filtered = window.filtered.concat(await db.all('size', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
-  if (sort.includes('amount-up')) window.filtered = window.filtered.concat(await db.all('size', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
-  log.debug(t1, `Cached images: ${window.filtered.length} fetched remaining`);
+  if (sort.includes('alpha-down')) images = images.concat(await db.all('name', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('alpha-up')) images = images.concat(await db.all('name', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('numeric-down')) images = images.concat(await db.all('date', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('numeric-up')) images = images.concat(await db.all('date', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('amount-down')) images = images.concat(await db.all('size', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  if (sort.includes('amount-up')) images = images.concat(await db.all('size', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
+  log.debug(t1, `Cached images: ${images.length} fetched remaining`);
   stats.remaining = Math.floor(window.performance.now() - t1);
-  // if (window.filtered.length > 0) log.div('log', true, `Loaded ${window.filtered.length} images from cache`);
-  if (window.filtered.length === 0) log.div('log', true, 'Image cache empty');
-  if (!loadTried && window.filtered.length === 0) {
+  // if (images.length > 0) log.div('log', true, `Loaded ${images.length} images from cache`);
+  if (images.length === 0) log.div('log', true, 'Image cache empty');
+  if (!loadTried && images.length === 0) {
     loadTried = true;
     // eslint-disable-next-line no-use-before-define
     await loadGallery(false);
   }
   busy('Enumerating images');
-  enumerate.enumerate(window.filtered).then(folderHandlers).catch((err) => err);
+  enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   stats.enumerate = Math.floor(window.performance.now() - t1);
-  // log.div('log', true, 'Displaying: ', window.filtered.length, ' images');
-  list.scroll(window.filtered, null); // just updates images list for future scroll events
+  // log.div('log', true, 'Displaying: ', images.length, ' images');
+  list.scroll(images, null); // just updates images list for future scroll events
   busy();
 }
 
@@ -355,21 +356,21 @@ async function sortResults(sort) {
 async function findDuplicates() {
   busy('Searching for<br>duplicate images');
 
-  log.div('log', true, `Analyzing ${window.filtered.length} images for similarity ...`);
+  log.div('log', true, `Analyzing ${images.length} images for similarity ...`);
   const t0 = performance.now();
   list.clearPrevious();
 
   const f = '/dist/index/worker.js';
   const worker = new Worker(f);
   worker.addEventListener('message', (msg) => {
-    window.filtered = msg.data;
+    images = msg.data;
     const t1 = performance.now();
-    log.div('log', true, `Found ${window.filtered.length} similar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    log.div('log', true, `Found ${images.length} similar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
     sortResults('similarity');
     busy();
   });
   // const all = await db.all();
-  worker.postMessage(window.filtered);
+  worker.postMessage(images);
 }
 
 // loads images, displays gallery and enumerates sidebar
@@ -413,7 +414,7 @@ async function loadGallery(refresh = false) {
     if (totalImages > 0) enumerate.refresh();
   }
   let perf = 0;
-  let images = 0;
+  let imagesCount = 0;
   if (pages > 0) {
     const promisesReq:Array<any> = [];
     const promisesData:Array<any> = [];
@@ -435,13 +436,13 @@ async function loadGallery(refresh = false) {
           progress = Math.min(100, Math.round(100 * dlSize / totalSize));
           perf = Math.round(dlSize / (performance.now() - t0));
           const t2 = performance.now();
-          images += json.length;
+          imagesCount += json.length;
           await db.store(json);
           const t3 = performance.now();
           stats.store += t3 - t2;
-          log.debug('Donwloading', `page:${page} progress:${progress}% images:${images} / ${totalImages} bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
+          log.debug('Donwloading', `page:${page} progress:${progress}% images:${imagesCount} / ${totalImages} bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
           if (progress >= 98) $('#progress').html(`Creating cache<br>images:${totalImages}<br>${totalSize.toLocaleString()} bytes`);
-          else $('#progress').html(`Downloading ${progress}%:<br>${images} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+          else $('#progress').html(`Downloading ${progress}%:<br>${imagesCount} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
           return true;
         });
         return true;
@@ -456,7 +457,7 @@ async function loadGallery(refresh = false) {
   const current = await db.count();
   const dl = (current - cached) > 0 ? `performance: ${Math.round(dlSize / (t1 - t0)).toLocaleString()} KB/sec ` : '';
   log.div('log', true, `Download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${dl}updated since ${dt}`);
-  // window.filtered = await db.all();
+  // images = await db.all();
   config.options.lastUpdated = updated;
   stats.size = dlSize;
   stats.load = Math.round(t1 - t0);
@@ -476,7 +477,7 @@ function resizeViewport() {
   const viewportScale = Math.min(1, Math.round(100 * window.outerWidth / 800) / 100);
   (document.querySelector('meta[name=viewport]') as HTMLElement).setAttribute('content', `width=device-width, shrink-to-fit=yes, initial-scale=${viewportScale}`);
 
-  if ($('#popup').css('display') !== 'none') details.show(window.filtered);
+  if ($('#popup').css('display') !== 'none') details.show(images);
 
   const top = $('#navbar').height() || 0;
   const height = window.innerHeight - top;
@@ -557,7 +558,7 @@ async function initSharesHandler() {
       const share:any = {};
       share.creator = user.user.user;
       share.name = $('#share-name').val();
-      share.images = window.filtered.map((a) => a.image);
+      share.images = images.map((a) => a.image);
       log.debug(t0, `Share create: creator: ${share.creator} name: ${share.name} images: ${share.images.length.toLocaleString()} size: ${JSON.stringify(share).length.toLocaleString()} bytes`);
       if (!share.creator || !share.name || ((share.name.length < 2) || !share.images) || (share.images.length < 1)) {
         $('#share-url').val('invalid data');
@@ -723,7 +724,7 @@ async function initMenuHandlers() {
 
   // navbar map
   $('#btn-map').on('click', () => {
-    map.show(window.filtered, $('btn-map').hasClass('fa-map-marked'));
+    map.show(images, $('btn-map').hasClass('fa-map-marked'));
   });
 
   // navline search input
@@ -791,7 +792,7 @@ async function initMenuHandlers() {
 
   // navbar slideshow
   $('#btn-slide').on('click', () => {
-    details.show(window.filtered[0].image);
+    details.show(images[0].image);
     details.slideShow(true);
   });
 
@@ -818,7 +819,7 @@ async function hashChange(evt) {
   const source = parseInt(evt.oldURL.substr(evt.oldURL.indexOf('#') + 1));
   if (source > target) {
     const top = $('#results').scrollTop() === 0;
-    const all = await db.count() - window.filtered.length;
+    const all = await db.count() - images.length;
     if (top && all === 0) {
       log.debug(t0, 'Exiting ...');
     } else {
@@ -838,14 +839,14 @@ async function animate() {
 }
 
 async function perfDetails() {
-  if (window.PerformanceNavigationTiming) {
+  if (typeof PerformanceNavigationTiming !== 'undefined') {
     const perf = performance.getEntriesByType('navigation')[0];
     stats.latency = Math.round(perf['fetchStart']);
     stats.fetch = Math.round(perf['responseEnd']);
     stats.interactive = Math.round(perf['domInteractive']);
     stats.complete = Math.round(perf.duration);
     // log.debug('Performance:', perf);
-  } else if (window.performance) {
+  } else {
     log.debug('Performance:', performance.timing);
   }
 }
@@ -904,8 +905,8 @@ async function main() {
   await initSharesHandler();
   await initSidebarHandlers();
 
-  stats.images = window.filtered.length;
-  stats.ready = Math.floor(window.performance.now() - t0);
+  stats.images = images.length;
+  stats.ready = Math.floor(performance.now() - t0);
   stats.pageMode = parent.location.href === location.href ? 'Standalone' : 'Frame';
   stats.appMode = matchMedia('(display-mode: standalone)').matches ? 'Standalone' : 'Browser';
 

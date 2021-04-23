@@ -26,7 +26,7 @@ export async function load(userConfig) {
   const modelPath = (!loadOpts.fromTFHub && !model.config.modelPath.endsWith('model.json')) ? `${model.config.modelPath}/model.json` : model.config.modelPath; // append model.json if not present
   try {
     const saveConfig = model.config;
-    // @ts-ignore
+    // @ts-ignore typescript error due to appending extra properties
     model = await tf.loadGraphModel(modelPath, loadOpts);
     model.config = saveConfig;
     model['name'] = model.config.name;

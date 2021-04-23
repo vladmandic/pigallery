@@ -57,10 +57,10 @@ const config = {
     lineColor: 'rgba(125, 255, 255, 0.6)',
     font: 'small-caps 1rem "Segoe UI"',
   },
-  classify: {},
-  detect: {},
-  human: {},
-  models: { classify: [], detect: [], person: {}, initial: true },
+  classify: <any>{},
+  detect: <any>{},
+  human: <any>{ },
+  models: { classify: <any>[], detect: <any>[], various: <any>[], person: {}, initial: true },
 };
 
 function colorHex(str) {

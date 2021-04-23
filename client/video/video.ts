@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 // css-imports used by esbuild
 import '../../assets/bootstrap.css';
 import '../../assets/fontawesome.css';
@@ -104,33 +102,31 @@ async function cameraSetup() {
 }
 
 function initHumanConfig() {
-  if (!config.default.human) {
-    const myConfig = {
-      modelBasePath: '',
-      face: {
-        enabled: false,
-        detector: { modelPath: '@vladmandic/human/models/blazeface-back.json' },
-        mesh: { modelPath: '@vladmandic/human/models/facemesh.json' },
-        iris: { modelPath: '@vladmandic/human/models/iris.json' },
-        description: { modelPath: '@vladmandic/human/models/faceres.json' },
-        emotion: { modelPath: '@vladmandic/human/models/emotion.json' },
-      },
-      body: {
-        enabled: false,
-        modelPath: '@vladmandic/human/models/posenet.json',
-      },
-      hand: {
-        enabled: false,
-        detector: { modelPath: '@vladmandic/human/models/handdetect.json' },
-        skeleton: { modelPath: '@vladmandic/human/models/handskeleton.json' },
-      },
-      gesture: {
-        enabled: true,
-      },
-    };
-    const human = new Human(myConfig);
-    config.default.human = JSON.parse(JSON.stringify(human.config));
-  }
+  const myConfig = {
+    modelBasePath: '',
+    face: {
+      enabled: false,
+      detector: { modelPath: '@vladmandic/human/models/blazeface-back.json' },
+      mesh: { modelPath: '@vladmandic/human/models/facemesh.json' },
+      iris: { modelPath: '@vladmandic/human/models/iris.json' },
+      description: { modelPath: '@vladmandic/human/models/faceres.json' },
+      emotion: { modelPath: '@vladmandic/human/models/emotion.json' },
+    },
+    body: {
+      enabled: false,
+      modelPath: '@vladmandic/human/models/posenet.json',
+    },
+    hand: {
+      enabled: false,
+      detector: { modelPath: '@vladmandic/human/models/handdetect.json' },
+      skeleton: { modelPath: '@vladmandic/human/models/handskeleton.json' },
+    },
+    gesture: {
+      enabled: true,
+    },
+  };
+  const human = new Human(myConfig);
+  config.default.human = JSON.parse(JSON.stringify(human.config));
 }
 
 async function menuSetup() {
@@ -253,8 +249,7 @@ async function menuSetup() {
 
 async function main() {
   log.debug(location.href);
-  // @ts-ignore
-  window.user = await user.get();
+  await user.get();
   await config.setTheme();
   await config.done();
   await menuSetup();
