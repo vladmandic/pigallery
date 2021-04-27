@@ -102,7 +102,7 @@ function filterWord(word) {
   const res = images.filter((obj) => {
     for (const tag of obj.tags) {
       const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0] as string : '';
-      const found = str.startsWith(word);
+      const found = str.toString().startsWith(word);
       if (found) return true;
     }
     return false;
@@ -540,12 +540,12 @@ async function initSharesHandler() {
   $('#sharestitle').on('click', async () => {
     const show = $('#share').is(':visible');
     if (!show) {
-      enumerate.shares();
+      await enumerate.shares();
       await folderHandlers();
     }
     $('#btn-shareadd').removeClass('fa-minus-square').addClass('fa-plus-square');
-    $('#share').toggle(!show);
     $('#shares').find('li').toggle(!show);
+    $('#share').toggle(!show);
     $('#share-name').val('');
     $('#share-url').val('');
     $('#share-name').focus();
@@ -724,7 +724,7 @@ async function initMenuHandlers() {
 
   // navbar map
   $('#btn-map').on('click', () => {
-    map.show(images, $('btn-map').hasClass('fa-map-marked'));
+    map.show(images, $('btn-map').hasClass('fa-map-marked'), directShare);
   });
 
   // navline search input

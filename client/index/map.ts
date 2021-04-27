@@ -8,19 +8,18 @@ import * as config from '../shared/config';
 let mapContainer;
 let L;
 
-async function find(images, lat, lon) {
+async function find(images, lat, lon, share) {
   const t0 = performance.now();
   // get data
   let all;
   const sort = config.options.listSortOrder;
-  if (sort.includes('alpha-down')) all = await db.all('name', true, 1, Number.MAX_SAFE_INTEGER, null, null);
-  else if (sort.includes('alpha-up')) all = await db.all('name', false, 1, Number.MAX_SAFE_INTEGER, null, null);
-  else if (sort.includes('numeric-down')) all = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, null, null);
-  else if (sort.includes('numeric-up')) all = await db.all('date', true, 1, Number.MAX_SAFE_INTEGER, null, null);
-  else if (sort.includes('amount-down')) all = await db.all('size', false, 1, Number.MAX_SAFE_INTEGER, null, null);
-  else if (sort.includes('amount-up')) all = await db.all('size', true, 1, Number.MAX_SAFE_INTEGER, null, null);
-  else all = await db.all('date', true, 1, Number.MAX_SAFE_INTEGER, null, null);
-  // const all = await db.all();
+  if (sort.includes('alpha-down')) all = await db.all('name', true, 1, Number.MAX_SAFE_INTEGER, null, share);
+  else if (sort.includes('alpha-up')) all = await db.all('name', false, 1, Number.MAX_SAFE_INTEGER, null, share);
+  else if (sort.includes('numeric-down')) all = await db.all('date', false, 1, Number.MAX_SAFE_INTEGER, null, share);
+  else if (sort.includes('numeric-up')) all = await db.all('date', true, 1, Number.MAX_SAFE_INTEGER, null, share);
+  else if (sort.includes('amount-down')) all = await db.all('size', false, 1, Number.MAX_SAFE_INTEGER, null, share);
+  else if (sort.includes('amount-up')) all = await db.all('size', true, 1, Number.MAX_SAFE_INTEGER, null, share);
+  else all = await db.all('date', true, 1, Number.MAX_SAFE_INTEGER, null, share);
   const points = all
     .filter((a) => (a.exif && a.exif.lat && a.exif.lon))
     .map((a) => ({ lat: a.exif.lat, lon: a.exif.lon }));
@@ -59,7 +58,7 @@ async function load() {
   });
 }
 
-export async function show(images, visible) {
+export async function show(images, visible, share) {
   if (typeof L === 'undefined') await load();
 
   const t0 = performance.now();
@@ -81,9 +80,8 @@ export async function show(images, visible) {
     layers: L.mapquest.tileLayer(config.theme.map),
     zoom: 3,
   });
-  mapContainer.on('click', (evt) => {
-    find(images, evt.latlng.lat, evt.latlng.lng);
-  });
+
+  mapContainer.on('click', (evt) => find(images, evt.latlng.lat, evt.latlng.lng, share));
   L.mapquest.geocodingControl().addTo(mapContainer);
   $('.leaflet-bottom.leaflet-left').html(''); // hide branding
   $('.leaflet-bottom.leaflet-right').html(''); // hide branding
