@@ -171,8 +171,12 @@ export async function refresh() {
 
 export async function count():Promise<number> {
   return new Promise((resolve) => {
-    const request = db.transaction(['images'], 'readwrite').objectStore('images').count();
-    request.onsuccess = (evt) => resolve(evt.target.result);
+    if (db) {
+      const request = db.transaction(['images'], 'readwrite').objectStore('images').count();
+      request.onsuccess = (evt) => resolve(evt.target.result);
+    } else {
+      resolve(0);
+    }
   });
 }
 
