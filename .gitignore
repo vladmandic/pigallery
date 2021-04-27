@@ -8,7 +8,7 @@ media/GooglePhotos
 media/Temp
 media/Tests
 dist/*
-pigallery.db
+pigallery.db*
 pigallery.log
 setup.json
 config.json
