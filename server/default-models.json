@@ -28,7 +28,7 @@
     "body": { "enabled": false },
     "hand": { "enabled": false },
     "face": {
-      "detector": { "enabled": true, "modelPath": "@vladmandic/human/models/blazeface-back.json", "rotation": true },
+      "detector": { "enabled": true, "modelPath": "@vladmandic/human/models/blazeface.json", "rotation": true },
       "mesh": { "enabled": true, "modelPath": "@vladmandic/human/models/facemesh.json" },
       "iris": { "enabled": true, "modelPath": "@vladmandic/human/models/iris.json" },
       "emotion": { "enabled": true, "modelPath": "@vladmandic/human/models/emotion.json" },
