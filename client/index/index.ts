@@ -32,6 +32,7 @@ async function busy(text: string | null = null) {
     $('.busy').width(($('.folderbar').width() as number).toString());
     $('#busy-text').html(text || '');
     $('.busy').show();
+    log.debug('Busy:', text.replace(/<.*>/, ' '));
   } else {
     $('.busy').hide();
   }
@@ -191,7 +192,7 @@ function shuffle(array) {
 
 // sort by image similarity
 async function similarImage(image) {
-  busy('Searching for<br>similar images');
+  busy(`Searching for<br>similar images: ${images.length}`);
   const t0 = performance.now();
   config.options.listDivider = 'similarity';
   const object = images.find((a) => a.image === decodeURIComponent(image));
@@ -220,7 +221,7 @@ function euclideanDistance(embedding1, embedding2, order = 2) {
 
 async function similarPerson(image) {
   let count = 0;
-  busy('Searching for<br>similar people');
+  busy(`Searching for<br>similar people: ${images.length}`);
   const t0 = performance.now();
   config.options.listDivider = 'similarity';
   const object = images.find((a) => a.image === decodeURIComponent(image));
@@ -271,7 +272,7 @@ async function similarPerson(image) {
 }
 
 async function similarClasses(image) {
-  busy('Searching for<br>similar classes');
+  busy(`Searching for<br>similar classes: ${images.length}`);
   const t0 = performance.now();
   config.options.listDivider = 'similarity';
   const object = images.find((a) => a.image === decodeURIComponent(image));

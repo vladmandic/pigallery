@@ -9,7 +9,6 @@ function str(...msg) {
 }
 
 async function debug(...msg) {
-  // const ts = `${moment().format('HH:mm:ss.SS')}:`;
   const threshold = 100;
   const dt = new Date();
   const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
@@ -21,10 +20,13 @@ async function debug(...msg) {
     if (duration && (typeof duration === 'number')) time = duration >= threshold ? Math.round(t1 - t0) : null;
     msg.shift();
   }
+  const stack = Error().stack?.split(/\r\n|\r|\n/);
+  const funcs = stack?.find((a) => (a.startsWith('    at ') && !a.startsWith('    at debug') && !a.startsWith('    at busy') && !a.startsWith('    at server') && !a.startsWith('    at div')))?.split(' ');
+  const caller = (funcs && funcs.length > 0) ? funcs[5] : '';
   // eslint-disable-next-line no-console
-  if (time) console.log(ts, '[', time, 'ms ]', ...msg);
+  if (time) console.log(ts, '[', time, 'ms ]', caller, ':', ...msg);
   // eslint-disable-next-line no-console
-  else console.log(ts, ...msg);
+  else console.log(ts, caller, ':', ...msg);
   return ts;
 }
 
