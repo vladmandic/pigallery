@@ -11025,7 +11025,7 @@
         ]
       },
       "client/shared/log.ts": {
-        "bytes": 2022,
+        "bytes": 2024,
         "imports": []
       },
       "client/process/modelClassify.ts": {
@@ -26692,7 +26692,7 @@
         ]
       },
       "client/process/processImage.ts": {
-        "bytes": 12494,
+        "bytes": 12488,
         "imports": [
           {
             "path": "node_modules/.pnpm/@vladmandic+human@1.8.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
@@ -27238,7 +27238,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 6523191
+        "bytes": 6523189
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -27822,7 +27822,7 @@
             "bytesInOutput": 23
           },
           "client/shared/log.ts": {
-            "bytesInOutput": 1963
+            "bytesInOutput": 1965
           },
           "client/process/modelClassify.ts": {
             "bytesInOutput": 3858
@@ -27843,7 +27843,7 @@
             "bytesInOutput": 2589
           }
         },
-        "bytes": 2690847
+        "bytes": 2690849
       },
       "dist/compare/compare.css": {
         "imports": [],
@@ -27864,7 +27864,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1054304
+        "bytes": 1054306
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27899,7 +27899,7 @@
             "bytesInOutput": 36713
           },
           "client/shared/log.ts": {
-            "bytesInOutput": 1963
+            "bytesInOutput": 1965
           },
           "assets/marked.esm.js": {
             "bytesInOutput": 59935
@@ -27941,7 +27941,7 @@
             "bytesInOutput": 1572
           }
         },
-        "bytes": 559828
+        "bytes": 559830
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27968,7 +27968,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12000651
+        "bytes": 12000691
       },
       "dist/process/process.js": {
         "imports": [],
@@ -29437,7 +29437,7 @@
             "bytesInOutput": 24
           },
           "client/shared/log.ts": {
-            "bytesInOutput": 1978
+            "bytesInOutput": 1980
           },
           "client/shared/user.ts": {
             "bytesInOutput": 1174
@@ -31957,10 +31957,10 @@
             "bytesInOutput": 4722
           },
           "client/process/processImage.ts": {
-            "bytesInOutput": 10667
+            "bytesInOutput": 10733
           }
         },
-        "bytes": 4838900
+        "bytes": 4838968
       },
       "dist/process/process.css": {
         "imports": [],
@@ -31981,7 +31981,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12114738
+        "bytes": 12114740
       },
       "dist/video/video.js": {
         "imports": [],
@@ -35952,7 +35952,7 @@
             "bytesInOutput": 43666
           },
           "client/shared/log.ts": {
-            "bytesInOutput": 1803
+            "bytesInOutput": 1805
           },
           "client/shared/user.ts": {
             "bytesInOutput": 1175
@@ -35988,7 +35988,7 @@
             "bytesInOutput": 8707
           }
         },
-        "bytes": 4907258
+        "bytes": 4907260
       },
       "dist/video/video.css": {
         "imports": [],
