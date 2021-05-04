@@ -24,9 +24,9 @@ async function debug(...msg) {
   const funcs = stack?.find((a) => (a.startsWith('    at ') && !a.startsWith('    at debug') && !a.startsWith('    at busy') && !a.startsWith('    at server') && !a.startsWith('    at div')))?.split(' ');
   const caller = (funcs && funcs.length > 0) ? funcs[5] : '';
   // eslint-disable-next-line no-console
-  if (time) console.log(ts, '[', time, 'ms ]', caller, ':', ...msg);
+  if (time) console.log(ts, '[', time, 'ms ]', `${caller}:`, ...msg);
   // eslint-disable-next-line no-console
-  else console.log(ts, caller, ':', ...msg);
+  else console.log(ts, `${caller}:`, ...msg);
   return ts;
 }
 

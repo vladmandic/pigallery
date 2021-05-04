@@ -162,7 +162,7 @@ export async function getImage(url, maxSize = 0):Promise<any> {
 }
 
 export async function process(name) {
-  // if (config.default.batchProcessing === 1) tf.engine().startScope();
+  await tf.engine().startScope();
   const mem = tf.memory();
   log.div('process-state', false, `Engine state: ${mem.numBytes.toLocaleString()} bytes ${mem.numTensors.toLocaleString()} tensors ${mem.numDataBuffers.toLocaleString()} buffers ${mem.numBytesInGPU ? mem.numBytesInGPU.toLocaleString() : '0'} GPU bytes`);
   const obj:any = {};
@@ -270,6 +270,8 @@ export async function process(name) {
   }
   const tp1 = performance.now();
   // end human detection
+
+  await tf.engine().endScope();
 
   const t1 = performance.now();
   obj.perf = { total: Math.round(t1 - t0), load: Math.round(ti1 - ti0), classify: Math.round(tc1 - tc0), detect: Math.round(td1 - td0), person: Math.round(tp1 - tp0) };
