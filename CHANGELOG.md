@@ -9,8 +9,9 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/04/30 mandic00@live.com
+### **HEAD -> master** 2021/05/01 mandic00@live.com
 
+- upadate human and tfjs libraries
 
 ### **3.6.3** 2021/04/30 mandic00@live.com
 

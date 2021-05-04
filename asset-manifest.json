@@ -26592,7 +26592,7 @@
           }
         ]
       },
-      "node_modules/.pnpm/@vladmandic+human@1.8.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
+      "node_modules/.pnpm/@vladmandic+human@1.8.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
         "bytes": 230233,
         "imports": [
           {
@@ -26695,7 +26695,7 @@
         "bytes": 12494,
         "imports": [
           {
-            "path": "node_modules/.pnpm/@vladmandic+human@1.8.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
+            "path": "node_modules/.pnpm/@vladmandic+human@1.8.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
@@ -27124,7 +27124,7 @@
         "bytes": 8648,
         "imports": [
           {
-            "path": "node_modules/.pnpm/@vladmandic+human@1.8.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
+            "path": "node_modules/.pnpm/@vladmandic+human@1.8.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
@@ -27190,7 +27190,7 @@
             "kind": "import-statement"
           },
           {
-            "path": "node_modules/.pnpm/@vladmandic+human@1.8.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
+            "path": "node_modules/.pnpm/@vladmandic+human@1.8.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
@@ -31941,7 +31941,7 @@
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.6.0_@tensorflow+tfjs-core@3.6.0/node_modules/@tensorflow/tfjs-data/dist/version.js": {
             "bytesInOutput": 25
           },
-          "node_modules/.pnpm/@vladmandic+human@1.8.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
+          "node_modules/.pnpm/@vladmandic+human@1.8.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
             "bytesInOutput": 271319
           },
           "client/process/modelClassify.ts": {
@@ -35945,7 +35945,7 @@
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.6.0_@tensorflow+tfjs-core@3.6.0/node_modules/@tensorflow/tfjs-data/dist/version.js": {
             "bytesInOutput": 25
           },
-          "node_modules/.pnpm/@vladmandic+human@1.8.1/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
+          "node_modules/.pnpm/@vladmandic+human@1.8.2/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
             "bytesInOutput": 271309
           },
           "assets/panzoom.js": {
