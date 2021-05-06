@@ -98,8 +98,6 @@ async function folderHandlers() {
 
 // used by filterresults
 function filterWord(word) {
-  const skip = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during', 'on', 'having'];
-  if (skip.includes(word)) return images;
   const res = images.filter((obj) => {
     for (const tag of obj.tags) {
       const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0] as string : '';
@@ -114,13 +112,17 @@ function filterWord(word) {
 
 // filters images based on search strings
 async function filterResults(input) {
+  const skipWords = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during', 'on', 'having'];
   busy(`Searching for<br>${input}`);
   const t0 = performance.now();
   const words:Array<string> = [];
   let selective: string | null = null;
   for (const word of input.split(' ')) {
-    if (!word.includes(':')) words.push(word);
-    else if (!selective) selective = word;
+    if (!word.includes(':')) {
+      if (!skipWords.includes(word)) words.push(word);
+    } else if (!selective) {
+      selective = word;
+    }
   }
   if (selective) {
     const keys = selective.split(':');
@@ -132,35 +134,49 @@ async function filterResults(input) {
   } else if (images.length === 0) {
     images = await db.refresh();
   }
-  let full:Array<any> = [];
-  const all:Array<any> = [];
   config.options.listDivider = 'search';
-  list.redraw(full, 'search results', true);
+  list.redraw([], 'search results', true); // clear list
+
+  const all = images;
+  let matchExact = 0;
+  let matchAll = 0;
+  let matchAny = 0;
+
   if (words.length > 0) {
-    // full match
+    // match for exact words
+    images = all;
     const term = words.join(' ').toLowerCase();
-    full = filterWord(term);
-    if (full.length > 0) all.push(...full);
+    images = filterWord(term);
+    matchExact = images.length;
     list.clearPrevious();
-    await list.redraw(full, `exact match: ${term}`, false);
-    // match for each word
+    await list.redraw(images, `exact match: ${term}`, false);
+
+    // match for all words
+    if (words.length > 1) {
+      images = all;
+      for (const word of words) {
+        images = filterWord(word.toLowerCase());
+      }
+      matchAll = images.length;
+      list.clearPrevious();
+      await list.redraw(images, `full match: ${words.join(', ')}`, false);
+    }
+
+    // match for any words
     if (words.length > 1) {
       for (const word of words) {
+        images = all;
         const partials = filterWord(word.toLowerCase());
-        const res:Array<any> = [];
-        for (const partial of partials) {
-          const found = all.filter((a) => a.image === partial.image);
-          if (!found || found.length === 0) res.push(partial);
-        }
-        all.push(...res);
+        matchAny += partials.length;
         list.clearPrevious();
-        await list.redraw(res, `partial match: ${word}`, false);
+        await list.redraw(partials, `partial match: ${word}`, false);
       }
     }
   }
+
+  // $('#search-result').html(`"${input}"<br>exact:${matchExact.length} total:${matchAll.length}`);
+  log.debug(t0, `Searching for "${input}" exact:${matchExact} all:${matchAll} any:${matchAny} images:${all.length}`);
   images = all;
-  $('#search-result').html(`"${input}"<br>exact:${full.length} total:${all.length}`);
-  log.debug(t0, `Searching for "${input}" exact:${full.length} partial:${all.length - full.length} total:${all.length} images`);
   enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   busy();
 }
