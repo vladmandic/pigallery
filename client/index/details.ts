@@ -98,6 +98,8 @@ function getPalette() {
   if (!thief) thief = new ColorThief();
   const img = document.getElementsByClassName('iv-image')[0];
   let palette = thief.getPalette(img, 16);
+  if (!palette) return '';
+
   palette = palette.sort((i, j) => (i[0] + i[1] + i[2]) - (j[0] + j[1] + j[2]));
   $('#popup').css('background', `radial-gradient(at 50% 100%, rgb(${palette[1]}) 0, rgb(${palette[2]}) 100%, rgb(${palette[2]}) 100%)`);
   $('#popup').off('mousemove');
