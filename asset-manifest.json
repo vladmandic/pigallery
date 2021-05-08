@@ -26811,7 +26811,7 @@
         "imports": []
       },
       "client/index/details.ts": {
-        "bytes": 19438,
+        "bytes": 19466,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26956,8 +26956,12 @@
           }
         ]
       },
+      "client/index/dictionary.ts": {
+        "bytes": 601,
+        "imports": []
+      },
       "client/index/index.ts": {
-        "bytes": 36740,
+        "bytes": 36947,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27029,6 +27033,10 @@
           },
           {
             "path": "client/index/pwa-register.ts",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/index/dictionary.ts",
             "kind": "import-statement"
           }
         ]
@@ -27864,7 +27872,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1054520
+        "bytes": 1055897
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27872,7 +27880,7 @@
         "entryPoint": "client/index/index.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
-            "bytesInOutput": 218655
+            "bytesInOutput": 218663
           },
           "node_modules/.pnpm/moment@2.29.1/node_modules/moment/moment.js": {
             "bytesInOutput": 134279
@@ -27896,7 +27904,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.ts": {
-            "bytesInOutput": 36745
+            "bytesInOutput": 36810
           },
           "client/shared/log.ts": {
             "bytesInOutput": 1965
@@ -27914,7 +27922,7 @@
             "bytesInOutput": 6410
           },
           "client/index/details.ts": {
-            "bytesInOutput": 19323
+            "bytesInOutput": 19354
           },
           "client/index/iv-viewer.ts": {
             "bytesInOutput": 26493
@@ -27939,9 +27947,12 @@
           },
           "client/index/pwa-register.ts": {
             "bytesInOutput": 1572
+          },
+          "client/index/dictionary.ts": {
+            "bytesInOutput": 555
           }
         },
-        "bytes": 559862
+        "bytes": 560552
       },
       "dist/index/index.css": {
         "imports": [],

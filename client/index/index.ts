@@ -18,6 +18,7 @@ import * as map from './map';
 import * as enumerate from './enumerate';
 import * as optionsConfig from './options';
 import * as pwa from './pwa-register';
+import * as dictionary from './dictionary';
 
 // global variables
 (window as any).filtered = [];
@@ -98,11 +99,15 @@ async function folderHandlers() {
 
 // used by filterresults
 function filterWord(word) {
-  const res = images.filter((obj) => {
-    for (const tag of obj.tags) {
+  const res = images.filter((image) => {
+    // add synonyms
+    for (const tag of image.tags) {
       const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0] as string : '';
-      const found = str.toString().startsWith(word);
-      if (found) return true;
+      // console.log(str, typeof str, word, synonyms);
+      for (const term of dictionary.synonyms(word)) {
+        const found = str.toString().startsWith(term);
+        if (found) return true;
+      }
     }
     return false;
   });
@@ -112,14 +117,13 @@ function filterWord(word) {
 
 // filters images based on search strings
 async function filterResults(input) {
-  const skipWords = ['in', 'a', 'the', 'of', 'with', 'using', 'wearing', 'and', 'at', 'during', 'on', 'having'];
   busy(`Searching for<br>${input}`);
   const t0 = performance.now();
   const words:Array<string> = [];
   let selective: string | null = null;
   for (const word of input.split(' ')) {
     if (!word.includes(':')) {
-      if (!skipWords.includes(word)) words.push(word);
+      if (!dictionary.skip.includes(word)) words.push(word);
     } else if (!selective) {
       selective = word;
     }
@@ -176,6 +180,7 @@ async function filterResults(input) {
 
   // $('#search-result').html(`"${input}"<br>exact:${matchExact.length} total:${matchAll.length}`);
   log.debug(t0, `Searching for "${input}" exact:${matchExact} all:${matchAll} any:${matchAny} images:${all.length}`);
+  log.div('log', true, `Searching for "${input}" exact:${matchExact} all:${matchAll} any:${matchAny} images:${all.length}`);
   images = all;
   enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   busy();
