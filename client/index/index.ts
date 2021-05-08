@@ -463,8 +463,13 @@ async function loadGallery(refresh = false) {
           const t3 = performance.now();
           stats.store += t3 - t2;
           log.debug('Donwloading', `page:${page} progress:${progress}% images:${imagesCount} / ${totalImages} bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
-          if (progress >= 98) $('#progress').html(`Creating cache<br>images:${totalImages}<br>${totalSize.toLocaleString()} bytes`);
-          else $('#progress').html(`Downloading ${progress}%:<br>${imagesCount} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+          if (progress >= 98) {
+            busy(`Creating cache<br>${totalImages} images<br>${totalSize.toLocaleString()} bytes`);
+            $('#progress').html(`Creating cache<br>images:${totalImages}<br>${totalSize.toLocaleString()} bytes`);
+          } else {
+            busy(`Downloading ${progress}%:<br>${imagesCount} / ${totalImages} images`);
+            $('#progress').html(`Downloading ${progress}%:<br>${imagesCount} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+          }
           return true;
         });
         return true;
@@ -479,6 +484,7 @@ async function loadGallery(refresh = false) {
   const current = await db.count();
   const dl = (current - cached) > 0 ? `performance: ${Math.round(dlSize / (t1 - t0)).toLocaleString()} KB/sec ` : '';
   log.div('log', true, `Download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${dl}updated since ${dt}`);
+  busy();
   // images = await db.all();
   config.options.lastUpdated = updated;
   stats.size = dlSize;
