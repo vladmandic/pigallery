@@ -26,13 +26,20 @@ async function enumerateClasses(images) {
         if (!tags || tags.length !== 2 || ignoreTags.includes(tags[0])) continue;
         for (const val of (tags[1] as string).split(',')) {
           ops++;
-          const classFound = classesList.find((a) => a.tag === val);
+          // const classFound = classesList.find((a) => a.tag === val);
+          let classFound;
+          for (let i = 0; i < classesList.length; i++) { // for loop is faster than array.find and here we're shaving some ms
+            if (classesList[i].tag === val) {
+              classFound = classesList[i];
+              break;
+            }
+          }
           if (classFound) classFound.count++;
           else classesList.push({ tag: val, count: 1 });
         }
       }
     }
-    classesList.sort((a, b) => b.count - a.count); // sort by occrences
+    classesList.sort((a, b) => b.count - a.count); // sort by number of occurences
   }
   const classesCount = classesList.length; // crop the list to top entries
   classesList.length = Math.min(config.options.topClasses, classesList.length);
