@@ -30,7 +30,7 @@ export async function get(isShare = null) {
   }
   if (user && user.user) {
     $('#user').text(user.user.split('@')[0]);
-    log.div('log', true, `User: ${user.user} root:${user.root} admin:${user.admin}`);
+    log.div('log', true, `user: ${user.user} root:${user.root} admin:${user.admin}`);
   } else {
     location.replace('/auth');
   }

@@ -39,15 +39,6 @@ async function find(images, lat, lon, share) {
 
 async function load() {
   return new Promise((resolve) => {
-    /*
-    $('<link>')
-      .appendTo('head')
-      .attr({
-        type: 'text/css',
-        rel: 'stylesheet',
-        href: '/assets/mapquest.css',
-      });
-    */
     $.getScript('/assets/mapquest.js').done(() => {
       $.getScript('/assets/leaflet-heat.js').done(() => {
         log.debug('Loaded MapQuest');

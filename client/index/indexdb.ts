@@ -32,9 +32,9 @@ export async function open() {
     request.onsuccess = (evt: any) => {
       log.debug(t0, 'IndexDB request open');
       db = evt.target?.result;
-      db.onerror = (event) => log.div('log', true, 'IndexDB DB error:', event.target.error || event);
-      db.onsuccess = (event) => log.div('log', true, `IndexDB DB open: ${event}`);
-      db.onblocked = (event) => log.div('log', true, `IndexDB DB blocked: ${event}`);
+      db.onerror = (event) => log.div('log', true, 'indexdb db error:', event.target.error || event);
+      db.onsuccess = (event) => log.div('log', true, `indexdb db open: ${event}`);
+      db.onblocked = (event) => log.div('log', true, `indexdb db blocked: ${event}`);
       resolve(true);
     };
     request.onblocked = () => {
@@ -107,7 +107,7 @@ export async function getShare(share) {
     if (img) filtered.push(img);
   }
   log.debug(t0, `Selected share: ${share} received:${json.length} valid:${filtered.length} invalid:${json.length - filtered.length}`);
-  log.div('log', true, `Loaded ${filtered.length} images from server for share ${share}`);
+  log.div('log', true, `loaded ${filtered.length} images from server for share ${share}`);
   return filtered;
 }
 
