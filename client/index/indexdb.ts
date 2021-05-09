@@ -122,6 +122,7 @@ export async function all(index: string, direction: boolean, start: number, end:
       const res:Array<any> = [];
       if (!user || !user.user) resolve(res);
       let idx = 0;
+      let arrIdx = 0;
       const cursor = db
         .transaction(['images'], 'readwrite')
         .objectStore('images')
@@ -139,9 +140,11 @@ export async function all(index: string, direction: boolean, start: number, end:
             resolve(e);
           } else {
             idx++;
-            if ((idx >= start) && (e.value.image.startsWith(user.root))) {
+            // if ((idx >= start) && (e.value.image.startsWith(user.root))) {
+            if (idx >= start) {
               if (!tag) {
-                res.push(e.value);
+                // res.push(e.value);
+                res[arrIdx++] = e.value;
               } else {
                 for (const val of e.value.tags) {
                   // @ts-ignore tag & value are unknown here

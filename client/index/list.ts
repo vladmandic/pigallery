@@ -166,20 +166,20 @@ export async function scroll(images, divider) {
   if (visibleHeight >= 0.95 * totalHeight && current < images.length) {
     const t0 = performance.now();
     const count = Math.min(config.options.listItemCount, images.length - current);
-    const items:Array<HTMLElement> = [];
+    const res = document.getElementById('results') as HTMLElement;
+    // const items:Array<HTMLElement> = [];
     for (let i = current; i < current + count; i++) {
       if (!images[i].thumbnail) images[i].thumbnail = indexdb.thumbnail(images[i].image);
       if (!images[i].person) images[i].person = indexdb.person(images[i].image);
       [images[i].thumbnail, images[i].person] = await Promise.all([images[i].thumbnail, images[i].person]); // to run both thumbnail and person indexdb get concurrently
       const title = addDividers(images[i], divider);
       const item = printResult(images[i]);
-      if (title) items.push(title);
-      items.push(item);
-      // if (divider) res.appendChild(divider);
-      // res.appendChild(item);
+      // if (title) items.push(title);
+      // items.push(item);
+      if (title) res.appendChild(title);
+      res.appendChild(item);
     }
-    const res = document.getElementById('results') as HTMLElement;
-    for (const item of items) res.appendChild(item);
+    // for (const item of items) res.appendChild(item);
     current += count;
     log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${images.length}`);
     $('.listitem').on('mouseover', (evt) => thumbButtons(evt, true));

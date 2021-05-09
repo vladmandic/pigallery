@@ -26786,7 +26786,7 @@
         "imports": []
       },
       "client/index/indexdb.ts": {
-        "bytes": 6730,
+        "bytes": 6831,
         "imports": [
           {
             "path": "client/shared/log.ts",
@@ -26840,7 +26840,7 @@
         ]
       },
       "client/index/list.ts": {
-        "bytes": 10302,
+        "bytes": 10304,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26906,7 +26906,7 @@
         ]
       },
       "client/index/enumerate.ts": {
-        "bytes": 8232,
+        "bytes": 8534,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -27872,7 +27872,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1056228
+        "bytes": 1056650
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27919,7 +27919,7 @@
             "bytesInOutput": 1173
           },
           "client/index/indexdb.ts": {
-            "bytesInOutput": 6410
+            "bytesInOutput": 6399
           },
           "client/index/details.ts": {
             "bytesInOutput": 19354
@@ -27931,7 +27931,7 @@
             "bytesInOutput": 410
           },
           "client/index/list.ts": {
-            "bytesInOutput": 9604
+            "bytesInOutput": 9533
           },
           "client/index/map.ts": {
             "bytesInOutput": 3420
@@ -27940,7 +27940,7 @@
             "bytesInOutput": 3103
           },
           "client/index/enumerate.ts": {
-            "bytesInOutput": 7690
+            "bytesInOutput": 7845
           },
           "client/index/options.ts": {
             "bytesInOutput": 6535
@@ -27952,7 +27952,7 @@
             "bytesInOutput": 555
           }
         },
-        "bytes": 560769
+        "bytes": 560842
       },
       "dist/index/index.css": {
         "imports": [],
