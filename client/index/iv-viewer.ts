@@ -552,6 +552,7 @@ class ImageViewer {
   }
 
   async zoom(perc, point) {
+    const zoomSteps = 15;
     perc = Math.round(Math.max(this.options.minZoom, perc));
     perc = Math.min(this.options.maxZoom, perc);
     point = point || { x: this.state.containerDim?.w / 2, y: this.state.containerDim?.h / 2 };
@@ -565,8 +566,8 @@ class ImageViewer {
     const baseBottom = this.state.containerDim?.h - baseTop;
     const zoomRecursive = () => {
       step++;
-      if (step < 16) this.frames.zoomFrame = requestAnimationFrame(zoomRecursive);
-      const tickZoom = easeOutQuart(step, this.state.zoomValue, perc - this.state.zoomValue, 16);
+      if (step <= zoomSteps) this.frames.zoomFrame = requestAnimationFrame(zoomRecursive);
+      const tickZoom = easeOutQuart(step, this.state.zoomValue, perc - this.state.zoomValue, zoomSteps + 1);
       const ratio = tickZoom / this.state.zoomValue;
       const imgWidth = this.state.imageDim?.w * tickZoom / 100;
       const imgHeight = this.state.imageDim?.h * tickZoom / 100;
@@ -589,11 +590,11 @@ class ImageViewer {
     zoomRecursive();
     return new Promise((resolve) => {
       const wait = setInterval(() => {
-        if (step >= 15) {
+        if (step >= zoomSteps) {
           clearInterval(wait);
           resolve(true);
         }
-      }, 10);
+      }, 50);
     });
   }
 
