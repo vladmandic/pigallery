@@ -17,7 +17,7 @@ export async function register(path) {
         log.debug(t0, 'PWA registered:', reg.scope);
       }
     } catch (err) {
-      if (err.name === 'SecurityError') log.div('log', true, 'PWA: SSL certificate is untrusted');
+      if (err.name === 'SecurityError') log.div('log', true, 'pwa: ssl certificate is untrusted');
       else log.debug(t0, 'PWA error:', err);
     }
     if (navigator.serviceWorker.controller) {

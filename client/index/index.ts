@@ -28,7 +28,6 @@ let directShare;
 let images:Array<any> = [];
 
 async function busy(text: string | null = null) {
-  // if (text && $('.busy').is(':visible')) return true;
   if (text) {
     $('.busy').width(($('.folderbar').width() as number).toString());
     $('#busy-text').html(text || '');
@@ -61,7 +60,6 @@ async function folderHandlers() {
     switch (type) {
       case 'folder':
         log.debug(t0, `Selected path: ${path}`);
-        // eslint-disable-next-line no-case-declarations
         const root = user.user && user.user.root ? user.user.root : 'media/';
         if (images.length < await db.count()) images = await db.refresh();
         if (path !== (root)) images = images.filter((a) => escape(a.image).startsWith(path));
@@ -79,7 +77,6 @@ async function folderHandlers() {
         break;
       case 'share':
         $('#share').toggle(true);
-        // eslint-disable-next-line no-case-declarations
         const currentShare = (await enumerate.getShares()).find((a) => a.key === path);
         if (!currentShare || !currentShare.name || !currentShare.key) return;
         $('#share-name').val(currentShare.name);
@@ -103,7 +100,6 @@ function filterWord(word) {
     // add synonyms
     for (const tag of image.tags) {
       const str = Object.values(tag) && Object.values(tag)[0] ? Object.values(tag)[0] as string : '';
-      // console.log(str, typeof str, word, synonyms);
       for (const term of dictionary.synonyms(word)) {
         const found = str.toString().startsWith(term);
         if (found) return true;
@@ -111,7 +107,6 @@ function filterWord(word) {
     }
     return false;
   });
-  // log.debug('Searching for:', word, 'found:', res.length);
   return res;
 }
 
@@ -178,9 +173,8 @@ async function filterResults(input) {
     }
   }
 
-  // $('#search-result').html(`"${input}"<br>exact:${matchExact.length} total:${matchAll.length}`);
   log.debug(t0, `Searching for "${input}" exact:${matchExact} all:${matchAll} any:${matchAny} images:${all.length}`);
-  log.div('log', true, `Searching for "${input}" exact:${matchExact} all:${matchAll} any:${matchAny} images:${all.length}`);
+  log.div('log', true, `searching for "${input}" exact:${matchExact} all:${matchAll} any:${matchAny} images:${all.length}`);
   images = all;
   enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   busy();
@@ -190,9 +184,9 @@ async function deleteImage(image) {
   if (user.user.admin) {
     const res = await fetch(`/api/record/del?rm=${image}`);
     const deleted = await res.json();
-    log.div('log', true, 'Record delete:', res.status, deleted);
+    log.div('log', true, 'record delete:', res.status, deleted);
   } else {
-    log.div('log', true, 'Error: must be admin to remove images');
+    log.div('log', true, 'error: must be admin to remove images');
   }
 }
 
@@ -359,8 +353,7 @@ async function sortResults(sort) {
   if (sort.includes('amount-up')) images = images.concat(await db.all('size', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
   log.debug(t1, `Cached images: ${images.length} fetched remaining`);
   stats.remaining = Math.floor(window.performance.now() - t1);
-  // if (images.length > 0) log.div('log', true, `Loaded ${images.length} images from cache`);
-  if (images.length === 0) log.div('log', true, 'Image cache empty');
+  if (images.length === 0) log.div('log', true, 'image cache empty');
   if (!loadTried && images.length === 0) {
     loadTried = true;
     // eslint-disable-next-line no-use-before-define
@@ -369,7 +362,6 @@ async function sortResults(sort) {
   busy('Enumerating images');
   enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   stats.enumerate = Math.floor(window.performance.now() - t1);
-  // log.div('log', true, 'Displaying: ', images.length, ' images');
   list.scroll(images, null); // just updates images list for future scroll events
   busy();
 }
@@ -378,7 +370,7 @@ async function sortResults(sort) {
 async function findDuplicates() {
   busy('Searching for<br>duplicate images');
 
-  log.div('log', true, `Analyzing ${images.length} images for similarity ...`);
+  log.div('log', true, `analyzing ${images.length} images for similarity ...`);
   const t0 = performance.now();
   list.clearPrevious();
 
@@ -387,11 +379,10 @@ async function findDuplicates() {
   worker.addEventListener('message', (msg) => {
     images = msg.data;
     const t1 = performance.now();
-    log.div('log', true, `Found ${images.length} similar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
+    log.div('log', true, `found ${images.length} similar images in ${Math.round(t1 - t0).toLocaleString()} ms`);
     sortResults('similarity');
     busy();
   });
-  // const all = await db.all();
   worker.postMessage(images);
 }
 
@@ -403,13 +394,13 @@ async function loadGallery(refresh = false) {
   if (!user.user.user) return;
   $('#progress').text('Requesting');
   if (user.user.user.startsWith('share')) {
-    log.div('log', true, 'Application access with share credentials and no direct share');
+    log.div('log', true, 'application access with share credentials and no direct share');
     return;
   }
   const t0 = performance.now();
   if (!refresh) {
     busy('Resetting database');
-    log.div('log', true, 'Downloading image cache ...');
+    log.div('log', true, 'downloading image cache ...');
     await db.reset();
     if (!directShare) await db.open();
   }
@@ -483,16 +474,14 @@ async function loadGallery(refresh = false) {
   const dt = config.options.lastUpdated === 0 ? 'start' : new Date(config.options.lastUpdated).toLocaleDateString();
   const current = await db.count();
   const dl = (current - cached) > 0 ? `performance: ${Math.round(dlSize / (t1 - t0)).toLocaleString()} KB/sec ` : '';
-  log.div('log', true, `Download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${dl}updated since ${dt}`);
+  log.div('log', true, `download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${dl}updated since ${dt}`);
   busy();
-  // images = await db.all();
   config.options.lastUpdated = updated;
   stats.size = dlSize;
   stats.load = Math.round(t1 - t0);
   stats.store = Math.round(stats.store);
   stats.speed = Math.round(dlSize / (t1 - t0 - stats.store));
   $('#progress').text('Almost done');
-  // if (!refresh) sortResults(config.options.listSortOrder);
 }
 
 // popup on right-click
@@ -669,8 +658,6 @@ function initSidebarHandlers() {
 
 // initializes all mouse handlers for main menu in list view
 async function initMenuHandlers() {
-  // log.debug('Navigation enabled');
-
   // navbar user
   $('#btn-user').on('click', () => {
     showNavbar($('#userbar'));
@@ -699,7 +686,6 @@ async function initMenuHandlers() {
   $('#btn-update').on('click', () => {
     showNavbar($('#iframe'));
     $('#iframe').attr('src', '/process');
-    // window.open('/process', '_blank');
   });
 
   // navline user docs
@@ -873,7 +859,6 @@ async function perfDetails() {
     stats.fetch = Math.round(perf['responseEnd']);
     stats.interactive = Math.round(perf['domInteractive']);
     stats.complete = Math.round(perf.duration);
-    // log.debug('Performance:', perf);
   } else {
     log.debug('Performance:', performance.timing);
   }
@@ -942,7 +927,7 @@ async function main() {
   stats.cache = cache ? (await cache.matchAll()).length : 0;
   await config.done();
   log.server('Load stats:', stats);
-  log.div('log', true, 'Ready:', stats.ready, 'ms');
+  log.div('log', true, 'ready:', stats.ready, 'ms');
 }
 
 // window.onpopstate = (evt) => log.debug(`URL Pop state: ${evt.target.location.href}`);

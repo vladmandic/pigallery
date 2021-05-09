@@ -26811,7 +26811,7 @@
         "imports": []
       },
       "client/index/details.ts": {
-        "bytes": 19466,
+        "bytes": 19105,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26840,7 +26840,7 @@
         ]
       },
       "client/index/list.ts": {
-        "bytes": 10304,
+        "bytes": 9683,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26877,7 +26877,7 @@
         "imports": []
       },
       "client/index/map.ts": {
-        "bytes": 3676,
+        "bytes": 3507,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26961,7 +26961,7 @@
         "imports": []
       },
       "client/index/index.ts": {
-        "bytes": 37188,
+        "bytes": 36390,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27042,7 +27042,7 @@
         ]
       },
       "client/process/process.ts": {
-        "bytes": 5589,
+        "bytes": 5511,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27872,7 +27872,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1057855
+        "bytes": 1055861
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27979,7 +27979,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12006765
+        "bytes": 12006686
       },
       "dist/process/process.js": {
         "imports": [],

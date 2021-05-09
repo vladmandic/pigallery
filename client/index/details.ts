@@ -297,8 +297,6 @@ export function drawDescription(object) {
         </tr>
       </table>
     `;
-  // if (config.options.viewDetails) $('#popup-details').html(html);
-  // $('#popup-details').toggle(config.options.viewDetails);
   $('#popup-details').html(html);
   $('#popup-details').show();
   // score filter handler
@@ -356,7 +354,6 @@ export async function show(img) {
 
   log.debug('Displaying:', object);
 
-  // const top = $('#navbar').height() + 6;
   $('#popup').toggle(true);
   $('#optionsview').toggle(true);
 
@@ -407,7 +404,6 @@ export async function slideShow(start) {
 
 function detectSwipe() {
   const swipePos = { sX: 0, sY: 0, eX: 0, eY: 0 };
-  // function detectSwipe(el, func, deltaMin = 90)
   const deltaMin = 180;
   // Directions enumeration
   const directions = Object.freeze({ UP: 'up', DOWN: 'down', RIGHT: 'right', LEFT: 'left' });
@@ -444,8 +440,6 @@ export function handlers() {
 
   $('#popup').off('click');
   $('#popup').on('click', (e) => {
-    // if (event.screenX < 20) showNextDetails(true);
-    // else if (event.clientX > $('#popup').width() - 20) showNextDetails(false);
     if (!isTextSelected() && !e.target.className.startsWith('iv-') && !e.target.className.startsWith('thumb')) {
       clear();
       $('#popup').toggle('fast');

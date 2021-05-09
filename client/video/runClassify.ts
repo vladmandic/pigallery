@@ -12,10 +12,10 @@ export async function run(name, input, config, objects) {
     objects.models[name] = await modelClassify.load(modelOptions);
     const memory1 = await tf.memory();
     (document.getElementById('status') as HTMLElement).innerText = '';
-    log.div('log', true, `Loaded model ${name}: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
+    log.div('log', true, `loaded model ${name}: ${(memory1.numBytes - memory0.numBytes).toLocaleString()} bytes ${(memory1.numTensors - memory0.numTensors).toLocaleString()} tensors`);
   }
   if (!objects.models[name]) {
-    log.div('log', true, `Model ${name} not loaded`);
+    log.div('log', true, `model ${name} not loaded`);
     return null;
   }
   const res = await modelClassify.classify(objects.models[name], input);
