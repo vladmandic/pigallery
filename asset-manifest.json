@@ -26840,7 +26840,7 @@
         ]
       },
       "client/index/list.ts": {
-        "bytes": 9683,
+        "bytes": 9906,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26960,8 +26960,17 @@
         "bytes": 601,
         "imports": []
       },
+      "client/index/components.ts": {
+        "bytes": 911,
+        "imports": [
+          {
+            "path": "client/index/details.ts",
+            "kind": "import-statement"
+          }
+        ]
+      },
       "client/index/index.ts": {
-        "bytes": 36390,
+        "bytes": 36494,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27037,6 +27046,10 @@
           },
           {
             "path": "client/index/dictionary.ts",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/index/components.ts",
             "kind": "import-statement"
           }
         ]
@@ -27872,7 +27885,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1055861
+        "bytes": 1057635
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27880,7 +27893,7 @@
         "entryPoint": "client/index/index.ts",
         "inputs": {
           "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
-            "bytesInOutput": 230622
+            "bytesInOutput": 230624
           },
           "node_modules/.pnpm/moment@2.29.1/node_modules/moment/moment.js": {
             "bytesInOutput": 141724
@@ -27904,7 +27917,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.ts": {
-            "bytesInOutput": 37027
+            "bytesInOutput": 37037
           },
           "client/shared/log.ts": {
             "bytesInOutput": 1965
@@ -27950,9 +27963,12 @@
           },
           "client/index/dictionary.ts": {
             "bytesInOutput": 555
+          },
+          "client/index/components.ts": {
+            "bytesInOutput": 751
           }
         },
-        "bytes": 580884
+        "bytes": 581678
       },
       "dist/index/index.css": {
         "imports": [],
