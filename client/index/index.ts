@@ -19,6 +19,7 @@ import * as enumerate from './enumerate';
 import * as optionsConfig from './options';
 import * as pwa from './pwa-register';
 import * as dictionary from './dictionary';
+import * as components from './components';
 
 // global variables
 (window as any).filtered = [];
@@ -900,6 +901,9 @@ async function main() {
   window['similarPerson'] = similarPerson;
   window['similarClasses'] = similarClasses;
   window['deleteImage'] = deleteImage;
+
+  // initialize custom web components
+  components.init();
 
   if (directShare) log.debug(`Direct link to share: ${directShare}`);
   $('body').on('contextmenu', (evt) => showContextPopup(evt));

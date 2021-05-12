@@ -117,6 +117,7 @@ function printResult(object) {
 
   const div = document.createElement('div');
   div.className = 'listitem';
+  // div.innerHTML = `<thumb-info img="${object.image}" src="${object.thumbnail}" title="${title}"></thumb-info>`;
   div.appendChild(thumb);
   div.appendChild(desc);
   return div;
@@ -171,6 +172,7 @@ export async function scroll(images, divider) {
     }
     current += count;
     log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${images.length}`);
+    // log.div('log', true, `Results scroll: added: ${count} current: ${current} total: ${images.length}`);
     $('.listitem').on('mouseover', (evt) => thumbButtons(evt, true));
     $('.listitem').on('mouseout', (evt) => thumbButtons(evt, false));
     $('.listitem').on('contextmenu', (evt) => $(evt.target).parent().find('.btn-tiny').show());
