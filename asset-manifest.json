@@ -12,7 +12,7 @@
         "imports": []
       },
       "client/pigallery.css": {
-        "bytes": 10729,
+        "bytes": 10878,
         "imports": []
       },
       "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js": {
@@ -26810,8 +26810,12 @@
         "bytes": 25680,
         "imports": []
       },
+      "client/index/names.ts": {
+        "bytes": 3404,
+        "imports": []
+      },
       "client/index/details.ts": {
-        "bytes": 19105,
+        "bytes": 19278,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26835,6 +26839,10 @@
           },
           {
             "path": "client/shared/config.ts",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/index/names.ts",
             "kind": "import-statement"
           }
         ]
@@ -27876,16 +27884,16 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11618
+            "bytesInOutput": 11783
           }
         },
-        "bytes": 418005
+        "bytes": 418170
       },
       "dist/index/index.js.map": {
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1057635
+        "bytes": 1063497
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27896,7 +27904,7 @@
             "bytesInOutput": 230624
           },
           "node_modules/.pnpm/moment@2.29.1/node_modules/moment/moment.js": {
-            "bytesInOutput": 141724
+            "bytesInOutput": 141728
           },
           "assets/color-thief.umd.js": {
             "bytesInOutput": 11881
@@ -27917,7 +27925,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.ts": {
-            "bytesInOutput": 37037
+            "bytesInOutput": 37039
           },
           "client/shared/log.ts": {
             "bytesInOutput": 1965
@@ -27935,19 +27943,22 @@
             "bytesInOutput": 6399
           },
           "client/index/details.ts": {
-            "bytesInOutput": 19354
+            "bytesInOutput": 19510
           },
           "client/index/iv-viewer.ts": {
             "bytesInOutput": 26545
+          },
+          "client/index/names.ts": {
+            "bytesInOutput": 3004
           },
           "client/shared/blockhash.ts": {
             "bytesInOutput": 410
           },
           "client/index/list.ts": {
-            "bytesInOutput": 9533
+            "bytesInOutput": 9536
           },
           "client/index/map.ts": {
-            "bytesInOutput": 3420
+            "bytesInOutput": 3423
           },
           "client/index/nearest.ts": {
             "bytesInOutput": 3103
@@ -27965,10 +27976,10 @@
             "bytesInOutput": 555
           },
           "client/index/components.ts": {
-            "bytesInOutput": 751
+            "bytesInOutput": 752
           }
         },
-        "bytes": 581678
+        "bytes": 584877
       },
       "dist/index/index.css": {
         "imports": [],
@@ -27986,10 +27997,10 @@
             "bytesInOutput": 3150
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11618
+            "bytesInOutput": 11783
           }
         },
-        "bytes": 559272
+        "bytes": 559437
       },
       "dist/process/process.js.map": {
         "imports": [],
@@ -31999,10 +32010,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11618
+            "bytesInOutput": 11783
           }
         },
-        "bytes": 418005
+        "bytes": 418170
       },
       "dist/video/video.js.map": {
         "imports": [],
@@ -36027,10 +36038,10 @@
             "bytesInOutput": 207942
           },
           "client/pigallery.css": {
-            "bytesInOutput": 11618
+            "bytesInOutput": 11783
           }
         },
-        "bytes": 418005
+        "bytes": 418170
       },
       "dist/index/worker.js.map": {
         "imports": [],

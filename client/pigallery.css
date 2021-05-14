@@ -78,6 +78,7 @@ input[type=range]::-moz-range-thumb { border: 1px solid #000000; margin-top: 0.1
 .docs { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; border: none; }
 .iframe { background: var(--body); height: calc(100vh - 5rem); color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 0; z-index: 10; display: none; border: none; }
 .btn-close { float: right; }
+.names { position: absolute; top: 15%; left: 10%; width: 80%; z-index: 99; padding: 8px; box-shadow: var(--shadow); background: var(--background); }
 .install { font-size: 0.8rem; font-weight: bold; background: var(--foreground); color: black; position: fixed; bottom: 0; right: 0; width: -moz-fit-content; width: fit-content; padding: 6px 23px 4px 4px; text-align: center; cursor: pointer; z-index: 1; display: none; }
 .video { background: var(--body); height: calc(100vh - 5rem);color: var(--text); overflow: scroll; position: fixed; top: 5rem; left: 0; width: 100%; padding: 10px; z-index: 10; display: none; }
 .video-label { margin: 0; margin-right: 10px; display: block; }
