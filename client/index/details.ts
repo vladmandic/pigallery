@@ -4,6 +4,7 @@ import * as log from '../shared/log';
 import ColorThief from '../../assets/color-thief.umd';
 import ImageViewer from './iv-viewer';
 import * as config from '../shared/config';
+import * as names from './names';
 
 let viewer;
 let thief;
@@ -484,6 +485,12 @@ export function handlers() {
   $('#details-faces').on('click', () => {
     config.options.viewFaces = !config.options.viewFaces;
     drawBoxes();
+  });
+
+  // navbar details name people
+  $('#details-names').off('click');
+  $('#details-names').on('click', () => {
+    names.show(last);
   });
 
   // navbar details download image
