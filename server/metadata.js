@@ -88,6 +88,9 @@ function buildTags(object) {
       else age = 'uknown';
       tags.push({ property: 'face' });
       tags.push({ gender: person.gender }, { emotion: person.emotion }, { age });
+      if (person.names && person.names.length > 0) {
+        for (const alias of person.names) tags.push({ alias });
+      }
     }
   }
   if (object.exif && object.exif.created) {

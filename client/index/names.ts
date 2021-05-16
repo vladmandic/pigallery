@@ -1,3 +1,6 @@
+import * as user from '../shared/user';
+import * as log from '../shared/log';
+
 let visible = false;
 
 const thumbSize = 96;
@@ -17,7 +20,39 @@ const byrc = function (arr, seed = 0) {
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
 
-function addPerson(person, img) {
+export function close() {
+  document.body.removeChild(div);
+  visible = false;
+}
+
+function updateObject(obj) {
+  const inputs = document.getElementsByClassName('person-input');
+  for (let i = 0; i < inputs.length; i++) {
+    const input = inputs[i] as HTMLInputElement;
+    const names = input.value.split(' ').filter((a) => a.length > 0);
+    if (names.length > 0) {
+      obj.person[i].names = names;
+    } else { // if input is empty unregister names
+      if (obj.person[i].names) delete obj.person[i].names;
+      if (obj.person[i].hash) delete obj.person[i].hash;
+    }
+  }
+
+  fetch('/api/record/put', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj) })
+    .then((post) => {
+      post.json();
+      log.div('log', true, `update record: ${obj.image}`);
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      log.div('process-log', true, `Error posting: ${obj.image} size: ${JSON.stringify(obj).length}`);
+    });
+
+  close();
+}
+
+function addPerson(person, obj, img) {
   const child = document.createElement('div');
   child.style.width = 'fit-content';
 
@@ -40,9 +75,10 @@ function addPerson(person, img) {
   label.style.paddingLeft = '16px';
 
   const input = document.createElement('input');
-  input.className = 'input';
+  input.className = 'input person-input';
   input.type = 'search';
-  input.id = byrc(person.descriptor).toString();
+  input.id = person.hash || byrc(person.descriptor).toString(); // use existing hash or create new one
+  input.value = (person.names && person.names.length > 0) ? person.names.join(' ') : ''; // use existing names
   input.style.width = '50vw';
   input.style.left = '-4rem';
   input.style.top = '2.5rem';
@@ -52,14 +88,7 @@ function addPerson(person, img) {
   if (!person.hash) person.hash = byrc(person.descriptor);
   people.push(person);
 
-  input.addEventListener('search', () => {
-    const found = people.find((a) => a.hash === parseInt(input.id));
-    if (found && input.value.length > 0) {
-      const names = input.value.split(' ').filter((a) => a.length > 0);
-      const obj = { hash: found.hash, names, descriptor: found.descriptor };
-      console.log('obj', obj);
-    }
-  });
+  input.addEventListener('search', () => updateObject(obj));
 
   child.appendChild(canvas);
   child.appendChild(label);
@@ -67,39 +96,36 @@ function addPerson(person, img) {
   return child;
 }
 
-export async function show(obj) {
-  people.length = 0;
-  if (visible && div) {
-    document.body.removeChild(div);
-    visible = false;
-    return;
-  }
-  if (!obj || !obj.person || obj.person.length === 0) return;
-  const img = document.getElementsByClassName('iv-large-image')[0] as HTMLImageElement;
-  if (!img || !img.complete || img.naturalWidth === 0 || img.naturalHeight === 0) return;
-
+function addObject(obj, img) {
   visible = true;
 
   div = document.createElement('div');
   div.className = 'names';
   div.id = 'names-list';
   for (const person of obj.person) {
-    if (person.boxRaw && (person.boxRaw.length === 4) && person.descriptor && (person.descriptor.length >= 128)) div.appendChild(addPerson(person, img));
+    if (person.boxRaw && (person.boxRaw.length === 4) && person.descriptor && (person.descriptor.length >= 128)) {
+      div.appendChild(addPerson(person, obj, img));
+    }
   }
   div.addEventListener('click', (evt) => {
-    if (evt.target.id === 'names-list') show(obj);
+    if (evt.target.id === 'names-list') close();
   });
   document.body.appendChild(div);
 }
 
-/*
-- submit to server
-- update person record on server
-- draw in persons input
-- enumerate on loadgallery
-- create tags
-- draw in image
-- draw in description
-- test search by name tag
-- implement simmilar search by name
-*/
+export async function show(obj) {
+  if (!user.user.admin) {
+    log.div('log', true, 'error: must be admin to edit names');
+    return;
+  }
+  people.length = 0;
+  if (visible && div) {
+    close();
+    return;
+  }
+  if (!obj || !obj.person || obj.person.length === 0) return;
+  const img = document.getElementsByClassName('iv-large-image')[0] as HTMLImageElement;
+  if (!img || !img.complete || img.naturalWidth === 0 || img.naturalHeight === 0) return;
+
+  addObject(obj, img);
+}

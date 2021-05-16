@@ -184,7 +184,8 @@ export function drawBoxes(object: any | null = null) {
         let height = person.boxRaw[3] * resizeY * object.processedSize.height;
         if (x + width > canvas.width) width = canvas.width - x;
         if (y + height > canvas.height) height = canvas.height - y;
-        rect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${person.gender} ${(person.age || 0).toFixed(1)}y`);
+        const name = person.names && person.names.length > 0 ? person.names[0] : '';
+        rect(ctx, x, y, width, height, 10, 3, 'deepskyblue', null, 0.6, `${name} ${person.gender} ${(person.age || 0).toFixed(1)}y`);
       }
       if (person.meshRaw && person.confidence > minScore) {
         for (const pt of person.meshRaw) {
@@ -207,11 +208,13 @@ export function drawDescription(object) {
   for (const obj of combine(filtered)) detectedArr.push(`${obj.score}% <b>${obj.name}</b>`);
   const detected = detectedArr.join(' | ');
 
-  let person = '';
   let nsfw = '';
+  let person = '';
   filtered = object.person && object.person.length > 0 ? object.person.filter((a) => a.confidence > minScore) : [];
   for (const i in filtered) {
-    person += `Person ${1 + parseInt(i)} ${(100 * filtered[i].confidence).toFixed(0)}% | `;
+    person += `Person ${1 + parseInt(i)}: `;
+    if (filtered[i].names && filtered[i].names.length > 0) person += `names: ${filtered[i].names.join(' ')} | `;
+    if (filtered[i].confidence) person += `${(100 * filtered[i].confidence).toFixed(0)}% | `;
     if (filtered[i].genderScore > 0 && filtered[i].gender !== '') person += `gender: ${(100 * filtered[i].genderScore).toFixed(0)}% ${filtered[i].gender} | `;
     if (filtered[i].age > 0) person += `age: ${filtered[i].age.toFixed(1)} | `;
     if (filtered[i].emotionScore > 0 && filtered[i].emotion !== '') person += `emotion: ${(100 * filtered[i].emotionScore).toFixed(0)}% ${filtered[i].emotion}<br>`;

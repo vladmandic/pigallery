@@ -18,29 +18,46 @@ async function enumerateClasses(images) {
   $('#classes').html('');
   if (!Array.isArray(images)) images = [];
   const classesList:Array<{ tag: string, count: number }> = [];
+  const namesList:Array<{ tag: string, count: number }> = [];
   let ops = 0;
   if (refreshNeeded) {
     for (const item of images) {
       for (const tag of item.tags) {
         const tags = Object.entries(tag)[0];
         if (!tags || tags.length !== 2 || ignoreTags.includes(tags[0])) continue;
-        for (const val of (tags[1] as string).split(',')) {
+        if (tags[0] === 'alias') {
           ops++;
-          // const classFound = classesList.find((a) => a.tag === val);
-          let classFound;
-          for (let i = 0; i < classesList.length; i++) { // for loop is faster than array.find and here we're shaving some ms
-            if (classesList[i].tag === val) {
-              classFound = classesList[i];
+          const name = tags[1] as string; // names array is already split
+          let nameFound;
+          for (let i = 0; i < namesList.length; i++) { // for loop is faster than array.find and here we're shaving some ms
+            if (namesList[i].tag === name) {
+              nameFound = namesList[i];
               break;
             }
           }
-          if (classFound) classFound.count++;
-          else classesList.push({ tag: val, count: 1 });
+          if (nameFound) nameFound.count++;
+          else namesList.push({ tag: name, count: 1 }); 
+        } else {
+          for (const val of (tags[1] as string).split(',')) {
+            ops++;
+            // const classFound = classesList.find((a) => a.tag === val);
+            let classFound;
+            for (let i = 0; i < classesList.length; i++) { // for loop is faster than array.find and here we're shaving some ms
+              if (classesList[i].tag === val) {
+                classFound = classesList[i];
+                break;
+              }
+            }
+            if (classFound) classFound.count++;
+            else classesList.push({ tag: val, count: 1 });
+          }
         }
       }
     }
     classesList.sort((a, b) => b.count - a.count); // sort by number of occurences
   }
+
+  // add tags/classes
   const classesCount = classesList.length; // crop the list to top entries
   classesList.length = Math.min(config.options.topClasses, classesList.length);
   let html = '';
@@ -49,6 +66,20 @@ async function enumerateClasses(images) {
     html += `<li><span tag="${escape(tag)}" type="class" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${tag} (${item.count})</span></li>`;
   }
   $('#classes').append(html);
+
+  namesList.sort((a, b) => b.count - a.count); // sort by number of occurences
+  const namesCount = namesList.length; // crop the list to top entries
+  namesList.length = Math.min(config.options.topClasses, namesCount);
+
+  // add names
+  html = '';
+  $('#names').html('');
+  for (const item of namesList) {
+    html += `<li><span tag="${escape(item.tag)}" type="name" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${item.tag} (${item.count})</span></li>`;
+  }
+  $('#names').append(html);
+
+  log.debug('Enumerated names:', namesCount);
   log.debug(t0, 'Enumerated classees: unique:', classesCount, 'total:', ops);
 }
 
@@ -197,7 +228,7 @@ async function enumerateResults(images) {
   const a2 = enumerateLocations(images);
   const a3 = enumerateClasses(images);
   const a4 = enumerateNSFW(images);
-  // const a5 = enumerateShares(); // enumerateShares is called explicitly so not part of general enumeration
+  // const a6 = enumerateShares(); // enumerateShares is called explicitly so not part of general enumeration
   await Promise.all([a1, a2, a3, a4]);
   refreshNeeded = true;
 }

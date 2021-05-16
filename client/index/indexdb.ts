@@ -140,11 +140,11 @@ export async function all(index: string, direction: boolean, start: number, end:
             resolve(e);
           } else {
             idx++;
-            // if ((idx >= start) && (e.value.image.startsWith(user.root))) {
             if (idx >= start) {
               if (!tag) {
-                // res.push(e.value);
-                res[arrIdx++] = e.value;
+                res[arrIdx] = e.value;
+                // if (!res[arrIdx].person) res[arrIdx++].person = person(e.value.image); // pre-populate person object
+                arrIdx++;
               } else {
                 for (const val of e.value.tags) {
                   // @ts-ignore tag & value are unknown here
