@@ -22,10 +22,12 @@ async function enumerateClasses(images) {
   let ops = 0;
   if (refreshNeeded) {
     for (const item of images) {
+      let nameTagFound = false;
       for (const tag of item.tags) {
         const tags = Object.entries(tag)[0];
         if (!tags || tags.length !== 2 || ignoreTags.includes(tags[0])) continue;
-        if (tags[0] === 'alias') {
+        if (tags[0] === 'alias' && !nameTagFound) {
+          nameTagFound = true;
           ops++;
           const name = tags[1] as string; // names array is already split
           let nameFound;
@@ -36,7 +38,7 @@ async function enumerateClasses(images) {
             }
           }
           if (nameFound) nameFound.count++;
-          else namesList.push({ tag: name, count: 1 }); 
+          else namesList.push({ tag: name, count: 1 });
         } else {
           for (const val of (tags[1] as string).split(',')) {
             ops++;
@@ -75,7 +77,7 @@ async function enumerateClasses(images) {
   html = '';
   $('#names').html('');
   for (const item of namesList) {
-    html += `<li><span tag="${escape(item.tag)}" type="name" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${item.tag} (${item.count})</span></li>`;
+    html += `<li><span tag="${escape(item.tag)}" type="name" style="padding-left: 16px" class="folder"><i class="fas fa-chevron-circle-right">&nbsp</i>${item.tag}</span></li>`;
   }
   $('#names').append(html);
 

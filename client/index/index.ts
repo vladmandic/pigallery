@@ -20,7 +20,6 @@ import * as optionsConfig from './options';
 import * as pwa from './pwa-register';
 import * as dictionary from './dictionary';
 import * as components from './components';
-import * as indexdb from './indexdb';
 
 // global variables
 (window as any).filtered = [];
@@ -82,6 +81,7 @@ async function folderHandlers() {
         const exact = images.filter((a) => a.tags.find((b) => ((Object.keys(b)[0] as string === 'alias') && (escape(Object.values(b)[0] as string).startsWith(path)))));
         if (exact && exact.length > 0) {
           log.debug(t0, `Selected name: ${path} origin: ${exact[0].image}`);
+          // eslint-disable-next-line no-use-before-define
           await similarPerson(exact[0].image, true);
         }
         break;
@@ -251,7 +251,7 @@ async function similarPerson(image, skipRedraw = false) {
   config.options.listDivider = 'similarity';
   const object = images.find((a) => a.image === decodeURIComponent(image));
   const descriptor:Float32Array[] = [];
-  if (!object.person) object.person = await indexdb.person(object.image);
+  if (!object.person) object.person = await db.person(object.image);
   if (object && object.person) {
     for (const p of object.person) {
       if (p.descriptor) descriptor.push(new Float32Array(Object.values(p.descriptor)));
@@ -264,31 +264,27 @@ async function similarPerson(image, skipRedraw = false) {
   }
   let targets = 0;
   for (const i in images) {
+    /*
     const isPerson = (img) => {
-      return true;
-      // const found = img.detect.filter((a) => a.class === 'person');
-      // return found && img.person && img.person.length > 0;
+      const found = img.detect.filter((a) => a.class === 'person');
+      return found && img.person && img.person.length > 0;
     };
-
+    */
     const target:Float32Array[] = [];
-    if (isPerson(images[i])) {
-      if (!images[i].person) images[i].person = await indexdb.person(images[i].image);
-      for (const p of (images[i].person || [])) {
-        if (p.descriptor) target.push(new Float32Array(Object.values(p.descriptor)));
-      }
-      let best = 1;
-      targets += target.length;
-      for (const x of descriptor) {
-        for (const y of target) {
-          count++;
-          const distance = euclideanDistance(x, y, 3);
-          if (distance < best) best = distance;
-        }
-      }
-      images[i].similarity = 100 * best;
-    } else {
-      images[i].similarity = 100;
+    if (!images[i].person) images[i].person = await db.person(images[i].image);
+    for (const p of (images[i].person || [])) {
+      if (p.descriptor) target.push(new Float32Array(Object.values(p.descriptor)));
     }
+    let best = 1;
+    targets += target.length;
+    for (const x of descriptor) {
+      for (const y of target) {
+        count++;
+        const distance = euclideanDistance(x, y, 3);
+        if (distance < best) best = distance;
+      }
+    }
+    images[i].similarity = 100 * best;
   }
   images = images
     .filter((a) => (a.person && a.person[0]) && (a.similarity > 50))
