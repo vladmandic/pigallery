@@ -162,6 +162,7 @@ export async function scroll(images, divider) {
     const count = Math.min(config.options.listItemCount, images.length - current);
     const res = document.getElementById('results') as HTMLElement;
     for (let i = current; i < current + count; i++) {
+      if (!images[i]) continue;
       if (!images[i].thumbnail) images[i].thumbnail = indexdb.thumbnail(images[i].image);
       if (!images[i].person) images[i].person = indexdb.person(images[i].image);
       [images[i].thumbnail, images[i].person] = await Promise.all([images[i].thumbnail, images[i].person]); // to run both thumbnail and person indexdb get concurrently

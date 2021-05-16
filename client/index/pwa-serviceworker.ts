@@ -1,7 +1,7 @@
 /// <reference lib="es2020" />
 /// <reference lib="webworker" />
 
-const skipCaching = false;
+const skipCaching = true;
 
 const cacheName = 'pigallery';
 const cacheFiles = ['/favicon.ico', '/pigallery.webmanifest', '/client/offline.html']; // assets and models are cached on first access

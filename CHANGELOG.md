@@ -1,6 +1,6 @@
 # @vladmandic/pigallery  
 
-Version: **3.6.4**  
+Version: **3.6.5**  
 Description: **PiGallery: AI-powered Self-hosted Secure Multi-user Image Gallery and Detailed Image analysis using Machine Learning, EXIF Parsing and Geo Tagging**  
 
 Author: **Vladimir Mandic <mandic00@live.com>**  
@@ -9,13 +9,18 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/05/09 mandic00@live.com
+### **HEAD -> master** 2021/05/14 mandic00@live.com
+
+- prototype web components
+
+### **origin/master** 2021/05/09 mandic00@live.com
+
+
+### **3.6.5** 2021/05/09 mandic00@live.com
 
 - faster zooming
 - profiling optimizations
-
-### **origin/master** 2021/05/07 mandic00@live.com
-
+- add download progress
 - added synonym match in search
 
 ### **3.6.4** 2021/05/06 mandic00@live.com

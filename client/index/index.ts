@@ -20,6 +20,7 @@ import * as optionsConfig from './options';
 import * as pwa from './pwa-register';
 import * as dictionary from './dictionary';
 import * as components from './components';
+import * as indexdb from './indexdb';
 
 // global variables
 (window as any).filtered = [];
@@ -75,6 +76,14 @@ async function folderHandlers() {
         if (!images) images = [];
         images = images.filter((a) => a.tags.find((b) => (escape(Object.values(b)[0] as string).startsWith(path))));
         log.debug(t0, `Selected class: ${path}`);
+        break;
+      case 'name':
+        if (!images) images = [];
+        const exact = images.filter((a) => a.tags.find((b) => ((Object.keys(b)[0] as string === 'alias') && (escape(Object.values(b)[0] as string).startsWith(path)))));
+        if (exact && exact.length > 0) {
+          log.debug(t0, `Selected name: ${path} origin: ${exact[0].image}`);
+          await similarPerson(exact[0].image, true);
+        }
         break;
       case 'share':
         $('#share').toggle(true);
@@ -235,14 +244,15 @@ function euclideanDistance(embedding1, embedding2, order = 2) {
   return res;
 }
 
-async function similarPerson(image) {
+async function similarPerson(image, skipRedraw = false) {
   let count = 0;
   busy(`Searching for<br>similar people: ${images.length}`);
   const t0 = performance.now();
   config.options.listDivider = 'similarity';
   const object = images.find((a) => a.image === decodeURIComponent(image));
   const descriptor:Float32Array[] = [];
-  if (object.person) {
+  if (!object.person) object.person = await indexdb.person(object.image);
+  if (object && object.person) {
     for (const p of object.person) {
       if (p.descriptor) descriptor.push(new Float32Array(Object.values(p.descriptor)));
     }
@@ -255,12 +265,15 @@ async function similarPerson(image) {
   let targets = 0;
   for (const i in images) {
     const isPerson = (img) => {
-      const found = img.detect.filter((a) => a.class === 'person');
-      return found && img.person && img.person.length > 0;
+      return true;
+      // const found = img.detect.filter((a) => a.class === 'person');
+      // return found && img.person && img.person.length > 0;
     };
+
     const target:Float32Array[] = [];
     if (isPerson(images[i])) {
-      for (const p of images[i].person) {
+      if (!images[i].person) images[i].person = await indexdb.person(images[i].image);
+      for (const p of (images[i].person || [])) {
         if (p.descriptor) target.push(new Float32Array(Object.values(p.descriptor)));
       }
       let best = 1;
@@ -282,9 +295,11 @@ async function similarPerson(image) {
     .sort((a, b) => b.similarity - a.similarity);
   log.debug(t0, `Source: ${descriptor.length} Target: ${targets} Compares:${count}`);
   log.debug(t0, `Similar: ${images.length} persons`);
-  list.redraw(images);
-  enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
-  busy();
+  if (!skipRedraw) {
+    list.redraw(images);
+    enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
+    busy();
+  }
 }
 
 async function similarClasses(image) {
@@ -475,7 +490,9 @@ async function loadGallery(refresh = false) {
   const dt = config.options.lastUpdated === 0 ? 'start' : new Date(config.options.lastUpdated).toLocaleDateString();
   const current = await db.count();
   const dl = (current - cached) > 0 ? `performance: ${Math.round(dlSize / (t1 - t0)).toLocaleString()} KB/sec ` : '';
-  log.div('log', true, `download cached: ${cached} updated: ${current - cached} images in ${Math.round(t1 - t0).toLocaleString()} ms ${dl}updated since ${dt}`);
+  const added = current - cached;
+  const update = totalImages - added;
+  log.div('log', true, `download cached: ${cached} updated: ${update} added: ${added} images in ${Math.round(t1 - t0).toLocaleString()} ms ${dl}updated since ${dt}`);
   busy();
   config.options.lastUpdated = updated;
   stats.size = dlSize;
@@ -651,9 +668,11 @@ function initSidebarHandlers() {
   $('#folderstitle').on('click', () => $('#folders').toggle('slow'));
   $('#locationstitle').on('click', () => $('#locations').toggle('slow'));
   $('#classestitle').on('click', () => $('#classes').toggle('slow'));
+  $('#namestitle').on('click', () => $('#names').toggle('slow'));
   $('#folders').toggle(false);
   $('#locations').toggle(false);
   $('#classes').toggle(false);
+  $('#names').toggle(false);
   $(window).on('resize', () => resizeViewport());
 }
 
