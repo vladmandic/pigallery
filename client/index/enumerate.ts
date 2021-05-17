@@ -60,8 +60,8 @@ async function enumerateClasses(images) {
   }
 
   // add tags/classes
-  const classesCount = classesList.length; // crop the list to top entries
-  classesList.length = Math.min(config.options.topClasses, classesList.length);
+  const classesCount = classesList.length;
+  classesList.length = Math.min(config.options.topClasses, classesList.length); // crop the list to top entries
   let html = '';
   for (const item of classesList) {
     const tag = item.tag.split(/ |-|,/)[0];
@@ -69,9 +69,9 @@ async function enumerateClasses(images) {
   }
   $('#classes').append(html);
 
-  namesList.sort((a, b) => b.count - a.count); // sort by number of occurences
-  const namesCount = namesList.length; // crop the list to top entries
-  namesList.length = Math.min(config.options.topClasses, namesCount);
+  namesList.sort((a, b) => (a.tag > b.tag ? 1 : -1)); // sort by name
+  const namesCount = namesList.length;
+  // namesList.length = Math.min(config.options.topClasses, namesCount); // crop the list to top entries
 
   // add names
   html = '';

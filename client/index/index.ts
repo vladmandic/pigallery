@@ -236,7 +236,7 @@ function euclideanDistance(embedding1, embedding2, order = 2) {
   if (embedding1?.length === 0 || embedding2?.length === 0) return 0;
   if (embedding1?.length !== embedding2?.length) return 0;
   // general minkowski distance, euclidean distance is limited case where order is 2
-  const distance = 4.0 * embedding1
+  const distance = 10.0 * embedding1
     .map((val, i) => (Math.abs(embedding1[i] - embedding2[i]) ** order)) // distance squared
     .reduce((sum, now) => (sum + now), 0) // sum all distances
     ** (1 / order); // get root of
