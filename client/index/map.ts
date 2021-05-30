@@ -37,6 +37,8 @@ async function find(images, lat, lon, share) {
   list.redraw(images);
 }
 
+// hack to load mapquest iife as on-demand module
+// https://developer.mapquest.com/documentation/mapquest-js/v1.3/
 async function load() {
   return new Promise((resolve) => {
     $.getScript('/assets/mapquest.js').done(() => {
@@ -67,7 +69,7 @@ export async function show(images, visible, share) {
   if ($('#map').css('display') === 'none') return;
   L.mapquest.key = 'lYrP4vF3Uk5zgTiGGuEzQGwGIVDGuy24';
   mapContainer = L.mapquest.map('map', {
-    center: [25.7632076, -80.1927073],
+    center: [25.7631, -80.1904], // panorama tower, brickell, miami, fl, usa
     layers: L.mapquest.tileLayer(config.theme.map),
     zoom: 3,
   });
@@ -83,5 +85,3 @@ export async function show(images, visible, share) {
   L.heatLayer(points, heat).addTo(mapContainer);
   log.debug(t0, `Map added ${points.length} points`);
 }
-
-// https://developer.mapquest.com/documentation/mapquest-js/v1.3/

@@ -1,9 +1,9 @@
 import * as user from '../shared/user';
 import * as log from '../shared/log';
+import * as config from '../shared/config';
 
 let visible = false;
 
-const thumbSize = 96;
 let div;
 const people: Array<any> = [];
 
@@ -57,8 +57,8 @@ function addPerson(person, obj, img) {
   child.style.width = 'fit-content';
 
   const canvas = document.createElement('canvas');
-  canvas.height = thumbSize;
-  canvas.width = thumbSize;
+  canvas.height = config.default.namesThumbSize;
+  canvas.width = config.default.namesThumbSize;
   canvas.style.background = 'var(--body)';
   const ctx = canvas.getContext('2d');
   const box = [

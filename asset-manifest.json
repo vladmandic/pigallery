@@ -11072,7 +11072,7 @@
         ]
       },
       "client/shared/config.ts": {
-        "bytes": 11179,
+        "bytes": 11307,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26626,7 +26626,7 @@
           }
         ]
       },
-      "node_modules/.pnpm/@vladmandic+human@1.8.4/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
+      "node_modules/.pnpm/@vladmandic+human@1.8.5/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
         "bytes": 229716,
         "imports": [
           {
@@ -26719,7 +26719,7 @@
             "kind": "import-statement"
           },
           {
-            "path": "node_modules/.pnpm/@vladmandic+human@1.8.4/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
+            "path": "node_modules/.pnpm/@vladmandic+human@1.8.5/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           }
         ]
@@ -26811,7 +26811,7 @@
         "imports": []
       },
       "client/index/names.ts": {
-        "bytes": 4322,
+        "bytes": 4384,
         "imports": [
           {
             "path": "client/shared/user.ts",
@@ -26819,6 +26819,10 @@
           },
           {
             "path": "client/shared/log.ts",
+            "kind": "import-statement"
+          },
+          {
+            "path": "client/shared/config.ts",
             "kind": "import-statement"
           }
         ]
@@ -26894,7 +26898,7 @@
         "imports": []
       },
       "client/index/map.ts": {
-        "bytes": 3507,
+        "bytes": 3594,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -26987,7 +26991,7 @@
         ]
       },
       "client/index/index.ts": {
-        "bytes": 37267,
+        "bytes": 37288,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -27162,7 +27166,7 @@
         "bytes": 8648,
         "imports": [
           {
-            "path": "node_modules/.pnpm/@vladmandic+human@1.8.4/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
+            "path": "node_modules/.pnpm/@vladmandic+human@1.8.5/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
@@ -27228,7 +27232,7 @@
             "kind": "import-statement"
           },
           {
-            "path": "node_modules/.pnpm/@vladmandic+human@1.8.4/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
+            "path": "node_modules/.pnpm/@vladmandic+human@1.8.5/node_modules/@vladmandic/human/dist/human.esm-nobundle.js",
             "kind": "import-statement"
           },
           {
@@ -27276,7 +27280,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 6531686
+        "bytes": 6531852
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -27872,7 +27876,7 @@
             "bytesInOutput": 6951
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8700
+            "bytesInOutput": 8748
           },
           "client/shared/user.ts": {
             "bytesInOutput": 1173
@@ -27881,19 +27885,19 @@
             "bytesInOutput": 2589
           }
         },
-        "bytes": 2809956
+        "bytes": 2810004
       },
       "dist/compare/compare.css": {
         "imports": [],
         "inputs": {
-          "assets/bootstrap.css": {
-            "bytesInOutput": 198360
+          "client/pigallery.css": {
+            "bytesInOutput": 11783
           },
           "assets/fontawesome.css": {
             "bytesInOutput": 207942
           },
-          "client/pigallery.css": {
-            "bytesInOutput": 11783
+          "assets/bootstrap.css": {
+            "bytesInOutput": 198360
           }
         },
         "bytes": 418170
@@ -27902,7 +27906,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1068573
+        "bytes": 1068917
       },
       "dist/index/index.js": {
         "imports": [],
@@ -27913,7 +27917,7 @@
             "bytesInOutput": 230624
           },
           "node_modules/.pnpm/moment@2.29.1/node_modules/moment/moment.js": {
-            "bytesInOutput": 141730
+            "bytesInOutput": 141989
           },
           "assets/color-thief.umd.js": {
             "bytesInOutput": 11881
@@ -27934,7 +27938,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.ts": {
-            "bytesInOutput": 37636
+            "bytesInOutput": 37641
           },
           "client/shared/log.ts": {
             "bytesInOutput": 1965
@@ -27943,7 +27947,7 @@
             "bytesInOutput": 59935
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8700
+            "bytesInOutput": 8748
           },
           "client/shared/user.ts": {
             "bytesInOutput": 1173
@@ -27958,16 +27962,16 @@
             "bytesInOutput": 26545
           },
           "client/index/names.ts": {
-            "bytesInOutput": 3865
+            "bytesInOutput": 3869
           },
           "client/shared/blockhash.ts": {
             "bytesInOutput": 410
           },
           "client/index/list.ts": {
-            "bytesInOutput": 9578
+            "bytesInOutput": 9575
           },
           "client/index/map.ts": {
-            "bytesInOutput": 3423
+            "bytesInOutput": 3417
           },
           "client/index/nearest.ts": {
             "bytesInOutput": 3103
@@ -27988,25 +27992,25 @@
             "bytesInOutput": 752
           }
         },
-        "bytes": 587884
+        "bytes": 588191
       },
       "dist/index/index.css": {
         "imports": [],
         "inputs": {
-          "assets/bootstrap.css": {
-            "bytesInOutput": 198360
-          },
-          "assets/fontawesome.css": {
-            "bytesInOutput": 207942
-          },
-          "assets/mapquest.css": {
-            "bytesInOutput": 138056
+          "client/pigallery.css": {
+            "bytesInOutput": 11783
           },
           "client/index/iv-viewer.css": {
             "bytesInOutput": 3150
           },
-          "client/pigallery.css": {
-            "bytesInOutput": 11783
+          "assets/mapquest.css": {
+            "bytesInOutput": 138056
+          },
+          "assets/fontawesome.css": {
+            "bytesInOutput": 207942
+          },
+          "assets/bootstrap.css": {
+            "bytesInOutput": 198360
           }
         },
         "bytes": 559437
@@ -28015,7 +28019,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12006646
+        "bytes": 12007029
       },
       "dist/process/process.js": {
         "imports": [],
@@ -29490,7 +29494,7 @@
             "bytesInOutput": 1174
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8703
+            "bytesInOutput": 8751
           },
           "client/process/modelClassify.ts": {
             "bytesInOutput": 3927
@@ -32000,26 +32004,26 @@
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.6.0_@tensorflow+tfjs-core@3.6.0/node_modules/@tensorflow/tfjs-data/dist/version.js": {
             "bytesInOutput": 25
           },
-          "node_modules/.pnpm/@vladmandic+human@1.8.4/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-            "bytesInOutput": 270762
+          "node_modules/.pnpm/@vladmandic+human@1.8.5/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
+            "bytesInOutput": 270761
           },
           "client/process/processImage.ts": {
             "bytesInOutput": 10733
           }
         },
-        "bytes": 4965530
+        "bytes": 4965577
       },
       "dist/process/process.css": {
         "imports": [],
         "inputs": {
-          "assets/bootstrap.css": {
-            "bytesInOutput": 198360
+          "client/pigallery.css": {
+            "bytesInOutput": 11783
           },
           "assets/fontawesome.css": {
             "bytesInOutput": 207942
           },
-          "client/pigallery.css": {
-            "bytesInOutput": 11783
+          "assets/bootstrap.css": {
+            "bytesInOutput": 198360
           }
         },
         "bytes": 418170
@@ -32028,7 +32032,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12120738
+        "bytes": 12121121
       },
       "dist/video/video.js": {
         "imports": [],
@@ -35992,8 +35996,8 @@
           "node_modules/.pnpm/@tensorflow+tfjs-data@3.6.0_@tensorflow+tfjs-core@3.6.0/node_modules/@tensorflow/tfjs-data/dist/version.js": {
             "bytesInOutput": 25
           },
-          "node_modules/.pnpm/@vladmandic+human@1.8.4/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
-            "bytesInOutput": 270752
+          "node_modules/.pnpm/@vladmandic+human@1.8.5/node_modules/@vladmandic/human/dist/human.esm-nobundle.js": {
+            "bytesInOutput": 270751
           },
           "assets/panzoom.js": {
             "bytesInOutput": 43661
@@ -36032,22 +36036,22 @@
             "bytesInOutput": 13893
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8707
+            "bytesInOutput": 8755
           }
         },
-        "bytes": 5033817
+        "bytes": 5033864
       },
       "dist/video/video.css": {
         "imports": [],
         "inputs": {
-          "assets/bootstrap.css": {
-            "bytesInOutput": 198360
+          "client/pigallery.css": {
+            "bytesInOutput": 11783
           },
           "assets/fontawesome.css": {
             "bytesInOutput": 207942
           },
-          "client/pigallery.css": {
-            "bytesInOutput": 11783
+          "assets/bootstrap.css": {
+            "bytesInOutput": 198360
           }
         },
         "bytes": 418170

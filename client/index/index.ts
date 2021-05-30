@@ -400,7 +400,6 @@ async function findDuplicates() {
 
 // loads images, displays gallery and enumerates sidebar
 async function loadGallery(refresh = false) {
-  const chunkSize = 200;
   const cached = await db.count();
   if (directShare) return;
   if (!user.user.user) return;
@@ -421,7 +420,7 @@ async function loadGallery(refresh = false) {
   const since = refresh ? config.options.lastUpdated : 0;
   let first;
   try {
-    first = await fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=0`);
+    first = await fetch(`/api/record/get?&time=${since}&chunksize=${config.default.downloadChunkSize}&page=0`);
   } catch (err) {
     log.debug('Error /api/record/get:', err);
   }
@@ -447,7 +446,7 @@ async function loadGallery(refresh = false) {
     perf = Math.round(dlSize / (performance.now() - t0));
     $('#progress').html(`Downloading ${progress}%:<br>${images} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
     for (let page = 1; page <= pages; page++) {
-      const promise = fetch(`/api/record/get?&time=${since}&chunksize=${chunkSize}&page=${page}`);
+      const promise = fetch(`/api/record/get?&time=${since}&chunksize=${config.default.downloadChunkSize}&page=${page}`);
       promisesReq.push(promise);
       // eslint-disable-next-line no-loop-func, promise/catch-or-return
       promise.then((result) => {
