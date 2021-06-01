@@ -41,14 +41,14 @@
   "dependencies": {
     "@tensorflow/tfjs": "^3.6.0",
     "@tensorflow/tfjs-backend-wasm": "^3.6.0",
-    "@vladmandic/human": "^1.8.5",
+    "@vladmandic/human": "^1.9.4",
     "@vladmandic/pilogger": "^0.2.17",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.1",
-    "esbuild": "^0.12.0",
+    "esbuild": "^0.12.5",
     "exif-parser": "^0.1.12",
     "express": "^4.17.1",
-    "express-session": "^1.17.1",
+    "express-session": "^1.17.2",
     "jpeg-exif": "^1.1.4",
     "jquery": "^3.6.0",
     "moment": "^2.29.1",
@@ -59,18 +59,18 @@
   },
   "devDependencies": {
     "@tensorflow/tfjs-node": "^3.6.1",
-    "@types/express": "^4.17.11",
+    "@types/express": "^4.17.12",
     "@types/jquery": "^3.5.5",
-    "@types/node": "^15.3.0",
-    "@typescript-eslint/eslint-plugin": "^4.24.0",
-    "@typescript-eslint/parser": "^4.24.0",
-    "eslint": "^7.26.0",
+    "@types/node": "^15.6.1",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-html": "^6.1.2",
-    "eslint-plugin-import": "^2.23.2",
+    "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-json": "^3.0.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.3.2"
   }
 }
