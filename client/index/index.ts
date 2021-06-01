@@ -1,9 +1,9 @@
 // css-imports used by esbuild
+import '../pigallery.css';
+import './iv-viewer.css';
 import '../../assets/bootstrap.css';
 import '../../assets/fontawesome.css';
 import '../../assets/mapquest.css';
-import './iv-viewer.css';
-import '../pigallery.css';
 
 import $ from 'jquery';
 import * as log from '../shared/log';

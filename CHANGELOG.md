@@ -9,7 +9,7 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/05/17 mandic00@live.com
+### **HEAD -> master** 2021/05/30 mandic00@live.com
 
 - enable caching
 
