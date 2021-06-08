@@ -1,7 +1,7 @@
 // css-imports used by esbuild
-import '../pigallery.css';
 import '../../assets/bootstrap.css';
 import '../../assets/fontawesome.css';
+import '../pigallery.css';
 
 import $ from 'jquery';
 import { tf } from '../shared/tf';
