@@ -1,6 +1,6 @@
 {
   "name": "@vladmandic/pigallery",
-  "version": "3.7.3",
+  "version": "3.7.4",
   "description": "PiGallery: AI-powered Self-hosted Secure Multi-user Image Gallery and Detailed Image analysis using Machine Learning, EXIF Parsing and Geo Tagging",
   "author": "Vladimir Mandic <mandic00@live.com>",
   "license": "MIT",
