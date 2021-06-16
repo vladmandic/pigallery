@@ -249,13 +249,13 @@ export async function process(name) {
       if (res && res.face) {
         for (const person of res.face) {
           obj.person.push({
-            confidence: person.confidence,
+            score: person.score,
             boxRaw: person.boxRaw,
             meshRaw: person.meshRaw,
             iris: person.iris,
             age: person.age,
             gender: person.gender,
-            genderScore: person.genderConfidence,
+            genderScore: person.genderScore,
             emotion: person.emotion[0] ? person.emotion[0].emotion : '',
             emotionScore: person.emotion[0] ? person.emotion[0].score : '',
             descriptor: person.embedding,

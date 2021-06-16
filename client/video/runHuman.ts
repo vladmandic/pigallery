@@ -8,7 +8,7 @@ let ctx;
 function drawFace(result, ui) {
   for (const face of result) {
     const labels:Array<string> = [];
-    if (face.agConfidence) labels.push(`${Math.trunc(100 * face.agConfidence)}% ${face.gender || ''}`);
+    if (face.ageScore) labels.push(`${Math.trunc(100 * face.ageScore)}% ${face.gender || ''}`);
     if (face.age) labels.push(`age: ${face.age || ''}`);
     if (face.iris) labels.push(`iris: ${face.iris}`);
     if (face.emotion && face.emotion[0]) labels.push(`${Math.trunc(100 * face.emotion[0].score)}% ${face.emotion[0].emotion}`);
@@ -210,7 +210,7 @@ export async function run(input, config, objects) {
   if (result.hand) drawHand(result.hand, config.ui);
   for (const face of result.face) {
     let label = '';
-    if (face.agConfidence) label += `${Math.trunc(100 * face.agConfidence)}% ${face.gender || ''} `;
+    if (face.ageScore) label += `${Math.trunc(100 * face.ageScore)}% ${face.gender || ''} `;
     if (face.age) label += `age: ${face.age || ''} `;
     if (face.emotion && face.emotion[0]) label += `${Math.trunc(100 * face.emotion[0].score)}% ${face.emotion[0].emotion} `;
     if (face.iris) label += `distance: ${face.iris} `;

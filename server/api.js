@@ -96,14 +96,14 @@ function api(app, inConfig, inDB) {
     if (req.query.rm) {
       const data = await db.findOne({ share: req.query.rm });
       log.info(`API/Share/Del ${sign(req)} ${data.creator} name: "${data.name}" key: ${data.share} images:`, data.images.length);
-      db.remove({ share: data.share }, { multi: false });
+      await db.remove({ share: data.share }, { multi: false });
       res.status(200).send('true');
     } else {
       res.status(400).json([]);
     }
   });
 
-  app.post('/api/share/put', (req, res) => {
+  app.post('/api/share/put', async (req, res) => {
     if (req.session.admin) {
       const data = req.body;
       const obj = {
@@ -114,7 +114,7 @@ function api(app, inConfig, inDB) {
         share: ((new Date()).getTime() / 1000).toString(36),
       };
       if (obj.images?.length > 0) {
-        db.update({ share: obj.share }, obj, { upsert: true });
+        await db.update({ share: obj.share }, obj, { upsert: true });
         log.info(`API/Share/Put ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images?.length);
         res.status(200).json({ key: obj.share });
       } else {
@@ -210,8 +210,8 @@ function api(app, inConfig, inDB) {
       const data = await db.findOne({ image: req.query.rm });
       if (data) {
         log.info(`API/Record/Del ${sign(req)} req: ${req.query.rm} res:`, data.image);
-        db.remove({ image: data.image }, { multi: false });
-        res.json(data.image);
+        await db.remove({ image: data.image }, { multi: false });
+        res.status(200).json(data.image);
       } else {
         res.status(400).json({ error: 'image not found' });
       }

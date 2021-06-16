@@ -181,10 +181,10 @@ async function menuSetup() {
     config.default.human.face.age.skipFrames = parseInt(val);
     config.default.human.hand.skipFrames = parseInt(val);
   });
-  objects.menus.params.addRange('Min Confidence', config.default.human.face.detector, 'minConfidence', 0.0, 1.0, 0.05, (val) => {
-    config.default.human.face.detector.minConfidence = parseFloat(val);
-    config.default.human.face.emotion.minConfidence = parseFloat(val);
-    config.default.human.hand.minConfidence = parseFloat(val);
+  objects.menus.params.addRange('Min Score', config.default.human.face.detector, 'minScore', 0.0, 1.0, 0.05, (val) => {
+    config.default.human.face.detector.minScore = parseFloat(val);
+    config.default.human.face.emotion.minScore = parseFloat(val);
+    config.default.human.hand.minScore = parseFloat(val);
   });
   objects.menus.params.addRange('Score Threshold', config.default.human.face.detector, 'scoreThreshold', 0.1, 1.0, 0.05, (val) => {
     config.default.human.face.detector.scoreThreshold = parseFloat(val);
