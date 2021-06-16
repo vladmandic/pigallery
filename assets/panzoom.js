@@ -1301,6 +1301,7 @@ const require_panzoom = __commonJS((exports, module) => {
     const started = Date.now();
     tryAttach();
     function tryAttach() {
+      // @ts-ignore
       const el = document.querySelector(query);
       if (!el) {
         const now = Date.now();
@@ -1313,7 +1314,7 @@ const require_panzoom = __commonJS((exports, module) => {
         return;
       }
       const panZoomOptions = collectOptions(panzoomScript);
-      console.log(panZoomOptions);
+      // console.log(panZoomOptions);
       window[globalName] = createPanZoom(el, panZoomOptions);
     }
     function collectOptions(script) {

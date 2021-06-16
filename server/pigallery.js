@@ -157,10 +157,9 @@ async function main() {
 
   // load image cache
   if (!fs.existsSync(config.server.db)) log.warn('Image cache not found:', config.server.db);
-  db = nedb.create({ filename: config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
+  db = await nedb.create({ filename: config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
   await db.ensureIndex({ fieldName: 'image', unique: true, sparse: true });
   await db.ensureIndex({ fieldName: 'processed', unique: false, sparse: false });
-  // await db.loadDatabase();
   await db.load();
   const records = await db.count({});
   log.state('Image DB loaded:', config.server.db, 'records:', records);

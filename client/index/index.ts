@@ -191,12 +191,16 @@ async function filterResults(input) {
 }
 
 async function deleteImage(image) {
-  if (user.user.admin) {
-    const res = await fetch(`/api/record/del?rm=${image}`);
+  if (!user.user.admin) {
+    log.div('log', true, 'error: must be admin to remove images');
+    return;
+  }
+  const res = await fetch(`/api/record/del?rm=${image}`);
+  if (res && res.ok) {
     const deleted = await res.json();
     log.div('log', true, 'record delete:', res.status, deleted);
   } else {
-    log.div('log', true, 'error: must be admin to remove images');
+    log.div('log', true, 'record delete error:', res.status);     
   }
 }
 
@@ -329,7 +333,14 @@ async function sortResults(sort) {
 
   // refresh records
   // eslint-disable-next-line no-use-before-define
-  await loadGallery(true);
+  if (images.length === 0) log.div('log', true, 'image cache empty');
+
+  if (!loadTried && (await db.count() === 0)) {
+    loadTried = true;
+    await loadGallery(false);
+  } else {
+    await loadGallery(true);
+  }
 
   const t0 = performance.now();
   log.debug(t0, `Sorting: ${sort.replace('navlinebutton fad sort fa-', '')}`);
@@ -365,12 +376,6 @@ async function sortResults(sort) {
   if (sort.includes('amount-up')) images = images.concat(await db.all('size', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
   log.debug(t1, `Cached images: ${images.length} fetched remaining`);
   stats.remaining = Math.floor(window.performance.now() - t1);
-  if (images.length === 0) log.div('log', true, 'image cache empty');
-  if (!loadTried && images.length === 0) {
-    loadTried = true;
-    // eslint-disable-next-line no-use-before-define
-    await loadGallery(false);
-  }
   busy('Enumerating images');
   enumerate.enumerate(images).then(folderHandlers).catch((err) => err);
   stats.enumerate = Math.floor(window.performance.now() - t1);
@@ -941,7 +946,7 @@ async function main() {
   stats.pageMode = parent.location.href === location.href ? 'Standalone' : 'Frame';
   stats.appMode = matchMedia('(display-mode: standalone)').matches ? 'Standalone' : 'Browser';
 
-  const cache = caches ? await caches.open('pigallery') : null;
+  const cache = (typeof caches !== 'undefined') ? await caches.open('pigallery') : null;
   stats.cache = cache ? (await cache.matchAll()).length : 0;
   await config.done();
   log.server('Load stats:', stats);
