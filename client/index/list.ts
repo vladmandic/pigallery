@@ -172,7 +172,7 @@ export async function scroll(images, divider) {
       res.appendChild(item);
     }
     current += count;
-    log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${images.length}`);
+    log.debug(t0, `Results scroll: added: ${count} current: ${current} total: ${images.length} divider: ${divider}`);
     // log.div('log', true, `Results scroll: added: ${count} current: ${current} total: ${images.length}`);
     $('.listitem').on('mouseover', (evt) => thumbButtons(evt, true));
     $('.listitem').on('mouseout', (evt) => thumbButtons(evt, false));
@@ -184,22 +184,27 @@ export async function scroll(images, divider) {
   details.update(images);
 }
 
+export async function clear() {
+  (document.getElementById('results') as HTMLElement).innerHTML = '';
+  current = 0;
+}
+
 // redraws gallery view and rebuilds sidebar menu
-export async function redraw(images, divider = config.options.listDivider, clear = true) {
+export async function redraw(images, divider = config.options.listDivider, clearList = true) {
   resize();
   const dt = new Date();
   const base = new Date(dt.getFullYear(), dt.getMonth(), 0).getTime();
   const hash = Math.trunc((dt.getTime() - base) / 1000);
   location.href = `#${hash}`;
   const t0 = performance.now();
-  if (clear) {
+  if (clearList) {
     (document.getElementById('results') as HTMLElement).innerHTML = '';
     current = 0;
   }
 
   await scroll(images, divider);
   (document.getElementById('results') as HTMLElement).scrollTop = 0;
-  log.debug(t0, 'Redraw results complete:', images.length, clear);
+  log.debug(t0, 'Redraw results complete:', images.length, clearList);
 }
 
 export function clearPrevious() {

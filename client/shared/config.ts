@@ -156,7 +156,7 @@ const options = {
   get listSortOrder() { return localStorage.getItem('listSortOrder') || 'numeric-down'; },
   set listSortOrder(val) { localStorage.setItem('listSortOrder', val); },
 
-  get fixWidth() { return localStorage.getItem('fixWidth') ? localStorage.getItem('fixWidth') === 'true' : true; },
+  get fixWidth() { return localStorage.getItem('fixWidth') ? localStorage.getItem('fixWidth') === 'true' : false; },
   set fixWidth(val) { localStorage.setItem('fixWidth', val.toString()); },
 
   get fixHeight() { return localStorage.getItem('fixHeight') ? localStorage.getItem('fixHeight') === 'true' : true; },

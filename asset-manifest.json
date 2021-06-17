@@ -11342,7 +11342,7 @@
         ]
       },
       "client/shared/config.ts": {
-        "bytes": 11307,
+        "bytes": 11308,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -38590,7 +38590,7 @@
         "imports": []
       },
       "client/index/indexdb.ts": {
-        "bytes": 6859,
+        "bytes": 6930,
         "imports": [
           {
             "path": "client/shared/log.ts",
@@ -38665,7 +38665,7 @@
         ]
       },
       "client/index/list.ts": {
-        "bytes": 9938,
+        "bytes": 10090,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -38795,7 +38795,7 @@
         ]
       },
       "client/index/index.ts": {
-        "bytes": 37384,
+        "bytes": 37739,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -39084,7 +39084,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 6760973
+        "bytes": 6760974
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -39686,7 +39686,7 @@
             "bytesInOutput": 6963
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8752
+            "bytesInOutput": 8753
           },
           "client/shared/user.ts": {
             "bytesInOutput": 1183
@@ -39695,7 +39695,7 @@
             "bytesInOutput": 2591
           }
         },
-        "bytes": 2912909
+        "bytes": 2912910
       },
       "dist/compare/compare.css": {
         "imports": [],
@@ -39716,7 +39716,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1069280
+        "bytes": 1070122
       },
       "dist/index/index.js": {
         "imports": [],
@@ -39748,7 +39748,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.ts": {
-            "bytesInOutput": 37784
+            "bytesInOutput": 38011
           },
           "client/shared/log.ts": {
             "bytesInOutput": 1965
@@ -39757,7 +39757,7 @@
             "bytesInOutput": 59957
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8752
+            "bytesInOutput": 8753
           },
           "client/shared/user.ts": {
             "bytesInOutput": 1183
@@ -39778,7 +39778,7 @@
             "bytesInOutput": 410
           },
           "client/index/list.ts": {
-            "bytesInOutput": 9575
+            "bytesInOutput": 9700
           },
           "client/index/map.ts": {
             "bytesInOutput": 3421
@@ -39802,7 +39802,7 @@
             "bytesInOutput": 754
           }
         },
-        "bytes": 588745
+        "bytes": 589098
       },
       "dist/index/index.css": {
         "imports": [],
@@ -39829,7 +39829,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12511574
+        "bytes": 12511575
       },
       "dist/process/process.js": {
         "imports": [],
@@ -41085,7 +41085,7 @@
             "bytesInOutput": 1184
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8752
+            "bytesInOutput": 8753
           },
           "client/process/modelClassify.ts": {
             "bytesInOutput": 3937
@@ -43635,7 +43635,7 @@
             "bytesInOutput": 10724
           }
         },
-        "bytes": 4951794
+        "bytes": 4951795
       },
       "dist/process/process.css": {
         "imports": [],
@@ -43656,7 +43656,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12625636
+        "bytes": 12625637
       },
       "dist/video/video.js": {
         "imports": [],
@@ -47474,10 +47474,10 @@
             "bytesInOutput": 13897
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8756
+            "bytesInOutput": 8757
           }
         },
-        "bytes": 5019873
+        "bytes": 5019874
       },
       "dist/video/video.css": {
         "imports": [],
