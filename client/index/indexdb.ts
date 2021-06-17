@@ -65,6 +65,7 @@ export async function reset() {
 }
 
 export async function put(obj) {
+  // splits object to be stored in separate stores
   const thumbDetails = { name: obj.image, thumbnail: obj.thumbnail };
   const personDetails = { name: obj.image, person: obj.person };
   delete obj.thumbnail;
@@ -186,6 +187,6 @@ export async function count():Promise<number> {
 export async function store(objects) {
   for (const object of objects) {
     object.timestamp = object.exif?.created || object.exif?.modified || 0;
-    put(object);
+    put(object); // this is async op
   }
 }

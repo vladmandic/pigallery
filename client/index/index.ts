@@ -200,7 +200,7 @@ async function deleteImage(image) {
     const deleted = await res.json();
     log.div('log', true, 'record delete:', res.status, deleted);
   } else {
-    log.div('log', true, 'record delete error:', res.status);     
+    log.div('log', true, 'record delete error:', res.status);
   }
 }
 
@@ -337,8 +337,10 @@ async function sortResults(sort) {
 
   if (!loadTried && (await db.count() === 0)) {
     loadTried = true;
+    // eslint-disable-next-line no-use-before-define
     await loadGallery(false);
   } else {
+    // eslint-disable-next-line no-use-before-define
     await loadGallery(true);
   }
 
@@ -366,7 +368,7 @@ async function sortResults(sort) {
   log.debug(t0, `Cached images: ${images.length} fetched initial`);
   const t1 = performance.now();
   stats.initial = Math.floor(t1 - t0);
-  $('#all').focus();
+  $('#all').trigger('focus');
   busy('Loading remaining<br>images in background');
   if (sort.includes('alpha-down')) images = images.concat(await db.all('name', true, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
   if (sort.includes('alpha-up')) images = images.concat(await db.all('name', false, config.options.listItemCount + 1, Number.MAX_SAFE_INTEGER, null, directShare));
@@ -403,6 +405,19 @@ async function findDuplicates() {
   worker.postMessage(images);
 }
 
+async function storeDatabase(chunks, totalImages) {
+  for await (const chunk of chunks) { // triggers all in parallel
+    const t0 = performance.now();
+    db.store(chunk); // async op
+    const imagesCount = await db.count(); // causes all pending transactions to clear
+    const progress = Math.min(100, Math.round(100 * imagesCount / totalImages));
+    busy(`Creating cache ${progress}%<br>${imagesCount} / ${totalImages} images`);
+    $('#progress').html(`Creating cache: ${progress}%<br>images: ${imagesCount} / ${totalImages}`);
+    const t1 = performance.now();
+    stats.store += t1 - t0;
+  }
+}
+
 // loads images, displays gallery and enumerates sidebar
 async function loadGallery(refresh = false) {
   const cached = await db.count();
@@ -433,23 +448,28 @@ async function loadGallery(refresh = false) {
   let totalImages = 0;
   let pages = 0;
   let dlSize = 0;
+  let imagesCount = 0;
   if (first && first.ok) {
     totalSize = parseFloat(first.headers.get('content-TotalSize') || '');
     totalImages = parseFloat(first.headers.get('content-TotalImages') || '');
     pages = parseInt(first.headers.get('content-Pages') || '0');
     const json0 = await first.json();
+    imagesCount = json0.length;
     dlSize = JSON.stringify(json0).length;
     if (json0 && json0.length > 0) db.store(json0);
     if (totalImages > 0) enumerate.refresh();
   }
   let perf = 0;
-  let imagesCount = 0;
   if (pages > 0) {
+    const chunks: Array<any> = [];
     const promisesReq:Array<any> = [];
     const promisesData:Array<any> = [];
+    $('#results').off('scroll');
+    list.clear();
     let progress = Math.min(100, Math.round(100 * dlSize / totalSize));
     perf = Math.round(dlSize / (performance.now() - t0));
-    $('#progress').html(`Downloading ${progress}%:<br>${images} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+    $('#progress').html(`Downloading ${progress}%:<br>${imagesCount} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+    $('#splash').toggle(true);
     for (let page = 1; page <= pages; page++) {
       const promise = fetch(`/api/record/get?&time=${since}&chunksize=${config.default.downloadChunkSize}&page=${page}`);
       promisesReq.push(promise);
@@ -464,19 +484,10 @@ async function loadGallery(refresh = false) {
           dlSize += JSON.stringify(json).length;
           progress = Math.min(100, Math.round(100 * dlSize / totalSize));
           perf = Math.round(dlSize / (performance.now() - t0));
-          const t2 = performance.now();
           imagesCount += json.length;
-          await db.store(json);
-          const t3 = performance.now();
-          stats.store += t3 - t2;
-          log.debug('Donwloading', `page:${page} progress:${progress}% images:${imagesCount} / ${totalImages} bytes:${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} perf:${perf.toLocaleString()} KB/sec`);
-          if (progress >= 98) {
-            busy(`Creating cache<br>${totalImages} images<br>${totalSize.toLocaleString()} bytes`);
-            $('#progress').html(`Creating cache<br>images:${totalImages}<br>${totalSize.toLocaleString()} bytes`);
-          } else {
-            busy(`Downloading ${progress}%:<br>${imagesCount} / ${totalImages} images`);
-            $('#progress').html(`Downloading ${progress}%:<br>${imagesCount} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
-          }
+          chunks.push(json);
+          busy(`Downloading ${progress}%<br>${imagesCount} / ${totalImages} images`);
+          $('#progress').html(`Downloading ${progress}%<br>${imagesCount} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
           return true;
         });
         return true;
@@ -484,6 +495,9 @@ async function loadGallery(refresh = false) {
     }
     await Promise.all(promisesReq);
     await Promise.all(promisesData);
+    await storeDatabase(chunks, totalImages);
+    list.redraw(images);
+    $('#splash').toggle(false);
   }
   const t1 = performance.now();
 
