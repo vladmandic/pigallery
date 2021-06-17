@@ -15,3 +15,4 @@ config.json
 models.json
 pnpm-lock.yaml
 tests
+backup/*

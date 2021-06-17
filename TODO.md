@@ -2,11 +2,8 @@
 
 ## Features
 
-- Implement MongoDB backend
 - Video analysis
-- Automatic DB backup
 - Creating Cache should have progres bar
-- Unhandled rejection handler
 
 ## General
 
@@ -16,5 +13,5 @@
 
 ## Issues
 
-- NodeJS large stack requirements
+- NeDB large stack requirements: <https://github.com/jrop/nedb-promise/issues/14>
 - Initial download causes first images to be duplicated

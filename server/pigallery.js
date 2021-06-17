@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
 const log = require('@vladmandic/pilogger');
 const http = require('http');
 const https = require('https');
@@ -28,7 +29,33 @@ function forceSSL(req, res, next) {
   return next();
 }
 
+async function createBackup(src) {
+  const dt = new Date();
+  // const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
+  const ts = (dt.getFullYear().toString() + '-')
+    + (dt.getMonth() + 1).toString().padStart(2, '0') + '-'
+    + (dt.getDate().toString().padStart(2, '0')) + '-'
+    + (dt.getHours().toString().padStart(2, '0')) + '-'
+    + (dt.getMinutes().toString().padStart(2, '0'));
+  const tgt = `backup/${src}-${ts}.gz`;
+  // fs.copyFileSync(src, tgt);
+  const compress = zlib.createGzip();
+  const input = fs.createReadStream(src);
+  const output = fs.createWriteStream(tgt);
+  fs.openSync(tgt, 'w', null);
+  return new Promise((resolve) => {
+    log.state('Image DB backup start:', src, 'size:', fs.statSync(src).size);
+    output.on('close', () => {
+      log.state('Image DB backup complete:', tgt, 'size:', fs.statSync(tgt).size);
+      resolve(true);
+    });
+    input.pipe(compress).pipe(output);
+  });
+}
+
 async function main() {
+  process.on('uncaughtException', (err) => log.error('Exception', err));
+  process.on('unhandledRejection', (err) => log.error('Rejection', err));
   try {
     config = JSON.parse(fs.readFileSync('./config.json').toString());
   } catch (err) {
@@ -46,18 +73,22 @@ async function main() {
   app.set('trust proxy', true);
 
   // update changelog
-  changelog.update('../CHANGELOG.md');
+  await changelog.update('../CHANGELOG.md');
+
+  if (!config) {
+    log.error('Configuration missing, exiting...');
+    process.exit(0);
+  }
+
+  // create image db backup
+  if (!fs.existsSync(config.server.db)) log.warn('Image cache not found:', config.server.db);
+  else await createBackup(config.server.db);
 
   // initialize esbuild bundler
   await build.compile();
 
   // initialize file watcher
   await watcher.watch(config);
-
-  if (!config) {
-    log.error('Configuration missing, exiting...');
-    process.exit(0);
-  }
 
   // load expressjs middleware
   // @ts-ignore not typescript compatible
@@ -156,7 +187,6 @@ async function main() {
   }
 
   // load image cache
-  if (!fs.existsSync(config.server.db)) log.warn('Image cache not found:', config.server.db);
   db = await nedb.create({ filename: config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
   await db.ensureIndex({ fieldName: 'image', unique: true, sparse: true });
   await db.ensureIndex({ fieldName: 'processed', unique: false, sparse: false });
