@@ -9,6 +9,9 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
+### **HEAD -> master** 2021/06/17 mandic00@live.com
+
+
 ### **3.7.5** 2021/06/17 mandic00@live.com
 
 - implement db backup
