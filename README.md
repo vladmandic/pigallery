@@ -217,7 +217,7 @@
 
 ### Configuration Details
 
-- [Server configuration documentation]('docs/client-server.md')
+- [Server configuration documentation]("docs/client-server.md")
 - [Client configuration documentation]('docs/client-config.md')
 - [Model configuration documentation]('docs/config-models.md')
 
