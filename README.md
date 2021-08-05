@@ -217,14 +217,14 @@
 
 ### Configuration Details
 
-- [Server configuration documentation](/docs/client-server.md)
-- [Client configuration documentation](/docs/client-config.md)
+- [Server configuration documentation](/docs/config-server.md)
+- [Client configuration documentation](/docs/config-client.md)
 - [Model configuration documentation](/docs/config-models.md)
 
 Additional nodes:
 
 - [Default models configuration](/docs/models-default.md)
-- [Recommended models configuration](/docs/models-recommended.md')
+- [Recommended models configuration](/docs/models-recommended.md)
 - [Model conversion notes](/docs/models-convert.md)
 - [Server API](/docs/api.md)
 
