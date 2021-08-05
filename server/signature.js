@@ -1,10 +1,13 @@
-#!/usr/bin/env -S node --no-deprecation --trace-warnings
+/**
+ * Analyze SavedModel or GraphModel input/output tensors
+ * Based on either model signature or model executor
+ *
+ * @param modelPath: string
+ */
 
 const fs = require('fs');
 const path = require('path');
-// @ts-ignore
 const log = require('@vladmandic/pilogger');
-// eslint-disable-next-line node/no-unpublished-require, import/no-extraneous-dependencies
 const tf = require('@tensorflow/tfjs-node');
 
 async function analyzeGraph(modelPath) {
@@ -26,14 +29,13 @@ async function analyzeGraph(modelPath) {
     for (const t of model.executor.graph['inputs']) {
       inputs.push({ name: t.name, dtype: t.attrParams.dtype.value, shape: t.attrParams.shape.value });
     }
-    // const shape = input.attrParam.map((a) => parseInt(a.size));
   } else {
     log.warn('model inputs: cannot determine');
   }
 
   const outputs = [];
   let i = 0;
-  if (model.modelSignature['outputs']) {
+  if (Object.values(model.modelSignature['outputs'])[0].dtype) {
     log.info('model outputs based on signature');
     for (const [key, val] of Object.entries(model.modelSignature['outputs'])) {
       const shape = val.tensorShape?.dim.map((a) => parseInt(a.size));
@@ -44,11 +46,19 @@ async function analyzeGraph(modelPath) {
     log.info('model outputs based on executor');
     // @ts-ignore
     for (const t of model.executor.graph['outputs']) {
-      outputs.push({ id: i++, name: t.name, dtype: t.attrParams.dtype?.value, shape: t.attrParams.shape?.value });
+      outputs.push({ id: i++, name: t.name, dtype: t.attrParams.dtype?.value || t.rawAttrs.T.type, shape: t.attrParams.shape?.value });
     }
   } else {
     log.warn('model outputs: cannot determine');
   }
+
+  const ops = {};
+  // @ts-ignore
+  for (const op of Object.values(model.executor.graph.nodes)) {
+    if (!ops[op.category]) ops[op.category] = [];
+    if (!ops[op.category].includes(op.op)) ops[op.category].push(op.op);
+  }
+  log.data('ops used by model:', ops);
 
   log.data('inputs:', inputs);
   log.data('outputs:', outputs);
@@ -88,7 +98,6 @@ async function main() {
   log.data('created on:', stat.birthtime);
   if (stat.isFile()) {
     if (param.endsWith('.json')) analyzeGraph(param);
-    // if (param.endsWith('.pb')) analyzeSaved(param);
   }
   if (stat.isDirectory()) {
     if (fs.existsSync(path.join(param, '/saved_model.pb'))) analyzeSaved(param);

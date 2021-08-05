@@ -2,15 +2,15 @@
 
 ## Image Classification
 
-MobileNet v3 trained on ImageNet 1k dataset
+- **MobileNet v3** trained on *ImageNet 1k* dataset
 
 ## Object Detection
 
-MobileNet v2 with SSD trained on COCO dataset
+- **MobileNet v2 with SSD** trained on *COCO* dataset
 
 ## Person Analysis
 
-Human library with embedded models
+- **Human** library with embedded models
 
 <br><hr>
 

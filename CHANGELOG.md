@@ -11,6 +11,7 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **HEAD -> master** 2021/08/04 mandic00@live.com
 
+- merge pull request #7 from trissiethehusky/master
 
 ### **3.7.6** 2021/07/29 mandic00@live.com
 
