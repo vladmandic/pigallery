@@ -53,23 +53,27 @@ For other types of models, see notes on coversion.
 
 **General options:**
 
-- name: <string>: logical name of a model
-- modelPath: <url>: url to model, with or without /model.json, also supports loading from tfhub
-- classes: <url>: set to url or leave as null to load classes.json from modelPath
-- minScore: <0..1>: minimum score that prediction has to achieve
-- scaleScore: <number || 1>: use if scores are off by order of magniture
-- maxResults: <number || 5>: how many results to return
-- normalizeInput: <number || 1>: value:(1) = range:(0..255), value=(1/255) = range:(0..1), value:(-1 + 1/127.5) = range:(-1..1)
-- sofmax: <boolean>: normalize scores using softmax function
-- postProcess: <string> // run through custom post-processing function after inference
+- `name: <string>`: logical name of a model
+- `modelPath: <url>`: url to model, with or without /model.json, also supports loading from tfhub
+- `classes: <url>`: set to url or leave as null to load classes.json from modelPath
+- `minScore: <0..1>`: minimum score that prediction has to achieve
+- `scaleScore: <number || 1>`: use if scores are off by order of magniture
+- `maxResults: <number || 5>`: how many results to return
+- `normalizeInput: <number || 1>`: value:(1) = range:(0..255), value=(1/255) = range:(0..1), value:(-1 + 1/127.5) = range:(-1..1)
+- `sofmax: <boolean>`: normalize scores using softmax function
+- `postProcess: <string>`: run through custom post-processing function after inference
+
 **Classify options:**
-- modelType: <'graph' || 'layers'>
-- tensorSize: <number || 224>: required
-- offset: <number || 0>: offset predictions by
-- background: <number || -1>: exclude prediction id from results
+
+- `modelType: <'graph' || 'layers'>`
+- `tensorSize: <number || 224>`: required
+- `offset: <number || 0>`: offset predictions by
+- `background: <number || -1>`: exclude prediction id from results
+
 **Detect options:**
-- iouThreshold: <number || 0.5>: used by nms
-- map: { boxes: <string || 'Identity_1:0'>, scores: <string || 'Identity_4:0'>, classes: <string || 'Identity_2:0'> }: defaults map to tfhub object detection models
+
+- `iouThreshold: <number || 0.5>`: used by non-maximum suppression (nms) function that detects overlaps between detected boxes
+- `map: { boxes: <string || 'Identity_1:0'>, scores: <string || 'Identity_4:0'>, classes: <string || 'Identity_2:0'> }`: defaults map to `tfhub` object detection models
 
 <br>
 

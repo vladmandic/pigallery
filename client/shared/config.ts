@@ -29,9 +29,10 @@ const config = {
     WEBGL_FORCE_F16_TEXTURES: false, // Whether the WebGL backend will always use f16 textures for rendering, can cause overflows on some models
     WEBGL_PACK_DEPTHWISECONV: false, // Whether we will pack the depthwise conv op // TODO: https://github.com/tensorflow/tfjs/issues/1679
     WEBGL_CPU_FORWARD: true, // Whether to perform small ops on CPU instead of uploading to GPU
+    WEBGL_USE_SHAPES_UNIFORMS: true, // Experimental, use uniforms for WebGL shaders where possible
+
     // WEBGL_CHECK_NUMERICAL_PROBLEMS // Whether to check for numerical representation problems
     // WEBGL_CONV_IM2COL // Whether we will use the im2col algorithm to speed up convolutions
-    // WEBGL_CPU_FORWARD: true, // Whether the WebGL backend will sometimes forward ops to the CPU
     // WEBGL_DISJOINT_QUERY_TIMER_EXTENSION_VERSION: // The disjoint_query_timer extension version. 0: disabled, 1: EXT_disjoint_timer_query, 2: EXT_disjoint_timer_query_webgl2
     // WEBGL_FENCE_API_ENABLED // Whether the fence API is available
     // WEBGL_LAZILY_UNPACK // Whether packed WebGL kernels lazily unpack their outputs

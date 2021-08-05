@@ -11409,7 +11409,7 @@
         ]
       },
       "client/shared/config.ts": {
-        "bytes": 11308,
+        "bytes": 11310,
         "imports": [
           {
             "path": "node_modules/.pnpm/jquery@3.6.0/node_modules/jquery/dist/jquery.js",
@@ -25655,7 +25655,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 6818616
+        "bytes": 6818637
       },
       "dist/compare/compare.js": {
         "imports": [],
@@ -26266,7 +26266,7 @@
             "bytesInOutput": 6963
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8753
+            "bytesInOutput": 8790
           },
           "client/shared/user.ts": {
             "bytesInOutput": 1183
@@ -26275,7 +26275,7 @@
             "bytesInOutput": 2591
           }
         },
-        "bytes": 2948552
+        "bytes": 2948589
       },
       "dist/compare/compare.css": {
         "imports": [],
@@ -26296,7 +26296,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1070122
+        "bytes": 1070143
       },
       "dist/index/index.js": {
         "imports": [],
@@ -26337,7 +26337,7 @@
             "bytesInOutput": 59957
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8753
+            "bytesInOutput": 8790
           },
           "client/shared/user.ts": {
             "bytesInOutput": 1183
@@ -26382,7 +26382,7 @@
             "bytesInOutput": 754
           }
         },
-        "bytes": 589098
+        "bytes": 589135
       },
       "dist/index/index.css": {
         "imports": [],
@@ -26409,7 +26409,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12309723
+        "bytes": 12309744
       },
       "dist/process/process.js": {
         "imports": [],
@@ -27938,7 +27938,7 @@
             "bytesInOutput": 1184
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8753
+            "bytesInOutput": 8790
           },
           "client/process/modelClassify.ts": {
             "bytesInOutput": 3937
@@ -30113,7 +30113,7 @@
             "bytesInOutput": 10726
           }
         },
-        "bytes": 5163528
+        "bytes": 5163565
       },
       "dist/process/process.css": {
         "imports": [],
@@ -30134,7 +30134,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 12423785
+        "bytes": 12423806
       },
       "dist/video/video.js": {
         "imports": [],
@@ -33850,10 +33850,10 @@
             "bytesInOutput": 13897
           },
           "client/shared/config.ts": {
-            "bytesInOutput": 8757
+            "bytesInOutput": 8794
           }
         },
-        "bytes": 5231579
+        "bytes": 5231616
       },
       "dist/video/video.css": {
         "imports": [],
