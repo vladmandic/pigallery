@@ -5,7 +5,7 @@ After=network.target network-online.target
 [Service]
 Type=simple
 Environment="NODE_ENV=production"
-ExecStart=/home/vlado/.nvm/versions/node/v16.0.0/bin/node --no-deprecation --trace-uncaught --trace-warnings --unhandled-rejections=throw --stack-size=8192 server/pigallery.js
+ExecStart=/home/vlado/.nvm/versions/node/v16.0.0/bin/node --no-deprecation --trace-uncaught --trace-warnings --unhandled-rejections=throw --stack-size=8192 --max-old-space-size=8192 --optimize-for-size server/pigallery.js
 WorkingDirectory=/home/demo/pigallery
 StandardOutput=inherit
 StandardError=inherit

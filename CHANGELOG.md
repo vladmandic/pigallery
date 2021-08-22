@@ -9,8 +9,10 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/08/04 mandic00@live.com
+### **HEAD -> master** 2021/08/05 mandic00@live.com
 
+- enable uniform support in latest tfjs
+- merge pull request #8 from trissiethehusky/master
 - merge pull request #7 from trissiethehusky/master
 
 ### **3.7.6** 2021/07/29 mandic00@live.com

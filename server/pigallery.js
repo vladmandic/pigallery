@@ -33,10 +33,12 @@ async function createBackup(src) {
   const dt = new Date();
   // const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
   const ts = (dt.getFullYear().toString() + '-')
-    + (dt.getMonth() + 1).toString().padStart(2, '0') + '-'
-    + (dt.getDate().toString().padStart(2, '0')) + '-'
-    + (dt.getHours().toString().padStart(2, '0')) + '-'
-    + (dt.getMinutes().toString().padStart(2, '0'));
+    + (dt.getMonth() + 1).toString().padStart(2, '0')
+    + '-'
+    + (dt.getDate().toString().padStart(2, '0'));
+    // + '-'
+    // + (dt.getHours().toString().padStart(2, '0')) + '-'
+    // + (dt.getMinutes().toString().padStart(2, '0'));
   const tgt = `backup/${src}-${ts}.gz`;
   // fs.copyFileSync(src, tgt);
   const compress = zlib.createGzip();
