@@ -3,6 +3,7 @@
 ## Features
 
 - Video analysis
+- Migrate to MongoDB
 
 ## General
 
@@ -12,4 +13,4 @@
 
 ## Issues
 
-- NeDB large stack requirements: <https://github.com/jrop/nedb-promise/issues/14>
+N/A
