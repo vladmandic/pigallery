@@ -106,7 +106,7 @@ async function testExif(dir) {
   // eslint-disable-next-line no-console
   console.log('Test', dir);
   /*
-  db = nedb.create({ filename: config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
+  db = nedb.create({ filename: config.server.nedb, inMemoryOnly: false, timestampData: true, autoload: false });
   await db.loadDatabase();
   const list = [];
   let filesAll = [];

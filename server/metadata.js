@@ -183,7 +183,7 @@ async function getHash(file, hashType) {
   });
 }
 
-function readDir(folder, match = null, recursive = false) {
+function readDir(folder, match = '', recursive = false) {
   let files = [];
   try {
     if (!fs.existsSync(folder)) return files;
