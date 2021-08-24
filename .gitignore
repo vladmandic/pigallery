@@ -16,3 +16,5 @@ models.json
 pnpm-lock.yaml
 tests
 backup/*
+data
+

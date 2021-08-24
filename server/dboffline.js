@@ -9,7 +9,7 @@ async function main() {
   log.header();
   const config = JSON.parse(fs.readFileSync('./config.json').toString());
   log.state('Config loaded');
-  const db = nedb.create({ filename: config.server.db, inMemoryOnly: false, timestampData: true, autoload: false });
+  const db = nedb.create({ filename: config.server.nedb, inMemoryOnly: false, timestampData: true, autoload: false });
   await db.ensureIndex({ fieldName: 'image', unique: true, sparse: true });
   await db.ensureIndex({ fieldName: 'processed', unique: false, sparse: false });
   await db.load();

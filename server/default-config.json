@@ -21,7 +21,11 @@
     "allowedImageFileTypes": [ ".jpeg", ".jpg" ],
     "mediaRoot": "media/",
     "defaultLimit": 100,
-    "db": "pigallery.db",
+    "db": "nedb",
+    "nedb": "pigallery.db",
+    "mongoURI": "mongodb://127.0.0.1:27017",
+    "mongoDB": "pigallery",
+    "mongoOptions": { "monitorCommands": true, "directConnection": true, "connectTimeoutMS": 10000, "socketTimeoutMS": 10000 },
     "descriptionsDB": "assets/wordnet-synset.json",
     "citiesDB": "assets/cities.json",
     "warmupImage": "assets/warmup.jpg"
