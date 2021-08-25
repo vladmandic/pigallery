@@ -76,8 +76,8 @@ class Menu {
   instance: number;
   _maxFPS: number;
   hidden: boolean;
-  menu: HTMLElement;
-  container: HTMLElement;
+  menu: HTMLElement | null;
+  container: HTMLElement | null;
   // end definition
 
   constructor(parent, title, position, userTheme = {}) {
@@ -89,6 +89,8 @@ class Menu {
     instance++;
     this._maxFPS = 0;
     this.hidden = false;
+    this.menu = null;
+    this.container = null;
   }
 
   createMenu(parent, title = '', position = { top: null, left: null, bottom: null, right: null }) {

@@ -37,12 +37,17 @@ async function cameraStart(play = true) {
   const video = document.getElementById('video') as HTMLVideoElement;
   const constraints = {
     audio: false,
-    video: { width: { ideal: window.innerWidth, max: 3840 }, height: { ideal: window.innerHeight, max: 3840 }, facingMode: config.default.facing ? 'user' : 'environment' },
+    video: {
+      width: { ideal: window.innerWidth, max: 3840 },
+      height: { ideal: window.innerHeight, max: 3840 },
+      facingMode: config.default.facing ? 'user' : 'environment',
+      resizeMode: 'none',
+    },
   };
   // const devices = await navigator.mediaDevices.enumerateDevices();
   const stream = await navigator.mediaDevices.getUserMedia(constraints);
-  const track = stream.getVideoTracks()[0];
-  if (track.getCapabilities && track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: '0' });
+  // const track = stream.getVideoTracks()[0] as MediaStreamTrack;
+  // if (track.getCapabilities && track.getCapabilities().resizeMode) await track.applyConstraints({ resizeMode: 'none' });
   if (!video) return;
   video.srcObject = stream;
   updateDiv('status', 'ready');
