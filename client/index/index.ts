@@ -443,6 +443,7 @@ async function loadGallery(refresh = false) {
   } catch (err) {
     log.debug('Error /api/record/get:', err);
   }
+  let estImages = 0;
   let totalSize = 0;
   let totalImages = 0;
   let pages = 0;
@@ -451,6 +452,7 @@ async function loadGallery(refresh = false) {
   if (first && first.ok) {
     totalSize = parseFloat(first.headers.get('content-TotalSize') || '');
     totalImages = parseFloat(first.headers.get('content-TotalImages') || '');
+    estImages = parseFloat(first.headers.get('content-EstImages') || '');
     pages = parseInt(first.headers.get('content-Pages') || '0');
     const json0 = await first.json();
     imagesCount = json0.length;
@@ -467,18 +469,19 @@ async function loadGallery(refresh = false) {
     list.clear();
     let progress = Math.min(100, Math.round(100 * dlSize / totalSize));
     perf = Math.round(dlSize / (performance.now() - t0));
-    $('#progress').html(`Downloading ${progress}%:<br>${imagesCount} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+    $('#progress').html(`Fetching ${estImages} images<br>`);
     $('#splash').toggle(true);
     for (let page = 1; page <= pages; page++) {
       const promise = fetch(`/api/record/get?&time=${since}&chunksize=${config.default.downloadChunkSize}&page=${page}`);
       promisesReq.push(promise);
-      // eslint-disable-next-line no-loop-func, promise/catch-or-return
       promise.then((result) => {
-        totalSize = parseFloat(result.headers.get('content-TotalSize') || '');
-        totalImages = parseFloat(result.headers.get('content-TotalImages') || '');
+        const newSize = parseFloat(result.headers.get('content-TotalSize') || '');
+        if (newSize > totalSize) totalSize = newSize;
+        const newImages = parseFloat(result.headers.get('content-TotalImages') || '');
+        if (newImages > totalImages) totalImages = newImages;
+        $('#progress').html(`Preparing ${Math.round(100 * totalImages / estImages)}%<br>${totalImages} / ${estImages} images`);
         const req = result.json();
         promisesData.push(req);
-        // eslint-disable-next-line promise/catch-or-return, promise/no-nesting
         req.then(async (json) => {
           dlSize += JSON.stringify(json).length;
           progress = Math.min(100, Math.round(100 * dlSize / totalSize));
@@ -486,7 +489,7 @@ async function loadGallery(refresh = false) {
           imagesCount += json.length;
           chunks.push(json);
           busy(`Downloading ${progress}%<br>${imagesCount} / ${totalImages} images`);
-          $('#progress').html(`Downloading ${progress}%<br>${imagesCount} / ${totalImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
+          $('#progress').html(`Downloading ${progress}%<br>${imagesCount} / ${estImages} images<br>${dlSize.toLocaleString()} / ${totalSize.toLocaleString()} bytes<br>${perf.toLocaleString()} KB/sec`);
           return true;
         });
         return true;

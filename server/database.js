@@ -6,6 +6,17 @@ const mongodb = require('mongodb');
 
 let db;
 
+const mongoOptions = {
+  monitorCommands: true,
+  directConnection: true,
+  connectTimeoutMS: 10000,
+  socketTimeoutMS: 10000,
+  noDelay: true,
+  minPoolSize: 1,
+  maxPoolSize: 10,
+  appName: 'PiGallery',
+};
+
 async function createNeDBBackup(src) {
   const dt = new Date();
   // const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
@@ -55,7 +66,7 @@ async function init(config) {
     }
   } else if (config.server.db === 'mongodb') {
     // connect to mongodb instance
-    const client = new mongodb.MongoClient(config.server.mongoURI, config.server.mongoOptions);
+    const client = new mongodb.MongoClient(config.server.mongoURI, mongoOptions);
     log.info('MongoDB Client:', client['s'].options.hosts[0]);
     log.info('MongoDB Driver:', client['s'].options.metadata.driver);
     client.on('commandFailed', (event) => log.warn('MongoDB command:', event.commandName, event.failure));
@@ -74,14 +85,15 @@ async function init(config) {
     db = database.collection('data');
     await db.createIndex({ image: 1 });
     await db.createIndex({ processed: 1 });
+    await db.createIndex({ processed: -1 });
+    await db.createIndex({ image: 1, processed: -1 });
 
     log.info('Image DB loaded:', await db.countDocuments());
-
-    // TODO
-    // const shares = await db.find({ images: { $exists: true } });
-    // for (const share of shares) {
-    //  log.state('Shares:', share.name, 'creator:', share.creator, 'key:', share.share, 'images:', share.images.length);
-    // }
+    const shares = await db.find({ images: { $exists: true } });
+    while (await shares.hasNext()) {
+      const share = await shares.next();
+      if (share) log.state('Shares:', share.name, 'creator:', share.creator, 'key:', share.share, 'images:', share.images.length);
+    }
   } else {
     log.error('Database engine not recognized:', config.server.db);
   }

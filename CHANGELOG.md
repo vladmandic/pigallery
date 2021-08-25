@@ -11,6 +11,7 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **HEAD -> master** 2021/08/24 mandic00@live.com
 
+- added nedb to mongodb migration script
 - enable large database
 - fix scrolling of process log
 - enable uniform support in latest tfjs

@@ -7,6 +7,8 @@ const exif = require('./exif.js');
 let config;
 let db;
 
+const ms = (t0, t1) => Math.trunc(parseFloat((t1 - t0).toString()) / 1000000);
+
 function sign(req) {
   const forwarded = (req.headers.forwarded || '').match(/for="\[(.*)\]:/);
   const ip = (Array.isArray(forwarded) ? forwarded[1] : null) || req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress;
@@ -71,7 +73,7 @@ function api(app, inConfig, inDB) {
     if (req.session.share) res.json([]);
     else {
       let shares = await db.find({ images: { $exists: true } });
-      if (shares.toArray) shares = await shares.toArray();
+      if (shares.hasNext) shares = await shares.toArray();
       if (!shares) shares = [];
       const data = shares.map((a) => ({ key: a.share, processed: a.processed, name: a.name, creator: a.creator, size: a.images.length }));
       log.info('API/Share/Dir', sign(req), 'shares:', data.length);
@@ -83,9 +85,7 @@ function api(app, inConfig, inDB) {
     if (req.query.id) {
       const data = await db.findOne({ share: req.query.id });
       const images = [];
-      for (const image of data.images) {
-        images.push(await db.findOne({ image }));
-      }
+      for (const image of data.images) images.push(await db.findOne({ image }));
       log.info(`API/Share/Get ${sign(req)} creator: ${data.creator} name: "${data.name}" key: ${data.share} images:`, images.length);
       res.json(images);
     } else {
@@ -97,7 +97,8 @@ function api(app, inConfig, inDB) {
     if (req.query.rm) {
       const data = await db.findOne({ share: req.query.rm });
       log.info(`API/Share/Del ${sign(req)} ${data.creator} name: "${data.name}" key: ${data.share} images:`, data.images.length);
-      await db.remove({ share: data.share }, { multi: false });
+      if (db.deleteOne) await db.deleteOne({ share: data.share });
+      else await db.remove({ share: data.share }, { multi: false });
       res.status(200).send('true');
     } else {
       res.status(400).json([]);
@@ -115,7 +116,7 @@ function api(app, inConfig, inDB) {
         share: ((new Date()).getTime() / 1000).toString(36),
       };
       if (obj.images?.length > 0) {
-        if (db.replace) await db.replace({ share: obj.share }, obj, { upsert: true });
+        if (db.replaceOne) await db.replaceOne({ share: obj.share }, obj, { upsert: true });
         else await db.update({ share: obj.share }, obj, { upsert: true });
         log.info(`API/Share/Put ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images?.length);
         res.status(200).json({ key: obj.share });
@@ -165,6 +166,7 @@ function api(app, inConfig, inDB) {
 
   let totalSize = 0;
   let totalImages = 0;
+  let estImages = 0;
   app.get('/api/record/get', async (req, res) => {
     const chunkSize = req.query.chunksize ? parseInt(req.query.chunksize) : 200;
     const page = req.query.page ? parseInt(req.query.page) : 0;
@@ -173,25 +175,38 @@ function api(app, inConfig, inDB) {
       totalImages = 0;
     }
     if (!req.session.share || req.session.share === '') {
-      const root = new RegExp(`^${req.session.root || 'media/'}`);
-      const time = req.query.time ? new Date(parseInt(req.query.time)) : new Date(0);
-      const count = await db.count({ image: root, processed: { $gte: time } });
-      let data = await db
+      const time = req.query.time && parseInt(req.query.time) !== 0 ? new Date(parseInt(req.query.time)) : null;
+      const root = req.session.root !== config.server.mediaRoot ? new RegExp(`^${req.session.root || 'media/'}`) : null;
+      const query = {};
+      query.image = root || { $exists: true };
+      query.processed = time ? { $gte: time } : { $exists: true };
+      const t0 = process.hrtime.bigint();
+      if (page === 0) estImages = await db.count(query);
+      let data = [];
+      data = await db
         .find({ image: root, processed: { $gte: time } })
         .sort({ processed: -1 })
         .skip(page * chunkSize)
         .limit(chunkSize);
-      if (data.toArray) data = await data.toArray();
-      const pages = Math.trunc(count / chunkSize);
+      if (data.hasNext) data = await data.toArray();
       const json = JSON.stringify(data);
       totalSize += json.length;
-      const estSize = (pages - page) * json.length + totalSize;
+      const numPages = Math.trunc(estImages / chunkSize);
+      const estSize = (numPages - page) * json.length + totalSize;
       totalImages += data.length;
-      log.info(`API/Record/Get ${sign(req)} root: ${req.session.root}`, `page: ${page}/${pages} images: ${totalImages}/${count}`, 'pageSize:', json.length, 'estSize:', estSize, 'totalSize:', totalSize, 'chunkSize:', chunkSize, 'sinceTime:', new Date(time));
+      const t1 = process.hrtime.bigint();
+      log.info(
+        `API/Record/Get ${sign(req)} root: ${req.session.root}`,
+        'page:', page, '/', numPages, 'images:', totalImages, '/', estImages,
+        'pageSize:', json.length, 'estSize:', estSize, 'totalSize:', totalSize, 'chunkSize:', chunkSize,
+        'sinceTime:', time ? new Date(time) : 'forever', 'perf', ms(t0, t1),
+      );
       res.set('content-TotalSize', estSize);
       res.set('content-TotalImages', totalImages);
-      res.set('content-Pages', pages);
-      res.send(json);
+      res.set('content-EstImages', estImages);
+      res.set('content-Pages', numPages);
+      // res.send(json);
+      res.json(data);
     } else {
       const records = await db.findOne({ share: req.session.share });
       const data = [];
@@ -213,7 +228,8 @@ function api(app, inConfig, inDB) {
       const data = await db.findOne({ image: req.query.rm });
       if (data) {
         log.info(`API/Record/Del ${sign(req)} req: ${req.query.rm} res:`, data.image);
-        await db.remove({ image: data.image }, { multi: false });
+        if (db.deleteOne) await db.deleteOne({ image: data.image });
+        else await db.remove({ image: data.image }, { multi: false });
         res.status(200).json(data.image);
       } else {
         res.status(400).json({ error: 'image not found' });
