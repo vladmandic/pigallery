@@ -33,7 +33,8 @@ function storeObject(data) {
   if (data.image === config.server.warmupImage) return;
   const json = data;
   json.processed = new Date();
-  db.update({ image: json.image }, json, { upsert: true });
+  if (db.replace) db.replace({ image: json.image }, json, { upsert: true });
+  else db.update({ image: json.image }, json, { upsert: true });
   log.data(`DB Insert "${json.image}"`, JSON.stringify(json).length, 'bytes');
 }
 
@@ -231,7 +232,8 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
     process = files;
   } else {
     for (const a of files) {
-      const image = await db.find({ image: a });
+      let image = await db.find({ image: a });
+      if (image.toArray) image = await image.toArray();
       if (image && image[0]) {
         const stat = fs.statSync(a);
         if (stat.ctime.getTime() !== image[0].exif.ctime.getTime()) {
@@ -260,6 +262,7 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
 
 async function checkRecords(list) {
   let all = await db.find({ hash: { $exists: true } });
+  if (all.toArray) all = await all.toArray();
   all = all.map((a) => a.image);
   const deleted = all.filter((a) => !list.includes(a));
   for (const item of deleted) {

@@ -1,21 +1,18 @@
 const fs = require('fs');
 const path = require('path');
-const zlib = require('zlib');
-const log = require('@vladmandic/pilogger');
 const http = require('http');
 const https = require('https');
+const log = require('@vladmandic/pilogger');
 const express = require('express');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
-const nedb = require('nedb-promises');
-const MongoClient = require("mongodb").MongoClient;
-const api = require('./api.js');
-const build = require('./build.js');
-const watcher = require('./watcher.js');
-const changelog = require('./changelog.js');
+const api = require('./api');
+const build = require('./build');
+const watcher = require('./watcher');
+const changelog = require('./changelog');
+const database = require('./database');
 
 let config;
-let db;
 
 function allowPWA(req, res, next) {
   if (req.url.endsWith('.js')) res.header('Service-Worker-Allowed', '/');
@@ -28,32 +25,6 @@ function forceSSL(req, res, next) {
     return res.redirect(`https://${req.hostname}:${config.server.HTTPSport}${req.baseUrl}${req.url}`);
   }
   return next();
-}
-
-async function createBackup(src) {
-  const dt = new Date();
-  // const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
-  const ts = (dt.getFullYear().toString() + '-')
-    + (dt.getMonth() + 1).toString().padStart(2, '0')
-    + '-'
-    + (dt.getDate().toString().padStart(2, '0'));
-    // + '-'
-    // + (dt.getHours().toString().padStart(2, '0')) + '-'
-    // + (dt.getMinutes().toString().padStart(2, '0'));
-  const tgt = `backup/${src}-${ts}.gz`;
-  // fs.copyFileSync(src, tgt);
-  const compress = zlib.createGzip();
-  const input = fs.createReadStream(src);
-  const output = fs.createWriteStream(tgt);
-  fs.openSync(tgt, 'w', null);
-  return new Promise((resolve) => {
-    log.state('Image DB backup start:', src, 'size:', fs.statSync(src).size);
-    output.on('close', () => {
-      log.state('Image DB backup complete:', tgt, 'size:', fs.statSync(tgt).size);
-      resolve(true);
-    });
-    input.pipe(compress).pipe(output);
-  });
 }
 
 async function main() {
@@ -136,7 +107,7 @@ async function main() {
     if (f.endsWith('.html')) {
       const mount = f.substr(0, f.indexOf('.html'));
       const name = path.join('./client', f);
-      log.state(`Mounted: ${mount} from ${name}`);
+      log.state(`Mounted: ${mount} from (${name}`);
       app.get(`/${mount}`, (req, res) => res.sendFile(name, { root }));
     }
   }
@@ -185,60 +156,14 @@ async function main() {
     serverHttps.listen(config.server.httpsPort);
   }
 
-  // load image cache
+  // load database
   log.info('Database engine:', config.server.db);
-  if (config.server.db === 'nedb') {
-    // create image db backup
-    if (!fs.existsSync(config.server.nedb)) log.warn('Image cache not found:', config.server.nedb);
-    else await createBackup(config.server.nedb);
-
-    db = await nedb.create({ filename: config.server.nedb, inMemoryOnly: false, timestampData: true, autoload: false });
-    await db.ensureIndex({ fieldName: 'image', unique: true, sparse: true });
-    await db.ensureIndex({ fieldName: 'processed', unique: false, sparse: false });
-    await db.load();
-    const records = await db.count({});
-    log.state('Image DB loaded:', config.server.nedb, 'records:', records);
-
-    const shares = await db.find({ images: { $exists: true } });
-    for (const share of shares) {
-      log.state('Shares:', share.name, 'creator:', share.creator, 'key:', share.share, 'images:', share.images.length);
-    }
-  }
-  if (config.server.db === 'mongodb') {
-    // connect to mongodb instance
-    const client = new MongoClient(config.server.mongoURI, config.server.mongoOptions);
-    log.info('MongoDB Client:', client['s'].options.hosts[0]);
-    log.info('MongoDB Driver:', client['s'].options.metadata.driver);
-    client.on('commandFailed', (event) => log.warn('MongoDB command:', event.commandName, event.failure));
-    client.on('serverOpening', () => log.state('MongoDB server connection opening'));
-    client.on('serverClosed', () => log.state('MongoDB server connection closed'));
-    try {
-      await client.connect();
-    } catch (err) {
-      log.error('MongoDB:', err.errmsg || err);
-    }
-    const state = client['topology'].s.state;
-    log.state('MongoDB State:', state);
-    if (state === 'closed') process.exit(1);
-    // init mongodb database
-    const database = client.db(config.server.mongoDB);
-    const images = database.collection('images');
-    const shares = database.collection('shares');
-    await images.createIndex({ 'image': 1 });
-    await images.createIndex({ 'processed': 1 });
-
-    // mongodb state before migration
-    log.info('Image DB loaded:', await images.countDocuments());
-    log.info('Shares loaded:', await shares.countDocuments());
-
-    // TBD
-    log.warn('MongoDB is not yet supported');
-    process.exit(1);
-  }
+  const db = await database.init(config);
   if (!db) {
-    log.error('Database engine not recognized:', config.server.db);
+    log.error('Error loading database');
     process.exit(1);
   }
+
   // initialize api calls
   api.init(app, config, db);
 }

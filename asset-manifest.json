@@ -25366,7 +25366,7 @@
         ]
       },
       "client/index/index.ts": {
-        "bytes": 37739,
+        "bytes": 37691,
         "imports": [
           {
             "path": "assets/bootstrap.css",
@@ -26302,7 +26302,7 @@
         "imports": [],
         "exports": [],
         "inputs": {},
-        "bytes": 1070143
+        "bytes": 1070048
       },
       "dist/index/index.js": {
         "imports": [],
@@ -26334,7 +26334,7 @@
             "bytesInOutput": 0
           },
           "client/index/index.ts": {
-            "bytesInOutput": 38011
+            "bytesInOutput": 37940
           },
           "client/shared/log.ts": {
             "bytesInOutput": 1965
@@ -26388,7 +26388,7 @@
             "bytesInOutput": 754
           }
         },
-        "bytes": 589135
+        "bytes": 589064
       },
       "dist/index/index.css.map": {
         "imports": [],

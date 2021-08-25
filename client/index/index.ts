@@ -332,8 +332,7 @@ async function sortResults(sort) {
   if (!user.user.user) return;
 
   // refresh records
-  // eslint-disable-next-line no-use-before-define
-  if (images.length === 0) log.div('log', true, 'image cache empty');
+  // if (images.length === 0) log.div('log', true, 'image cache empty');
 
   if (!loadTried && (await db.count() === 0)) {
     loadTried = true;
