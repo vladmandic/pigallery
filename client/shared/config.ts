@@ -16,7 +16,7 @@ const config = {
   memory: true,            // set webgl memory hard limit
   autoreload: true,        // auto reload processing window on error
   floatPrecision: true,    // use 32-bit float precision
-  downloadChunkSize: 500,  // number of records downloaded in each chunk
+  downloadChunkSize: 200,  // number of records downloaded in each chunk
   namesThumbSize: 96,      // size of person thumbnail
   cacheAssets: true,       // pwa setting
   cacheMedia: false,       // pwa setting

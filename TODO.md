@@ -2,9 +2,8 @@
 
 ## Features
 
-- Video analysis: TBD
-- Optimize MongoDB Access: TBD
-- Add MongoDB Docs: TBD
+- Video analysis
+- Add MongoDB Docs
 
 ## General
 

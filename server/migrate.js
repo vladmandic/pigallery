@@ -10,16 +10,16 @@
 */
 
 const fs = require('fs');
-const MongoClient = require("mongodb").MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 const nedb = require('nedb-promises');
 const log = require('@vladmandic/pilogger');
 
 const options = {
   mongoURI: 'mongodb://127.0.0.1:27017',
   mongoDB: 'pigallery',
-  mongoOptions: { monitorCommands:true, directConnection: true, connectTimeoutMS: 10000, socketTimeoutMS: 10000 },
+  mongoOptions: { monitorCommands: true, directConnection: true, connectTimeoutMS: 10000, socketTimeoutMS: 10000 },
   neDB: 'pigallery.db',
-}
+};
 
 async function main() {
   log.header();
@@ -44,8 +44,8 @@ async function main() {
   const database = client.db(options.mongoDB);
   const images = database.collection('images');
   const shares = database.collection('shares');
-  await images.createIndex({ 'image': 1 });
-  await images.createIndex({ 'processed': 1 });
+  await images.createIndex({ image: 1 });
+  await images.createIndex({ processed: 1 });
 
   // mongodb state before migration
   log.info('mongodb image documents:', await images.countDocuments());
@@ -78,10 +78,10 @@ async function main() {
   }
   process.stdout.write('\n');
   db = await nedb.create({ inMemoryOnly: true, timestampData: true, autoload: false }); // unload database
-  log.state('nedb unloaded')
+  log.state('nedb unloaded');
 
   // compact
-  log.state('mongodb compacting...')
+  log.state('mongodb compacting...');
   database.command({ compact: 'images' });
   database.command({ compact: 'shares' });
 

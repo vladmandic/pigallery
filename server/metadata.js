@@ -33,7 +33,7 @@ function storeObject(data) {
   if (data.image === config.server.warmupImage) return;
   const json = data;
   json.processed = new Date();
-  if (db.replace) db.replace({ image: json.image }, json, { upsert: true });
+  if (db.replaceOne) db.replaceOne({ image: json.image }, json, { upsert: true });
   else db.update({ image: json.image }, json, { upsert: true });
   log.data(`DB Insert "${json.image}"`, JSON.stringify(json).length, 'bytes');
 }
@@ -232,24 +232,17 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
     process = files;
   } else {
     for (const a of files) {
-      let image = await db.find({ image: a });
-      if (image.toArray) image = await image.toArray();
-      if (image && image[0]) {
+      const image = await db.findOne({ image: a });
+      if (image) {
         const stat = fs.statSync(a);
-        if (stat.ctime.getTime() !== image[0].exif.ctime.getTime()) {
-          log.data(`  FS ctime updated ${a} ${image[0].exif.ctime} ${stat.ctime}`);
+        if (stat.ctime.getTime() !== image.exif.ctime.getTime()) {
+          log.data(`  FS ctime updated ${a} ${image.exif.ctime} ${stat.ctime}`);
           process.push(a);
           updated++;
-        } else if (stat.mtime.getTime() !== image[0].exif.mtime.getTime()) {
-          log.data(`  FS mtime updated ${a} ${image[0].exif.mtime} ${stat.mtime}`);
+        } else if (stat.mtime.getTime() !== image.exif.mtime.getTime()) {
+          log.data(`  FS mtime updated ${a} ${image.exif.mtime} ${stat.mtime}`);
           process.push(a);
           updated++;
-        /*
-        else if (!image[0].location || !image[0].location.country) {
-          log.data(`  Location data missing ${a}`);
-          process.push(a);
-          updated++;
-        */
         } else processed++;
       } else {
         process.push(a);
@@ -261,9 +254,16 @@ async function listFiles(folder, match = '', recursive = false, force = false) {
 }
 
 async function checkRecords(list) {
-  let all = await db.find({ hash: { $exists: true } });
-  if (all.toArray) all = await all.toArray();
-  all = all.map((a) => a.image);
+  const data = await db.find({ hash: { $exists: true } });
+  let all = [];
+  if (data.hasNext) {
+    while (await data.hasNext()) {
+      const a = await data.next();
+      all.push(a.image);
+    }
+  } else {
+    all = data.map((a) => a.image);
+  }
   const deleted = all.filter((a) => !list.includes(a));
   for (const item of deleted) {
     log.data('Delete:', item);
