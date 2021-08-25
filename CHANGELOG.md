@@ -9,8 +9,9 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/08/24 mandic00@live.com
+### **HEAD -> master** 2021/08/25 mandic00@live.com
 
+- add support for mongodb backend
 - added nedb to mongodb migration script
 - enable large database
 - fix scrolling of process log
