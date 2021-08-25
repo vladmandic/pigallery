@@ -71,6 +71,7 @@ function api(app, inConfig, inDB) {
     if (req.session.share) res.json([]);
     else {
       let shares = await db.find({ images: { $exists: true } });
+      if (shares.toArray) shares = await shares.toArray();
       if (!shares) shares = [];
       const data = shares.map((a) => ({ key: a.share, processed: a.processed, name: a.name, creator: a.creator, size: a.images.length }));
       log.info('API/Share/Dir', sign(req), 'shares:', data.length);
@@ -114,7 +115,8 @@ function api(app, inConfig, inDB) {
         share: ((new Date()).getTime() / 1000).toString(36),
       };
       if (obj.images?.length > 0) {
-        await db.update({ share: obj.share }, obj, { upsert: true });
+        if (db.replace) await db.replace({ share: obj.share }, obj, { upsert: true });
+        else await db.update({ share: obj.share }, obj, { upsert: true });
         log.info(`API/Share/Put ${sign(req)} "${obj.name}" key: ${obj.share} creator: ${obj.creator} images: `, obj.images?.length);
         res.status(200).json({ key: obj.share });
       } else {
@@ -174,11 +176,12 @@ function api(app, inConfig, inDB) {
       const root = new RegExp(`^${req.session.root || 'media/'}`);
       const time = req.query.time ? new Date(parseInt(req.query.time)) : new Date(0);
       const count = await db.count({ image: root, processed: { $gte: time } });
-      const data = await db
+      let data = await db
         .find({ image: root, processed: { $gte: time } })
         .sort({ processed: -1 })
         .skip(page * chunkSize)
         .limit(chunkSize);
+      if (data.toArray) data = await data.toArray();
       const pages = Math.trunc(count / chunkSize);
       const json = JSON.stringify(data);
       totalSize += json.length;

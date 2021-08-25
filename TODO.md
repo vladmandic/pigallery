@@ -2,8 +2,9 @@
 
 ## Features
 
-- Video analysis
-- Migrate to MongoDB
+- Video analysis: TBD
+- Optimize MongoDB Access: TBD
+- Add MongoDB Docs: TBD
 
 ## General
 
