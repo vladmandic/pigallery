@@ -11,6 +11,7 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **HEAD -> master** 2021/08/25 mandic00@live.com
 
+- add mongodb backend
 - add support for mongodb backend
 - added nedb to mongodb migration script
 - enable large database
