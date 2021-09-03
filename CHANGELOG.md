@@ -9,8 +9,9 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2021/08/25 mandic00@live.com
+### **update with tfjs 3.9.0** 2021/09/02 mandic00@live.com
 
+- improve type checking
 - add mongodb backend
 - add support for mongodb backend
 - added nedb to mongodb migration script
