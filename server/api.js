@@ -182,13 +182,12 @@ function api(app, inConfig, inDB) {
       query.processed = time ? { $gte: time } : { $exists: true };
       const t0 = process.hrtime.bigint();
       if (page === 0) estImages = await db.count(query);
-      let data = [];
-      data = await db
-        .find({ image: root, processed: { $gte: time } })
+      let data = await db
+        .find(query)
         .sort({ processed: -1 })
         .skip(page * chunkSize)
         .limit(chunkSize);
-      if (data.hasNext) data = await data.toArray();
+      if (data.hasNext) data = await data.toArray(); // if mongodb convert to array
       const json = JSON.stringify(data);
       totalSize += json.length;
       const numPages = Math.trunc(estImages / chunkSize);
