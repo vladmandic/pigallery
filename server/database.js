@@ -93,8 +93,8 @@ async function initMongoDB(config) {
 }
 
 async function init(config) {
-  if (config.server.db === 'nedb') await initNedDB();
-  else if (config.server.db === 'mongodb') await initMongoDB();
+  if (config.server.db === 'nedb') await initNedDB(config);
+  else if (config.server.db === 'mongodb') await initMongoDB(config);
   else log.error('Database engine not recognized:', config.server.db);
   return db;
 }
