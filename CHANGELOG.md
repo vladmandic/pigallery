@@ -9,11 +9,12 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
+### **HEAD -> master** 2021/10/01 mandic00@live.com
+
+
 ### **3.7.7** 2021/10/01 mandic00@live.com
 
-
-### **origin/master** 2021/09/03 mandic00@live.com
-
+- critical issue with database download
 - improve type checking
 - add mongodb backend
 - add support for mongodb backend

@@ -8,7 +8,7 @@
   "main": "server/pigallery.js",
   "sideEffects": false,
   "scripts": {
-    "start": "node --unhandled-rejections=strict --pending-deprecation --trace-deprecation --stack-size=8192 --max-old-space-size=8192 --optimize-for-size server/pigallery.js",
+    "start": "node --stack-size=8192 --max-old-space-size=8192 --optimize-for-size server/pigallery.js",
     "lint": "eslint *.json client/**/*.ts server/*.js",
     "test": "eslint *.json client/**/*.ts server/*.js",
     "setup": "node ./setup.js",
