@@ -1,16 +1,12 @@
 # To-do List
 
-## Features
-
-- Video analysis
-
-## General
-
+- Dockerize app: <https://nodejs.org/en/docs/guides/nodejs-docker-webapp/>
 - Cross-Browser compatibility testing
 - Update documentation
-- Test deployment
+- More verbose `setup.js`
 - MongoDB Docs
 - MongoDB error handling
+- Video analysis
 
 ## Issues
 
