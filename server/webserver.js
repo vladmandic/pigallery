@@ -24,6 +24,9 @@ function forceSSL(req, res, next) {
 
 async function init(inConfig) {
   config = inConfig;
+
+  if (!fs.existsSync('sessions')) fs.mkdirSync('sessions');
+
   const root = path.join(__dirname, '../');
   const app = express();
   app.disable('x-powered-by');
