@@ -56,6 +56,7 @@ async function init(inConfig) {
     if (req.url === '/') res.set('cache-control', 'public, max-age=180');
     else if (req.url.startsWith('/api/')) res.set('cache-control', 'no-cache');
     else res.set('cache-control', 'public, max-age=31557600, immutable');
+    res.set('access-control-allow-origin', '*');
 
     if (req.url.startsWith('/api/user/auth')) next();
     else if (!req.url.startsWith('/api/')) next();
