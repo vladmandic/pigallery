@@ -4,7 +4,7 @@ import '../../assets/fontawesome.css';
 import '../pigallery.css';
 
 import $ from 'jquery';
-import { tf } from '../shared/tf';
+import * as tf from '@vladmandic/tfjs/dist/tfjs.esm';
 import * as log from '../shared/log';
 import * as user from '../shared/user';
 import * as config from '../shared/config';

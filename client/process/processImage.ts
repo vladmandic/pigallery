@@ -1,11 +1,10 @@
-import { tf, wasm } from '../shared/tf';
+import * as tf from '@vladmandic/tfjs/dist/tfjs.esm';
+import { Human } from '@vladmandic/human/dist/human.esm';
 import * as log from '../shared/log';
 import * as modelClassify from './modelClassify';
 import * as modelDetect from './modelDetect';
 import * as hash from '../shared/blockhash';
 import * as config from '../shared/config';
-// eslint-disable-next-line import/order
-import Human from '@vladmandic/human/dist/human.esm-nobundle';
 
 const models:{ classify: Array<any>, detect: Array<any>, human: any } = { classify: [], detect: [], human: {} };
 let error;
@@ -80,7 +79,6 @@ export async function load() {
   const t1 = performance.now();
   log.div('process-log', true, `TensorFlow models loaded: ${Math.round(t1 - t0).toLocaleString().toLocaleString()}ms`);
   log.div('process-log', true, `Initializing TensorFlow/JS version ${tf.version_core}`);
-  if (config.default.backEnd === 'wasm') await wasm.setWasmPaths('/assets/');
   await resetBackend(config.default.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);

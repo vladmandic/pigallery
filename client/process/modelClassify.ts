@@ -1,4 +1,4 @@
-import { tf } from '../shared/tf';
+import * as tf from '@vladmandic/tfjs/dist/tfjs.esm';
 
 const defaults = {
   modelPath: null,

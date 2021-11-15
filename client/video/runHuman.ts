@@ -1,4 +1,4 @@
-import Human from '@vladmandic/human/dist/human.esm-nobundle';
+import { Human } from '@vladmandic/human/dist/human.esm';
 import * as draw from './draw';
 
 const human = new Human();
@@ -202,7 +202,7 @@ export async function run(input, config, objects) {
 
   draw.clear(canvas);
   // draw image from video if processed by human, else ignore
-  if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas.width, result.canvas.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
+  if (result.canvas) ctx.drawImage(result.canvas, 0, 0, result.canvas['width'], result.canvas['height'], 0, 0, objects.canvases.human.width, objects.canvases.human.height);
   // else ctx.drawImage(input, 0, 0, input.width, input.height, 0, 0, objects.canvases.human.width, objects.canvases.human.height);
 
   if (result.face) drawFace(result.face, config.ui);
@@ -210,7 +210,6 @@ export async function run(input, config, objects) {
   if (result.hand) drawHand(result.hand, config.ui);
   for (const face of result.face) {
     let label = '';
-    if (face.ageScore) label += `${Math.trunc(100 * face.ageScore)}% ${face.gender || ''} `;
     if (face.age) label += `age: ${face.age || ''} `;
     if (face.emotion && face.emotion[0]) label += `${Math.trunc(100 * face.emotion[0].score)}% ${face.emotion[0].emotion} `;
     if (face.iris) label += `distance: ${face.iris} `;
