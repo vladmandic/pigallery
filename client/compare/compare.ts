@@ -4,7 +4,7 @@ import '../../assets/fontawesome.css';
 import '../pigallery.css';
 
 import $ from 'jquery';
-import { tf, wasm } from '../shared/tf';
+import * as tf from '@vladmandic/tfjs/dist/tfjs.esm';
 import * as log from '../shared/log';
 import * as modelClassify from '../process/modelClassify';
 import * as modelDetect from '../process/modelDetect';
@@ -30,7 +30,6 @@ async function resetBackend(backendName) {
 async function init() {
   await user.get();
   log.div('log', true, `TensorFlow/JS Version: ${tf.version_core}`);
-  await wasm.setWasmPaths('/assets/');
   await resetBackend(config.default.backEnd);
   await tf.enableProdMode();
   tf.ENV.set('DEBUG', false);

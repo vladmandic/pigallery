@@ -290,8 +290,8 @@ class ImageViewer {
         const imageCurrentDim = this.getImageCurrentDim();
         currentPos = position;
         this.sliders.snapSlider.onMove(e, {
-          dx: -position.dx * this.state.snapImageDim?.w / imageCurrentDim?.w,
-          dy: -position.dy * this.state.snapImageDim?.h / imageCurrentDim?.h,
+          dx: -position.dx * this.state.snapImageDim.w / imageCurrentDim.w,
+          dy: -position.dy * this.state.snapImageDim.h / imageCurrentDim.h,
         });
       },
       onEnd: () => {
@@ -306,8 +306,8 @@ class ImageViewer {
           positionX += easeOutQuart(step, xDiff / 3, -xDiff / 3, 60);
           positionY += easeOutQuart(step, yDiff / 3, -yDiff / 3, 60);
           this.sliders.snapSlider.onMove(null, {
-            dx: -(positionX * this.state.snapImageDim?.w / imageCurrentDim?.w),
-            dy: -(positionY * this.state.snapImageDim?.h / imageCurrentDim?.h),
+            dx: -(positionX * this.state.snapImageDim.w / imageCurrentDim.w),
+            dy: -(positionY * this.state.snapImageDim.h / imageCurrentDim.h),
           });
           step++;
         };
@@ -335,14 +335,14 @@ class ImageViewer {
       },
       onMove: (e, position) => {
         const imageCurrentDim = this.getImageCurrentDim();
-        const maxLeft = Math.max(this.state.snapImageDim?.w - this.state.snapHandleDim?.w, startHandleLeft);
-        const maxTop = Math.max(this.state.snapImageDim?.h - this.state.snapHandleDim?.h, startHandleTop);
+        const maxLeft = Math.max(this.state.snapImageDim.w - this.state.snapHandleDim.w, startHandleLeft);
+        const maxTop = Math.max(this.state.snapImageDim.h - this.state.snapHandleDim.h, startHandleTop);
         const minLeft = Math.min(0, startHandleLeft);
         const minTop = Math.min(0, startHandleTop);
         const left = clamp(startHandleLeft + position.dx, minLeft, maxLeft);
         const top = clamp(startHandleTop + position.dy, minTop, maxTop);
-        const imgLeft = -left * imageCurrentDim?.w / this.state.snapImageDim?.w;
-        const imgTop = -top * imageCurrentDim?.h / this.state.snapImageDim?.h;
+        const imgLeft = -left * imageCurrentDim.w / this.state.snapImageDim.w;
+        const imgTop = -top * imageCurrentDim.h / this.state.snapImageDim.h;
         css(this.elements.snapHandle, { left: `${left}px`, top: `${top}px` });
         css(this.elements.image, { left: `${imgLeft}px`, top: `${imgTop}px` });
       },
@@ -457,8 +457,8 @@ class ImageViewer {
 
   getImageCurrentDim() {
     return {
-      w: this.state.imageDim?.w * (this.state.zoomValue / 100),
-      h: this.state.imageDim?.h * (this.state.zoomValue / 100),
+      w: this.state.imageDim.w * (this.state.zoomValue / 100),
+      h: this.state.imageDim.h * (this.state.zoomValue / 100),
     };
   }
 
@@ -555,22 +555,22 @@ class ImageViewer {
     const zoomSteps = 15;
     perc = Math.round(Math.max(this.options.minZoom, perc));
     perc = Math.min(this.options.maxZoom, perc);
-    point = point || { x: this.state.containerDim?.w / 2, y: this.state.containerDim?.h / 2 };
+    point = point || { x: this.state.containerDim.w / 2, y: this.state.containerDim.h / 2 };
     const curLeft = parseFloat(css(this.elements.image, 'left'));
     const curTop = parseFloat(css(this.elements.image, 'top'));
     this.clearFrames();
     let step = 0;
-    const baseLeft = (this.state.containerDim?.w - this.state.imageDim?.w) / 2;
-    const baseTop = (this.state.containerDim?.h - this.state.imageDim?.h) / 2;
-    const baseRight = this.state.containerDim?.w - baseLeft;
-    const baseBottom = this.state.containerDim?.h - baseTop;
+    const baseLeft = (this.state.containerDim.w - this.state.imageDim.w) / 2;
+    const baseTop = (this.state.containerDim.h - this.state.imageDim.h) / 2;
+    const baseRight = this.state.containerDim.w - baseLeft;
+    const baseBottom = this.state.containerDim.h - baseTop;
     const zoomRecursive = () => {
       step++;
       if (step <= zoomSteps) this.frames.zoomFrame = requestAnimationFrame(zoomRecursive);
       const tickZoom = easeOutQuart(step, this.state.zoomValue, perc - this.state.zoomValue, zoomSteps + 1);
       const ratio = tickZoom / this.state.zoomValue;
-      const imgWidth = this.state.imageDim?.w * tickZoom / 100;
-      const imgHeight = this.state.imageDim?.h * tickZoom / 100;
+      const imgWidth = this.state.imageDim.w * tickZoom / 100;
+      const imgHeight = this.state.imageDim.h * tickZoom / 100;
       let newLeft = -((point.x - curLeft) * ratio - point.x);
       let newTop = -((point.y - curTop) * ratio - point.y);
       newLeft = Math.min(newLeft, baseLeft);
@@ -605,14 +605,14 @@ class ImageViewer {
   }
 
   resizeSnapHandle(imgWidth, imgHeight, imgLeft, imgTop) {
-    const imageWidth = imgWidth || this.state.imageDim?.w * this.state.zoomValue / 100;
-    const imageHeight = imgHeight || this.state.imageDim?.h * this.state.zoomValue / 100;
+    const imageWidth = imgWidth || this.state.imageDim.w * this.state.zoomValue / 100;
+    const imageHeight = imgHeight || this.state.imageDim.h * this.state.zoomValue / 100;
     const imageLeft = imgLeft || parseFloat(css(this.elements.image, 'left'));
     const imageTop = imgTop || parseFloat(css(this.elements.image, 'top'));
-    const left = -imageLeft * this.state.snapImageDim?.w / imageWidth;
-    const top = -imageTop * this.state.snapImageDim?.h / imageHeight;
-    const handleWidth = this.state.containerDim?.w * this.state.snapImageDim?.w / imageWidth;
-    const handleHeight = this.state.containerDim?.h * this.state.snapImageDim?.h / imageHeight;
+    const left = -imageLeft * this.state.snapImageDim.w / imageWidth;
+    const top = -imageTop * this.state.snapImageDim.h / imageHeight;
+    const handleWidth = this.state.containerDim.w * this.state.snapImageDim.w / imageWidth;
+    const handleHeight = this.state.containerDim.h * this.state.snapImageDim.h / imageHeight;
     css(this.elements.snapHandle, {
       top: `${top}px`,
       left: `${left}px`,
@@ -674,4 +674,5 @@ ImageViewer.defaults = {
   zoomWheel: true,
 };
 
+// eslint-disable-next-line no-restricted-exports
 export { ImageViewer as default };

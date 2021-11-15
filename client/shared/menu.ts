@@ -298,7 +298,7 @@ class Menu {
     else this.addValue(title, val);
   }
 
-  addChart(title, id, width = 150, height = 40, color) {
+  addChart(title, id, width = 150, height = 40, color: undefined | string = undefined) {
     if (color) menuTheme.chartColor = color;
     const el = document.createElement('div');
     el.className = 'menu-item menu-chart-title';

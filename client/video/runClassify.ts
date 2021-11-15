@@ -1,4 +1,4 @@
-import { tf } from '../shared/tf';
+import * as tf from '@vladmandic/tfjs/dist/tfjs.esm';
 import * as log from '../shared/log';
 import * as modelClassify from '../process/modelClassify';
 

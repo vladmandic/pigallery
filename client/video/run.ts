@@ -1,4 +1,4 @@
-import { tf, wasm } from '../shared/tf';
+import * as tf from '@vladmandic/tfjs/dist/tfjs.esm';
 import * as log from '../shared/log';
 import * as draw from './draw';
 import * as runDetect from './runDetect';
@@ -56,7 +56,6 @@ async function resetBackend(backendName) {
 async function init(config) {
   // document.getElementById('status').innerText = 'initializing';
   if (config.backEnd && config.backEnd !== '') {
-    if (config.backEnd === 'wasm') await wasm.setWasmPaths('/assets/');
     await resetBackend(config.backEnd);
     tf.ENV.set('DEBUG', false);
     if (config.backEnd === 'webgl') {

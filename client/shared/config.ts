@@ -246,6 +246,7 @@ async function done() {
 }
 
 export {
+  // eslint-disable-next-line no-restricted-exports
   config as default,
   setTheme,
   themes,

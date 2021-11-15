@@ -4,9 +4,9 @@ import '../../assets/fontawesome.css';
 import '../pigallery.css';
 
 import $ from 'jquery';
-import { tf } from '../shared/tf';
+import * as tf from '@vladmandic/tfjs/dist/tfjs.esm';
 // eslint-disable-next-line import/order
-import Human from '@vladmandic/human/dist/human.esm-nobundle';
+import { Human } from '@vladmandic/human/dist/human.esm';
 import panzoom from '../../assets/panzoom';
 import * as log from '../shared/log';
 import * as user from '../shared/user';
