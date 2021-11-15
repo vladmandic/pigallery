@@ -69,21 +69,14 @@ async function decodeValues(model, values) {
 async function getImage(model, image) {
   // read image pixels or use tensor as-is
   const bufferT = image instanceof tf.Tensor ? tf.clone(image) : tf.browser.fromPixels(image, 3);
-
   // resize to expected model input size
   const resizedT = tf.image.resizeBilinear(bufferT, [model.config.tensorSize, model.config.tensorSize], false);
-  bufferT.dispose();
-
   const expandedT = resizedT.shape.length < 4 ? tf.expandDims(resizedT, 0) : tf.clone(resizedT);
-  resizedT.dispose();
-
   // casting depends on model input data type
   const castedT = model.inputs[0].dtype === 'int32' ? tf.clone(expandedT) : tf.cast(expandedT, 'float32');
-  expandedT.dispose();
-
   // normalization is on-demand
   const imageT = model.config.normalizeInput === 1 ? tf.clone(castedT) : tf.mul(castedT, [model.config.normalizeInput]);
-  castedT.dispose();
+  tf.dispose([bufferT, resizedT, castedT, expandedT]);
   return imageT;
 }
 
@@ -102,9 +95,9 @@ export async function classify(model, image, userConfig = {}) {
   const predictionT0 = Array.isArray(predictionsT) ? predictionsT[0] : predictionsT; // some models return prediction for multiple objects in array, some return single prediction
   const softmaxT = model.config.softmax ? tf.softmax(predictionT0) : tf.clone(predictionT0);
   if (Array.isArray(predictionsT)) for (const tensorT of predictionsT) tensorT.dispose();
-  else predictionsT.dispose();
+  else tf.dispose(predictionsT);
   const softmax = await softmaxT.data();
-  softmaxT.dispose();
+  tf.dispose(softmaxT);
 
   // decode result data
   const decoded = await decodeValues(model, softmax);
