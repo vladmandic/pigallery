@@ -410,8 +410,8 @@ async function storeDatabase(chunks, totalImages) {
     db.store(chunk); // async op
     const imagesCount = await db.count(); // causes all pending transactions to clear
     const progress = Math.min(100, Math.round(100 * imagesCount / totalImages));
-    busy(`Creating cache ${progress}%<br>${imagesCount} / ${totalImages} images`);
-    $('#progress').html(`Creating cache: ${progress}%<br>images: ${imagesCount} / ${totalImages}`);
+    busy(`Processing ${progress}%<br>${imagesCount} / ${totalImages} images`);
+    $('#progress').html(`Processing: ${progress}%<br>images: ${imagesCount} / ${totalImages}`);
     const t1 = performance.now();
     stats.store += t1 - t0;
   }
@@ -479,7 +479,7 @@ async function loadGallery(refresh = false) {
         if (newSize > totalSize) totalSize = newSize;
         const newImages = parseFloat(result.headers.get('content-TotalImages') || '');
         if (newImages > totalImages) totalImages = newImages;
-        $('#progress').html(`Preparing ${Math.round(100 * totalImages / estImages)}%<br>${totalImages} / ${estImages} images`);
+        $('#progress').html(`Requesting ${Math.round(100 * totalImages / estImages)}%<br>${totalImages} / ${estImages} images`);
         const req = result.json();
         promisesData.push(req);
         req.then(async (json) => {

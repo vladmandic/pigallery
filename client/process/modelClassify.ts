@@ -100,7 +100,7 @@ export async function classify(model, image, userConfig = {}) {
 
   // get best results
   const predictionT0 = Array.isArray(predictionsT) ? predictionsT[0] : predictionsT; // some models return prediction for multiple objects in array, some return single prediction
-  const softmaxT = model.config.softmax ? predictionT0.softmax() : predictionT0.clone();
+  const softmaxT = model.config.softmax ? tf.softmax(predictionT0) : tf.clone(predictionT0);
   if (Array.isArray(predictionsT)) for (const tensorT of predictionsT) tensorT.dispose();
   else predictionsT.dispose();
   const softmax = await softmaxT.data();
