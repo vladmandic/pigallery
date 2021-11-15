@@ -141,16 +141,14 @@ export async function detect(model, image, userConfig = {}) {
     const rawScores = await res[1].data();
     [scores, classes] = calculateMaxScores(rawScores, res[1].shape[1], res[1].shape[2], model.config);
   }
-  for (const tensorT of res) tensorT.dispose();
-  softmaxT.dispose();
-  boxesT.dispose();
+  tf.dispose([softmaxT, boxesT, ...res]);
 
   // sort & filter results using nms feature
   let nms = [];
   try {
     const nmsT = await tf.image.nonMaxSuppressionAsync(boxes, scores, model.config.maxResults, model.config.iouThreshold, model.config.minScore / model.config.scaleScore);
     nms = await nmsT.data();
-    nmsT.dispose();
+    tf.dispose(nmsT);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Detect NMS Error:', err);
@@ -197,6 +195,6 @@ export async function detect(model, image, userConfig = {}) {
     }
   }
   // cleanup and return results
-  imageT.dispose();
+  tf.dispose(imageT);
   return results;
 }
