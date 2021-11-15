@@ -9,8 +9,8 @@ let db;
 const mongoOptions = {
   monitorCommands: true,
   directConnection: true,
-  connectTimeoutMS: 10000,
-  socketTimeoutMS: 10000,
+  connectTimeoutMS: 300000,
+  socketTimeoutMS: 300000,
   noDelay: true,
   minPoolSize: 1,
   maxPoolSize: 10,

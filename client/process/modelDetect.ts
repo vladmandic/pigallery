@@ -129,8 +129,8 @@ export async function detect(model, image, userConfig = {}) {
   }
 
   // find results
-  const boxesT = res[0].shape.length > 2 ? res[0].squeeze() : res[0].clone(); // boxes can be 3d or 2d in some models
-  const softmaxT = model.config.softmax ? res[1].softmax() : res[1].clone();
+  const boxesT = res[0].shape.length > 2 ? tf.squeeze(res[0]) : tf.clone(res[0]); // boxes can be 3d or 2d in some models
+  const softmaxT = model.config.softmax ? tf.softmax(res[1]) : tf.clone(res[1]);
   const boxes = await boxesT.array();
   let scores;
   let classes;
