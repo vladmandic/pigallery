@@ -11,6 +11,7 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **HEAD -> master** 2021/11/15 mandic00@live.com
 
+- avoid tf chained ops
 
 ### **3.7.9** 2021/11/08 mandic00@live.com
 
