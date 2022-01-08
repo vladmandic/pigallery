@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@vladmandic/human": "github:vladmandic/human",
-    "@vladmandic/pilogger": "^0.3.5",
+    "@vladmandic/pilogger": "^0.4.2",
     "@vladmandic/tfjs": "github:vladmandic/tfjs",
     "buffer": "^6.0.3",
     "chokidar": "^3.5.2",
