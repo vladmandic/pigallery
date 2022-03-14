@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const moment = require('moment');
-const simpleGit = require('simple-git/promise');
+const simpleGit = require('simple-git');
 const logger = require('@vladmandic/pilogger');
 const app = require('../package.json');
 
