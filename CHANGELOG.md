@@ -9,10 +9,10 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
+### **HEAD -> master** 2022/03/14 mandic00@live.com
+
+
 ### **3.8.2** 2022/03/14 mandic00@live.com
-
-
-### **origin/master** 2021/12/14 mandic00@live.com
 
 
 ### **3.8.1** 2021/12/14 mandic00@live.com

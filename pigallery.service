@@ -1,17 +1,17 @@
 [Unit]
 Description=pigallery
-After=network.target network-online.target
+After=network.target network-online.target pigallery-mongod.service
 
 [Service]
 Type=simple
 Environment="NODE_ENV=production"
-ExecStart=/home/vlado/.nvm/versions/node/v16.0.0/bin/node --no-deprecation --trace-uncaught --trace-warnings --unhandled-rejections=throw --stack-size=8192 --max-old-space-size=8192 --optimize-for-size server/pigallery.js
-WorkingDirectory=/home/demo/pigallery
+ExecStart= /home/vlado/.nvm/versions/node/v17.7.2/bin/node --trace-uncaught --trace-warnings --unhandled-rejections=throw --stack-size=8192 --max-old-space-size=8192 --optimize-for-size server/pigallery.js
+WorkingDirectory=/home/vlado/dev/pigallery
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
 RestartSec=300
-User=demo
+User=vlado
 StandardOutput=null
 
 [Install]

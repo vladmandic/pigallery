@@ -1,0 +1,17 @@
+[Unit]
+Description=pigallery-mongod
+After=network.target network-online.target
+
+[Service]
+Type=simple
+ExecStart=/bin/mongod --quiet --bind_ip 127.0.0.1 --wiredTigerCacheSizeGB 0.5 --noauth --tlsMode disabled --dbpath /home/vlado/dev/pigallery/data
+WorkingDirectory=/home/vlado/dev/pigallery
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+RestartSec=300
+User=vlado
+StandardOutput=null
+
+[Install]
+WantedBy=multi-user.target
