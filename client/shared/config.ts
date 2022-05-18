@@ -13,7 +13,7 @@ const config = {
   squareImage: false,      // resize proportional to the original image or to a square image
   registerPWA: true,       // register PWA service worker?
   facing: true,            // webcam facing front or back
-  memory: true,            // set webgl memory hard limit
+  memory: false,           // set webgl memory hard limit
   autoreload: true,        // auto reload processing window on error
   floatPrecision: true,    // use 32-bit float precision
   downloadChunkSize: 200,  // number of records downloaded in each chunk
@@ -25,7 +25,7 @@ const config = {
   modelsRoot: '/models/',  // pwa setting
   // webgl configuration
   webgl: {
-    WEBGL_DELETE_TEXTURE_THRESHOLD: 0, // delete textures upon disposal is used memory is larger than this rather than making them available for reuse // Math.trunc(3.5 * 1024 * 1024 * 1024)
+    // WEBGL_DELETE_TEXTURE_THRESHOLD: 0, // delete textures upon disposal is used memory is larger than this rather than making them available for reuse // Math.trunc(3.5 * 1024 * 1024 * 1024)
     WEBGL_FORCE_F16_TEXTURES: false, // Whether the WebGL backend will always use f16 textures for rendering, can cause overflows on some models
     WEBGL_PACK_DEPTHWISECONV: false, // Whether we will pack the depthwise conv op // TODO: https://github.com/tensorflow/tfjs/issues/1679
     WEBGL_CPU_FORWARD: true, // Whether to perform small ops on CPU instead of uploading to GPU

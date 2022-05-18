@@ -1,6 +1,6 @@
 # @vladmandic/pigallery  
 
-Version: **3.9.0**  
+Version: **3.9.2**  
 Description: **PiGallery: AI-powered Self-hosted Secure Multi-user Image Gallery and Detailed Image analysis using Machine Learning, EXIF Parsing and Geo Tagging**  
 
 Author: **Vladimir Mandic <mandic00@live.com>**  
@@ -9,7 +9,10 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ## Changelog
 
-### **HEAD -> master** 2022/03/14 mandic00@live.com
+### **3.9.2** 2022/05/18 mandic00@live.com
+
+
+### **3.9.1** 2022/03/20 mandic00@live.com
 
 
 ### **3.8.2** 2022/03/14 mandic00@live.com
@@ -24,7 +27,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **3.7.8** 2021/10/25 mandic00@live.com
 
-- remove package-lock.json
 - add default sessions folder
 - fix db init
 
@@ -80,9 +82,7 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 - fix multi-word search
 - scoped run
-
-### **release: 3.6.3** 2021/05/01 mandic00@live.com
-
+- stack tracing in debug logs
 - upadate human and tfjs libraries
 
 ### **3.6.3** 2021/04/30 mandic00@live.com
@@ -278,9 +278,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 ### **2.2.9** 2021/02/06 mandic00@live.com
 
 
-### **release: 2.1** 2021/01/29 mandic00@live.com
-
-
 ### **2.2.8** 2021/01/29 mandic00@live.com
 
 
@@ -294,8 +291,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 ### **2.2.5** 2020/12/15 mandic00@live.com
 
 - reenable faceapi
-- merge pull request #3 from vladmandic/dependabot/npm_and_yarn/ini-1.3.8
-- bump ini from 1.3.5 to 1.3.8
 
 ### **2.2.4** 2020/12/12 mandic00@live.com
 
@@ -304,7 +299,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 ### **2.2.3** 2020/11/25 mandic00@live.com
 
 - fix chrome 87 compatibility
-- remove tf from assets
 - video optimizations
 - webgl tuning
 - implemented object detection
@@ -435,7 +429,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **2.0.4** 2020/08/30 cyan00@gmail.com
 
-- removed utils
 - implemented cleancss css merging
 - optimize live video
 - cleaned up docs and compare module
@@ -449,9 +442,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 - video interface
 - new live video module
 - optimized shares management
-
-### **release: 2.0.2** 2020/08/28 cyan00@gmail.com
-
 
 ### **2.0.2** 2020/08/28 cyan00@gmail.com
 
@@ -560,7 +550,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **1.1.7** 2020/07/25 cyan00@gmail.com
 
-- delete
 - added themes
 
 ### **1.1.5** 2020/07/23 cyan00@gmail.com
@@ -601,7 +590,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **1.0.7** 2020/07/06 cyan00@gmail.com
 
-- adding lineawesome
 
 ### **1.0.6** 2020/07/04 cyan00@gmail.com
 
@@ -698,7 +686,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 ### **0.9.3** 2020/06/17 cyan00@gmail.com
 
 - added inception v4 and deepdetect 6k models
-- initial map work
 - implemented brotli compression
 - processing logging
 - error handling
@@ -770,7 +757,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 
 ### **0.6.4** 2020/05/27 cyan00@gmail.com
 
-- converted to png
 - added examples
 
 ### **0.6.3** 2020/05/26 cyan00@gmail.com
@@ -803,7 +789,6 @@ Repository: **<git+https://github.com/vladmandic/pigallery.git>**
 - pwa enabled
 - added gif and png processing
 - bugfixes
-- deleted dist
 - persistent user config
 - pwa caching
 

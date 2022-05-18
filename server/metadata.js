@@ -267,7 +267,8 @@ async function checkRecords(list) {
   const deleted = all.filter((a) => !list.includes(a));
   for (const item of deleted) {
     log.data('Delete:', item);
-    db.remove({ image: item });
+    if (db.deleteOne) await db.deleteOne({ image: item });
+    else await db.remove({ image: item }, { multi: false });
   }
   const before = all.length;
   const after = await db.count({});
