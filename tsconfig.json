@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "es2020",
-    "target": "es2018",
+    "module": "ESNext",
+    "target": "es2020",
     "moduleResolution": "node",
     "typeRoots": ["node_modules/@types"],
     "outDir": "types",
